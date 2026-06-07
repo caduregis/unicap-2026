@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Salão des Lumières — Iluminismo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+  #canvas-container { width:100vw; height:100vh; }
+  #nav {
+    position:fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+    background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);
+    z-index:100;
+  }
+  #nav a {
+    color:#d4a030; text-decoration:none; font-size:13px; font-weight:500;
+    letter-spacing:0.04em; padding:7px 14px;
+    border:1px solid rgba(212,160,48,0.35); border-radius:6px;
+    transition:all 0.2s; background:rgba(0,0,0,0.5);
+  }
+  #nav a:hover { background:rgba(212,160,48,0.15); border-color:rgba(212,160,48,0.6); }
+  #badge {
+    color:#e8c060; font-size:13px; font-weight:600; letter-spacing:0.06em;
+    background:rgba(0,0,0,0.6); padding:7px 16px;
+    border:1px solid rgba(232,192,96,0.3); border-radius:20px;
+  }
+  #hint {
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    color:rgba(200,150,50,0.75); font-size:12px; font-weight:400;
+    letter-spacing:0.08em; text-transform:uppercase;
+    background:rgba(0,0,0,0.5); padding:8px 18px; border-radius:20px;
+    border:1px solid rgba(200,150,50,0.2); pointer-events:none; z-index:100;
+  }
+  #popup {
+    display:none; position:fixed; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    background:linear-gradient(145deg,rgba(5,3,1,0.98),rgba(12,8,2,0.97));
+    border:1px solid rgba(200,140,30,0.5);
+    border-radius:16px; padding:32px 36px; max-width:540px; width:90%;
+    z-index:200; box-shadow:0 20px 60px rgba(0,0,0,0.95),0 0 40px rgba(200,130,30,0.12);
+  }
+  #popup.active { display:block; animation:fadeUp 0.25s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translate(-50%,-48%)} to{opacity:1;transform:translate(-50%,-50%)} }
+  #popup-title { font-size:18px; font-weight:700; color:#d49820; letter-spacing:0.03em; margin-bottom:14px; border-bottom:1px solid rgba(200,140,30,0.25); padding-bottom:12px; }
+  #popup-desc { font-size:14px; color:#c09860; line-height:1.7; margin-bottom:18px; }
+  #popup-tip { font-size:13px; color:#a0e090; line-height:1.65; background:rgba(60,140,60,0.08); border-left:3px solid rgba(80,180,80,0.5); padding:12px 14px; border-radius:0 8px 8px 0; margin-bottom:18px; }
+  #popup-tip::before { content:"UNICAP "; font-weight:700; color:#70d060; }
+  #popup-close { display:block; text-align:center; cursor:pointer; background:rgba(200,140,30,0.12); color:#c09018; border:1px solid rgba(200,140,30,0.3); border-radius:8px; padding:9px; font-size:13px; font-weight:600; letter-spacing:0.05em; transition:all 0.2s; }
+  #popup-close:hover { background:rgba(200,140,30,0.22); }
+  #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:150; }
+  #overlay.active { display:block; }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<nav id="nav">
+  <a href="resumo.html">← Resumo Iluminismo</a>
+  <div id="badge">📚 Salão des Lumières — Iluminismo</div>
+  <a href="../../../index.html">Hub Principal</a>
+</nav>
+<div id="hint">Clique nos livros na mesa para conhecer cada pensador</div>
+<div id="overlay"></div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"></div>
+  <div id="popup-close">Fechar</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const W = window.innerWidth, H = window.innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x040208);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x040208, 15, 40);
+
+const camera = new THREE.PerspectiveCamera(60, W/H, 0.1, 100);
+camera.position.set(0, 7, 16);
+camera.lookAt(0, 1, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.65;
+controls.minDistance = 5;
+controls.maxDistance = 25;
+
+// Lights
+const ambLight = new THREE.AmbientLight(0x0a0603, 0.5);
+scene.add(ambLight);
+
+// Ceiling spotlight
+const spotLight = new THREE.SpotLight(0xffe8b0, 0.6, 30, Math.PI/4, 0.5);
+spotLight.position.set(0, 12, 0);
+spotLight.target.position.set(0, 0, 0);
+spotLight.castShadow = true;
+scene.add(spotLight);
+scene.add(spotLight.target);
+
+// Candelabra lights (3 on table)
+const candlePositions = [[-4, 1.5, 0], [0, 1.5, 0], [4, 1.5, 0]];
+const candleLights = [];
+candlePositions.forEach(([cx,cy,cz], i) => {
+  const cl = new THREE.PointLight(0xffa030, 2.0, 10);
+  cl.position.set(cx, cy, cz);
+  cl.userData.phase = i * 1.7;
+  cl.castShadow = false;
+  scene.add(cl);
+  candleLights.push(cl);
+});
+
+// Floor — dark parquet
+const floorCanvas = document.createElement('canvas');
+floorCanvas.width = 256; floorCanvas.height = 256;
+const fctx = floorCanvas.getContext('2d');
+fctx.fillStyle = '#180a03';
+fctx.fillRect(0,0,256,256);
+fctx.strokeStyle = '#220e05';
+fctx.lineWidth = 1;
+for (let i = 0; i < 256; i += 32) {
+  fctx.beginPath(); fctx.moveTo(i,0); fctx.lineTo(i,256); fctx.stroke();
+  fctx.beginPath(); fctx.moveTo(0,i); fctx.lineTo(256,i); fctx.stroke();
+}
+const floorTex = new THREE.CanvasTexture(floorCanvas);
+floorTex.wrapS = floorTex.wrapT = THREE.RepeatWrapping;
+floorTex.repeat.set(4,4);
+const floorGeo = new THREE.PlaneGeometry(30, 25);
+const floorMat = new THREE.MeshLambertMaterial({ map: floorTex });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -0.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Walls (dark walnut panel)
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x120c05 });
+const backWall = new THREE.Mesh(new THREE.PlaneGeometry(30, 16), wallMat);
+backWall.position.set(0, 7.5, -12);
+scene.add(backWall);
+const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(25, 16), wallMat);
+leftWall.rotation.y = Math.PI/2;
+leftWall.position.set(-15, 7.5, 0);
+scene.add(leftWall);
+const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(25, 16), wallMat);
+rightWall.rotation.y = -Math.PI/2;
+rightWall.position.set(15, 7.5, 0);
+scene.add(rightWall);
+
+// Bookshelves (back wall)
+function makeBookshelf(x, z) {
+  const g = new THREE.Group();
+  const shelfMat = new THREE.MeshLambertMaterial({ color: 0x1a0e06 });
+  // Frame
+  const frameGeo = new THREE.BoxGeometry(4, 7, 0.4);
+  const frame = new THREE.Mesh(frameGeo, shelfMat);
+  frame.position.y = 3.5;
+  g.add(frame);
+  // Books
+  const bookColors = [0x8b1a1a, 0x1a3a8b, 0x1a8b3a, 0x8b7a1a, 0x5a1a8b, 0x8b4a1a, 0x2a6a6a];
+  let bx = -1.7;
+  for (let row = 0; row < 3; row++) {
+    bx = -1.7;
+    while (bx < 1.7) {
+      const bw = 0.15 + Math.random()*0.15;
+      const bh = 1.2 + Math.random()*0.4;
+      const bookGeo = new THREE.BoxGeometry(bw, bh, 0.3);
+      const bookMat = new THREE.MeshLambertMaterial({ color: bookColors[Math.floor(Math.random()*bookColors.length)] });
+      const book = new THREE.Mesh(bookGeo, bookMat);
+      book.position.set(bx + bw/2, 1.2 + row*2.2 + bh/2 - 0.4, 0.06);
+      if (Math.random() > 0.7) book.rotation.z = (Math.random()-0.5)*0.15;
+      g.add(book);
+      bx += bw + 0.02;
+    }
+    // Shelf board
+    const sbGeo = new THREE.BoxGeometry(3.8, 0.08, 0.4);
+    const sb = new THREE.Mesh(sbGeo, shelfMat);
+    sb.position.y = row*2.2 + 0.4;
+    g.add(sb);
+  }
+  g.position.set(x, -0.5, z);
+  scene.add(g);
+}
+makeBookshelf(-6, -11.5);
+makeBookshelf(-1, -11.5);
+makeBookshelf(4, -11.5);
+
+// Long mahogany table
+const tableMat = new THREE.MeshLambertMaterial({ color: 0x200c05 });
+const tableGeo = new THREE.BoxGeometry(14, 0.25, 4);
+const table = new THREE.Mesh(tableGeo, tableMat);
+table.position.set(0, 0.1, 0);
+table.castShadow = true;
+table.receiveShadow = true;
+scene.add(table);
+// Table legs
+[[6, -1.5],[6, 1.5],[-6,-1.5],[-6,1.5]].forEach(([lx,lz]) => {
+  const legGeo = new THREE.BoxGeometry(0.2, 1.2, 0.2);
+  const leg = new THREE.Mesh(legGeo, tableMat);
+  leg.position.set(lx, -0.5, lz);
+  leg.castShadow = true;
+  scene.add(leg);
+});
+
+// Candelabras (decorative)
+function makeCandelabra(x, z) {
+  const g = new THREE.Group();
+  const stemMat = new THREE.MeshLambertMaterial({ color: 0xa08000 });
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 1.2, 8), stemMat);
+  stem.position.y = 0.6;
+  g.add(stem);
+  const plateGeo = new THREE.CylinderGeometry(0.4, 0.3, 0.08, 16);
+  const plate = new THREE.Mesh(plateGeo, stemMat);
+  plate.position.y = 1.2;
+  g.add(plate);
+  // 3 candle arms
+  for (let i = 0; i < 3; i++) {
+    const angle = (i/3)*Math.PI*2;
+    const armGeo = new THREE.BoxGeometry(0.5, 0.05, 0.05);
+    const arm = new THREE.Mesh(armGeo, stemMat);
+    arm.position.set(Math.cos(angle)*0.25, 1.32, Math.sin(angle)*0.25);
+    arm.rotation.y = angle;
+    g.add(arm);
+    const candleGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 8);
+    const candle = new THREE.Mesh(candleGeo, new THREE.MeshLambertMaterial({ color: 0xf0e8d0 }));
+    candle.position.set(Math.cos(angle)*0.5, 1.6, Math.sin(angle)*0.5);
+    g.add(candle);
+    const flameGeo = new THREE.SphereGeometry(0.04, 6, 6);
+    const flame = new THREE.Mesh(flameGeo, new THREE.MeshBasicMaterial({ color: 0xffcc00 }));
+    flame.position.set(Math.cos(angle)*0.5, 1.88, Math.sin(angle)*0.5);
+    flame.scale.y = 1.8;
+    g.add(flame);
+  }
+  g.position.set(x, 0.22, z);
+  scene.add(g);
+}
+makeCandelabra(-4, 0);
+makeCandelabra(0, 0);
+makeCandelabra(4, 0);
+
+// Chairs (7 thinkers)
+function makeChair(x, z) {
+  const g = new THREE.Group();
+  const woodMat = new THREE.MeshLambertMaterial({ color: 0x1a0e06 });
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.07, 0.7), woodMat);
+  seat.position.y = 0.5;
+  g.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1.0, 0.07), woodMat);
+  back.position.set(0, 1.05, -0.32);
+  g.add(back);
+  [[0.3,0.25,0.3],[0.3,0.25,-0.3],[-0.3,0.25,0.3],[-0.3,0.25,-0.3]].forEach(([lx,ly,lz]) => {
+    const legGeo = new THREE.BoxGeometry(0.07, 0.5, 0.07);
+    const leg = new THREE.Mesh(legGeo, woodMat);
+    leg.position.set(lx, ly, lz);
+    g.add(leg);
+  });
+  g.position.set(x, 0, z);
+  scene.add(g);
+}
+const chairXPositions = [-5.5, -3.5, -1.5, 0.5, 2.5, 4.5, -5.5];
+chairXPositions.forEach((cx, i) => makeChair(cx + (i === 6 ? 0 : 0), i < 6 ? -2.5 : 2.5));
+
+// Concept thinkers — books on table
+const seatData = [
+  { x:-5.5, title:"Voltaire",
+    desc:"Crítica à Igreja e à intolerância religiosa. 'Esmaguem o infame!' (a Igreja). Defesa da liberdade de expressão e da tolerância. Deísmo: Deus criou o mundo mas não intervém — relojoeiro. 'Cândido' (romance satírico). 'Dicionário Filosófico'. Exilado diversas vezes por suas críticas.",
+    tip:"Voltaire = liberdade de expressão e crítica à Igreja. UNICAP pergunta: 'Qual pensador defendia a tolerância religiosa?' → Voltaire. 'Esmagemos o infame' = a instituição Igreja, não Deus." },
+  { x:-3.5, title:"Rousseau",
+    desc:"Contrato Social: o povo soberano delega poder ao Estado. Vontade Geral ≠ vontade de todos (é o bem comum). 'O homem nasce bom; a sociedade o corrompe.' Bom selvagem: estado de natureza como inocência perdida. Base do romantismo e da Revolução Francesa (liberdade, igualdade, fraternidade).",
+    tip:"Rousseau ≠ Hobbes: Hobbes vê o estado de natureza como guerra; Rousseau vê como paz. Para UNICAP: 'Segundo Rousseau, por que o homem é corrupto?' → Pela sociedade e a propriedade privada." },
+  { x:-1.5, title:"Montesquieu",
+    desc:"'O Espírito das Leis': tripartição dos poderes (Executivo, Legislativo, Judiciário). Teoria do governo por leis, não por homens. Classificação dos governos: república, monarquia, despotismo. Influenciou a Constituição dos EUA e a Declaração dos Direitos do Homem.",
+    tip:"Separação dos poderes = Montesquieu. Praticamente todo sistema democrático moderno (inclusive o Brasil com a Constituição de 1988) se baseia nessa divisão. Questão: 'Quem teorizou a separação de poderes?' → Montesquieu." },
+  { x:0.5, title:"Locke",
+    desc:"Contrato Social: o Estado protege vida, liberdade e propriedade. Se o Estado viola esses direitos → povo tem direito à revolução. Base do liberalismo clássico. Tabula rasa: a mente nasce vazia. Influenciou a Revolução Americana e a Declaração de Independência dos EUA.",
+    tip:"Locke = pai do liberalismo político. 'Vida, liberdade e propriedade' de Locke virou 'vida, liberdade e busca da felicidade' na Declaração de Independência. Locke vs. Hobbes: Locke acredita no estado de natureza como paz relativa." },
+  { x:2.5, title:"Kant",
+    desc:"'Sapere aude!' — Ouse saber! A Ilustração como saída da menoridade intelectual. Imperativo categórico: 'Age apenas segundo aquela máxima pela qual podes querer que ela se torne lei universal.' Ética deontológica: o dever moral independe de consequências. 'Crítica da Razão Pura': limites do conhecimento (fenômeno vs. nômeno).",
+    tip:"Kant é o mais cobrado de todos em vestibulares. 'Imperativo categórico' = regra universal de ação moral. Diferente de Aristóteles (virtude) e Mill (utilidade). UNICAP cita Kant por nome." },
+  { x:4.5, title:"Diderot e a Encyclopédie",
+    desc:"Projeto de sistematizar todo o conhecimento humano em uma obra (Encyclopédie, 1751-1772). Símbolo máximo do Iluminismo: razão como instrumento de combate ao obscurantismo. Participantes: Voltaire, Rousseau, Montesquieu. Censurada pela Igreja e pela monarquia.",
+    tip:"A Encyclopédie = símbolo do projeto iluminista de difundir o conhecimento e combater a ignorância. Questão: 'O que representa a Encyclopédie?' → Sistematização do saber humano pela razão, crítica ao dogmatismo." },
+  { x:-5.5, z:1.5, title:"Contexto Histórico — Por que o Iluminismo?",
+    desc:"Séc. XVIII: Europa sob monarquias absolutas, Igreja Católica com enorme poder, início da expansão burguesa. O Iluminismo é a ideologia da burguesia em ascensão contra o Antigo Regime (monarquia + clero + nobreza). Resultados: Revolução Americana (1776), Revolução Francesa (1789), independências latino-americanas.",
+    tip:"Iluminismo = ideologia da Revolução Francesa e das independências americanas. Não foi só teoria — foi base filosófica para transformações políticas reais. UNICAP cobra a conexão Iluminismo → Revolução Francesa." }
+];
+
+const bookMeshes = [];
+const bookInfo = [];
+
+seatData.forEach((s, i) => {
+  const bz = s.z || 0;
+  // Book on table
+  const bCanvas = document.createElement('canvas');
+  bCanvas.width = 128; bCanvas.height = 128;
+  const bCtx = bCanvas.getContext('2d');
+  const bookBg = ['#8b1a1a','#1a3a8b','#1a5a3a','#6a4a1a','#3a1a6a','#1a5a5a','#6a3a1a'][i];
+  bCtx.fillStyle = bookBg;
+  bCtx.fillRect(0,0,128,128);
+  bCtx.fillStyle = '#f0e0b0';
+  bCtx.font = 'bold 13px serif';
+  bCtx.textAlign = 'center';
+  const words = s.title.split(' ');
+  let line='', lines=[];
+  words.forEach(w => {
+    const test = line+w+' ';
+    if (bCtx.measureText(test).width > 110 && line) { lines.push(line.trim()); line=w+' '; }
+    else line=test;
+  });
+  if (line) lines.push(line.trim());
+  const sy2 = 64 - (lines.length-1)*8;
+  lines.forEach((l, li) => bCtx.fillText(l, 64, sy2 + li*16));
+  const bTex = new THREE.CanvasTexture(bCanvas);
+  const bGeo = new THREE.BoxGeometry(0.9, 0.12, 0.65);
+  const bMats = [
+    new THREE.MeshLambertMaterial({ color: parseInt(bookBg.replace('#','0x')) }),
+    new THREE.MeshLambertMaterial({ color: parseInt(bookBg.replace('#','0x')) }),
+    new THREE.MeshLambertMaterial({ map: bTex }),
+    new THREE.MeshLambertMaterial({ color: 0xd0c090 }),
+    new THREE.MeshLambertMaterial({ color: parseInt(bookBg.replace('#','0x')) }),
+    new THREE.MeshLambertMaterial({ color: parseInt(bookBg.replace('#','0x')) })
+  ];
+  const book = new THREE.Mesh(bGeo, bMats);
+  book.position.set(s.x, 0.28, bz);
+  book.rotation.y = (Math.random()-0.5)*0.3;
+  book.castShadow = true;
+  scene.add(book);
+  bookMeshes.push(book);
+  bookInfo.push({ mesh: book, data: s, baseY: 0.28 });
+});
+
+// Globe on table
+const globeGeo = new THREE.SphereGeometry(0.4, 16, 16);
+const globeMat = new THREE.MeshLambertMaterial({ color: 0x3a6a8a });
+const globe = new THREE.Mesh(globeGeo, globeMat);
+globe.position.set(-5, 0.62, 1.2);
+scene.add(globe);
+const globeStandGeo = new THREE.CylinderGeometry(0.05, 0.1, 0.5, 8);
+const globeStand = new THREE.Mesh(globeStandGeo, new THREE.MeshLambertMaterial({ color: 0x8a7020 }));
+globeStand.position.set(-5, 0.12, 1.2);
+scene.add(globeStand);
+
+// Quill and paper on table
+const paperGeo = new THREE.PlaneGeometry(0.7, 0.9);
+const paperMat = new THREE.MeshLambertMaterial({ color: 0xe8dcc0 });
+const paper = new THREE.Mesh(paperGeo, paperMat);
+paper.rotation.x = -Math.PI/2;
+paper.position.set(1.5, 0.24, -0.8);
+scene.add(paper);
+
+// Popup logic
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = -1;
+const popupEl = document.getElementById('popup');
+const overlayEl = document.getElementById('overlay');
+const titleEl = document.getElementById('popup-title');
+const descEl = document.getElementById('popup-desc');
+const tipEl = document.getElementById('popup-tip');
+
+function showPopup(d) {
+  titleEl.textContent = d.title;
+  descEl.textContent = d.desc;
+  tipEl.textContent = d.tip;
+  overlayEl.classList.add('active');
+  popupEl.classList.add('active');
+}
+
+document.getElementById('popup-close').addEventListener('click', () => {
+  popupEl.classList.remove('active');
+  overlayEl.classList.remove('active');
+});
+overlayEl.addEventListener('click', () => {
+  popupEl.classList.remove('active');
+  overlayEl.classList.remove('active');
+});
+
+renderer.domElement.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX/W)*2-1;
+  mouse.y = -(e.clientY/H)*2+1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(bookMeshes);
+  if (hits.length > 0) {
+    const idx = bookMeshes.indexOf(hits[0].object);
+    if (idx !== hovered) {
+      if (hovered >= 0) bookMeshes[hovered].position.y = bookInfo[hovered].baseY;
+      hovered = idx;
+      bookMeshes[idx].position.y = bookInfo[idx].baseY + 0.15;
+      document.body.style.cursor = 'pointer';
+    }
+  } else {
+    if (hovered >= 0) { bookMeshes[hovered].position.y = bookInfo[hovered].baseY; hovered = -1; }
+    document.body.style.cursor = 'default';
+  }
+});
+
+renderer.domElement.addEventListener('click', e => {
+  mouse.x = (e.clientX/W)*2-1;
+  mouse.y = -(e.clientY/H)*2+1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(bookMeshes);
+  if (hits.length > 0) {
+    const idx = bookMeshes.indexOf(hits[0].object);
+    showPopup(bookInfo[idx].data);
+  }
+});
+
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+  controls.update();
+
+  // Candle flicker
+  candleLights.forEach((cl, i) => {
+    cl.intensity = 1.8 + Math.sin(t*3.1 + cl.userData.phase)*0.3 + Math.sin(t*7.2 + i*2.3)*0.1;
+  });
+
+  // Spotlight subtle pulse
+  spotLight.intensity = 0.55 + Math.sin(t*0.4)*0.05;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+});
+</script>
+</body>
+</html>

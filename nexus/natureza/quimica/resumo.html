@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Química — Resumo — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #0a0303;
+  --surface: #100505;
+  --surface2: #150607;
+  --border: rgba(255,255,255,0.07);
+  --accent: #ff8833;
+  --accent2: #ffcc44;
+  --text: #d4b8a8;
+  --muted: #705040;
+  --heading: #f0d8c8;
+}
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+.container { max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding:14px 0; border-bottom:1px solid var(--border); }
+nav a { color:var(--muted); text-decoration:none; font-size:12px; font-weight:500; padding:6px 14px; border:1px solid var(--border); border-radius:7px; transition:all 0.2s; }
+nav a:hover { color:var(--heading); background:rgba(255,255,255,0.04); }
+nav .nav-title { color:rgba(255,255,255,0.2); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; }
+h1 { font-size:28px; font-weight:700; color:var(--heading); margin-bottom:6px; }
+.subtitle { font-size:14px; color:var(--muted); margin-bottom:40px; }
+.section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px; margin-bottom:24px; }
+.section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.section-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h2 { font-size:17px; font-weight:600; color:var(--heading); }
+.section p { font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:12px; }
+.section p:last-child { margin-bottom:0; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+.card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.card h4 { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+.card p { font-size:13px; color:var(--muted); line-height:1.6; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:14px; }
+th { background:rgba(255,136,51,0.08); color:var(--accent); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-block { background:var(--surface2); border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:16px 18px; margin-bottom:16px; }
+.question-block .q { font-size:13.5px; color:var(--heading); font-weight:500; margin-bottom:10px; }
+.question-block .resp { font-size:13px; color:var(--accent2); background:rgba(255,204,68,0.06); border:1px solid rgba(255,204,68,0.15); border-radius:7px; padding:10px 14px; }
+.formula { background:rgba(255,136,51,0.07); border:1px solid rgba(255,136,51,0.15); border-radius:8px; padding:10px 16px; font-size:13px; color:#ffaa66; font-family:monospace; margin:10px 0; }
+.highlight { color:var(--accent2); font-weight:600; }
+@media(max-width:600px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="../../index.html">← Nexus</a>
+    <span class="nav-title">Química</span>
+    <a href="mapa3d.html">Mapa 3D →</a>
+  </nav>
+
+  <h1>Química</h1>
+  <p class="subtitle">Resumo completo para o vestibular UNICAP 2026 — Carlos Régis / Direito</p>
+
+  <!-- SEÇÃO 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,136,51,0.15);">⚗️</div>
+      <h2>1. Tabela Periódica: Organização e Tendências</h2>
+    </div>
+    <p>A tabela periódica organiza os 118 elementos conhecidos em ordem crescente de <strong class="highlight">número atômico (Z)</strong> — quantidade de prótons no núcleo. Cada elemento tem símbolo, número atômico e massa atômica.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Grupos e Períodos</h4>
+        <p><strong>Grupos (colunas, 1-18):</strong> elementos com mesma configuração eletrônica de valência. Grupo 1 = metais alcalinos. Grupo 2 = metais alcalino-terrosos. Grupo 17 = halogênios. Grupo 18 = gases nobres.<br>
+        <strong>Períodos (linhas, 1-7):</strong> elementos com mesmo número de camadas eletrônicas.</p>
+      </div>
+      <div class="card">
+        <h4>Propriedades Periódicas</h4>
+        <p><strong>Raio atômico:</strong> aumenta de cima→baixo (mais camadas) e da direita→esquerda (menor atração nuclear).<br>
+        <strong>Eletronegatividade:</strong> aumenta da esquerda→direita e de baixo→cima. Flúor (F) é o mais eletronegativo.<br>
+        <strong>Energia de ionização:</strong> aumenta com a eletronegatividade.</p>
+      </div>
+    </div>
+    <table>
+      <tr><th>Família / Grupo</th><th>Nome</th><th>Características</th><th>Exemplos</th></tr>
+      <tr><td>Grupo 1</td><td>Metais Alcalinos</td><td>1 elétron de valência; altamente reativos</td><td>Li, Na, K, Rb, Cs</td></tr>
+      <tr><td>Grupo 2</td><td>Metais Alcalino-Terrosos</td><td>2 elétrons de valência; reativos</td><td>Mg, Ca, Ba, Sr</td></tr>
+      <tr><td>Grupos 3-12</td><td>Metais de Transição</td><td>Múltiplas valências; coloridos</td><td>Fe, Cu, Zn, Au, Ag</td></tr>
+      <tr><td>Grupo 17</td><td>Halogênios</td><td>7 elétrons de valência; muito reativos</td><td>F, Cl, Br, I</td></tr>
+      <tr><td>Grupo 18</td><td>Gases Nobres</td><td>8 elétrons (exceto He); inertes</td><td>He, Ne, Ar, Kr, Xe</td></tr>
+    </table>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(100,200,255,0.12);">🔗</div>
+      <h2>2. Ligações Químicas e Geometria Molecular</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h4>Ligação Iônica</h4>
+        <p>Metal + não-metal. Transferência de elétrons. Formam íons (cátion + ânion). Rede cristalina. Alto ponto de fusão/ebulição. Conduz eletricidade em solução. Ex.: NaCl, MgO, CaF₂.</p>
+      </div>
+      <div class="card">
+        <h4>Ligação Covalente</h4>
+        <p>Não-metal + não-metal. Compartilhamento de pares de elétrons. Pode ser simples (1 par), dupla (2) ou tripla (3). Ex.: H₂O, CO₂, N₂. Apolar: elétrons igualmente compartilhados. Polar: elétrons mais próximos ao mais eletronegativo.</p>
+      </div>
+      <div class="card">
+        <h4>Ligação Metálica</h4>
+        <p>Metal + metal. "Mar de elétrons" livres no retículo. Explica condutividade elétrica e térmica, maleabilidade, brilho. Ex.: Fe, Cu, Au, liga de bronze (Cu+Sn).</p>
+      </div>
+    </div>
+    <p style="margin-top:14px"><strong class="highlight">Geometria molecular (VSEPR):</strong> linear (BeCl₂), angular (H₂O), trigonal plana (BF₃), piramidal (NH₃), tetraédrica (CH₄). Pares de elétrons livres aumentam a repulsão e diminuem o ângulo.</p>
+    <p><strong class="highlight">Forças intermoleculares:</strong> van der Waals (apolares, mais fracas), dipolo-dipolo (polares), ligação de hidrogênio (F, O ou N ligados a H — mais fortes). Determinam ponto de ebulição e solubilidade.</p>
+  </div>
+
+  <!-- SEÇÃO 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(180,80,255,0.12);">🧪</div>
+      <h2>3. Funções Inorgânicas: Ácidos, Bases, Sais, Óxidos e pH</h2>
+    </div>
+    <table>
+      <tr><th>Função</th><th>Definição</th><th>Exemplos</th><th>Obs.</th></tr>
+      <tr><td>Ácido (Arrhenius)</td><td>Libera H⁺ em solução aquosa</td><td>HCl, H₂SO₄, HNO₃, CH₃COOH</td><td>Forte: ionização total; fraco: parcial</td></tr>
+      <tr><td>Base (Arrhenius)</td><td>Libera OH⁻ em solução aquosa</td><td>NaOH, Ca(OH)₂, NH₄OH</td><td>Forte: NaOH, KOH; fraco: NH₄OH</td></tr>
+      <tr><td>Sal</td><td>Produto de neutralização ácido+base</td><td>NaCl, CaCO₃, Na₂SO₄</td><td>Condutor em solução; muitos insolúveis</td></tr>
+      <tr><td>Óxido</td><td>Composto binário com O</td><td>CO₂, Na₂O, CaO, Fe₂O₃</td><td>Óxido ácido, básico, anfótero, neutro</td></tr>
+    </table>
+    <div class="formula">pH = -log[H⁺]  |  pOH = -log[OH⁻]  |  pH + pOH = 14</div>
+    <p>pH 0-6,9 = ácido | pH 7 = neutro | pH 7,1-14 = básico. Indicadores: tornesol, fenolftaleína, alaranjado de metila.</p>
+    <p>Neutralização: HCl + NaOH → NaCl + H₂O. Reação de dupla troca entre ácido e base sempre forma sal + água.</p>
+  </div>
+
+  <!-- SEÇÃO 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,220,0,0.12);">⚡</div>
+      <h2>4. Reações Químicas: Tipos, Balanceamento e Leis</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Tipos de Reações</h4>
+        <p><strong>Síntese (combinação):</strong> A + B → AB. Ex.: H₂ + Cl₂ → 2HCl.<br>
+        <strong>Decomposição (análise):</strong> AB → A + B. Ex.: 2H₂O → 2H₂ + O₂.<br>
+        <strong>Simples troca (deslocamento):</strong> A + BC → AC + B. Ex.: Fe + CuSO₄ → FeSO₄ + Cu.<br>
+        <strong>Dupla troca (metátese):</strong> AB + CD → AD + CB. Ex.: NaCl + AgNO₃ → AgCl↓ + NaNO₃.</p>
+      </div>
+      <div class="card">
+        <h4>Leis de Conservação</h4>
+        <p><strong>Lei de Lavoisier:</strong> A massa total dos reagentes é igual à massa total dos produtos. "Na natureza nada se cria, nada se perde, tudo se transforma."<br>
+        <strong>Lei de Proust:</strong> As proporções em massa dos elementos numa substância são sempre as mesmas.<br>
+        <strong>Balanceamento:</strong> ajustar coeficientes para igualar átomos de cada elemento.</p>
+      </div>
+    </div>
+    <div class="formula">2H₂ + O₂ → 2H₂O  (4H e 2O em ambos os lados)</div>
+  </div>
+
+  <!-- SEÇÃO 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">🔢</div>
+      <h2>5. Estequiometria: Mol, Massa Molar e Cálculos</h2>
+    </div>
+    <p><strong class="highlight">Mol:</strong> unidade de quantidade de matéria. 1 mol = 6,02 × 10²³ entidades (número de Avogadro).</p>
+    <div class="formula">Massa molar (M) = massa de 1 mol em g/mol = mesma numericamente que a massa atômica em u.m.a.</div>
+    <div class="formula">n = m / M  (n = número de mols; m = massa em g; M = massa molar em g/mol)</div>
+    <p>Exemplo: M(H₂O) = 2×1 + 16 = 18 g/mol. Logo 36g de H₂O = 2 mol de H₂O.</p>
+    <p><strong class="highlight">Proporção estequiométrica:</strong> os coeficientes da equação indicam a proporção em mols dos reagentes e produtos.</p>
+    <p><strong class="highlight">Reagente limitante:</strong> o que é consumido primeiro (em menor proporção estequiométrica). O rendimento máximo é calculado com base no reagente limitante.</p>
+    <div class="formula">Rendimento (%) = (quantidade obtida / quantidade teórica) × 100</div>
+  </div>
+
+  <!-- SEÇÃO 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(0,255,136,0.1);">🌿</div>
+      <h2>6. Química Orgânica: Hidrocarbonetos, Funções e Polímeros</h2>
+    </div>
+    <p>O carbono é tetravalente (4 ligações) e forma cadeias extensas — base da química orgânica. A maioria dos compostos orgânicos também contém H; muitos têm O, N, S, P, halogênios.</p>
+    <table>
+      <tr><th>Função Orgânica</th><th>Grupo Funcional</th><th>Exemplo</th><th>Propriedade</th></tr>
+      <tr><td>Álcool</td><td>-OH (hidroxila)</td><td>Etanol (C₂H₅OH)</td><td>Solúvel em água; combustível</td></tr>
+      <tr><td>Aldeído</td><td>-CHO (carbonila terminal)</td><td>Formaldeído (HCHO)</td><td>Oxidação gera ácido carboxílico</td></tr>
+      <tr><td>Cetona</td><td>-CO- (carbonila interna)</td><td>Acetona (CH₃COCH₃)</td><td>Solvente; não oxida facilmente</td></tr>
+      <tr><td>Ácido Carboxílico</td><td>-COOH</td><td>Ácido acético (CH₃COOH)</td><td>Ácido fraco; odor característico</td></tr>
+      <tr><td>Éster</td><td>-COO-</td><td>Acetato de etila (CH₃COOC₂H₅)</td><td>Aromas; biodiesel</td></tr>
+      <tr><td>Amina</td><td>-NH₂</td><td>Metilamina (CH₃NH₂)</td><td>Base orgânica; odor de peixe</td></tr>
+      <tr><td>Amida</td><td>-CONH-</td><td>Nylon, proteínas (ligação peptídica)</td><td>Presente em polímeros</td></tr>
+      <tr><td>Hidrocarbonetos</td><td>Só C e H</td><td>Metano, etileno, benzeno</td><td>Alcanos, alcenos, alcinos, aromáticos</td></tr>
+    </table>
+    <p style="margin-top:14px"><strong class="highlight">Polímeros:</strong> macromoléculas formadas por repetição de monômeros. Naturais: proteínas, amido, celulose. Sintéticos: polietileno, PVC, nylon, borracha sintética. Reação de polimerização por adição (alcenos) ou condensação.</p>
+  </div>
+
+  <!-- SEÇÃO 7 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">💧</div>
+      <h2>7. Soluções e Termoquímica</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Soluções</h4>
+        <p><strong>Solução:</strong> mistura homogênea de soluto (menor quantidade) + solvente (maior quantidade).<br>
+        <strong>Concentração molar (M):</strong> M = n/V (mol/L).<br>
+        <strong>Concentração em g/L:</strong> C = m/V (g/L).<br>
+        <strong>Diluição:</strong> C₁V₁ = C₂V₂ (mols do soluto conservados).<br>
+        <strong>Solubilidade:</strong> quantidade máxima dissolvida a dada temperatura.</p>
+      </div>
+      <div class="card">
+        <h4>Termoquímica</h4>
+        <p><strong>Entalpia (ΔH):</strong> calor absorvido/liberado a pressão constante.<br>
+        <strong>Exotérmica:</strong> ΔH &lt; 0 — libera calor ao ambiente. Ex.: combustão, neutralização.<br>
+        <strong>Endotérmica:</strong> ΔH &gt; 0 — absorve calor do ambiente. Ex.: fotossíntese, fusão.<br>
+        <strong>Lei de Hess:</strong> ΔH de uma reação = soma dos ΔH das etapas intermediárias.</p>
+      </div>
+    </div>
+    <div class="formula">C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O  ΔH = -2803 kJ/mol  (exotérmica)</div>
+  </div>
+
+  <!-- SEÇÃO 8 — Questões-tipo UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,220,0,0.12);">📝</div>
+      <h2>8. Questões-Tipo UNICAP</h2>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q1. Sobre as ligações químicas, é CORRETO afirmar:<br>
+      (A) Na ligação iônica, os elétrons são compartilhados igualmente entre os átomos.<br>
+      (B) A ligação metálica explica a condutividade elétrica dos metais.<br>
+      (C) H₂O apresenta ligação iônica pois H é metal e O é não-metal.<br>
+      (D) Na ligação covalente apolar, um átomo transfere elétrons para o outro.<br>
+      (E) O NaCl é um exemplo de ligação metálica.</div>
+      <div class="resp">Resposta: (B) — A ligação metálica (mar de elétrons livres) explica a condutividade elétrica dos metais. H₂O tem ligação covalente polar. NaCl tem ligação iônica.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q2. Na reação: N₂ + 3H₂ → 2NH₃, quantos litros de NH₃ (nas CNTP) são produzidos ao se usar 6 mols de H₂?<br>
+      (A) 22,4 L (B) 44,8 L (C) 89,6 L (D) 67,2 L (E) 134,4 L</div>
+      <div class="resp">Resposta: (C) 89,6 L — 3 mols H₂ → 2 mols NH₃. 6 mols H₂ → 4 mols NH₃. Nas CNTP: 1 mol de gás = 22,4 L. 4 × 22,4 = 89,6 L.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q3. Identifique a função orgânica do composto CH₃-CH₂-COOH:<br>
+      (A) Álcool (B) Aldeído (C) Cetona (D) Ácido carboxílico (E) Éster</div>
+      <div class="resp">Resposta: (D) Ácido carboxílico — O grupo funcional -COOH (carboxila) caracteriza os ácidos carboxílicos. Esse composto é o ácido propiônico (3 carbonos).</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

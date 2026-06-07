@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">A Arena das Forças</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ─── Scene Setup ─────────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050408);
+scene.fog = new THREE.Fog(0x050408, 20, 55);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 8, 18);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 4;
+controls.maxDistance = 40;
+controls.target.set(0, 1, 0);
+
+// ─── Lighting ─────────────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x050310, 1.2);
+scene.add(ambient);
+
+const mainLight = new THREE.PointLight(0xff9955, 1.5, 30);
+mainLight.position.set(0, 10, 0);
+mainLight.castShadow = true;
+scene.add(mainLight);
+
+const blueLight = new THREE.PointLight(0x4488ff, 0.8, 20);
+blueLight.position.set(-8, 4, -4);
+scene.add(blueLight);
+
+// ─── Arena Floor (marble dark) ───────────────────────────────────────────────
+const floorGeo = new THREE.CylinderGeometry(14, 14, 0.3, 64);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x060408, roughness: 0.8, metalness: 0.3 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.position.y = -2.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const floorInner = new THREE.Mesh(
+  new THREE.CylinderGeometry(10, 10, 0.05, 64),
+  new THREE.MeshStandardMaterial({ color: 0x080510, roughness: 0.6, metalness: 0.5 })
+);
+floorInner.position.y = -2.3;
+scene.add(floorInner);
+
+// Grid
+const gridHelper = new THREE.GridHelper(18, 18, 0x0a0814, 0x0a0814);
+gridHelper.position.y = -2.25;
+scene.add(gridHelper);
+
+// ─── Arena Pillars ────────────────────────────────────────────────────────────
+const pillarMat = new THREE.MeshStandardMaterial({ color: 0x0c0a14, roughness: 0.9, metalness: 0.1 });
+for (let i = 0; i < 8; i++) {
+  const angle = (i / 8) * Math.PI * 2;
+  const r = 11;
+  const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8, 8), pillarMat);
+  pillar.position.set(Math.cos(angle) * r, 1.5, Math.sin(angle) * r);
+  pillar.castShadow = true;
+  scene.add(pillar);
+}
+
+// Dome ring
+const domeRing = new THREE.Mesh(
+  new THREE.TorusGeometry(11, 0.3, 8, 64),
+  new THREE.MeshStandardMaterial({ color: 0x1a1428, roughness: 0.7, metalness: 0.4 })
+);
+domeRing.rotation.x = Math.PI / 2;
+domeRing.position.y = 5.5;
+scene.add(domeRing);
+
+// ─── PENDULUM ─────────────────────────────────────────────────────────────────
+const pendulumGroup = new THREE.Group();
+pendulumGroup.position.set(-6, 5, 0);
+
+// Pivot
+const pivot = new THREE.Mesh(
+  new THREE.SphereGeometry(0.1, 8, 8),
+  new THREE.MeshStandardMaterial({ color: 0x888888 })
+);
+pendulumGroup.add(pivot);
+
+// String (as a cylinder)
+const stringMesh = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.02, 0.02, 3.5, 6),
+  new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
+);
+stringMesh.position.y = -1.75;
+pendulumGroup.add(stringMesh);
+
+// Bob
+const pendulumBob = new THREE.Mesh(
+  new THREE.SphereGeometry(0.4, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0xff2222, emissive: 0xaa0000, emissiveIntensity: 0.5, roughness: 0.3 })
+);
+pendulumBob.position.y = -3.5;
+pendulumGroup.add(pendulumBob);
+
+const pendulumLight = new THREE.PointLight(0xff2222, 0.8, 4);
+pendulumLight.position.y = -3.5;
+pendulumGroup.add(pendulumLight);
+
+scene.add(pendulumGroup);
+
+// ─── PRISM (Light Dispersion) ─────────────────────────────────────────────────
+const prismGroup = new THREE.Group();
+prismGroup.position.set(5, 1, 0);
+
+const prismMat = new THREE.MeshStandardMaterial({
+  color: 0xaaccff, transparent: true, opacity: 0.3, roughness: 0.05, metalness: 0.1
+});
+const prismGeo = new THREE.ConeGeometry(0.4, 1.5, 3);
+const prism = new THREE.Mesh(prismGeo, prismMat);
+prism.rotation.z = Math.PI / 2;
+prism.position.set(0, 0, 0);
+prismGroup.add(prism);
+
+// Incoming white ray
+const incomingRay = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-3, 0.5, 0),
+    new THREE.Vector3(-0.5, 0, 0)
+  ]),
+  new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 })
+);
+prismGroup.add(incomingRay);
+
+// Dispersed rays (RGB)
+const dispersedColors = [0xff2222, 0x22ff44, 0x2244ff];
+const dispersedAngles = [0.3, 0, -0.3];
+dispersedColors.forEach((col, i) => {
+  const angle = dispersedAngles[i];
+  const ray = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(0.6, 0, 0),
+      new THREE.Vector3(0.6 + Math.cos(angle) * 3, Math.sin(angle) * 3, 0)
+    ]),
+    new THREE.LineBasicMaterial({ color: col, transparent: true, opacity: 0.7 })
+  );
+  prismGroup.add(ray);
+});
+scene.add(prismGroup);
+
+// ─── FORCE VECTOR ─────────────────────────────────────────────────────────────
+const forceGroup = new THREE.Group();
+forceGroup.position.set(0, 1, -3);
+
+const forceShaft = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.06, 0.06, 2.5, 8),
+  new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xaa8800, emissiveIntensity: 0.5 })
+);
+forceShaft.rotation.z = Math.PI / 2;
+forceShaft.position.x = 1.25;
+forceGroup.add(forceShaft);
+
+const forceTip = new THREE.Mesh(
+  new THREE.ConeGeometry(0.18, 0.5, 8),
+  new THREE.MeshStandardMaterial({ color: 0xffcc00, emissive: 0xffaa00, emissiveIntensity: 0.6 })
+);
+forceTip.rotation.z = -Math.PI / 2;
+forceTip.position.x = 2.75;
+forceGroup.add(forceTip);
+
+const forceLight = new THREE.PointLight(0xffcc00, 0.8, 5);
+forceLight.position.set(2.5, 0, 0);
+forceGroup.add(forceLight);
+
+scene.add(forceGroup);
+
+// ─── ELECTRIC FIELD ────────────────────────────────────────────────────────────
+const efGroup = new THREE.Group();
+efGroup.position.set(-2, 3, -5);
+
+// Positive charge (red sphere)
+const posCharge = new THREE.Mesh(
+  new THREE.SphereGeometry(0.3, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0xff3333, emissive: 0xaa0000, emissiveIntensity: 0.8 })
+);
+posCharge.position.set(-2.5, 0, 0);
+efGroup.add(posCharge);
+
+const posLight = new THREE.PointLight(0xff3333, 0.8, 4);
+posLight.position.set(-2.5, 0, 0);
+efGroup.add(posLight);
+
+// Negative charge (blue sphere)
+const negCharge = new THREE.Mesh(
+  new THREE.SphereGeometry(0.3, 16, 16),
+  new THREE.MeshStandardMaterial({ color: 0x3366ff, emissive: 0x0022aa, emissiveIntensity: 0.8 })
+);
+negCharge.position.set(2.5, 0, 0);
+efGroup.add(negCharge);
+
+const negLight = new THREE.PointLight(0x3366ff, 0.8, 4);
+negLight.position.set(2.5, 0, 0);
+efGroup.add(negLight);
+
+// Field lines (arcs from + to -)
+for (let i = 0; i < 8; i++) {
+  const spread = (i - 3.5) * 0.4;
+  const points = [];
+  for (let j = 0; j <= 20; j++) {
+    const tt = j / 20;
+    const x = -2.2 + tt * 4.4;
+    const y = Math.sin(tt * Math.PI) * spread;
+    points.push(new THREE.Vector3(x, y, 0));
+  }
+  const lineGeo = new THREE.BufferGeometry().setFromPoints(points);
+  const lineMat = new THREE.LineBasicMaterial({
+    color: i % 2 === 0 ? 0xff6666 : 0x6688ff, transparent: true, opacity: 0.5
+  });
+  efGroup.add(new THREE.Line(lineGeo, lineMat));
+}
+scene.add(efGroup);
+
+// ─── Study Nodes ──────────────────────────────────────────────────────────────
+const nodes = [];
+const nodeData = [
+  {
+    pos: [-6, 6, 0],
+    title: 'Cinemática',
+    body: 'Estuda o movimento sem causas. MRU: v=Δx/Δt, espaço x=x₀+v·t. MRUV: a=Δv/Δt; v=v₀+a·t; x=x₀+v₀t+at²/2; v²=v₀²+2aΔx. Queda livre: a=g≈10 m/s². Lançamento oblíquo: componentes horizontal (MRU) e vertical (MRUV) independentes.',
+    tip: '<strong>UNICAP:</strong> Equações do MRUV: v=v₀+at e x=x₀+v₀t+at²/2. Calcular velocidade final ou distância percorrida.'
+  },
+  {
+    pos: [0, 4, 3],
+    title: 'Dinâmica — Leis de Newton',
+    body: '1ª Lei (Inércia): corpo em repouso ou MRU sem força resultante. 2ª Lei: F=m·a (resultante = massa × aceleração). 3ª Lei (Ação-Reação): pares iguais, opostos, em corpos diferentes. Peso: P=m·g. Normal, atrito, tensão: forças de contato. Coeficiente de atrito: Fat=μ·N.',
+    tip: '<strong>UNICAP:</strong> Dado m=5kg, F=20N, calcular aceleração: a=F/m=4 m/s². Lei de Newton é básico.'
+  },
+  {
+    pos: [5, 4, 3],
+    title: 'Trabalho e Energia',
+    body: 'Trabalho: W=F·d·cos θ. Energia cinética: Ec=mv²/2. Energia potencial gravitacional: Ep=mgh. Trabalho do peso: W=-ΔEp. Teorema trabalho-energia: W_resultante=ΔEc. Conservação de energia mecânica (sem atrito): Ec+Ep=constante. Potência: P=W/t=F·v.',
+    tip: '<strong>UNICAP:</strong> Corpo cai de h=5m: velocidade no solo? v=√(2gh)=√100=10 m/s. Conservação de energia.'
+  },
+  {
+    pos: [-4, 4, -5],
+    title: 'Eletrostática',
+    body: 'Carga elétrica: +e ou -e; unidade Coulomb. Cargas iguais: repelem; opostas: atraem. Lei de Coulomb: F=k·Q₁·Q₂/r². k=9×10⁹ N·m²/C². Campo elétrico: E=F/q=k·Q/r². Potencial elétrico: V=k·Q/r. Capacitor: armazena carga. Condutor: cargas na superfície.',
+    tip: '<strong>UNICAP:</strong> Dobrar a distância entre cargas: força dividida por 4 (relação inversa ao quadrado).'
+  },
+  {
+    pos: [4, 4, -5],
+    title: 'Corrente Elétrica e Circuitos',
+    body: 'Corrente: I=Q/t (Ampères). Resistência: R=V/I (Ohm). Lei de Ohm: V=R·I. Resistividade: ρ=R·A/L. Resistores em série: R_total=R₁+R₂+... Em paralelo: 1/R_total=1/R₁+1/R₂+... Potência elétrica: P=V·I=R·I²=V²/R. Efeito Joule: calor gerado por corrente.',
+    tip: '<strong>UNICAP:</strong> 2 resistores de 4Ω em paralelo: R=2Ω. Em série: R=8Ω. Calcular potência dissipada.'
+  },
+  {
+    pos: [0, 5, -7],
+    title: 'Óptica e Ondulatória',
+    body: 'Reflexão: ângulo de incidência = reflexão. Refração: n₁sinθ₁=n₂sinθ₂ (Snell). Índice de refração: n=c/v. Espelhos: plano (imagem virtual, reta, mesmo tamanho); côncavo/convexo. Lentes: convergente (biconvex) forma imagem real ou virtual. Equação dos espelhos/lentes: 1/f=1/p+1/p\'.',
+    tip: '<strong>UNICAP:</strong> Espelho plano: imagem virtual, direita, mesmo tamanho, mesma distância atrás. Cai em questões diretas.'
+  }
+];
+
+nodeData.forEach(data => {
+  const geo = new THREE.SphereGeometry(0.35, 12, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xffcc00, emissive: 0xcc8800, emissiveIntensity: 0.9,
+    roughness: 0.2, metalness: 0.1
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(...data.pos);
+  scene.add(mesh);
+  nodes.push({ mesh, title: data.title, body: data.body, tip: data.tip });
+});
+
+// ─── Raycaster ────────────────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+window.addEventListener('click', () => {
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  if (hits.length) {
+    const n = nodes.find(n => n.mesh === hits[0].object);
+    if (n) {
+      document.getElementById('popup-title').textContent = n.title;
+      document.getElementById('popup-body').textContent = n.body;
+      document.getElementById('popup-tip').innerHTML = n.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+// ─── Animation ────────────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Pendulum swing
+  const swingAngle = Math.sin(t * 1.8) * 0.6;
+  pendulumGroup.rotation.z = swingAngle;
+
+  // Force vector glow
+  forceLight.intensity = 0.6 + 0.4 * Math.sin(t * 2);
+  forceGroup.rotation.y = t * 0.3;
+
+  // Prism rotate slowly
+  prismGroup.rotation.y = Math.sin(t * 0.3) * 0.2;
+
+  // Electric field oscillate
+  efGroup.rotation.y = t * 0.15;
+  posLight.intensity = 0.6 + 0.3 * Math.sin(t * 1.5);
+  negLight.intensity = 0.6 + 0.3 * Math.cos(t * 1.5);
+
+  // Main light slow orbit
+  mainLight.position.x = Math.sin(t * 0.2) * 3;
+  mainLight.position.z = Math.cos(t * 0.2) * 3;
+
+  // Node hover
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  nodes.forEach((n, i) => {
+    const isHit = hits.length && hits[0].object === n.mesh;
+    n.mesh.scale.setScalar(isHit ? 1.35 : 1.0);
+    n.mesh.material.emissiveIntensity = isHit ? 1.4 : 0.9;
+    n.mesh.position.y = nodeData[i].pos[1] + Math.sin(t * 0.8 + i) * 0.1;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

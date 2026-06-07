@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="100%" height="auto" style="background: linear-gradient(135deg, #0a0e1a 0%, #131829 100%); font-family: 'Inter', sans-serif;">
+
+<!-- Centro -->
+<circle cx="700" cy="450" r="105" fill="#00d4ff" opacity="0.12"/>
+<circle cx="700" cy="450" r="78" fill="#131829" stroke="#00d4ff" stroke-width="3"/>
+<text x="700" y="442" text-anchor="middle" fill="#00d4ff" font-size="22" font-weight="800">FILOSOFIA</text>
+<text x="700" y="468" text-anchor="middle" fill="#ffb800" font-size="16" font-weight="600">POLÍTICA</text>
+
+<!-- Conexões -->
+<g stroke="#00d4ff" stroke-width="1.5" fill="none" opacity="0.5">
+  <line x1="700" y1="372" x2="350" y2="170"/>
+  <line x1="700" y1="372" x2="700" y2="150"/>
+  <line x1="700" y1="372" x2="1050" y2="170"/>
+  <line x1="622" y1="450" x2="220" y2="450"/>
+  <line x1="778" y1="450" x2="1180" y2="450"/>
+  <line x1="700" y1="528" x2="350" y2="730"/>
+  <line x1="700" y1="528" x2="700" y2="780"/>
+  <line x1="700" y1="528" x2="1050" y2="730"/>
+</g>
+
+<!-- ANTIGUIDADE: Sócrates -->
+<g transform="translate(350,170)">
+  <rect x="-110" y="-50" width="220" height="100" rx="14" fill="#1f2937" stroke="#00d4ff" stroke-width="2"/>
+  <text x="0" y="-22" text-anchor="middle" fill="#00d4ff" font-weight="800" font-size="18">SÓCRATES</text>
+  <text x="0" y="-2" text-anchor="middle" fill="#ffb800" font-size="11">470-399 a.C.</text>
+  <text x="0" y="18" text-anchor="middle" fill="#cbd5e1" font-size="11">Maiêutica</text>
+  <text x="0" y="36" text-anchor="middle" fill="#cbd5e1" font-size="11">"Só sei que nada sei"</text>
+</g>
+
+<!-- Platão -->
+<g transform="translate(700,150)">
+  <rect x="-110" y="-50" width="220" height="100" rx="14" fill="#1f2937" stroke="#ffb800" stroke-width="2"/>
+  <text x="0" y="-22" text-anchor="middle" fill="#ffb800" font-weight="800" font-size="18">PLATÃO</text>
+  <text x="0" y="-2" text-anchor="middle" fill="#00d4ff" font-size="11">427-347 a.C.</text>
+  <text x="0" y="18" text-anchor="middle" fill="#cbd5e1" font-size="11">Mito da Caverna</text>
+  <text x="0" y="36" text-anchor="middle" fill="#cbd5e1" font-size="11">A República · Filósofo-rei</text>
+</g>
+
+<!-- Aristóteles -->
+<g transform="translate(1050,170)">
+  <rect x="-110" y="-50" width="220" height="100" rx="14" fill="#1f2937" stroke="#10b981" stroke-width="2"/>
+  <text x="0" y="-22" text-anchor="middle" fill="#10b981" font-weight="800" font-size="18">ARISTÓTELES</text>
+  <text x="0" y="-2" text-anchor="middle" fill="#ffb800" font-size="11">384-322 a.C.</text>
+  <text x="0" y="18" text-anchor="middle" fill="#cbd5e1" font-size="11">Zoon politikon</text>
+  <text x="0" y="36" text-anchor="middle" fill="#cbd5e1" font-size="11">Virtude = meio-termo</text>
+</g>
+
+<!-- MAQUIAVEL (esquerda) -->
+<g transform="translate(220,450)">
+  <rect x="-110" y="-50" width="220" height="100" rx="14" fill="#1f2937" stroke="#ef4444" stroke-width="2"/>
+  <text x="0" y="-22" text-anchor="middle" fill="#ef4444" font-weight="800" font-size="18">MAQUIAVEL</text>
+  <text x="0" y="-2" text-anchor="middle" fill="#ffb800" font-size="11">1469-1527</text>
+  <text x="0" y="18" text-anchor="middle" fill="#cbd5e1" font-size="11">O Príncipe (1513)</text>
+  <text x="0" y="36" text-anchor="middle" fill="#cbd5e1" font-size="11">Virtù × Fortuna</text>
+</g>
+
+<!-- KANT (direita) -->
+<g transform="translate(1180,450)">
+  <rect x="-110" y="-50" width="220" height="100" rx="14" fill="#1f2937" stroke="#8b5cf6" stroke-width="2"/>
+  <text x="0" y="-22" text-anchor="middle" fill="#8b5cf6" font-weight="800" font-size="18">KANT</text>
+  <text x="0" y="-2" text-anchor="middle" fill="#ffb800" font-size="11">1724-1804</text>
+  <text x="0" y="18" text-anchor="middle" fill="#cbd5e1" font-size="11">Imperativo Categórico</text>
+  <text x="0" y="36" text-anchor="middle" fill="#cbd5e1" font-size="11">Dignidade Humana</text>
+</g>
+
+<!-- HOBBES -->
+<g transform="translate(350,730)">
+  <rect x="-115" y="-55" width="230" height="110" rx="14" fill="#1f2937" stroke="#a78bfa" stroke-width="2"/>
+  <text x="0" y="-28" text-anchor="middle" fill="#a78bfa" font-weight="800" font-size="18">HOBBES</text>
+  <text x="0" y="-8" text-anchor="middle" fill="#ffb800" font-size="11">1588-1679 · Leviatã (1651)</text>
+  <text x="0" y="12" text-anchor="middle" fill="#cbd5e1" font-size="11">Guerra de todos contra todos</text>
+  <text x="0" y="28" text-anchor="middle" fill="#cbd5e1" font-size="11">Soberano absoluto</text>
+  <text x="0" y="44" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="700">ABSOLUTISMO</text>
+</g>
+
+<!-- LOCKE -->
+<g transform="translate(700,780)">
+  <rect x="-115" y="-55" width="230" height="110" rx="14" fill="#1f2937" stroke="#06b6d4" stroke-width="2"/>
+  <text x="0" y="-28" text-anchor="middle" fill="#06b6d4" font-weight="800" font-size="18">LOCKE</text>
+  <text x="0" y="-8" text-anchor="middle" fill="#ffb800" font-size="11">1632-1704 · Tratados (1689)</text>
+  <text x="0" y="12" text-anchor="middle" fill="#cbd5e1" font-size="11">Vida · Liberdade · Propriedade</text>
+  <text x="0" y="28" text-anchor="middle" fill="#cbd5e1" font-size="11">Estado limitado</text>
+  <text x="0" y="44" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">LIBERALISMO</text>
+</g>
+
+<!-- ROUSSEAU -->
+<g transform="translate(1050,730)">
+  <rect x="-115" y="-55" width="230" height="110" rx="14" fill="#1f2937" stroke="#f472b6" stroke-width="2"/>
+  <text x="0" y="-28" text-anchor="middle" fill="#f472b6" font-weight="800" font-size="18">ROUSSEAU</text>
+  <text x="0" y="-8" text-anchor="middle" fill="#ffb800" font-size="11">1712-1778 · C. Social (1762)</text>
+  <text x="0" y="12" text-anchor="middle" fill="#cbd5e1" font-size="11">Vontade geral</text>
+  <text x="0" y="28" text-anchor="middle" fill="#cbd5e1" font-size="11">Soberania popular</text>
+  <text x="0" y="44" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="700">DEMOCRACIA</text>
+</g>
+
+<!-- Conexão entre contratualistas (linha contínua) -->
+<line x1="465" y1="730" x2="585" y2="765" stroke="#ffb800" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+<line x1="815" y1="765" x2="935" y2="730" stroke="#ffb800" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+
+<!-- Subtítulos categóricos -->
+<text x="700" y="55" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="700" letter-spacing="3">ANTIGUIDADE CLÁSSICA</text>
+<text x="700" y="850" text-anchor="middle" fill="#94a3b8" font-size="14" font-weight="700" letter-spacing="3">CONTRATUALISMO (séc. XVII-XVIII)</text>
+
+<!-- Legenda -->
+<g transform="translate(50,50)">
+  <text x="0" y="0" fill="#00d4ff" font-size="13" font-weight="700">Cores por categoria:</text>
+  <circle cx="10" cy="20" r="6" fill="#a78bfa"/><text x="22" y="24" fill="#cbd5e1" font-size="11">Absolutismo</text>
+  <circle cx="10" cy="42" r="6" fill="#06b6d4"/><text x="22" y="46" fill="#cbd5e1" font-size="11">Liberalismo</text>
+  <circle cx="10" cy="64" r="6" fill="#f472b6"/><text x="22" y="68" fill="#cbd5e1" font-size="11">Democracia</text>
+  <circle cx="10" cy="86" r="6" fill="#8b5cf6"/><text x="22" y="90" fill="#cbd5e1" font-size="11">Dignidade Humana</text>
+</g>
+
+<!-- Conexões com CF/88 -->
+<g transform="translate(700,460)" opacity="0.85">
+  <text x="0" y="-2" text-anchor="middle" fill="#ffb800" font-size="9" font-weight="700">↓ INFLUÊNCIA NA CF/88 ↓</text>
+</g>
+
+</svg>

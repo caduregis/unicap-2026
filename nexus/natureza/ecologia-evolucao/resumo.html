@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecologia e Evolução — Resumo — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #020804;
+  --surface: #040c06;
+  --surface2: #071008;
+  --border: rgba(255,255,255,0.07);
+  --accent: #44cc66;
+  --accent2: #88ff44;
+  --text: #b8d4b8;
+  --muted: #507050;
+  --heading: #d8f0d8;
+}
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+.container { max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding:14px 0; border-bottom:1px solid var(--border); }
+nav a { color:var(--muted); text-decoration:none; font-size:12px; font-weight:500; padding:6px 14px; border:1px solid var(--border); border-radius:7px; transition:all 0.2s; }
+nav a:hover { color:var(--heading); background:rgba(255,255,255,0.04); }
+nav .nav-title { color:rgba(255,255,255,0.2); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; }
+h1 { font-size:28px; font-weight:700; color:var(--heading); margin-bottom:6px; }
+.subtitle { font-size:14px; color:var(--muted); margin-bottom:40px; }
+.section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px; margin-bottom:24px; }
+.section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.section-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h2 { font-size:17px; font-weight:600; color:var(--heading); }
+.section p { font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:12px; }
+.section p:last-child { margin-bottom:0; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+.card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.card h4 { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+.card p { font-size:13px; color:var(--muted); line-height:1.6; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:14px; }
+th { background:rgba(68,204,102,0.08); color:var(--accent); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-block { background:var(--surface2); border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:16px 18px; margin-bottom:16px; }
+.question-block .q { font-size:13.5px; color:var(--heading); font-weight:500; margin-bottom:10px; }
+.question-block .resp { font-size:13px; color:var(--accent2); background:rgba(136,255,68,0.06); border:1px solid rgba(136,255,68,0.15); border-radius:7px; padding:10px 14px; }
+.highlight { color:var(--accent2); font-weight:600; }
+.badge { display:inline-block; font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px; margin:1px; }
+.badge-green { background:rgba(68,204,102,0.15); color:#66dd88; border:1px solid rgba(68,204,102,0.2); }
+.badge-blue { background:rgba(68,136,255,0.12); color:#6699ff; border:1px solid rgba(68,136,255,0.2); }
+.badge-red { background:rgba(255,80,80,0.12); color:#ff7777; border:1px solid rgba(255,80,80,0.2); }
+.badge-yellow { background:rgba(255,220,0,0.12); color:#ffdd55; border:1px solid rgba(255,220,0,0.2); }
+.badge-purple { background:rgba(180,80,255,0.12); color:#cc88ff; border:1px solid rgba(180,80,255,0.2); }
+@media(max-width:600px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="../../index.html">← Nexus</a>
+    <span class="nav-title">Ecologia e Evolução</span>
+    <a href="mapa3d.html">Mapa 3D →</a>
+  </nav>
+
+  <h1>Ecologia e Evolução</h1>
+  <p class="subtitle">Resumo completo para o vestibular UNICAP 2026 — Carlos Régis / Direito</p>
+
+  <!-- SEÇÃO 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,204,102,0.15);">🌿</div>
+      <h2>1. Níveis de Organização Ecológica</h2>
+    </div>
+    <p>A ecologia estuda as relações entre os seres vivos e o ambiente. A organização hierárquica vai do indivíduo à biosfera.</p>
+    <table>
+      <tr><th>Nível</th><th>Definição</th><th>Exemplo</th></tr>
+      <tr><td>Indivíduo</td><td>Ser vivo único de uma espécie</td><td>Um gavião</td></tr>
+      <tr><td>População</td><td>Indivíduos da mesma espécie numa área</td><td>Gaviões do Pantanal</td></tr>
+      <tr><td>Comunidade (Biocenose)</td><td>Todas as populações de uma área</td><td>Fauna e flora do Pantanal</td></tr>
+      <tr><td>Ecossistema</td><td>Comunidade + fatores abióticos</td><td>Pantanal (biótico + abiótico)</td></tr>
+      <tr><td>Bioma</td><td>Conjunto de ecossistemas com clima similar</td><td>Cerrado brasileiro</td></tr>
+      <tr><td>Biosfera</td><td>Toda vida na Terra e seu ambiente</td><td>Planeta Terra</td></tr>
+    </table>
+    <p style="margin-top:14px">Fatores abióticos: temperatura, luz, umidade, pH, pressão. Fatores bióticos: todas as interações entre organismos vivos.</p>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,160,0,0.12);">🔗</div>
+      <h2>2. Relações Ecológicas</h2>
+    </div>
+    <table>
+      <tr><th>Relação</th><th>Tipo</th><th>Espécie A</th><th>Espécie B</th><th>Exemplo</th></tr>
+      <tr><td>Mutualismo</td><td>Harmônica interesp.</td><td>+</td><td>+</td><td>Abelha e flor (polinização)</td></tr>
+      <tr><td>Protocooperação</td><td>Harmônica interesp.</td><td>+</td><td>+</td><td>Peixe-palhaço e anêmona (facultativo)</td></tr>
+      <tr><td>Comensalismo</td><td>Harmônica interesp.</td><td>+</td><td>0</td><td>Rêmora e tubarão; epífitas sobre árvores</td></tr>
+      <tr><td>Inquilinismo</td><td>Harmônica interesp.</td><td>+</td><td>0</td><td>Pássaro que usa oco de árvore para morar</td></tr>
+      <tr><td>Predatismo</td><td>Desarmônica interesp.</td><td>+</td><td>–</td><td>Leão e zebra</td></tr>
+      <tr><td>Parasitismo</td><td>Desarmônica interesp.</td><td>+</td><td>–</td><td>Tênia e humano; piolho e ave</td></tr>
+      <tr><td>Competição</td><td>Desarmônica interesp.</td><td>–</td><td>–</td><td>Leão e hiena disputando presa</td></tr>
+      <tr><td>Amensalismo</td><td>Desarmônica interesp.</td><td>0</td><td>–</td><td>Penicilina (fungo) inibindo bactérias</td></tr>
+      <tr><td>Competição intraes.</td><td>Desarmônica intraesp.</td><td>–</td><td>–</td><td>Dois machos disputando fêmea</td></tr>
+      <tr><td>Canibalismo</td><td>Desarmônica intraesp.</td><td>+</td><td>–</td><td>Aranha-viúva negra come o macho após cópula</td></tr>
+    </table>
+    <p style="margin-top:12px">Dica: 0 = indiferente; + = beneficiado; – = prejudicado.</p>
+  </div>
+
+  <!-- SEÇÃO 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,220,0,0.12);">⚡</div>
+      <h2>3. Cadeias e Teias Alimentares — Pirâmides Tróficas</h2>
+    </div>
+    <p><strong class="highlight">Cadeia alimentar:</strong> sequência linear mostrando a transferência de energia. Ex.: grama → gafanhoto → sapo → cobra → gavião.</p>
+    <p><strong class="highlight">Teia alimentar:</strong> conjunto de cadeias interligadas em uma comunidade. Mais estável que a cadeia isolada — se uma espécie desaparece, as demais têm outras fontes.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Níveis Tróficos</h4>
+        <p><strong>Produtores (1° nível):</strong> autótrofos (plantas, algas, fitoplâncton) — realizam fotossíntese ou quimiossíntese.<br>
+        <strong>Consumidores primários (2° nível):</strong> herbívoros.<br>
+        <strong>Consumidores secundários (3° nível):</strong> carnívoros.<br>
+        <strong>Decompositores:</strong> fungos e bactérias — reciclam matéria orgânica.</p>
+      </div>
+      <div class="card">
+        <h4>Pirâmide de Energia (Regra dos 10%)</h4>
+        <p>Apenas 10% da energia de um nível trófico passa ao nível seguinte. 90% é perdida como calor (respiração celular). Pirâmide de energia: sempre regular, com base maior. Pirâmide de biomassa ou número pode ser invertida.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">🔄</div>
+      <h2>4. Ciclos Biogeoquímicos</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Ciclo do Carbono</h4>
+        <p><strong>Fotossíntese:</strong> plantas removem CO₂ da atmosfera.<br>
+        <strong>Respiração celular:</strong> todos os organismos liberam CO₂.<br>
+        <strong>Decomposição:</strong> libera CO₂ e compostos orgânicos.<br>
+        <strong>Combustão fóssil:</strong> principal fonte de CO₂ humano.<br>
+        Reservatórios: atmosfera, oceanos, litosfera, biomassa.</p>
+      </div>
+      <div class="card">
+        <h4>Ciclo do Nitrogênio</h4>
+        <p><strong>Fixação biológica:</strong> bactérias Rhizobium (leguminosas) fixam N₂ → NH₃.<br>
+        <strong>Nitrificação:</strong> NH₃ → NO₂⁻ → NO₃⁻ (Nitrosomonas e Nitrobacter).<br>
+        <strong>Assimilação:</strong> plantas absorvem NO₃⁻.<br>
+        <strong>Desnitrificação:</strong> NO₃⁻ → N₂ (volta à atmosfera).</p>
+      </div>
+      <div class="card">
+        <h4>Ciclo da Água (Hidrológico)</h4>
+        <p><strong>Evaporação:</strong> água líquida → vapor (calor solar).<br>
+        <strong>Transpiração:</strong> plantas liberam vapor d'água.<br>
+        <strong>Condensação:</strong> vapor → nuvens.<br>
+        <strong>Precipitação:</strong> chuva, neve.<br>
+        <strong>Infiltração:</strong> recarga do lençol freático.</p>
+      </div>
+      <div class="card">
+        <h4>Ciclo do Fósforo</h4>
+        <p>Único ciclo sem fase gasosa relevante. Fósforo vem de rochas (intemperismo). Absorvido por plantas como fosfato (PO₄³⁻). Passa pela cadeia alimentar. Decompositores liberam fósforo no solo. Eutrofização: excesso de P e N provoca proliferação de algas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(0,200,100,0.12);">🌎</div>
+      <h2>5. Biomas Brasileiros</h2>
+    </div>
+    <table>
+      <tr><th>Bioma</th><th>Localização</th><th>Características</th><th>Ameaças</th></tr>
+      <tr><td><span class="badge badge-green">Amazônia</span></td><td>Norte do Brasil</td><td>Maior biodiversidade do mundo; floresta tropical úmida; maior bacia hidrográfica</td><td>Desmatamento, garimpagem, queimadas</td></tr>
+      <tr><td><span class="badge badge-yellow">Cerrado</span></td><td>Brasil Central</td><td>2° maior bioma; savana neotropical; "berço das águas"; grande biodiversidade</td><td>Agropecuária expansiva; 50% já desmatado</td></tr>
+      <tr><td><span class="badge badge-green">Mata Atlântica</span></td><td>Costa leste</td><td>Maior biodiversidade endêmica; mais ameaçada; restam ~12%</td><td>Urbanização intensa; exploração histórica</td></tr>
+      <tr><td><span class="badge badge-yellow">Caatinga</span></td><td>Nordeste</td><td>Único bioma exclusivamente brasileiro; vegetação xerófita; clima semiárido</td><td>Desertificação; uso inadequado do solo</td></tr>
+      <tr><td><span class="badge badge-blue">Pantanal</span></td><td>MT e MS</td><td>Maior planície alagável do mundo; alta biodiversidade de fauna</td><td>Queimadas; agropecuária</td></tr>
+      <tr><td><span class="badge badge-green">Pampa</span></td><td>Rio Grande do Sul</td><td>Campos temperados; vegetação rasteira; espécies campestres únicas</td><td>Substituição por monoculturas (soja, arroz)</td></tr>
+      <tr><td><span class="badge badge-blue">Manguezal</span></td><td>Zona costeira</td><td>Transição terra-mar; berçário marinho; alta produtividade</td><td>Especulação imobiliária; poluição costeira</td></tr>
+    </table>
+  </div>
+
+  <!-- SEÇÃO 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,100,80,0.12);">🦎</div>
+      <h2>6. Evolução: Lamarck vs Darwin, Evidências e Especiação</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Lamarckismo (Incorreto)</h4>
+        <p><strong>Lei do uso e desuso:</strong> órgãos usados mais se desenvolvem; os não usados atrofiam.<br>
+        <strong>Herança dos caracteres adquiridos:</strong> essas modificações seriam passadas às gerações seguintes.<br>
+        Exemplo: girafa alonga o pescoço durante a vida e filhos nascem com pescoço mais longo. INCORRETO.</p>
+      </div>
+      <div class="card">
+        <h4>Darwinismo (Correto)</h4>
+        <p><strong>Variabilidade natural:</strong> indivíduos diferem dentro de uma população.<br>
+        <strong>Seleção natural:</strong> ambiente seleciona os mais adaptados, que sobrevivem e reproduzem mais.<br>
+        <strong>Herança:</strong> características vantajosas são herdadas.<br>
+        Exemplo: girafas com pescoço mais longo já tinham vantagem natural.</p>
+      </div>
+    </div>
+    <p style="margin-top:14px"><strong class="highlight">Evidências evolutivas:</strong></p>
+    <div class="grid-3">
+      <div class="card"><h4>Fósseis</h4><p>Registros históricos de formas de vida extintas. Mostram progressão das espécies no tempo.</p></div>
+      <div class="card"><h4>Anatomia Comparada</h4><p>Órgãos homólogos: mesma origem, funções diferentes (asa de morcego e braço humano). Órgãos análogos: mesma função, origens diferentes (asa de inseto e de ave).</p></div>
+      <div class="card"><h4>Embriologia</h4><p>Embriões de espécies diferentes são muito similares nos estágios iniciais, indicando ancestral comum.</p></div>
+      <div class="card"><h4>Bioquímica</h4><p>DNA e proteínas similares em espécies relacionadas. Quanto mais próximo o parentesco, maior a semelhança molecular.</p></div>
+      <div class="card"><h4>Biogeografia</h4><p>Distribuição geográfica das espécies reflete história evolutiva e deriva continental.</p></div>
+      <div class="card"><h4>Especiação</h4><p>Alopatrida: isolamento geográfico. Simpátrica: sem isolamento geográfico. Poliploidia em plantas. Resultado: nova espécie incapaz de cruzar com a ancestral.</p></div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 7 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,60,60,0.12);">⚠️</div>
+      <h2>7. Impactos Ambientais e Sustentabilidade</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Efeito Estufa</h4>
+        <p>Gases estufa (CO₂, CH₄, N₂O, vapor d'água) retêm calor na atmosfera. Fenômeno natural e essencial para a vida. Problema: intensificação pelo uso de combustíveis fósseis. Consequências: aquecimento global, degelo, elevação do nível do mar.</p>
+      </div>
+      <div class="card">
+        <h4>Chuva Ácida</h4>
+        <p>SO₂ (queima de enxofre) + NO₂ (veículos) reagem com água formando H₂SO₄ e HNO₃. pH abaixo de 5,6. Danos a florestas, lagos, monumentos históricos.</p>
+      </div>
+      <div class="card">
+        <h4>Camada de Ozônio</h4>
+        <p>O₃ na estratosfera absorve UV-B e UV-C. CFC (clorofluorcarbonetos) destrói O₃. Buraco sobre Antártica. Protocolo de Montreal (1987): banimento gradual dos CFCs.</p>
+      </div>
+      <div class="card">
+        <h4>Eutrofização</h4>
+        <p>Excesso de nutrientes (N e P de fertilizantes e esgoto) em corpos d'água. Proliferação excessiva de algas (bloom). Diminuição do O₂ dissolvido. Morte de peixes e outros organismos aquáticos.</p>
+      </div>
+    </div>
+    <p style="margin-top:14px"><strong class="highlight">Acordos internacionais:</strong> Protocolo de Quioto (1997, metas de CO₂), Acordo de Paris (2015, limitar aquecimento a 1,5-2°C), COP (Conferências do Clima anuais), Agenda 2030 ODS.</p>
+  </div>
+
+  <!-- SEÇÃO 8 — Questões-tipo UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,220,0,0.12);">📝</div>
+      <h2>8. Questões-Tipo UNICAP</h2>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q1. Considere a seguinte cadeia alimentar: Fitoplâncton → Zooplâncton → Peixe pequeno → Peixe grande → Tubarão. Se a energia disponível no fitoplâncton é de 100.000 kcal, qual a energia disponível para o tubarão?<br>
+      (A) 10.000 kcal (B) 1.000 kcal (C) 100 kcal (D) 10 kcal (E) 1 kcal</div>
+      <div class="resp">Resposta: (D) 10 kcal — A cada nível trófico transfere-se 10% da energia. 5 níveis: 100.000 × 0,1 × 0,1 × 0,1 × 0,1 = 10 kcal no tubarão (5° nível).</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q2. "Segundo essa teoria, os caracteres adquiridos pelo uso ou desuso de órgãos durante a vida de um indivíduo são transmitidos aos seus descendentes." Essa afirmação se refere às ideias de:<br>
+      (A) Charles Darwin (B) Gregor Mendel (C) Jean-Baptiste Lamarck (D) Alfred Wallace (E) Thomas Malthus</div>
+      <div class="resp">Resposta: (C) Lamarck — A herança dos caracteres adquiridos é o fundamento do lamarckismo, teoria evolutiva proposta por Lamarck, hoje considerada incorreta. Darwin propôs a seleção natural, Mendel a genética.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q3. "Fungos e bactérias que se alimentam de matéria orgânica morta, transformando-a em substâncias inorgânicas que retornam ao ambiente." Esses organismos são:<br>
+      (A) Produtores (B) Consumidores primários (C) Consumidores terciários (D) Decompositores (E) Parasitas obrigatórios</div>
+      <div class="resp">Resposta: (D) Decompositores — São os organismos que realizam a decomposição (saprotrofismo), reciclando nutrientes e fechando os ciclos biogeoquímicos. São fundamentais para o funcionamento dos ecossistemas.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

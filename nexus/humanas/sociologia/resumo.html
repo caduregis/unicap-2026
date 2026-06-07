@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Sociologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --gold: #d4840a; --gold-light: #e8a030; --bg: #060402; --bg2: #0e0a04; --bg3: #181006; --text: #c8b898; --text-bright: #e8d8b8; --green: #78c870; --red: #d07060; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: linear-gradient(160deg, var(--bg) 0%, #030108 100%); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; }
+#navbar { position: sticky; top: 0; background: linear-gradient(90deg, #06040280, #0e0a0480); border-bottom: 1px solid #3a1a0840; padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 16px; z-index: 50; backdrop-filter: blur(12px); }
+#nav-back { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #d4840a40; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #d4840a20; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-bright); }
+#nav-map { color: #706050; text-decoration: none; font-size: 12px; padding: 5px 12px; border: 1px solid #70605040; border-radius: 6px; transition: all .2s; }
+#nav-map:hover { background: #70605020; color: var(--gold-light); }
+main { max-width: 880px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: #a07828; margin-bottom: 32px; }
+.card { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border: 1px solid #3a1a0840; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+.card:hover { border-color: #d4840a30; transition: border-color .3s; }
+.card h2 { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h2 .num { background: #d4840a22; border: 1px solid #d4840a40; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+.card.marx-card { border-left: 3px solid #ff303060; }
+.card.durk-card { border-left: 3px solid #f0c04060; }
+.card.weber-card { border-left: 3px solid #3060e060; }
+.card.marx-card h2 { color: #ff8060; }
+.card.durk-card h2 { color: #f8d090; }
+.card.weber-card h2 { color: #80a0ff; }
+p { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 10px; }
+strong { color: var(--text-bright); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+th { background: #d4840a22; color: var(--gold); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #d4840a30; }
+td { padding: 9px 12px; border-bottom: 1px solid #1a1006; color: var(--text); vertical-align: top; }
+td.marx-col { border-left: 2px solid #ff303040; }
+td.durk-col { border-left: 2px solid #f0c04040; }
+td.weber-col { border-left: 2px solid #3060e040; }
+tr:hover td { background: #d4840a08; }
+.tip-box { background: #d4840a12; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 10px 16px; margin-top: 12px; font-size: 13px; color: #e8c870; }
+.tip-box::before { content: "UNICAP "; font-weight: 700; color: var(--gold); }
+.tip-box.marx-tip { background: #ff303018; border-left-color: #ff3030; color: #ff9070; }
+.tip-box.marx-tip::before { color: #ff5030; }
+.tip-box.durk-tip { background: #f0c04018; border-left-color: #f0c040; color: #f8d890; }
+.tip-box.durk-tip::before { color: #d4a820; }
+.tip-box.weber-tip { background: #3060e018; border-left-color: #3060e0; color: #90b0ff; }
+.tip-box.weber-tip::before { color: #3060e0; }
+.checklist { list-style: none; margin-top: 8px; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid #1a1006; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.checklist li input[type=checkbox] { accent-color: var(--gold); width: 15px; height: 15px; cursor: pointer; }
+.checklist li:last-child { border-bottom: none; }
+.compare-table th:nth-child(2) { color: #ff8060; }
+.compare-table th:nth-child(3) { color: #f8d090; }
+.compare-table th:nth-child(4) { color: #80a0ff; }
+.br-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+.br-card { background: #0a0602; border-radius: 8px; padding: 14px; }
+.br-card h4 { font-size: 13px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; border-bottom: 1px solid #d4840a30; padding-bottom: 5px; }
+.br-card p { font-size: 12px; line-height: 1.6; }
+.cultura-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.cultura-card { background: #0a0602; border: 1px solid #2a1408; border-radius: 8px; padding: 14px; }
+.cultura-card h4 { font-size: 12px; font-weight: 700; color: #c8a050; margin-bottom: 6px; }
+.cultura-card p { font-size: 12px; line-height: 1.6; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.video-card { background: #0a0602; border: 1px solid #d4840a30; border-radius: 8px; padding: 14px; text-align: center; }
+.video-card .ch { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+.video-card p { font-size: 11px; color: #806040; }
+.map-link { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4840a20, #a05c0812); border: 1px solid #d4840a50; color: var(--gold-light); text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.map-link:hover { background: linear-gradient(135deg, #d4840a35, #a05c0825); transform: translateY(-1px); }
+.links-row { display: flex; justify-content: center; gap: 16px; margin: 32px 0; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
+.tag-red { background: #ff303022; color: #ff9070; border: 1px solid #ff303040; }
+.tag-gold { background: #f0c04022; color: #f8d890; border: 1px solid #f0c04040; }
+.tag-blue { background: #3060e022; color: #90b0ff; border: 1px solid #3060e040; }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Sociologia — Resumo</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</nav>
+<main>
+  <h1>Sociologia</h1>
+  <p class="subtitle">Marx, Durkheim, Weber e Sociologia Brasileira — guia completo UNICAP 2026</p>
+  <div class="links-row"><a href="mapa3d.html" class="map-link">⚙️ Explorar O Ateliê dos Três — Mapa 3D</a></div>
+
+  <!-- 1 -->
+  <div class="card">
+    <h2><span class="num">01</span> O que é Sociologia? Auguste Comte e o Positivismo</h2>
+    <p>A Sociologia nasceu como ciência no século XIX, em resposta às transformações da Revolução Industrial e da Revolução Francesa. <strong>Auguste Comte (1798-1857)</strong>, filósofo francês, cunhou o termo "sociologia" e fundou o <strong>positivismo</strong>.</p>
+    <p><strong>Positivismo de Comte:</strong> Só o conhecimento científico e empírico é válido. A sociedade pode ser estudada com o método das ciências naturais. A sociologia seria a "rainha das ciências" — a mais complexa, que unifica o conhecimento. A humanidade evoluiria por três estados: teológico → metafísico → científico (positivo).</p>
+    <p><strong>Lei dos Três Estados:</strong> Estado teológico (explicação religiosa), estado metafísico (explicação filosófica abstrata), estado positivo (explicação científica — o mais avançado).</p>
+    <p>Comte influenciou o <strong>positivismo brasileiro</strong>: o lema "Ordem e Progresso" da bandeira é diretamente de Comte. Os militares que proclamaram a República em 1889 eram positivistas.</p>
+    <div class="tip-box">Questão clássica: 'O que é o positivismo de Comte?' → Filosofia que valoriza o conhecimento científico e acredita no progresso da humanidade através da razão. O positivismo no Brasil influenciou a República e está na bandeira.</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card marx-card">
+    <h2><span class="num">02</span> Marx: Materialismo, Luta de Classes, Mais-valia e Alienação</h2>
+    <p><strong>Materialismo Histórico:</strong> Para Marx, não são as ideias que determinam a realidade — é o contrário. A <strong>infraestrutura</strong> (base econômica: meios de produção, relações de produção) determina a <strong>superestrutura</strong> (Estado, religião, arte, família, ideologia).</p>
+    <p><strong>Dialética Materialista:</strong> Influenciado por Hegel, mas invertido. Hegel: as ideias movem a história. Marx: as condições materiais movem a história. "Coloquei Hegel de cabeça para baixo." A história avança por contradições (tese-antítese-síntese).</p>
+    <p><strong>Modos de Produção:</strong> Escravidão → Feudalismo → Capitalismo → Socialismo → Comunismo. Cada modo tem sua classe dominante e dominada, e sua contradição interna que gera a transição.</p>
+    <p><strong>Mais-valia (Surplus Value):</strong> No capitalismo, o trabalhador cria mais valor do que recebe como salário. A diferença é a mais-valia — apropriada pelo capitalista. É a fonte do lucro capitalista e da exploração.</p>
+    <p><strong>Alienação:</strong> O trabalhador se torna estranho a: (1) o produto do seu trabalho (pertence ao capitalista), (2) o ato de produzir (trabalho imposto), (3) sua espécie (natureza humana como atividade consciente), (4) outros seres humanos (competição). O trabalhador se torna uma mercadoria.</p>
+    <p><strong>Ideologia:</strong> Sistema de ideias que legitima a dominação da classe dominante. "As ideias da classe dominante são as ideias dominantes." A religião é o "ópio do povo" — alivia o sofrimento mas não resolve a causa.</p>
+    <div class="tip-box marx-tip">Para UNICAP: 'O que é mais-valia?' = diferença entre o que o trabalhador produz e o que recebe. 'O que é alienação?' = o trabalhador não se reconhece no produto do trabalho. 'Para Marx, a religião é...' = o ópio do povo (anestesia para a exploração).</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card durk-card">
+    <h2><span class="num">03</span> Durkheim: Fato Social, Solidariedade, Anomia e Suicídio</h2>
+    <p><strong>Fato Social:</strong> O objeto da sociologia para Durkheim. Definição: "toda maneira de agir, pensar e sentir que é exterior ao indivíduo e exerce sobre ele uma coerção." Características: <strong>exterioridade</strong> (existe fora do indivíduo), <strong>coercitividade</strong> (pressão para conformidade), <strong>generalidade</strong> (compartilhado pelo grupo). Exemplos: língua, leis, moral, modas, religião.</p>
+    <p><strong>Solidariedade Mecânica vs. Orgânica:</strong></p>
+    <p>• <strong>Mecânica:</strong> Sociedades simples, pré-industriais. Coesão pela semelhança (todos fazem as mesmas coisas, crenças idênticas). Consciência coletiva forte, individual fraca. Punição é vingança (direito repressivo).</p>
+    <p>• <strong>Orgânica:</strong> Sociedades complexas, industrializadas. Coesão pela diferença e complementaridade (divisão do trabalho). Consciência individual mais forte. Punição é restitutiva (direito civil).</p>
+    <p><strong>Anomia:</strong> Ausência ou fraqueza das normas sociais que regulam o comportamento. Ocorre em períodos de mudança social rápida (crise, prosperidade súbita, revolução). O indivíduo perde os referenciais, se sente desorientado.</p>
+    <p><strong>O Suicídio (1897) — tipos:</strong></p>
+    <table>
+      <tr><th>Tipo</th><th>Causa</th><th>Exemplo</th></tr>
+      <tr><td>Egoísta</td><td>Fraca integração social</td><td>Solteiros, sem religião, isolados</td></tr>
+      <tr><td>Altruísta</td><td>Excesso de integração</td><td>Soldados, missões suicidas, harakiri</td></tr>
+      <tr><td>Anômico</td><td>Perturbação da regulação social</td><td>Após crise econômica, divórcio</td></tr>
+      <tr><td>Fatalista</td><td>Excesso de regulação</td><td>Escravizados, prisioneiros</td></tr>
+    </table>
+    <div class="tip-box durk-tip">Durkheim usa dados estatísticos para provar que o suicídio (ato individual) é determinado por fatores sociais. Isso revolucionou a sociologia — mostrou que a sociedade é uma realidade sui generis (tem existência própria, não é apenas soma de indivíduos). Questão: 'O que Durkheim quis mostrar com o estudo do suicídio?' → Que mesmo atos individuais têm causas sociais.</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card weber-card">
+    <h2><span class="num">04</span> Weber: Ação Social, Dominação, Burocracia e Protestantismo</h2>
+    <p><strong>Ação Social:</strong> Para Weber, a sociologia deve compreender o sentido que os atores dão às suas ações. <strong>Verstehen</strong> (compreensão): o sociólogo deve tentar entender o significado subjetivo da ação. Método: tipos ideais (construções abstratas para compreender a realidade, não descrições de casos reais).</p>
+    <p><strong>4 Tipos de Ação Social:</strong></p>
+    <p>• <strong>Racional com relação a fins:</strong> Escolha racional de meios para atingir objetivos (ex.: negócio comercial)</p>
+    <p>• <strong>Racional com relação a valores:</strong> Age por convicção ética, independente do resultado (ex.: greve de princípio)</p>
+    <p>• <strong>Afetiva:</strong> Guiada por emoções e sentimentos (ex.: ato de raiva)</p>
+    <p>• <strong>Tradicional:</strong> Guiada pelo costume e pela tradição (ex.: rezar antes de comer)</p>
+    <p><strong>3 Tipos de Dominação Legítima:</strong></p>
+    <p>• <strong>Tradicional:</strong> Baseada no costume e na tradição (rei, patriarca). O súdito obedece porque "sempre foi assim"</p>
+    <p>• <strong>Carismática:</strong> Baseada nos dons pessoais do líder (profeta, Hitler, Mandela). O seguidor obedece pela devoção pessoal</p>
+    <p>• <strong>Racional-legal:</strong> Baseada em regras impessoais e cargos formais (democracia, burocracia estatal). Obedece-se ao cargo, não à pessoa</p>
+    <p><strong>Burocracia:</strong> Tipo mais racional de organização. Características: hierarquia formal, regras escritas, especializaçãi de funções, impessoalidade (o funcionário não decide segundo critérios pessoais). Weber temia a "jaula de ferro": o mundo moderno aprisionado na racionalidade instrumental.</p>
+    <p><strong>Ética Protestante e Capitalismo:</strong> O calvinismo (predestinação) criou uma ética de trabalho, ascetismo e reinvestimento dos lucros — "afinidade eletiva" com o capitalismo. Weber NÃO diz que o protestantismo CAUSOU o capitalismo.</p>
+    <div class="tip-box weber-tip">Weber é crucial para entender a política contemporânea. Dominação carismática → pode ser democrática (Lula) ou autoritária (Hitler). A democracia moderna é dominação racional-legal. Questão: 'Que tipo de dominação exerce o presidente eleito?' → Racional-legal (exerce o cargo segundo regras constitucionais).</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <h2><span class="num">05</span> Tabela Comparativa: Marx vs. Durkheim vs. Weber</h2>
+    <table class="compare-table">
+      <tr><th>Aspecto</th><th>MARX</th><th>DURKHEIM</th><th>WEBER</th></tr>
+      <tr><td>Problema central</td><td class="marx-col">Por que há exploração?</td><td class="durk-col">O que mantém a sociedade coesa?</td><td class="weber-col">Como os atores dão sentido à ação?</td></tr>
+      <tr><td>Método</td><td class="marx-col">Materialismo dialético</td><td class="durk-col">Positivismo (fato social como coisa)</td><td class="weber-col">Compreensão (Verstehen), tipos ideais</td></tr>
+      <tr><td>Visão da sociedade</td><td class="marx-col">Conflito de classes</td><td class="durk-col">Organismo coeso (funcionalismo)</td><td class="weber-col">Arena de ações com sentido</td></tr>
+      <tr><td>Visão do capitalismo</td><td class="marx-col">Exploração; deve ser superado</td><td class="durk-col">Mudança social que gera anomia</td><td class="weber-col">Racionalização crescente; jaula de ferro</td></tr>
+      <tr><td>Religião</td><td class="marx-col">Ópio do povo; ideologia</td><td class="durk-col">Força de coesão social</td><td class="weber-col">Ética protestante favoreceu capitalismo</td></tr>
+      <tr><td>Transformação social</td><td class="marx-col">Revolução necessária</td><td class="durk-col">Reforma gradual</td><td class="weber-col">Sem receita; compreender é o objetivo</td></tr>
+      <tr><td>Obra principal</td><td class="marx-col">O Capital (1867); Manifesto Comunista (1848)</td><td class="durk-col">O Suicídio (1897); As Regras do Método Sociológico (1895)</td><td class="weber-col">Economia e Sociedade; A Ética Protestante (1905)</td></tr>
+    </table>
+    <div class="tip-box">A tabela comparativa é cobrada diretamente. Memorize: Marx = conflito, Durkheim = coesão, Weber = compreensão. Marx = revolução, Durkheim = reforma, Weber = análise sem prescrição.</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <h2><span class="num">06</span> Sociologia Brasileira: Florestan, Gilberto Freyre e Sérgio Buarque</h2>
+    <div class="br-grid">
+      <div class="br-card">
+        <h4>Florestan Fernandes (1920-1995)</h4>
+        <p>Principal sociólogo brasileiro. Obra: "A Integração do Negro na Sociedade de Classes" (1964). Mostrou que a abolição não integrou os negros na sociedade capitalista — foram marginalizados. Criticou a teoria da "democracia racial" como mito. Militância política: foi cassado durante a ditadura. Fundou a Escola Paulista de Sociologia.</p>
+      </div>
+      <div class="br-card">
+        <h4>Gilberto Freyre (1900-1987)</h4>
+        <p>Obra: "Casa-Grande e Senzala" (1933). Analisou a formação da sociedade brasileira pela miscigenação entre portugueses, africanos e indígenas. Criou o conceito de "lusotropicalismo" — ideia de que Portugal foi um colonizador tolerante e miscigenado. Criticado por amenizar a violência da escravidão e criar o mito da democracia racial.</p>
+      </div>
+      <div class="br-card">
+        <h4>Sérgio Buarque de Holanda (1902-1982)</h4>
+        <p>Obra: "Raízes do Brasil" (1936). Criou o conceito do "homem cordial" — a cordialidade brasileira não é gentileza, mas a extensão das relações privadas (afeto, família) para a esfera pública (Estado, política). O Brasil tem dificuldade de separar o público do privado — raiz do clientelismo e do personalismo.</p>
+      </div>
+    </div>
+    <div class="tip-box">Florestan Fernandes é o mais cobrado: ele desconstruiu o mito da democracia racial e mostrou que a desigualdade racial no Brasil é estrutural, não acidental. Questão: 'Para Florestan Fernandes, a abolição foi suficiente para integrar os negros?' → Não — sem terra, educação e suporte, a liberdade formal não gerou igualdade real.</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card">
+    <h2><span class="num">07</span> Cultura: Cultura de Massa, Indústria Cultural e Cultura Popular</h2>
+    <div class="cultura-grid">
+      <div class="cultura-card">
+        <h4>Cultura Popular</h4>
+        <p>Produzida pelas classes populares, organicamente, sem fins comerciais prioritários. Manifesta em festas, artesanato, músicas regionais, folclore. Não é inferior — é diferente. A sociologia rompe com a hierarquia elitista que separa "alta cultura" de "cultura popular".</p>
+      </div>
+      <div class="cultura-card">
+        <h4>Cultura de Massa</h4>
+        <p>Produzida industrialmente para consumo das massas. Não confundir com cultura popular — é produzida para o mercado. Homogeneização cultural, padronização dos gostos. A globalização intensificou a cultura de massa (cinema Hollywood, música pop global, redes sociais).</p>
+      </div>
+      <div class="cultura-card">
+        <h4>Indústria Cultural</h4>
+        <p>Conceito de Theodor Adorno e Max Horkheimer (Escola de Frankfurt). A cultura tornou-se uma mercadoria: entretenimento padronizado para as massas que amortece a consciência crítica. A falsa personalização: "escolha" entre produtos iguais. O entretenimento substitui a arte autêntica e impede a reflexão.</p>
+      </div>
+      <div class="cultura-card">
+        <h4>Escola de Frankfurt</h4>
+        <p>Instituto de Pesquisa Social de Frankfurt (1920s-). Teóricos: Adorno, Horkheimer, Marcuse, Walter Benjamin, Habermas. Teoria Crítica: análise marxista da cultura e da ideologia. Crítica do capitalismo tardio e de sua capacidade de incorporar a crítica. Habermas: racionalidade comunicativa como alternativa à racionalidade instrumental.</p>
+      </div>
+    </div>
+    <div class="tip-box">A indústria cultural é tema de questões sobre mídia, tecnologia e sociedade. Questão clássica: 'O que Adorno e Horkheimer criticavam na indústria cultural?' → A padronização da cultura, a mercantilização da arte e a amortização da consciência crítica das massas.</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card">
+    <h2><span class="num">08</span> Cidadania e Direitos Humanos para o Vestibular</h2>
+    <p><strong>T.H. Marshall e a cidadania:</strong> Classificou cidadania em 3 gerações:</p>
+    <p>• <strong>Direitos civis (séc. XVIII):</strong> Liberdade individual, propriedade, igualdade perante a lei, ir e vir, contrair contratos.</p>
+    <p>• <strong>Direitos políticos (séc. XIX):</strong> Votar e ser votado, participar da vida política, liberdade de associação política.</p>
+    <p>• <strong>Direitos sociais (séc. XX):</strong> Educação, saúde, moradia, trabalho, previdência social. O Estado deve garantir um mínimo de bem-estar (welfare state).</p>
+    <p>Alguns autores acrescentam uma <strong>4ª geração:</strong> direitos difusos e coletivos (meio ambiente, paz, autodeterminação dos povos), e até uma <strong>5ª geração:</strong> direitos digitais.</p>
+    <p><strong>Para o Brasil:</strong> A Constituição de 1988 garante direitos civis, políticos e sociais. O SUS (saúde universal gratuita) é um direito social constitucional. A desigualdade social impede que os direitos formais se tornem direitos reais para todos.</p>
+    <div class="tip-box">Para UNICAP/Direito: saber a classificação das gerações de direitos é fundamental. Questão: 'O direito ao voto é de qual geração?' → Direito político (2ª geração). 'O direito à saúde pelo SUS é de qual geração?' → Direito social (3ª geração). A Constituição de 1988 é a base de todos os direitos no Brasil.</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card">
+    <h2><span class="num">09</span> Dicas UNICAP</h2>
+    <table>
+      <tr><th>Tema</th><th>O que mais cai</th><th>Não confundir</th></tr>
+      <tr><td><span class="tag tag-red">Marx</span></td><td>Mais-valia, alienação, luta de classes, ideologia</td><td>Marx não foi o inventor do socialismo — Proudhon, Saint-Simon precederam</td></tr>
+      <tr><td><span class="tag tag-gold">Durkheim</span></td><td>Fato social, solidariedade, anomia, tipos de suicídio</td><td>Solidariedade mecânica ≠ primitiva/inferior — apenas diferente</td></tr>
+      <tr><td><span class="tag tag-blue">Weber</span></td><td>Tipos de ação social, dominação, burocracia, protestantismo</td><td>Weber não diz que protestantismo CAUSOU capitalismo — afinidade eletiva</td></tr>
+      <tr><td>Sociologia BR</td><td>Florestan Fernandes (desigualdade racial)</td><td>Gilberto Freyre não é marxista — foi criticado por amenizar a escravidão</td></tr>
+      <tr><td>Cultura</td><td>Indústria cultural (Adorno/Horkheimer)</td><td>Cultura de massa ≠ cultura popular (diferentes origens e funções)</td></tr>
+      <tr><td>Cidadania</td><td>Gerações de direitos (Marshall)</td><td>Direitos de 1ª, 2ª e 3ª geração têm conteúdos distintos</td></tr>
+    </table>
+  </div>
+
+  <!-- 10 -->
+  <div class="card">
+    <h2><span class="num">10</span> Checklist de Revisão</h2>
+    <ul class="checklist">
+      <li><input type="checkbox"> Sei o que é positivismo e quem foi Auguste Comte</li>
+      <li><input type="checkbox"> Sei explicar infraestrutura e superestrutura (Marx)</li>
+      <li><input type="checkbox"> Sei o que é mais-valia e alienação (Marx)</li>
+      <li><input type="checkbox"> Sei o que é ideologia para Marx ('ópio do povo')</li>
+      <li><input type="checkbox"> Sei definir fato social (Durkheim) com as 3 características</li>
+      <li><input type="checkbox"> Sei a diferença entre solidariedade mecânica e orgânica</li>
+      <li><input type="checkbox"> Conheço os 4 tipos de suicídio de Durkheim</li>
+      <li><input type="checkbox"> Sei o que é anomia</li>
+      <li><input type="checkbox"> Conheço os 4 tipos de ação social (Weber)</li>
+      <li><input type="checkbox"> Sei os 3 tipos de dominação legítima (Weber)</li>
+      <li><input type="checkbox"> Sei o que é a 'jaula de ferro' e a burocracia (Weber)</li>
+      <li><input type="checkbox"> Sei a tese da ética protestante e afinidade eletiva (Weber)</li>
+      <li><input type="checkbox"> Conheço Florestan Fernandes e sua crítica à democracia racial</li>
+      <li><input type="checkbox"> Sei o que é a indústria cultural (Adorno e Horkheimer)</li>
+      <li><input type="checkbox"> Conheço as 3 gerações de direitos (Marshall)</li>
+    </ul>
+  </div>
+
+  <!-- 11 -->
+  <div class="card">
+    <h2><span class="num">11</span> Melhores Videoaulas</h2>
+    <div class="video-grid">
+      <div class="video-card"><div class="ch">Canal do Sociólogo</div><p>YouTube — Marx, Durkheim e Weber em linguagem clara e direta</p></div>
+      <div class="video-card"><div class="ch">Parabólica</div><p>YouTube — Clássicos da Sociologia: ótima didática visual</p></div>
+      <div class="video-card"><div class="ch">Me Salva Sociologia</div><p>YouTube/meusalva.com — Resumos e questões para vestibulares</p></div>
+      <div class="video-card"><div class="ch">Brasil Escola</div><p>brasilescola.uol.com.br — Artigos completos com exercícios resolvidos</p></div>
+    </div>
+  </div>
+
+  <div class="links-row"><a href="mapa3d.html" class="map-link">⚙️ Voltar ao Ateliê dos Três — Mapa 3D</a></div>
+</main>
+</body>
+</html>

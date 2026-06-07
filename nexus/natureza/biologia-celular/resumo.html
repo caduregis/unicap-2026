@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologia Celular — Resumo — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #04060f;
+  --surface: #080d1a;
+  --surface2: #0c1220;
+  --border: rgba(255,255,255,0.07);
+  --accent: #4488ff;
+  --accent2: #00ff88;
+  --text: #c8d4e8;
+  --muted: #6070a0;
+  --heading: #e8f0ff;
+}
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+.container { max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding:14px 0; border-bottom:1px solid var(--border); }
+nav a { color:var(--muted); text-decoration:none; font-size:12px; font-weight:500; padding:6px 14px; border:1px solid var(--border); border-radius:7px; transition:all 0.2s; }
+nav a:hover { color:var(--heading); background:rgba(255,255,255,0.05); }
+nav .nav-title { color:rgba(255,255,255,0.25); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; }
+h1 { font-size:28px; font-weight:700; color:var(--heading); margin-bottom:6px; }
+.subtitle { font-size:14px; color:var(--muted); margin-bottom:40px; }
+.section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px; margin-bottom:24px; }
+.section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.section-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h2 { font-size:17px; font-weight:600; color:var(--heading); }
+.section p { font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:12px; }
+.section p:last-child { margin-bottom:0; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.card h4 { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+.card p { font-size:13px; color:var(--muted); line-height:1.6; }
+.tag { display:inline-block; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; margin:2px; }
+.tag-blue { background:rgba(68,136,255,0.15); color:#6699ff; border:1px solid rgba(68,136,255,0.2); }
+.tag-green { background:rgba(0,255,136,0.1); color:#44cc88; border:1px solid rgba(0,255,136,0.15); }
+.tag-orange { background:rgba(255,160,0,0.12); color:#ffaa44; border:1px solid rgba(255,160,0,0.2); }
+.tag-red { background:rgba(255,80,80,0.12); color:#ff7777; border:1px solid rgba(255,80,80,0.2); }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:14px; }
+th { background:rgba(68,136,255,0.08); color:var(--accent); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-block { background:var(--surface2); border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:16px 18px; margin-bottom:16px; }
+.question-block .q { font-size:13.5px; color:var(--heading); font-weight:500; margin-bottom:10px; }
+.question-block .opcoes { font-size:13px; color:var(--muted); line-height:2; margin-bottom:10px; }
+.question-block .resp { font-size:13px; color:var(--accent2); background:rgba(0,255,136,0.06); border:1px solid rgba(0,255,136,0.15); border-radius:7px; padding:10px 14px; }
+.formula { background:rgba(68,136,255,0.07); border:1px solid rgba(68,136,255,0.15); border-radius:8px; padding:10px 16px; font-size:13px; color:#aac8ff; font-family:monospace; margin:10px 0; }
+.highlight { color:var(--accent2); font-weight:600; }
+@media(max-width:600px){ .grid-2{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="../../index.html">← Nexus</a>
+    <span class="nav-title">Biologia Celular</span>
+    <a href="mapa3d.html">Mapa 3D →</a>
+  </nav>
+
+  <h1>Biologia Celular</h1>
+  <p class="subtitle">Resumo completo para o vestibular UNICAP 2026 — Carlos Régis / Direito</p>
+
+  <!-- SEÇÃO 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">🔬</div>
+      <h2>1. Organização Celular: Procariota vs Eucariota</h2>
+    </div>
+    <p>Todos os seres vivos são formados por células. A diferença fundamental entre os dois tipos celulares é a presença ou ausência de núcleo organizado com membrana nuclear.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Célula Procariota</h4>
+        <p>Sem membrana nuclear. DNA circular no citoplasma (nucleoide). Sem organelas membranosas. Apenas ribossomos 70S. Exclusiva de bactérias e arqueas. Tamanho: 1–10 µm.</p>
+      </div>
+      <div class="card">
+        <h4>Célula Eucariota</h4>
+        <p>Com núcleo delimitado por membrana dupla. Organelas membranosas (mitocôndria, retículo, etc.). Ribossomos 80S (citoplasma) e 70S (mitocôndria). Inclui fungos, plantas, animais, protistas.</p>
+      </div>
+    </div>
+    <table>
+      <tr><th>Organela</th><th>Função</th><th>Onde encontrar</th></tr>
+      <tr><td>Mitocôndria</td><td>Respiração celular aeróbica — produção de ATP</td><td>Células animais e vegetais</td></tr>
+      <tr><td>Cloroplasto</td><td>Fotossíntese — captura energia luminosa</td><td>Células vegetais e algas</td></tr>
+      <tr><td>Ribossomo</td><td>Síntese de proteínas (tradução)</td><td>Todas as células</td></tr>
+      <tr><td>Retículo Endoplasmático Rugoso</td><td>Síntese e transporte de proteínas secretadas</td><td>Eucariotos</td></tr>
+      <tr><td>Retículo Endoplasmático Liso</td><td>Síntese de lipídios; detoxificação</td><td>Eucariotos</td></tr>
+      <tr><td>Complexo de Golgi</td><td>Modificação, empacotamento e secreção de proteínas</td><td>Eucariotos</td></tr>
+      <tr><td>Lisossomo</td><td>Digestão intracelular; reciclagem</td><td>Células animais</td></tr>
+      <tr><td>Vacúolo</td><td>Armazenamento de água, nutrientes, íons</td><td>Vegetais (grande central)</td></tr>
+      <tr><td>Centríolo</td><td>Formação do fuso mitótico</td><td>Células animais</td></tr>
+      <tr><td>Núcleo</td><td>Controle da célula; contém DNA</td><td>Eucariotos</td></tr>
+    </table>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(0,255,136,0.12);">🧬</div>
+      <h2>2. DNA, RNA e Síntese de Proteínas</h2>
+    </div>
+    <p><strong class="highlight">DNA (Ácido Desoxirribonucleico):</strong> Dupla hélice antiparalela. Bases nitrogenadas: Adenina (A), Timina (T), Citosina (C), Guanina (G). Pares complementares: A-T e C-G. Localização: núcleo (cromossomas), mitocôndria e cloroplasto.</p>
+    <p><strong class="highlight">RNA (Ácido Ribonucleico):</strong> Fita simples. Base Uracila (U) no lugar de Timina. Tipos: RNAm (mensageiro), RNAt (transportador), RNAr (ribossômico).</p>
+    <div class="formula">TRANSCRIÇÃO: DNA → RNA mensageiro (ocorre no NÚCLEO, catalisada pela RNA polimerase)</div>
+    <div class="formula">TRADUÇÃO: RNAm → Proteína (ocorre no RIBOSSOMO, RNAt traz os aminoácidos)</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Transcrição</h4>
+        <p>RNA polimerase lê o DNA molde e sintetiza o RNAm. O RNAm sai do núcleo pelos poros nucleares para o citoplasma.</p>
+      </div>
+      <div class="card">
+        <h4>Tradução</h4>
+        <p>Ribossomo lê códons (tripletos) do RNAm. RNAt traz aminoácido correspondente ao anticódon. Proteína é montada aminoácido por aminoácido.</p>
+      </div>
+    </div>
+    <p style="margin-top:14px">Código genético: 64 códons possíveis (4³) para codificar 20 aminoácidos — código degenerado (mais de um códon para mesmo aminoácido). Códon de parada: UAA, UAG, UGA.</p>
+  </div>
+
+  <!-- SEÇÃO 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,160,0,0.12);">⚡</div>
+      <h2>3. Divisão Celular: Mitose e Meiose</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Mitose</h4>
+        <p>Divisão para crescimento, regeneração e reprodução assexuada. Fases: <strong>I-P-M-A-T</strong> (Interfase, Prófase, Metáfase, Anáfase, Telófase). Resultado: 2 células filhas diploides (2n), geneticamente idênticas à célula-mãe. Ocorre em células somáticas.</p>
+      </div>
+      <div class="card">
+        <h4>Meiose</h4>
+        <p>Divisão para formação de gametas. Duas divisões consecutivas (Meiose I e II). Resultado: 4 células haploides (n) com variabilidade genética. Crossing-over na Prófase I aumenta variabilidade. Ocorre nas gônadas (testículos e ovários).</p>
+      </div>
+    </div>
+    <table>
+      <tr><th>Característica</th><th>Mitose</th><th>Meiose</th></tr>
+      <tr><td>N° de divisões</td><td>1</td><td>2</td></tr>
+      <tr><td>Células resultantes</td><td>2</td><td>4</td></tr>
+      <tr><td>Ploidia das filhas</td><td>2n (diploides)</td><td>n (haploides)</td></tr>
+      <tr><td>Variabilidade genética</td><td>Não gera</td><td>Gera (crossing-over)</td></tr>
+      <tr><td>Ocorre em</td><td>Células somáticas</td><td>Células germinativas</td></tr>
+      <tr><td>Finalidade</td><td>Crescimento, regeneração</td><td>Formação de gametas</td></tr>
+    </table>
+  </div>
+
+  <!-- SEÇÃO 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(180,100,255,0.15);">🧪</div>
+      <h2>4. Genética Mendeliana</h2>
+    </div>
+    <p><strong class="highlight">1ª Lei de Mendel (Segregação dos Fatores):</strong> Cada característica hereditária é determinada por um par de fatores (alelos) que se separam na formação dos gametas. Cada gameta recebe apenas um alelo de cada par.</p>
+    <p><strong class="highlight">2ª Lei de Mendel (Segregação Independente):</strong> Pares de fatores que determinam características diferentes se segregam de forma independente na formação dos gametas. Válida para genes em cromossomos diferentes (não ligados).</p>
+    <div class="formula">Monohíbrido Aa × Aa → AA : Aa : aa = 1:2:1 (genótipo) | Dominante:Recessivo = 3:1 (fenótipo)</div>
+    <div class="formula">Dihíbrido AaBb × AaBb → Fenótipos na razão 9:3:3:1</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Terminologia</h4>
+        <p><strong>Alelo dominante:</strong> se expressa em AA ou Aa. Representado por letra maiúscula.<br>
+        <strong>Alelo recessivo:</strong> só se expressa em aa. Representado por letra minúscula.<br>
+        <strong>Homozigoto:</strong> AA ou aa. <strong>Heterozigoto:</strong> Aa.</p>
+      </div>
+      <div class="card">
+        <h4>Quadrado de Punnett</h4>
+        <p>Ferramenta para calcular probabilidades de cruzamentos. Cruzamento Aa×Aa: 25% AA, 50% Aa, 25% aa. Cruzamento AA×aa: 100% Aa (todos dominantes no fenótipo).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,80,80,0.12);">🔗</div>
+      <h2>5. Genética Não-Mendeliana</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Codominância</h4>
+        <p>Ambos os alelos se expressam simultaneamente no heterozigoto. Exemplo: tipo sanguíneo AB (IA IB). Grupos sanguíneos ABO: alelos IA, IB (codominantes) e i (recessivo).</p>
+      </div>
+      <div class="card">
+        <h4>Dominância Incompleta</h4>
+        <p>Heterozigoto apresenta fenótipo intermediário entre os dois homozigotos. Exemplo: flor vermelha (VV) × branca (BB) → rosa (VB). Razão fenotípica: 1:2:1.</p>
+      </div>
+      <div class="card">
+        <h4>Herança Ligada ao Sexo</h4>
+        <p>Genes no cromossomo X. Homem (XY): hemizigoto — expressa o gene do X mesmo que recessivo. Mulher (XX): pode ser portadora (XᴬXᵃ). Exemplos: daltonismo, hemofilia, distrofia muscular.</p>
+      </div>
+      <div class="card">
+        <h4>Herança Quantitativa (Poligênica)</h4>
+        <p>Característica controlada por múltiplos genes (poligenes). Distribuição contínua na população (curva normal). Exemplos: altura, cor da pele, peso. Influência ambiental relevante.</p>
+      </div>
+    </div>
+    <p style="margin-top:14px">Epistasia: interação entre genes — um gene afeta a expressão de outro. Pleiotropia: um gene afeta múltiplas características. Alelos letais: em homozigose causam morte.</p>
+  </div>
+
+  <!-- SEÇÃO 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(0,200,255,0.12);">⚙️</div>
+      <h2>6. Biotecnologia e Genética Moderna</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>DNA Recombinante e OGM</h4>
+        <p>Enzimas de restrição cortam o DNA em sítios específicos. Ligase une fragmentos de diferentes origens. OGMs: milho Bt (resistente a insetos), soja RR (resistente a herbicida), insulina humana em bactéria.</p>
+      </div>
+      <div class="card">
+        <h4>PCR (Reação em Cadeia da Polimerase)</h4>
+        <p>Amplifica bilhões de cópias de um fragmento de DNA in vitro. Aplicações: testes de paternidade, identificação forense, diagnóstico de doenças infecciosas (ex: COVID-19).</p>
+      </div>
+      <div class="card">
+        <h4>CRISPR-Cas9</h4>
+        <p>Sistema de edição genética de precisão. Guia-RNA leva a proteína Cas9 ao sítio-alvo no DNA para corte. Permite adicionar, remover ou corrigir genes. Potencial para tratar doenças genéticas.</p>
+      </div>
+      <div class="card">
+        <h4>Clonagem e Terapia Gênica</h4>
+        <p>Clonagem terapêutica: obter células-tronco para tratamento de doenças (não reprodutiva). Terapia gênica: inserção de gene funcional em células com gene defeituoso. Projeto Genoma Humano: sequenciamento completo (2003).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 7 — Questões-tipo UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,200,0,0.12);">📝</div>
+      <h2>7. Questões-Tipo UNICAP</h2>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q1. Em relação ao transporte de substâncias pela membrana plasmática, assinale a alternativa CORRETA:<br>
+      (A) A difusão simples ocorre contra o gradiente de concentração e consome ATP.<br>
+      (B) O transporte ativo move substâncias a favor do gradiente, sem consumo de energia.<br>
+      (C) A osmose é o movimento de água do meio mais concentrado para o menos concentrado.<br>
+      (D) A bomba de sódio-potássio é exemplo de transporte ativo, consumindo ATP.<br>
+      (E) A endocitose libera substâncias para fora da célula.</div>
+      <div class="resp">Resposta: (D) — A bomba Na⁺/K⁺ bombeia 3 Na⁺ para fora e 2 K⁺ para dentro, contra o gradiente, consumindo ATP. A osmose ocorre do meio hipotônico para o hipertônico. Endocitose = captura para dentro (exocitose = liberação para fora).</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q2. Em um cruzamento entre dois indivíduos heterozigotos (Aa × Aa) para uma característica com dominância completa, qual a probabilidade de um descendente apresentar o fenótipo recessivo?<br>
+      (A) 25% (B) 50% (C) 75% (D) 100% (E) 0%</div>
+      <div class="resp">Resposta: (A) 25% — Cruzamento Aa × Aa gera: 1AA : 2Aa : 1aa. O genótipo aa (único recessivo) corresponde a 1/4 = 25% dos descendentes.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q3. Sobre a meiose, é INCORRETO afirmar:<br>
+      (A) Produz células haploides (n).<br>
+      (B) Ocorre em células germinativas das gônadas.<br>
+      (C) O crossing-over contribui para a variabilidade genética.<br>
+      (D) Resulta em duas células filhas geneticamente idênticas à célula-mãe.<br>
+      (E) Envolve duas divisões celulares consecutivas.</div>
+      <div class="resp">Resposta: (D) — A meiose GERA variabilidade (crossing-over + segregação aleatória), produzindo células geneticamente DIFERENTES da célula-mãe. Quem produz células idênticas é a mitose.</div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 8 — Tabela Organelas -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">📊</div>
+      <h2>8. Tabela-Resumo de Organelas e Funções</h2>
+    </div>
+    <table>
+      <tr><th>Organela</th><th>Membrana</th><th>Função Principal</th><th>Observação</th></tr>
+      <tr><td>Mitocôndria</td><td>Dupla</td><td>Respiração celular aeróbica (ATP)</td><td>Tem DNA próprio — teoria endossimbiótica</td></tr>
+      <tr><td>Cloroplasto</td><td>Dupla</td><td>Fotossíntese</td><td>Só em vegetais/algas; tem DNA próprio</td></tr>
+      <tr><td>Ribossomo</td><td>Nenhuma</td><td>Síntese de proteínas</td><td>Livre no citoplasma ou no RER</td></tr>
+      <tr><td>RE Rugoso (RER)</td><td>Simples</td><td>Síntese de proteínas secretadas</td><td>Tem ribossomos na superfície</td></tr>
+      <tr><td>RE Liso (REL)</td><td>Simples</td><td>Síntese de lipídios, detox</td><td>Sem ribossomos</td></tr>
+      <tr><td>Complexo de Golgi</td><td>Simples</td><td>Modificação e embalagem de proteínas</td><td>"Correio" da célula</td></tr>
+      <tr><td>Lisossomo</td><td>Simples</td><td>Digestão intracelular</td><td>Enzimas hidrolíticas; pH ácido</td></tr>
+      <tr><td>Vacúolo central</td><td>Simples</td><td>Turgescência, armazenamento</td><td>Grande em células vegetais</td></tr>
+      <tr><td>Centríolo</td><td>Nenhuma</td><td>Fuso mitótico</td><td>Par (díade); ausente em plantas</td></tr>
+      <tr><td>Membrana plasmática</td><td>Bicamada fosfolipídica</td><td>Barreira seletiva; comunicação</td><td>Modelo mosaico fluido</td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

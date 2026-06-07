@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física Mecânica · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">FÍSICA MECÂNICA</div><div class="lt2">cinemática · dinâmica · energia · estática · fluidos</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">⚙</div><div class="bt"><div class="l1">Física Mecânica</div><div class="l2">Física · Bloco 1</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · FÍS MECÂNICA</span><h1>Mecânica</h1><p>Movimento e suas causas. Cinemática, dinâmica (Newton), trabalho e energia, estática, hidrostática. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#3b82f6', corHex2:'#2563eb', bg:'#04081c', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'FIS M1',nome:'Cinemática',sub:'Estudo do movimento',forma:'tetra',cor:0x3b82f6,
+topicos:['Cinemática: estudo do movimento sem se preocupar com as causas','Conceitos: referencial, trajetória, posição, deslocamento, distância percorrida','Velocidade média (Δs/Δt), velocidade instantânea','Aceleração média (Δv/Δt), aceleração instantânea','MRU (Movimento Retilíneo Uniforme): v = constante, s = s₀ + v·t','MRUV (Movimento Retilíneo Uniformemente Variado): a = constante','Equações: v = v₀ + a·t; s = s₀ + v₀·t + ½·a·t²; v² = v₀² + 2·a·Δs (Torricelli)','Queda livre: g ≈ 9,8 m/s² ≈ 10 m/s²','Lançamento vertical, horizontal e oblíquo','Movimento circular: período (T), frequência (f), velocidade angular (ω), aceleração centrípeta','Gráficos s × t, v × t, a × t','Composição de movimentos (princípio de Galileu)'],
+resumo:'Cinemática é "como" o movimento acontece (sem perguntar por quê). Base de tudo. UNICAP costuma cobrar gráficos.',
+dica:'GRÁFICO v × t: área sob a curva = deslocamento. GRÁFICO s × t: inclinação = velocidade. TORRICELLI: v² = v₀² + 2·a·Δs (sem tempo, salva-vidas).'},
+{cod:'FIS M2',nome:'Dinâmica · Leis de Newton',sub:'Causas do movimento',forma:'octa',cor:0x2563eb,
+topicos:['Dinâmica: estudo das causas do movimento','1ª Lei de Newton (Inércia): corpo em repouso ou MRU permanece, se F_resultante=0','2ª Lei de Newton (Princípio Fundamental): F_resultante = m·a','3ª Lei de Newton (Ação e Reação): toda ação tem reação igual e oposta','Forças: peso (P=m·g), normal (N), atrito (estático e cinético), tração, elástica (Hooke F=k·x)','Atrito: F_at = μ·N (μ_estático > μ_cinético)','Plano inclinado, polia, sistemas conectados','Força centrípeta: F_c = m·v²/r','Movimento em círculos: pêndulo, satélites','Lei da Gravitação Universal de Newton: F = G·m₁·m₂/r²','Leis de Kepler: 1ª (órbitas elípticas), 2ª (áreas iguais em tempos iguais), 3ª (T² ∝ R³)','Peso aparente em elevadores'],
+resumo:'Newton revolucionou a física. 3 leis explicam tudo (no mundo macroscópico não-relativístico). Gravidade universal explica órbitas planetárias.',
+dica:'F = m·a é a EQUAÇÃO MAIS IMPORTANTE da física. Atrito estático SEMPRE > atrito cinético. Pesar 70kg na Terra ≠ 70kg na Lua (peso, não massa).'},
+{cod:'FIS M3',nome:'Trabalho · Energia · Potência',sub:'Conservação',forma:'dodeca',cor:0xa855f7,
+topicos:['Trabalho (τ ou W): τ = F·d·cos(θ), unidade Joule (J)','Trabalho da força peso, da força elástica, da força de atrito','Energia cinética: E_c = ½·m·v²','Energia potencial gravitacional: E_p = m·g·h','Energia potencial elástica: E_pe = ½·k·x²','Energia mecânica = E_c + E_p','Princípio da conservação da energia mecânica (sistema conservativo, sem atrito)','Teorema da energia cinética: τ_total = ΔE_c','Potência (P): P = τ/t = F·v, unidade Watt (W)','Rendimento (η): η = P_útil/P_total','Quantidade de movimento (momentum): Q = m·v','Conservação do momentum: colisões','Colisões: elásticas (conserva E_c) × inelásticas','Impulso: I = F·Δt = ΔQ'],
+resumo:'Energia não se cria nem se destrói. Mecânica resolve-se elegantemente por conservação de energia/momentum.',
+dica:'ENERGIA SE CONSERVA (E_mec inicial = E_mec final, sem atrito). MOMENTUM SE CONSERVA em colisões. 1 Watt = 1 Joule/segundo. 1 cv ≈ 736 W.'},
+{cod:'FIS M4',nome:'Estática · Equilíbrio',sub:'Corpos em repouso',forma:'tetra',cor:0xfb923c,
+topicos:['Estática: estudo do equilíbrio (corpo em repouso ou MRU)','Equilíbrio de ponto material: ΣF = 0','Equilíbrio de corpo extenso (rígido): ΣF = 0 E ΣM = 0','Momento (ou torque) de uma força: M = F·d (braço)','Centro de gravidade × centro de massa','Equilíbrio estável, instável, indiferente','Alavancas: interfixa, inter-resistente, interpotente','Lei das Alavancas (Arquimedes): F_pot·braço_pot = F_res·braço_res','Polias fixas × móveis, sistemas de polias','Plano inclinado'],
+resumo:'Estática: o corpo NÃO acelera. Mas pode estar em movimento (MRU)! Soma vetorial de forças = 0 E soma de torques = 0.',
+dica:'ALAVANCA: tipos por posição do ponto de apoio. Pé de cabra = interfixa. Carrinho de mão = inter-resistente. Pinça = interpotente.'},
+{cod:'FIS M5',nome:'Hidrostática · Fluidos',sub:'Pressão, Pascal, Arquimedes',forma:'icosa',cor:0x06b6d4,
+topicos:['Hidrostática: estática dos fluidos','Densidade (ρ = m/V), unidades: kg/m³, g/cm³','Pressão: P = F/A, unidades Pascal (N/m²), atm, mmHg','Pressão hidrostática: P = ρ·g·h (Lei de Stevin)','Princípio de Pascal: pressão aplicada num fluido transmite-se integralmente','Prensa hidráulica: F₁/A₁ = F₂/A₂','Princípio de Arquimedes (Empuxo): E = ρ_fluido · V_imerso · g','Corpo flutua (E ≥ P), afunda (E < P)','Vasos comunicantes','Barômetro de Torricelli (1atm ≈ 760 mmHg ≈ 10 m de coluna de água)','Aerostática: pressão atmosférica diminui com altitude'],
+resumo:'Fluidos exercem pressão. Pascal explica prensa hidráulica (força amplificada). Arquimedes explica por que navios flutuam.',
+dica:'EMPUXO = peso do fluido deslocado. Navio flutua porque desloca volume de água maior que seu peso. Prensa hidráulica: pouca força ali, grande força aqui.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

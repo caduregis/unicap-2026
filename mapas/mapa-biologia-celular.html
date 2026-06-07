@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologia Celular · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">BIOLOGIA CELULAR</div><div class="lt2">células · metabolismo · núcleo · divisão</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">◉</div><div class="bt"><div class="l1">Biologia Celular</div><div class="l2">Biologia · Bloco 1</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · BIO CELULAR</span><h1>Biologia Celular</h1><p>Composição química, células, metabolismo energético, núcleo celular, divisão celular. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em organela</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#a78bfa', corHex2:'#8b5cf6', bg:'#0e0420', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'BIO C1',nome:'Composição Química da Célula',sub:'Inorgânicos e orgânicos',forma:'tetra',cor:0xa78bfa,
+topicos:['Substâncias inorgânicas: água (70-90% da célula) e sais minerais','Funções da água: solvente, reações, regulação térmica, transporte','Sais minerais: cálcio (ossos), ferro (hemoglobina), iodo (tireoide), sódio/potássio (impulsos), magnésio (clorofila)','Substâncias orgânicas: carboidratos, lipídios, proteínas, ácidos nucleicos, vitaminas','Carboidratos: monossacarídeos (glicose, frutose), dissacarídeos (sacarose, lactose), polissacarídeos (amido, glicogênio, celulose)','Lipídios: triglicerídeos, fosfolipídios (membrana), esteroides (colesterol, hormônios)','Proteínas: enzimas, hormônios, estruturais, transporte (hemoglobina), defesa (anticorpos)','Aminoácidos essenciais × não essenciais','Estruturas proteicas: primária, secundária, terciária, quaternária','Desnaturação proteica','Enzimas: catalisadores biológicos, especificidade, fatores (pH, T, concentração)','Ácidos nucleicos: DNA (informação genética) e RNA (executa)','Vitaminas: hidrossolúveis (B, C) e lipossolúveis (A, D, E, K)'],
+resumo:'Tudo é química! A célula é feita de 4 macromoléculas: carboidratos, lipídios, proteínas, ácidos nucleicos. Água é o solvente.',
+dica:'ENZIMAS: cada uma só atua em UM substrato. Sensíveis a pH e T. Desnaturação proteica é IRREVERSÍVEL (ovo cozido não volta a cru).'},
+{cod:'BIO C2',nome:'Tipos Celulares · Organelas',sub:'Procarionte × eucarionte',forma:'dodeca',cor:0x06b6d4,
+topicos:['Teoria celular: todos os seres vivos são compostos por células (Schwann, Schleiden)','Tipos de células: procariontes (sem núcleo: bactérias, arqueias) × eucariontes (com núcleo)','Eucariontes: animais × vegetais (parede celular, cloroplasto, vacúolo grande)','Membrana plasmática: bicamada lipídica + proteínas (modelo do mosaico fluido)','Funções da membrana: permeabilidade seletiva, transporte','Transporte passivo: difusão, osmose, difusão facilitada (sem gasto de ATP)','Transporte ativo (gasta ATP): bomba de Na/K','Transportes em massa: endocitose (fagocitose, pinocitose), exocitose','Organelas: núcleo (DNA), mitocôndria (respiração), cloroplasto (fotossíntese, só vegetal), retículo endoplasmático (RE liso × RER), complexo de Golgi, lisossomos (digestão), vacúolos, ribossomos (síntese proteica), centríolos','Citoesqueleto: microtúbulos, microfilamentos','Parede celular: celulose (vegetais), quitina (fungos), peptidoglicano (bactérias)'],
+resumo:'Procarionte = simples, sem núcleo (bactérias). Eucarionte = complexo, com organelas e núcleo (animais, vegetais, fungos, protistas).',
+dica:'MITOCÔNDRIA tem DNA próprio (origem por endossimbiose). CLOROPLASTO também. Bomba de Na/K mantém o gradiente para impulsos nervosos.'},
+{cod:'BIO C3',nome:'Metabolismo · Energia',sub:'Respiração, fotossíntese, fermentação',forma:'icosa',cor:0xf472b6,
+topicos:['Metabolismo: conjunto das reações químicas da célula','Anabolismo (constrói, gasta E) × catabolismo (degrada, libera E)','ATP (adenosina trifosfato) — moeda energética','Respiração celular aeróbica (na mitocôndria): glicólise (citoplasma) → ciclo de Krebs (matriz mitocondrial) → cadeia respiratória (cristas)','C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + 38 ATP','Fotossíntese (no cloroplasto): fase clara (tilacoide, libera O₂) + fase escura/ciclo de Calvin (estroma)','6 CO₂ + 6 H₂O + luz → C₆H₁₂O₆ + 6 O₂','Fermentação: anaeróbica, sem O₂','Fermentação alcoólica (leveduras, fabricam vinho/cerveja): glicose → etanol + CO₂','Fermentação lática (músculos, lactobacilos): glicose → ácido láctico','Pequena produção de ATP na fermentação (2 ATP)','Quimiossíntese: bactérias usam energia química de compostos inorgânicos'],
+resumo:'Vida = transformação de energia. Respiração (consome O₂, gera ATP). Fotossíntese (consome CO₂, gera O₂). Fermentação (sem O₂, pouco ATP).',
+dica:'CONTAS: respiração aeróbica gera 38 ATP (alta eficiência). Fermentação gera APENAS 2 ATP (baixa). Por isso músculo cansado dói (acúmulo de ácido láctico).'},
+{cod:'BIO C4',nome:'Núcleo · DNA · RNA · Síntese Proteica',sub:'Código genético, transcrição, tradução',forma:'octa',cor:0xfbbf24,
+topicos:['Núcleo: comando da célula, contém o DNA','Cromatina (DNA desenrolado, na interfase) × cromossomos (DNA condensado, na divisão)','Cariótipo humano: 46 cromossomos (23 pares), sendo 22 autossomos + 1 par sexual (XX feminino, XY masculino)','DNA: dupla hélice (Watson e Crick, 1953), nucleotídeos (fosfato + desoxirribose + base nitrogenada)','Bases: adenina (A), timina (T), guanina (G), citosina (C); A-T (2 pontes H), G-C (3 pontes H)','RNA: fita simples, ribose, uracila (U) no lugar da timina','Tipos de RNA: mensageiro (mRNA), transportador (tRNA), ribossômico (rRNA)','Replicação do DNA (interfase, fase S): semiconservativa','Transcrição: DNA → mRNA (núcleo)','Tradução: mRNA → proteína (ribossomo)','Código genético: 64 códons (trincas), codifica 20 aminoácidos; redundante, universal','Dogma central da Biologia Molecular: DNA → RNA → Proteína','Mutações: substituição, inserção, deleção; podem ser benéficas, neutras ou prejudiciais'],
+resumo:'DNA é receita; RNA é cópia; proteína é o produto. Transcrição (núcleo) → Tradução (ribossomo). Sem isso, não há vida.',
+dica:'DNA tem TIMINA, RNA tem URACILA. A-T no DNA, A-U no RNA. Replicação SEMICONSERVATIVA: cada nova molécula tem 1 fita velha + 1 nova.'},
+{cod:'BIO C5',nome:'Divisão Celular',sub:'Mitose × Meiose',forma:'torus',cor:0xef4444,
+topicos:['Ciclo celular: interfase (G1, S, G2) + divisão (M)','Mitose: divisão somática, 1 célula → 2 células iguais (mesmo n° de cromossomos)','Fases da mitose: prófase, metáfase, anáfase, telófase + citocinese','Função da mitose: crescimento, reparo, renovação tecidual, reprodução assexuada','Meiose: divisão para gametas (células sexuais), 1 célula → 4 células com METADE dos cromossomos (n)','Meiose I (reducional): separação de homólogos','Meiose II (equacional): separação de cromátides irmãs','Crossing-over (permuta) na prófase I — gera variabilidade genética','Importância da meiose: gera gametas, recombinação genética','Erros: não disjunção → síndromes (Down, trissomia 21; Klinefelter XXY; Turner XO)'],
+resumo:'Mitose = células somáticas iguais. Meiose = células sexuais (gametas) com metade dos cromossomos. Crossing-over gera variabilidade.',
+dica:'MITOSE: 1 → 2 idênticas. MEIOSE: 1 → 4 com metade dos cromossomos. SÍNDROME DE DOWN = trissomia do par 21 (não-disjunção meiótica).'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

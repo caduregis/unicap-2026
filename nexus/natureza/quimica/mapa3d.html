@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Química — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">O Laboratório do Alquimista Moderno</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ─── Scene Setup ─────────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0303);
+scene.fog = new THREE.Fog(0x0a0303, 18, 50);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 7, 15);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 3;
+controls.maxDistance = 40;
+controls.target.set(0, 2, 0);
+
+// ─── Lighting ─────────────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x0a0506, 1.0);
+scene.add(ambient);
+
+const violetLight = new THREE.PointLight(0x8833ff, 1.5, 20);
+violetLight.position.set(-5, 5, 0);
+scene.add(violetLight);
+
+const orangeLight = new THREE.PointLight(0xff8833, 1.5, 20);
+orangeLight.position.set(5, 5, 0);
+scene.add(orangeLight);
+
+const topLight = new THREE.PointLight(0xff4400, 0.8, 30);
+topLight.position.set(0, 12, 0);
+scene.add(topLight);
+
+// ─── Stone Floor ─────────────────────────────────────────────────────────────
+const floorGeo = new THREE.PlaneGeometry(30, 30, 20, 20);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x0c0707, roughness: 1.0, metalness: 0.1 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -2.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const gridHelper = new THREE.GridHelper(20, 20, 0x1a0808, 0x1a0808);
+gridHelper.position.y = -2.49;
+scene.add(gridHelper);
+
+// ─── Gothic Arches (back wall) ────────────────────────────────────────────────
+const stoneMat = new THREE.MeshStandardMaterial({ color: 0x0e0808, roughness: 1.0, metalness: 0.0 });
+
+function createArch(x) {
+  const group = new THREE.Group();
+  // Left pillar
+  const pillarL = new THREE.Mesh(new THREE.BoxGeometry(0.4, 8, 0.4), stoneMat);
+  pillarL.position.set(-1.5, 1.5, 0);
+  group.add(pillarL);
+  // Right pillar
+  const pillarR = new THREE.Mesh(new THREE.BoxGeometry(0.4, 8, 0.4), stoneMat);
+  pillarR.position.set(1.5, 1.5, 0);
+  group.add(pillarR);
+  // Arch top (using a torus segment approximation)
+  const archGeo = new THREE.TorusGeometry(1.5, 0.2, 8, 20, Math.PI);
+  const arch = new THREE.Mesh(archGeo, stoneMat);
+  arch.position.set(0, 5.5, 0);
+  group.add(arch);
+  group.position.set(x, -2.5, -7);
+  scene.add(group);
+}
+createArch(-6);
+createArch(0);
+createArch(6);
+
+// Back wall
+const wallMat = new THREE.MeshStandardMaterial({ color: 0x080404, roughness: 1.0 });
+const wall = new THREE.Mesh(new THREE.BoxGeometry(20, 10, 0.3), wallMat);
+wall.position.set(0, 2.5, -7.2);
+scene.add(wall);
+
+// ─── Central Workbench ────────────────────────────────────────────────────────
+const benchMat = new THREE.MeshStandardMaterial({ color: 0x120808, roughness: 0.8, metalness: 0.2 });
+const benchTop = new THREE.Mesh(new THREE.BoxGeometry(14, 0.2, 3.5), benchMat);
+benchTop.position.set(0, -0.5, 0);
+benchTop.receiveShadow = true;
+scene.add(benchTop);
+
+const benchLegs = new THREE.Mesh(new THREE.BoxGeometry(14, 2, 3.5), benchMat);
+benchLegs.position.set(0, -1.6, 0);
+scene.add(benchLegs);
+
+// ─── Test Tubes ───────────────────────────────────────────────────────────────
+const tubeColors = [0xff2222, 0x22ff44, 0x2244ff, 0xffcc00];
+const tubePositions = [-4, -1.4, 1.4, 4];
+const tubeLights = [];
+const bubbleGroups = [];
+
+tubeColors.forEach((col, i) => {
+  const x = tubePositions[i];
+
+  // Glass tube body
+  const tubeGeo = new THREE.CylinderGeometry(0.15, 0.12, 1.5, 12, 1, true);
+  const tubeMat = new THREE.MeshStandardMaterial({
+    color: 0x222244, transparent: true, opacity: 0.3, side: THREE.DoubleSide, roughness: 0.1
+  });
+  const tube = new THREE.Mesh(tubeGeo, tubeMat);
+  tube.position.set(x, 0.5, 0.8);
+  scene.add(tube);
+
+  // Liquid inside
+  const liqGeo = new THREE.CylinderGeometry(0.13, 0.11, 1.3, 12);
+  const liqMat = new THREE.MeshStandardMaterial({
+    color: col, emissive: col, emissiveIntensity: 0.4, transparent: true, opacity: 0.7
+  });
+  const liquid = new THREE.Mesh(liqGeo, liqMat);
+  liquid.position.set(x, 0.4, 0.8);
+  scene.add(liquid);
+
+  // Inner glow light
+  const pLight = new THREE.PointLight(col, 1.2, 3);
+  pLight.position.set(x, 0.5, 0.8);
+  scene.add(pLight);
+  tubeLights.push(pLight);
+
+  // Bubble particles
+  const bubblePositions = new Float32Array(20 * 3);
+  const bubbleSeeds = [];
+  for (let j = 0; j < 20; j++) {
+    bubblePositions[j * 3]     = x + (Math.random() - 0.5) * 0.2;
+    bubblePositions[j * 3 + 1] = -0.3 + Math.random() * 1.2;
+    bubblePositions[j * 3 + 2] = 0.8;
+    bubbleSeeds.push(Math.random());
+  }
+  const bGeo = new THREE.BufferGeometry();
+  bGeo.setAttribute('position', new THREE.BufferAttribute(bubblePositions, 3));
+  const bMat = new THREE.PointsMaterial({ color: col, size: 0.04, transparent: true, opacity: 0.8 });
+  const bubbles = new THREE.Points(bGeo, bMat);
+  scene.add(bubbles);
+  bubbleGroups.push({ points: bubbles, seeds: bubbleSeeds, baseX: x, color: col });
+});
+
+// ─── Benzene Molecule (floating) ─────────────────────────────────────────────
+const benzeneGroup = new THREE.Group();
+benzeneGroup.position.set(0, 4.5, 0);
+
+const bondColors = [0xff8800, 0xffcc00, 0xff8800, 0xffcc00, 0xff8800, 0xffcc00];
+const carbonAtoms = [];
+for (let i = 0; i < 6; i++) {
+  const angle = (i / 6) * Math.PI * 2;
+  const x = Math.cos(angle) * 1.5;
+  const z = Math.sin(angle) * 1.5;
+
+  const atomGeo = new THREE.SphereGeometry(0.2, 12, 12);
+  const atomMat = new THREE.MeshStandardMaterial({
+    color: 0x333344, emissive: 0x111122, emissiveIntensity: 0.5,
+    roughness: 0.3, metalness: 0.3
+  });
+  const atom = new THREE.Mesh(atomGeo, atomMat);
+  atom.position.set(x, 0, z);
+  benzeneGroup.add(atom);
+  carbonAtoms.push(new THREE.Vector3(x, 0, z));
+
+  // Bond to next atom
+  const nextAngle = ((i + 1) / 6) * Math.PI * 2;
+  const nx = Math.cos(nextAngle) * 1.5;
+  const nz = Math.sin(nextAngle) * 1.5;
+  const bondGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(x, 0, z),
+    new THREE.Vector3(nx, 0, nz)
+  ]);
+  const bondMat = new THREE.LineBasicMaterial({ color: bondColors[i] });
+  benzeneGroup.add(new THREE.Line(bondGeo, bondMat));
+}
+
+// Inner ring (aromatic)
+const innerRingGeo = new THREE.TorusGeometry(0.8, 0.03, 6, 30);
+const innerRingMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xff6600, emissiveIntensity: 0.8 });
+const innerRing = new THREE.Mesh(innerRingGeo, innerRingMat);
+innerRing.rotation.x = Math.PI / 2;
+benzeneGroup.add(innerRing);
+
+scene.add(benzeneGroup);
+
+// ─── Periodic Table Texture on Wall ───────────────────────────────────────────
+const ptCanvas = document.createElement('canvas');
+ptCanvas.width = 512;
+ptCanvas.height = 256;
+const ptCtx = ptCanvas.getContext('2d');
+ptCtx.fillStyle = '#080305';
+ptCtx.fillRect(0, 0, 512, 256);
+ptCtx.font = 'bold 14px Arial';
+ptCtx.fillStyle = '#331a00';
+ptCtx.fillText('TABELA PERIÓDICA', 180, 22);
+const elements = [
+  ['H','He'],
+  ['Li','Be','B','C','N','O','F','Ne'],
+  ['Na','Mg','Al','Si','P','S','Cl','Ar'],
+  ['K','Ca','Sc','Ti','V','Cr','Mn','Fe','Co','Ni','Cu','Zn'],
+  ['Ga','Ge','As','Se','Br','Kr']
+];
+const elemColors = ['#3a1a00','#1a003a','#003a1a','#1a1a3a','#2a1a00','#002a1a'];
+elements.forEach((row, ri) => {
+  row.forEach((el, ci) => {
+    const ex = ci * 38 + 8;
+    const ey = ri * 40 + 30;
+    ptCtx.fillStyle = elemColors[ri % elemColors.length];
+    ptCtx.fillRect(ex, ey, 34, 34);
+    ptCtx.strokeStyle = '#441a00';
+    ptCtx.strokeRect(ex, ey, 34, 34);
+    ptCtx.fillStyle = '#886644';
+    ptCtx.font = 'bold 11px Arial';
+    ptCtx.fillText(el, ex + 4, ey + 22);
+  });
+});
+const ptTexture = new THREE.CanvasTexture(ptCanvas);
+const ptPlane = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 5),
+  new THREE.MeshStandardMaterial({ map: ptTexture, roughness: 0.8 })
+);
+ptPlane.position.set(-4, 3.5, -6.9);
+scene.add(ptPlane);
+
+// ─── Study Nodes ──────────────────────────────────────────────────────────────
+const nodes = [];
+const nodeData = [
+  {
+    pos: [-5, 2, -4],
+    title: 'Tabela Periódica',
+    body: 'Organização por número atômico crescente. Grupos (colunas): mesma configuração de valência. Períodos (linhas): mesmo número de camadas. Metais: condutores, brilho. Não-metais: isolantes em geral. Semimetais. Propriedades: raio, eletronegatividade, energia de ionização — variam periodicamente.',
+    tip: '<strong>UNICAP:</strong> Eletronegatividade: aumenta da esquerda→direita e de baixo→cima. F é o mais eletronegativo.'
+  },
+  {
+    pos: [5, 2, -4],
+    title: 'Ligações Químicas',
+    body: 'Iônica: metal + não-metal, transferência de elétrons, sólidos cristalinos, alto ponto de fusão. Covalente: não-metal + não-metal, compartilhamento, pode ser simples/dupla/tripla. Metálica: metal + metal, elétrons livres, condutividade elétrica. Regra do octeto: átomos buscam 8 elétrons na camada de valência.',
+    tip: '<strong>UNICAP:</strong> NaCl = iônica. H₂O = covalente. Cu (fio elétrico) = metálica. Identificar tipo de ligação é básico.'
+  },
+  {
+    pos: [-5, 2, 2],
+    title: 'Funções Inorgânicas',
+    body: 'Ácido: libera H⁺ em solução. Base: libera OH⁻. Sal: produto de neutralização (ácido+base). Óxido: binário com O. pH: escala 0-14 (7=neutro, <7=ácido, >7=básico). Força de ácidos/bases: forte=ionização total; fraco=parcial. Exemplos: HCl (forte), CH₃COOH (fraco), NaOH (forte).',
+    tip: '<strong>UNICAP:</strong> Classificar substâncias como ácido, base, sal ou óxido. pH<7 = ácido, pH>7 = básico.'
+  },
+  {
+    pos: [5, 2, 2],
+    title: 'Reações Químicas',
+    body: 'Tipos: síntese (A+B→AB), decomposição (AB→A+B), simples troca (A+BC→AC+B), dupla troca (AB+CD→AD+CB). Balanceamento: igualar átomos de cada elemento dos 2 lados. Lei de Lavoisier: massa total se conserva. Lei de Proust: proporções definidas.',
+    tip: '<strong>UNICAP:</strong> Balancear H₂+O₂→H₂O: resultado 2H₂+O₂→2H₂O. Identificar tipo de reação dado equação.'
+  },
+  {
+    pos: [0, 2, -6],
+    title: 'Estequiometria',
+    body: 'Mol: 6,02×10²³ partículas (Avogadro). Massa molar: massa de 1 mol em gramas = número atômico em g/mol. Proporção estequiométrica: usar coeficientes da equação balanceada. Reagente limitante: o que se esgota primeiro. Rendimento: produto obtido / teórico × 100%.',
+    tip: '<strong>UNICAP:</strong> Quantos gramas de H₂O se formam com 4g de H₂? M(H₂)=2; 2mol H₂ → 2mol H₂O; 2×18=36g.'
+  },
+  {
+    pos: [0, 3, 3],
+    title: 'Funções Orgânicas',
+    body: 'Carbono: tetravalente, forma cadeias. Hidrocarbonetos: só C e H (alcanos CnH2n+2, alcenos, alcinos). Funções: álcool (OH), aldeído (CHO), cetona (CO interno), ácido carboxílico (COOH), éster, amina (NH₂). IUPAC: nomenclatura sistemática. Isômeros: mesma fórmula molecular, estrutura diferente.',
+    tip: '<strong>UNICAP:</strong> Identificar grupo funcional dado fórmula estrutural. OH = álcool; COOH = ácido carboxílico.'
+  },
+  {
+    pos: [0, 6, 0],
+    title: 'Soluções e Termoquímica',
+    body: 'Solução: soluto+solvente. Concentração: C=m/V (g/L) ou M=n/V (mol/L). Diluição: C₁V₁=C₂V₂. Solubilidade: max de soluto dissolvido. Reação endotérmica: absorve calor (ΔH>0). Exotérmica: libera calor (ΔH<0). Entalpia de formação, combustão, neutralização.',
+    tip: '<strong>UNICAP:</strong> Combustão = exotérmica (libera calor). Fotossíntese = endotérmica (absorve luz/calor).'
+  }
+];
+
+nodeData.forEach(data => {
+  const geo = new THREE.SphereGeometry(0.35, 12, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xff8833, emissive: 0xcc5500, emissiveIntensity: 0.8,
+    roughness: 0.2, metalness: 0.1
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(...data.pos);
+  scene.add(mesh);
+  nodes.push({ mesh, title: data.title, body: data.body, tip: data.tip });
+});
+
+// ─── Raycaster ────────────────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+window.addEventListener('click', () => {
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  if (hits.length) {
+    const n = nodes.find(n => n.mesh === hits[0].object);
+    if (n) {
+      document.getElementById('popup-title').textContent = n.title;
+      document.getElementById('popup-body').textContent = n.body;
+      document.getElementById('popup-tip').innerHTML = n.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+// ─── Animation ────────────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Benzene rotation
+  benzeneGroup.rotation.y = t * 0.4;
+  benzeneGroup.position.y = 4.5 + Math.sin(t * 0.6) * 0.2;
+
+  // Tube lights flicker
+  tubeLights.forEach((light, i) => {
+    light.intensity = 0.8 + 0.4 * Math.sin(t * 2.5 + i * 1.2);
+  });
+
+  // Bubbles rise
+  bubbleGroups.forEach((bg, gi) => {
+    const pos = bg.points.geometry.attributes.position.array;
+    for (let j = 0; j < 20; j++) {
+      pos[j * 3 + 1] += 0.008 + bg.seeds[j] * 0.004;
+      if (pos[j * 3 + 1] > 1.1) {
+        pos[j * 3 + 1] = -0.3;
+        pos[j * 3]     = bg.baseX + (Math.random() - 0.5) * 0.2;
+      }
+    }
+    bg.points.geometry.attributes.position.needsUpdate = true;
+  });
+
+  // Violet/orange lights animate
+  violetLight.intensity = 1.0 + 0.5 * Math.sin(t * 0.7);
+  orangeLight.intensity = 1.0 + 0.5 * Math.cos(t * 0.7);
+
+  // Node hover
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  nodes.forEach((n, i) => {
+    const isHit = hits.length && hits[0].object === n.mesh;
+    n.mesh.scale.setScalar(isHit ? 1.35 : 1.0);
+    n.mesh.position.y = nodeData[i].pos[1] + Math.sin(t + i) * 0.08;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

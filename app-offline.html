@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>UNICAP 2026 · Carlos</title>
+<style>
+:root{--bg:#0a0e1a;--card:#151b2e;--border:#1e2d40;--cyan:#00d4ff;--amber:#ffb800;--green:#10b981;--red:#ef4444;--purple:#8b5cf6;--text:#e2e8f0;--muted:#64748b}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden}
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
+#content{flex:1;overflow-y:auto;padding:16px;padding-bottom:84px}
+#content::-webkit-scrollbar{display:none}
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#0f1628;border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nb{flex:1;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;color:var(--muted);font-size:9px;cursor:pointer}
+.nb.on{color:var(--cyan)}
+.nb .ic{font-size:22px}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.ct{font-size:.85rem;font-weight:700;color:var(--cyan);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.65rem;font-weight:700}
+.br{background:#ef44441a;color:var(--red);border:1px solid #ef444440}
+.ba{background:#ffb8001a;color:var(--amber);border:1px solid #ffb80040}
+.bg{background:#10b9811a;color:var(--green);border:1px solid #10b98140}
+.bc{background:#00d4ff1a;color:var(--cyan);border:1px solid #00d4ff40}
+.cbox{background:linear-gradient(135deg,#0f172a,#1a2744);border:1px solid #2a3f6f;border-radius:16px;padding:20px;text-align:center;margin-bottom:16px}
+.cv{font-size:3rem;font-weight:900;color:var(--cyan);line-height:1}
+.cl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.cs{font-size:.75rem;color:var(--muted);margin-top:4px}
+.xrow{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.xlv{background:var(--cyan);color:#000;font-weight:900;font-size:.8rem;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.xbg{flex:1;height:8px;background:#1e2d40;border-radius:4px;overflow:hidden}
+.xbf{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:4px;transition:.4s}
+.xl{font-size:.7rem;color:var(--muted);white-space:nowrap}
+.ss{display:flex;gap:8px;margin-bottom:16px}
+.sb{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center}
+.sv{font-size:1.3rem;font-weight:900;color:var(--cyan)}
+.sl{font-size:.65rem;color:var(--muted);margin-top:2px}
+.ti{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.ti:last-child{border-bottom:none}
+.tc{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.2s}
+.tc.dn{background:var(--green);border-color:var(--green)}
+.tc.dn::after{content:'✓';color:#fff;font-size:12px;font-weight:700}
+.tt{font-size:.85rem;flex:1}.tt.dn{text-decoration:line-through;color:var(--muted)}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none}
+.sn{font-size:.85rem;font-weight:600}
+.sa{color:var(--muted);transition:.2s;font-size:1rem}
+.sc.op .sa{transform:rotate(180deg)}
+.sb2{padding:0 14px 14px;display:none}
+.sc.op .sb2{display:block}
+.sb2 ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.sb2 li{font-size:.8rem;color:#94a3b8;padding-left:14px;position:relative}
+.sb2 li::before{content:'›';position:absolute;left:0;color:var(--cyan)}
+.sal{background:#ffb8001a;border:1px solid #ffb80030;border-radius:8px;padding:8px 10px;font-size:.75rem;color:var(--amber);margin-bottom:8px}
+.mb{width:100%;margin-top:10px;padding:8px;background:var(--border);border:none;border-radius:8px;color:var(--text);font-size:.8rem;cursor:pointer}
+.mb.dn{background:#10b9811a;border:1px solid #10b98140;color:var(--green)}
+.pt{font-size:3rem;font-weight:900;text-align:center;color:var(--cyan);font-variant-numeric:tabular-nums}
+.pl{text-align:center;color:var(--muted);font-size:.8rem;margin-top:4px;margin-bottom:16px}
+.br2{display:flex;gap:10px;margin-bottom:12px}
+.btn{flex:1;padding:12px;border:none;border-radius:10px;font-size:.85rem;font-weight:700;cursor:pointer}
+.btn:active{transform:scale(.96)}
+.bc2{background:var(--cyan);color:#000}
+.bbo{background:transparent;border:1px solid var(--border);color:var(--text)}
+.bhe{width:10px;height:10px;background:#1e2d40;border-radius:5px;overflow:hidden;margin:8px 0}
+.bhf{height:100%;background:linear-gradient(90deg,var(--red),var(--amber));border-radius:5px;transition:.4s}
+.bne{font-size:1rem;font-weight:700;color:var(--red);text-align:center}
+.bee{font-size:3rem;text-align:center;margin:8px 0}
+.atk{width:100%;padding:14px;background:linear-gradient(135deg,var(--red),#9f1239);border:none;border-radius:12px;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:8px}
+.atk:active{transform:scale(.96)}
+.qb{background:#0f172a;border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:12px 14px;font-size:.8rem;color:#94a3b8;font-style:italic;margin-bottom:12px}
+.ad{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start}
+.adate{background:#1e2d40;border-radius:8px;padding:6px 10px;text-align:center;min-width:44px}
+.adn{font-size:1.3rem;font-weight:900;line-height:1;color:var(--cyan)}
+.adw{font-size:.6rem;color:var(--muted);text-transform:uppercase}
+.ai{flex:1}.at2{font-size:.8rem;font-weight:600;margin-bottom:4px}
+.as{font-size:.72rem;color:var(--muted)}
+.today-hl{border-color:var(--cyan)!important}
+.today-hl .adate{background:#00d4ff22}
+.stt{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin:16px 0 8px;display:flex;align-items:center;gap:8px}
+.stt::after{content:'';flex:1;height:1px;background:var(--border)}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:10px 20px;border-radius:20px;font-size:.85rem;font-weight:600;opacity:0;transition:.3s;z-index:999;pointer-events:none;white-space:nowrap}
+#toast.show{opacity:1}
+.bhe{width:100%;height:10px}
+</style>
+</head>
+<body>
+<div id="app">
+ <div id="content">
+
+  <!-- HOJE -->
+  <div id="t-hoje" class="tab on">
+   <div class="cbox">
+    <div class="cl">⚖️ UNICAP · Direito Manhã</div>
+    <div class="cv" id="dias-n">--</div>
+    <div class="cs" id="dias-s">14 de junho de 2026</div>
+   </div>
+   <div class="xrow">
+    <div class="xlv" id="lv-badge">Lv1</div>
+    <div class="xbg"><div class="xbf" id="xp-bar" style="width:0%"></div></div>
+    <div class="xl" id="xp-lbl">0 XP</div>
+   </div>
+   <div class="ss">
+    <div class="sb"><div class="sv" id="s-streak">0</div><div class="sl">🔥 Streak</div></div>
+    <div class="sb"><div class="sv" id="s-tasks">0/0</div><div class="sl">✅ Hoje</div></div>
+    <div class="sb"><div class="sv" id="s-xp">0</div><div class="sl">⚡ XP</div></div>
+   </div>
+   <div class="card">
+    <div class="ct">📅 <span id="hoje-titulo">Hoje</span></div>
+    <div id="hoje-tasks"></div>
+   </div>
+   <div class="card">
+    <div class="ct">⏳ PM2 — CBV amanhã 7h</div>
+    <div style="text-align:center;padding:8px 0">
+     <div style="font-size:1.8rem;font-weight:900;color:var(--amber)" id="pm2-clock">--:--:--</div>
+     <div style="font-size:.75rem;color:var(--muted);margin-top:4px">01/06/2026 · 7h às 12h30</div>
+    </div>
+   </div>
+  </div>
+
+  <!-- PM2 -->
+  <div id="t-pm2" class="tab">
+   <div class="card">
+    <div class="ct">📝 PM2 · 01/06 · CBV</div>
+    <div style="font-size:.8rem;color:var(--muted);margin-bottom:10px">15 componentes · marque o que revisar</div>
+    <div class="xrow" style="margin:0">
+     <div class="xlv" id="pm2-xp-b">0 XP</div>
+     <div class="xbg"><div class="xbf" id="pm2-xp-bar" style="width:0%"></div></div>
+     <div class="xl" id="pm2-xp-l">0/15</div>
+    </div>
+   </div>
+   <div class="stt">🔴 PRIORIDADE MÁXIMA</div>
+   <div id="pm2-list"></div>
+  </div>
+
+  <!-- BOSS -->
+  <div id="t-boss" class="tab">
+   <div class="qb" id="qb">"..."</div>
+   <div class="card" style="text-align:center">
+    <div class="ct" style="justify-content:center">⚡ MODO BOSS</div>
+    <div style="font-size:.75rem;color:var(--muted);margin-bottom:12px" id="lv-name">Estagiário de Direito</div>
+    <div class="bee" id="b-emoji">😈</div>
+    <div class="bne" id="b-name">Boss: Procrastinação</div>
+    <div class="bhe"><div class="bhf" id="b-hp" style="width:100%"></div></div>
+    <div style="font-size:.75rem;color:var(--muted);margin-top:4px" id="b-hpt">HP: 100/100</div>
+    <button class="atk" onclick="attackBoss()">⚔️ ATACAR (+25 XP)</button>
+   </div>
+   <div class="card">
+    <div class="ct">🍅 Pomodoro</div>
+    <div class="pt" id="pt">25:00</div>
+    <div class="pl" id="pl">Pronto para focar?</div>
+    <div class="br2">
+     <button class="btn bc2" id="pb" onclick="togPomo()">▶ Iniciar</button>
+     <button class="btn bbo" onclick="rstPomo()">↺ Reset</button>
+    </div>
+    <div style="font-size:.75rem;color:var(--muted);text-align:center" id="pc">Sessões: 0</div>
+   </div>
+   <div class="card">
+    <div class="ct">🏆 Meu Nível</div>
+    <div id="lv-list"></div>
+   </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div id="t-agenda" class="tab">
+   <div class="card" style="padding:12px;margin-bottom:16px;text-align:center">
+    <div style="font-size:.8rem">⚖️ Prova: <strong style="color:var(--cyan)">14/06/2026</strong></div>
+    <div style="font-size:.75rem;color:var(--muted);margin-top:4px">🎯 Direito Manhã · Meta: <strong style="color:var(--amber)">600+ pontos</strong></div>
+   </div>
+   <div id="agenda-list"></div>
+  </div>
+
+ </div>
+ <nav id="nav">
+  <button class="nb on" onclick="st('hoje',this)"><span class="ic">🏠</span>Hoje</button>
+  <button class="nb" onclick="st('pm2',this)"><span class="ic">📝</span>PM2</button>
+  <button class="nb" onclick="st('boss',this)"><span class="ic">⚡</span>Boss</button>
+  <button class="nb" onclick="st('agenda',this)"><span class="ic">📅</span>Agenda</button>
+ </nav>
+</div>
+<div id="toast"></div>
+
+<script>
+const SUBJ=[
+ {id:'ling',n:'Análise Linguística',ic:'📖',p:'max',pts:100,al:'Cai MUITO: sujeito, predicado, orações subordinadas!',it:['Sujeito: simples, composto, indeterminado, oculto','Predicado verbal, nominal, verbo-nominal','Orações subordinadas substantivas e adjetivas','Figuras: metáfora, metonímia, hipérbole, eufemismo','Concordância verbal: sujeito composto','Regência: assistir, visar, aspirar, esquecer']},
+ {id:'lit',n:'Literatura',ic:'📚',p:'max',pts:100,al:'Cai MUITO: características e autores de cada escola!',it:['Romantismo BR: Gonçalves Dias, Alencar, Álvares de Azevedo','Realismo: Machado de Assis (fase realista), Dom Casmurro','Naturalismo: Aluísio Azevedo — O Cortiço','Parnasianismo: Olavo Bilac (perfeição formal, arte pela arte)','Modernismo 1ª fase: Semana 1922, Mário, Oswald','Modernismo 2ª fase: Drummond, Cecília Meireles, João Cabral']},
+ {id:'hist',n:'História',ic:'🏛️',p:'max',pts:100,al:'Cai MUITO: datas e causas dos grandes eventos!',it:['Grécia: democracia ateniense, polis, guerras médicas','Roma: república → principado → dominato → queda 476 d.C.','Brasil Colonial: capitanias hereditárias, governo geral, Inconfidência','Independência 1822 → D.Pedro I → Período Regencial','Segundo Reinado: abolição 1888, proclamação República 1889','República Velha: coronelismo, política café-com-leite, Revolução 1930']},
+ {id:'geo',n:'Geografia',ic:'🌎',p:'alta',pts:80,al:'Foco: biomas brasileiros + globalização + urbanização',it:['Biomas: Amazônia, Cerrado, Caatinga, Mata Atlântica, Pantanal, Pampa','Clima BR: equatorial (Norte), tropical (Centro), semiárido, subtropical (Sul)','Urbanização: êxodo rural, megalópoles, segregação socioespacial','Globalização: fluxos de capital, trabalho, informação','Blocos: UE, Mercosul, NAFTA/USMCA, BRICS']},
+ {id:'bio1',n:'Biologia 1',ic:'🔬',p:'max',pts:100,al:'Cai MUITO: célula, mitose e meiose!',it:['Procarionte (sem núcleo) vs eucarionte (com núcleo)','Organelas: mitocôndria (ATP), ribossomo (proteína), cloroplasto','Mitose: 4 fases → 2 células IGUAIS (crescimento)','Meiose: 2 divisões → 4 células DIFERENTES (gametas)','DNA: dupla hélice, A-T e G-C, fita sentido','Síntese proteica: transcrição (DNA→RNAm) e tradução (RNAm→proteína)']},
+ {id:'bio2',n:'Biologia 2',ic:'🌿',p:'alta',pts:80,al:'Foco: ecologia — cadeias, ciclos e relações!',it:['Cadeia: produtor→consumidor primário→secundário→decompositores','Relações ecológicas: mutualismo(+/+), comensalismo(+/0), parasitismo(+/-)','Ciclo do carbono: fotossíntese absorve, respiração/queima libera','Ciclo da água: evaporação, condensação, precipitação','Impactos: desmatamento, efeito estufa, chuva ácida']},
+ {id:'qui1',n:'Química 1',ic:'⚗️',p:'media',pts:60,al:'Foco: tabela periódica e ligações químicas',it:['Períodos (linhas) = nº camadas | Grupos (colunas) = nº elétrons valência','Alcalinos (1A): 1 e⁻ valência | Halogênios (7A): 7 e⁻ | Nobres (8A): 8 e⁻','Ligação iônica: metal + ametal (troca e⁻)','Ligação covalente: ametal + ametal (compartilha e⁻)','Polaridade: H₂O polar (angular) | CO₂ apolar (linear)','Funções: ácido (H⁺), base (OH⁻), sal, óxido']},
+ {id:'qui2',n:'Química 2',ic:'🧪',p:'media',pts:60,al:'Foco: balanceamento e estequiometria',it:['Balanceamento por tentativa: acerta coeficientes','Mol = 6,02×10²³ partículas (Avogadro)','1 mol de qualquer gás (CNTP) = 22,4 L','Cálculo molar: m = n × M (massa molar)','Exotérmica: libera calor (ΔH < 0) | Endotérmica: absorve (ΔH > 0)','Velocidade reação: ↑temperatura, ↑concentração, catalisador']},
+ {id:'fis1',n:'Física 1',ic:'⚡',p:'media',pts:60,al:'Foco: MRU e MRUV — decore as fórmulas!',it:['MRU: v = Δs/Δt (v constante, a = 0)','MRUV: v = v₀ + at | s = s₀ + v₀t + at²/2','v² = v₀² + 2aΔs (Torricelli — sem tempo)','Queda livre: a = g = 10 m/s², v = gt, h = gt²/2','2ª Lei Newton: F = m·a | Peso: P = m·g','Atrito: Fat = μ × N']},
+ {id:'fis2',n:'Física 2',ic:'🔊',p:'media',pts:60,al:'Foco: ondas e óptica',it:['Ondas: v = λ·f | mecânicas (precisam meio) vs eletromagnéticas','Reflexão: θᵢ = θᵣ','Refração: luz muda velocidade ao trocar de meio','Espelho côncavo: convergente, foco real, imagem real/invertida','Lente convergente: convexas, amplia ou reduz','Espectro EM: rádio, micro, IV, visível, UV, X, gama']},
+ {id:'mat1',n:'Matemática 1',ic:'📐',p:'max',pts:100,al:'Cai MUITO: funções e Bhaskara!',it:['Função 1°: f(x)=ax+b | a>0 crescente | zero: x=-b/a','Função 2°: f(x)=ax²+bx+c | Δ=b²-4ac','Bhaskara: x=(-b±√Δ)/2a','Vértice: xᵥ=-b/2a | yᵥ=-Δ/4a','Razão e proporção: a/b=c/d → extremos×meios','Regra de 3: montar tabela, produto cruzado']},
+ {id:'mat2',n:'Matemática 2',ic:'📊',p:'alta',pts:80,al:'Foco: porcentagem, juros e probabilidade',it:['Porcentagem: parte/total × 100 | 1%=0,01','Juros simples: J=C·i·t | M=C(1+it)','Juros compostos: M=C·(1+i)ᵗ','Probabilidade: P=favoráveis/total | P(A∪B)=P(A)+P(B)-P(A∩B)','Média: soma/n | Mediana: valor central | Moda: mais frequente','Permutação: Pₙ=n! | Combinação: Cₙ,ₖ=n!/k!(n-k)!']},
+ {id:'ing',n:'Inglês',ic:'🇺🇸',p:'media',pts:60,al:'Foco: interpretação de texto e tempos verbais',it:['Simple Present: he/she/it+s | does/do para perguntas','Simple Past: verbo+ed (regulares) | did+inf. para perguntas','Present Continuous: am/is/are + verbo+ing','Pronomes: I/me/my, you/your, he/him/his, she/her/her','Cognatos: television, information, communication, democracy','Estratégia de leitura: título + 1°parágrafo + último parágrafo']},
+ {id:'fil',n:'Filosofia',ic:'🤔',p:'alta',pts:80,al:'Foco: Sócrates, Platão, Aristóteles e Iluminismo',it:['Sócrates: maiêutica, "conhece-te a ti mesmo", ironia socrática','Platão: mundo das ideias vs sensível, alegoria da caverna','Aristóteles: lógica formal, ética da virtude, animal político','Iluminismo séc.XVIII: razão, progresso, liberdade individual','Hobbes: Leviatã, estado de natureza = guerra','Locke: vida, liberdade, propriedade | Rousseau: vontade geral, bom selvagem']},
+ {id:'soc',n:'Sociologia',ic:'👥',p:'media',pts:60,al:'Foco: os três clássicos!',it:['Comte: positivismo, ordem e progresso, 3 estados','Durkheim: fato social (externo, coercitivo, geral), suicídio','Marx: luta de classes, mais-valia, alienação, materialismo histórico','Weber: ação social, burocracia, ética protestante e capitalismo','Etnocentrismo (julgar outro pela sua cultura) vs relativismo','Movimentos sociais: MST, feminismo, LGBTQIA+, antirracismo']},
+];
+
+const PLANO={
+ '2026-06-01':{t:'📝 PM2 — Prova na CBV (7h–12h30)',tk:['Prova PM2 na escola','Revisão leve à tarde','Descansar após a prova']},
+ '2026-06-02':{t:'📖 Linguagens + Redação',tk:['Tipologia + interpretação de texto','Análise sintática + regência','Figuras de linguagem','RED #2 Desigualdade Social']},
+ '2026-06-03':{t:'📚 Literatura + RED #3',tk:['Romantismo e Realismo','Modernismo 1ª e 2ª fase','RED #3 Saúde Mental','Flashcards 20 cards']},
+ '2026-06-04':{t:'🏛️ Humanas — História',tk:['Grécia e Roma Antigas','Brasil Colonial + Independência','Brasil Império e República','10 questões História']},
+ '2026-06-05':{t:'🌎 Humanas — Filosofia + Geo',tk:['Sócrates, Platão, Aristóteles','Iluminismo e contratualistas','Geografia: biomas + clima','Sociologia clássica']},
+ '2026-06-06':{t:'🎯 SIMULADO UNICAP INTERNO',tk:['Simulado 8h15–13h15','Corrigir e identificar erros','Priorizar o que errou']},
+ '2026-06-07':{t:'📐 Matemática',tk:['Razão, proporção, regra de 3','Porcentagem e juros','Funções 1° e 2° grau','20+ exercícios']},
+ '2026-06-08':{t:'🔬 Natureza + Inglês',tk:['Biologia: célula + ecologia','Química: tabela + ligações','Física: MRU e MRUV','Inglês: leitura + vocabulário']},
+ '2026-06-09':{t:'🏆 OBMEP — Descanso UNICAP',tk:['OBMEP hoje','Revisão leve Humanas','Flashcards 20 cards']},
+ '2026-06-10':{t:'🔁 Revisão Geral 1',tk:['Revisão Linguagens','Revisão Literatura','Revisão História + Filosofia','Correção RED #1 e #2']},
+ '2026-06-11':{t:'🔁 Revisão Geral 2',tk:['Revisão Matemática','Revisão Natureza','Inglês: texto longo','Sociologia + Geografia']},
+ '2026-06-12':{t:'📝 Redação Final + Revisão',tk:['RED #4 tema livre','Revisão critérios redação','Simulado rápido 30 questões','Descanso às 20h']},
+ '2026-06-13':{t:'😴 Véspera — LEVE',tk:['Só flashcards (30 min)','Revisar desempate UNICAP','Separar documentos','Dormir cedo 22h MAX']},
+ '2026-06-14':{t:'🏆 DIA DA PROVA UNICAP 2026.2',tk:['Acorda 6h, café caprichado','Chega cedo no local','REDAÇÃO PRIMEIRO (50%)','Vai com calma — você estudou!']},
+};
+
+const LEVELS=[
+ {n:'Estagiário de Direito',min:0},{n:'Advogado Júnior',min:500},{n:'Advogado Pleno',min:1200},
+ {n:'Advogado Sênior',min:2500},{n:'Sócio Associado',min:4500},{n:'Sócio Pleno',min:7000},
+ {n:'Promotor de Justiça',min:10000},{n:'Juiz de Direito',min:14000},{n:'Desembargador',min:19000},
+ {n:'Presidente do STF',min:25000},
+];
+const BOSSES=[
+ {n:'Procrastinação',e:'😈',hp:100},{n:'Insegurança',e:'😰',hp:150},
+ {n:'Fomo Social',e:'📱',hp:200},{n:'Sono na Mesa',e:'😴',hp:250},
+ {n:'Vestibular UNICAP',e:'⚖️',hp:500},
+];
+const QUOTES=[
+ 'Cada hora de estudo hoje é um voto na sua aprovação.',
+ 'Direito Manhã UNICAP te espera. Vai lá buscar.',
+ '14 de junho. Você já sabe a data. Faça valer.',
+ 'Redação vale 50%. Escreve. Escreve. Escreve.',
+ 'Carlos do futuro agradece cada minuto que você sentar.',
+ 'Não é sobre ser o melhor. É sobre ser melhor que ontem.',
+ 'A preguiça de agora é a reprovação de amanhã.',
+ 'Quem estuda hoje não pede uma segunda chance amanhã.',
+];
+
+let S=JSON.parse(localStorage.getItem('uc-v2')||'{}');
+S.xp=S.xp||0;S.streak=S.streak||0;S.tasks=S.tasks||{};
+S.pm2=S.pm2||{};S.pm2xp=S.pm2xp||0;
+S.boss=S.boss||{idx:0,hp:100};S.pomos=S.pomos||0;
+function sv(){localStorage.setItem('uc-v2',JSON.stringify(S))}
+
+function getlv(xp){for(let i=LEVELS.length-1;i>=0;i--)if(xp>=LEVELS[i].min)return i;return 0;}
+
+function st(id,btn){
+ document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+ document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+ document.getElementById('t-'+id).classList.add('on');
+ btn.classList.add('on');
+ document.getElementById('content').scrollTop=0;
+}
+
+function upXP(){
+ const li=getlv(S.xp);const lv=LEVELS[li];
+ const nx=LEVELS[Math.min(li+1,LEVELS.length-1)];
+ const pct=li===LEVELS.length-1?100:Math.round((S.xp-lv.min)/(nx.min-lv.min)*100);
+ document.getElementById('lv-badge').textContent='Lv'+(li+1);
+ document.getElementById('xp-bar').style.width=pct+'%';
+ document.getElementById('xp-lbl').textContent=S.xp+' XP';
+ document.getElementById('s-xp').textContent=S.xp;
+ document.getElementById('s-streak').textContent=S.streak;
+ document.getElementById('lv-name').textContent=lv.n;
+ document.getElementById('lv-list').innerHTML=LEVELS.map((l,i)=>{
+  const dn=S.xp>=l.min;
+  return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">'+
+   '<div style="font-size:.75rem;font-weight:700;color:'+(dn?'var(--green)':'var(--muted)')+';width:24px">'+(i+1)+'</div>'+
+   '<div style="flex:1;font-size:.78rem;color:'+(dn?'var(--text)':'var(--muted)')+'">'+l.n+'</div>'+
+   '<div style="font-size:.7rem;color:'+(dn?'var(--green)':'var(--muted)')+'">'+( dn?'✓':l.min+' XP')+'</div></div>';
+ }).join('');
+}
+
+function addXP(pts,msg){
+ S.xp+=pts;sv();upXP();toast('+'+pts+' XP — '+msg);
+}
+
+function getTK(){return new Date().toISOString().slice(0,10)}
+
+function buildHoje(){
+ const k=getTK();
+ const p=PLANO[k]||{t:'📖 Dia de Estudo',tk:['Estudar 1 matéria por 1h','Fazer 10 flashcards','Revisar conteúdo anterior']};
+ document.getElementById('hoje-titulo').textContent=p.t;
+ const dn=S.tasks[k]||{};let dc=0;
+ document.getElementById('hoje-tasks').innerHTML=p.tk.map((t,i)=>{
+  const isDn=!!dn[i];if(isDn)dc++;
+  return '<div class="ti"><div class="tc '+(isDn?'dn':'')+'" onclick="tgTask(\''+k+'\','+i+',this,event)"></div>'+
+   '<div class="tt '+(isDn?'dn':'')+'">'+t+'</div></div>';
+ }).join('');
+ document.getElementById('s-tasks').textContent=dc+'/'+p.tk.length;
+}
+
+function tgTask(k,i,el,e){
+ e.stopPropagation();
+ if(!S.tasks[k])S.tasks[k]={};
+ const was=!!S.tasks[k][i];S.tasks[k][i]=!was;
+ el.classList.toggle('dn',!was);el.nextElementSibling.classList.toggle('dn',!was);
+ if(!was)addXP(50,'Tarefa concluída!');
+ sv();buildHoje();
+}
+
+function buildPM2(){
+ const c=document.getElementById('pm2-list');c.innerHTML='';
+ const groups={max:[],alta:[],media:[]};
+ SUBJ.forEach(s=>groups[s.p].push(s));
+ ['max','alta','media'].forEach(pri=>{
+  if(pri==='alta'){const d=document.createElement('div');d.className='stt';d.textContent='🟡 IMPORTANTE';c.appendChild(d);}
+  if(pri==='media'){const d=document.createElement('div');d.className='stt';d.textContent='⚪ COMPLEMENTAR';c.appendChild(d);}
+  groups[pri].forEach(s=>{
+   const dn=!!S.pm2[s.id];
+   const d=document.createElement('div');d.className='sc'+(dn?' op':'');d.id='p-'+s.id;
+   const bcls=pri==='max'?'br':pri==='alta'?'ba':'bc';
+   d.innerHTML='<div class="sh" onclick="tgPM2(\''+s.id+'\')">'+
+    '<span style="display:flex;align-items:center;gap:8px">'+s.ic+
+    ' <span class="sn" style="'+(dn?'text-decoration:line-through;color:var(--muted)':'')+'">'+s.n+'</span>'+
+    ' <span class="badge '+bcls+'">'+s.pts+'xp</span>'+(dn?' <span style="color:var(--green)">✓</span>':'')+
+    '</span><span class="sa">▾</span></div>'+
+    '<div class="sb2"><div class="sal">'+s.al+'</div>'+
+    '<ul>'+s.it.map(i=>'<li>'+i+'</li>').join('')+'</ul>'+
+    '<button class="mb'+(dn?' dn':'')+'" onclick="mkPM2(\''+s.id+'\','+s.pts+',event)">'+
+    (dn?'✓ Revisado':'Marcar como revisado')+'</button></div>';
+   c.appendChild(d);
+  });
+ });
+ const dn=Object.values(S.pm2).filter(Boolean).length;
+ document.getElementById('pm2-xp-b').textContent=S.pm2xp+' XP';
+ document.getElementById('pm2-xp-bar').style.width=Math.round(dn/SUBJ.length*100)+'%';
+ document.getElementById('pm2-xp-l').textContent=dn+'/'+SUBJ.length;
+}
+
+function tgPM2(id){document.getElementById('p-'+id).classList.toggle('op')}
+
+function mkPM2(id,pts,e){
+ e.stopPropagation();
+ const was=!!S.pm2[id];S.pm2[id]=!was;
+ if(!was){S.pm2xp+=pts;addXP(pts,'PM2 revisado!')}
+ else S.pm2xp=Math.max(0,S.pm2xp-pts);
+ sv();buildPM2();
+}
+
+function buildBoss(){
+ const b=BOSSES[Math.min(S.boss.idx,BOSSES.length-1)];
+ document.getElementById('b-emoji').textContent=b.e;
+ document.getElementById('b-name').textContent='Boss: '+b.n;
+ const pct=Math.max(0,S.boss.hp/b.hp*100);
+ document.getElementById('b-hp').style.width=pct+'%';
+ document.getElementById('b-hpt').textContent='HP: '+S.boss.hp+'/'+b.hp;
+}
+
+function attackBoss(){
+ const b=BOSSES[Math.min(S.boss.idx,BOSSES.length-1)];
+ const dmg=Math.floor(Math.random()*15)+10;
+ S.boss.hp=Math.max(0,S.boss.hp-dmg);
+ addXP(25,'Ataque!');
+ if(S.boss.hp<=0){
+  toast('🏆 Boss derrotado! +100 XP BÔNUS');S.xp+=100;
+  S.boss.idx=Math.min(S.boss.idx+1,BOSSES.length-1);
+  S.boss.hp=BOSSES[S.boss.idx]?BOSSES[S.boss.idx].hp:500;
+ }
+ sv();buildBoss();upXP();
+}
+
+let pTimer=null,pSecs=25*60,pRun=false,pCyc=0;
+function upPomo(){
+ const m=Math.floor(pSecs/60),s=pSecs%60;
+ document.getElementById('pt').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function togPomo(){
+ if(pRun){clearInterval(pTimer);pRun=false;document.getElementById('pb').textContent='▶ Continuar';document.getElementById('pl').textContent='Pausado';}
+ else{
+  pRun=true;document.getElementById('pb').textContent='⏸ Pausar';
+  document.getElementById('pl').textContent=pCyc%2===0?'🔴 Foco total!':'🟢 Pausa — respira';
+  pTimer=setInterval(()=>{
+   if(pSecs>0){pSecs--;upPomo();}
+   else{
+    clearInterval(pTimer);pRun=false;pCyc++;
+    if(pCyc%2===0){S.pomos++;sv();addXP(100,'Pomodoro 🍅');document.getElementById('pc').textContent='Sessões: '+S.pomos;pSecs=5*60;document.getElementById('pl').textContent='🟢 5 min de pausa!';document.getElementById('pb').textContent='▶ Iniciar pausa';}
+    else{pSecs=25*60;document.getElementById('pl').textContent='💪 Hora de focar!';document.getElementById('pb').textContent='▶ Nova sessão';}
+    upPomo();
+   }
+  },1000);
+ }
+}
+function rstPomo(){clearInterval(pTimer);pRun=false;pSecs=25*60;pCyc=0;upPomo();document.getElementById('pb').textContent='▶ Iniciar';document.getElementById('pl').textContent='Pronto para focar?';}
+
+function buildAgenda(){
+ const c=document.getElementById('agenda-list');
+ const today=getTK();
+ const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+ c.innerHTML=Object.entries(PLANO).map(([dt,p])=>{
+  const d=new Date(dt+'T12:00:00');const ht=dt===today;
+  return '<div class="ad '+(ht?'today-hl':'')+'">'+
+   '<div class="adate"><div class="adn">'+d.getDate()+'</div><div class="adw">'+days[d.getDay()]+'</div></div>'+
+   '<div class="ai"><div class="at2">'+p.t+'</div><div class="as">'+p.tk.slice(0,2).join(' · ')+'</div></div></div>';
+ }).join('');
+}
+
+function updClock(){
+ const now=new Date();
+ const prova=new Date('2026-06-14T08:00:00');
+ const pm2=new Date('2026-06-01T07:00:00');
+ const dp=prova-now;
+ if(dp>0){document.getElementById('dias-n').textContent=Math.floor(dp/86400000);document.getElementById('dias-s').textContent=Math.floor((dp%86400000)/3600000)+'h restantes';}
+ else{document.getElementById('dias-n').textContent='🎉';document.getElementById('dias-s').textContent='Dia da prova chegou!';}
+ const d2=pm2-now;
+ if(d2>0){
+  const h=Math.floor(d2/3600000),m=Math.floor((d2%3600000)/60000),s=Math.floor((d2%60000)/1000);
+  document.getElementById('pm2-clock').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+ } else document.getElementById('pm2-clock').textContent='BOA PROVA! 🎯';
+}
+
+function toast(msg){
+ const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+ setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.getElementById('qb').textContent='"'+QUOTES[Math.floor(Math.random()*QUOTES.length)]+'"';
+buildHoje();buildPM2();buildBoss();buildAgenda();upXP();upPomo();
+document.getElementById('pc').textContent='Sessões: '+S.pomos;
+updClock();setInterval(updClock,1000);
+</script>
+</body>
+</html>

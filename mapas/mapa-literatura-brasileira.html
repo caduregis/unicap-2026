@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Literatura Brasileira · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">LITERATURA BR</div><div class="lt2">quinhentismo · barroco · modernismo</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">℘</div><div class="bt"><div class="l1">Literatura Brasileira</div><div class="l2">Linguagens · História da Arte + Literatura BR</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · LITERATURA</span><h1>Literatura Brasileira & História da Arte</h1><p>Da Carta de Caminha (1500) à literatura contemporânea. 8 escolas literárias com autores, obras e características LITERAIS do PDF Conteúdos Programáticos.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em escola</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#c084fc', corHex2:'#a855f7', bg:'#0e0420', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'LB 1',nome:'Quinhentismo',sub:'Séc. XVI · Literatura de informação',forma:'tetra',cor:0xc084fc,
+topicos:['Carta de Pero Vaz de Caminha (1500)','Literatura de informação (Pero Magalhães Gândavo, Gabriel Soares de Sousa)','Literatura jesuítica (Pe. José de Anchieta, Pe. Manuel da Nóbrega)','Catequese e aculturação dos indígenas'],
+resumo:'Primeiros relatos sobre o Brasil. Anchieta escreveu em tupi para catequizar. Não é "escola literária" formal, é o conjunto de textos do séc. XVI.',
+dica:'Anchieta NÃO é Quinhentismo formal — é "literatura jesuítica/catequética". A Carta de Caminha é o marco zero da literatura brasileira.'},
+{cod:'LB 2',nome:'Barroco · Séc. XVII',sub:'Gregório de Matos, Pe. Vieira',forma:'octa',cor:0xa855f7,
+topicos:['Estética do contraste, dualismo, antíteses, paradoxos','Cultismo (rebuscamento formal) e Conceptismo (jogo de ideias)','Gregório de Matos — "Boca do Inferno" — poemas líricos, religiosos, satíricos','Padre Antônio Vieira — Sermões (Sermão da Sexagésima)'],
+resumo:'Barroco brasileiro = Bahia. Dualismo corpo/alma, terra/céu, prazer/culpa. Vieira é mestre do conceptismo (raciocínio); Gregório, do cultismo + sátira.',
+dica:'Gregório de Matos = SÁTIRA política e social (Boca do Inferno). Vieira = SERMÕES com argumentação rigorosa. Ambos da Bahia.'},
+{cod:'LB 3',nome:'Arcadismo · Séc. XVIII',sub:'Cláudio Manuel, Gonzaga, Basílio',forma:'dodeca',cor:0xfde047,
+topicos:['Bucolismo, fugere urbem, locus amoenus, carpe diem, inutilia truncat','Pseudônimos pastoris (Dirceu, Marília, Glauceste Satúrnio)','Cláudio Manuel da Costa — "Obras Poéticas" (1768) — marco inaugural','Tomás Antônio Gonzaga — "Marília de Dirceu" — exilado pela Inconfidência','Basílio da Gama — "O Uraguai" · Santa Rita Durão — "Caramuru"'],
+resumo:'Reação ao barroco. Iluminismo. Simplicidade pastoril, racionalismo, idealização do campo. Mineiros, ligados à Inconfidência (1789).',
+dica:'Arcadismo BR = mineiros + Inconfidência. Marília de Dirceu é o livro mais famoso. Latim arcádico: fugere urbem (fugir da cidade).'},
+{cod:'LB 4',nome:'Romantismo · 1836-1881',sub:'3 gerações poéticas + prosa',forma:'torus',cor:0xec4899,
+topicos:['1ª geração (nacionalista/indianista): Gonçalves Dias, José de Alencar (O Guarani, Iracema)','2ª geração (ultra-romântica/mal-do-século): Álvares de Azevedo, Casimiro de Abreu','3ª geração (condoreira/abolicionista): Castro Alves ("Navio Negreiro")','Prosa urbana: Manuel Antônio de Almeida, José de Alencar (Senhora)','Prosa indianista: José de Alencar (O Guarani)','Prosa regionalista: Bernardo Guimarães (A Escrava Isaura), Visconde de Taunay'],
+resumo:'Movimento ligado à Independência (1822). Quer construir identidade nacional via índio idealizado. 3 gerações poéticas distintas.',
+dica:'Castro Alves = "Poeta dos escravos". Gonçalves Dias = "Canção do Exílio". Alencar = pai do romance brasileiro (O Guarani, Iracema, Senhora).'},
+{cod:'LB 5',nome:'Realismo e Naturalismo · 1881-1893',sub:'Machado, Aluísio, Raul Pompeia',forma:'icosa',cor:0xf472b6,
+topicos:['Realismo: Machado de Assis ("Memórias Póstumas de Brás Cubas" 1881, "Dom Casimiro", "Quincas Borba")','Naturalismo: Aluísio Azevedo ("O Cortiço" 1890, "O Mulato")','Romance psicológico: Raul Pompeia ("O Ateneu")','Análise científica do homem, determinismo (Naturalismo)','Crítica social, ironia, narrador não-confiável (Machado)'],
+resumo:'Reação ao romantismo. Realismo psicológico (Machado) + Naturalismo determinista (Aluísio). Brás Cubas (1881) é o marco fundador.',
+dica:'Machado = REALISMO (psicológico). Aluísio Azevedo = NATURALISMO (determinismo biológico, "homem-animal"). Não confunda.'},
+{cod:'LB 6',nome:'Parnasianismo e Simbolismo · 1893-1922',sub:'Bilac, Cruz e Sousa, Alphonsus',forma:'tetra',cor:0x06b6d4,
+topicos:['Parnasianismo: culto à forma, soneto perfeito · Olavo Bilac ("Tarde", "Profissão de Fé")','Trio parnasiano: Bilac, Alberto de Oliveira, Raimundo Correia','Simbolismo: musicalidade, sinestesia, espiritualismo · Cruz e Sousa ("Broquéis")','Alphonsus de Guimaraens — "Setenário das Dores de Nossa Senhora"'],
+resumo:'Parnasianismo = forma impecável, objetivo. Simbolismo = subjetivo, místico. Período de transição entre Realismo e Modernismo.',
+dica:'Cruz e Sousa = "Dante negro", afrobrasileiro. Bilac = "Príncipe dos poetas". Simbolismo usa MAIÚSCULAS, repetições, aliteração.'},
+{cod:'LB 7',nome:'Pré-Modernismo · 1902-1922',sub:'Euclides, Lima Barreto, Augusto, Graça',forma:'octa',cor:0xfb923c,
+topicos:['Período de transição entre Simbolismo e Modernismo','Euclides da Cunha — "Os Sertões" (1902) — Canudos','Lima Barreto — "Triste Fim de Policarpo Quaresma" — crítica social','Augusto dos Anjos — "Eu" (1912) — poesia cientificista, mórbida','Graça Aranha — "Canaã" — choque de culturas','Monteiro Lobato — Jeca Tatu, contos do interior'],
+resumo:'Denúncia social do "Brasil esquecido": sertão (Euclides), subúrbio carioca (Lima Barreto), morte e ciência (Augusto). Realismo crítico.',
+dica:'Os Sertões = jornalismo + ciência + literatura sobre Canudos (1896-97). Augusto dos Anjos = poesia "mórbida", influência cientificista.'},
+{cod:'LB 8',nome:'Modernismo · 1922-1945+',sub:'3 fases: 22, 30, 45',forma:'dodeca',cor:0xfb7185,
+topicos:['Semana de Arte Moderna (1922): Mário e Oswald de Andrade, Tarsila do Amaral, Anita Malfatti','1ª fase (1922-30): destruição, irreverência · Mário ("Macunaíma"), Oswald ("Manifesto Antropófago")','2ª geração/30 (regional, urbana): Carlos Drummond, Cecília Meireles, Manuel Bandeira','Romance de 30: Graciliano Ramos ("Vidas Secas"), Jorge Amado, Rachel de Queiroz, José Lins do Rego','3ª geração/45 (intimista, regional): Clarice Lispector, João Cabral de Melo Neto, João Guimarães Rosa ("Grande Sertão: Veredas")','Literatura contemporânea: Caio Fernando Abreu, Lygia Fagundes Telles, Hilda Hilst, autoras negras (Conceição Evaristo)'],
+resumo:'Maior movimento literário brasileiro. Quebra com o passado (1922) → consolidação social (1930) → linguagem polida (1945). Atual continua o legado.',
+dica:'Manifesto Antropófago (Oswald) = "comer" cultura estrangeira e ressignificar. Guimarães Rosa = sertão + neologismos + filosofia. Drummond = "ser ou não ser" brasileiro.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

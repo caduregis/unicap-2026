@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Língua Inglesa · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">ENGLISH</div><div class="lt2">reading · grammar</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">E</div><div class="bt"><div class="l1">Língua Inglesa</div><div class="l2">Linguagens · Reading + Grammar</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · INGLÊS</span><h1>Língua Inglesa · Reading & Grammar</h1><p>9 gramática + 9 reading skills LITERAIS do PDF Conteúdos Programáticos. Sem inventar conteúdo — só o que está no edital oficial.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#06b6d4', corHex2:'#0891b2', bg:'#02101a', hubForma:'sphere' };
+window.MARCOS = [
+{cod:'ING 1',nome:'Reading Comprehension',sub:'Associar, inferir, ideias principais',forma:'icosa',cor:0x06b6d4,
+topicos:['Associar vocábulos e expressões de um texto em inglês ao seu tema','Inferir o sentido de uma palavra ou expressão, considerando texto e contexto, assim como sua estrutura morfológica','Relacionar um texto em inglês, as estruturas linguísticas, sua função e seu uso social','Reconhecer características de um texto próprias do gênero a que pertence','Apreender as ideias principais em um texto','Distinguir, nos textos, os fatos relatados das opiniões'],
+resumo:'Reading comprehension é 50%+ da prova de inglês. Treinar leitura ATIVA: identificar tema, ideias principais, distinguir facts/opinions.',
+dica:'Não tente traduzir palavra por palavra. Leia o título + 1ª linha + última linha. Depois decida onde aprofundar.'},
+{cod:'ING 1.7-1.9',nome:'Coesão · Conectivos · Cultura',sub:'Relações sintático-semânticas',forma:'dodeca',cor:0x0891b2,
+topicos:['Estabelecer relações sintático-semânticas entre partes de um texto (adição, oposição, explicação, conclusão, causa, consequência, condição, temporalidade e finalidade)','Identificar recursos (repetições, substituições, associações, uso de conectivos) que contribuem para a coesão e coerência do texto','Reconhecer aspectos socioculturais de povos de falantes da língua estrangeira'],
+resumo:'Conectivos (linking words) carregam relações lógicas. "However" = oposição. "Therefore" = consequência. "Although" = concessão.',
+dica:'Decore os conectivos por FUNÇÃO: adição (and, also, moreover), oposição (but, however, although), causa (because, since), consequência (therefore, thus).'},
+{cod:'ING 2.1-2.4',nome:'Articles · Nouns · Pronouns · Possessives',sub:'Determinantes básicos',forma:'octa',cor:0x10b981,
+topicos:['Articles (a, an, the)','Nouns and quantifiers (much, many, some, any, a lot of, few, little)','Pronouns (object: him, her, them, us; subject: he, she, they, we; relative: who, which, that, whose)','Possessive forms (apostrophe), Possessive adjectives (my, your, his...), Possessive pronouns (mine, yours, his...)'],
+resumo:'A/AN antes de vocábulo iniciado por som vocálico/consonantal. THE para algo específico. Pronome RELATIVO conecta orações.',
+dica:'WHO para pessoas (subject). WHOM (formal) para pessoa como objeto. WHICH/THAT para coisas. WHOSE para posse. "I know the man WHO came."'},
+{cod:'ING 2.5-2.6',nome:'Verb Tenses · Moods',sub:'Tempos e modos verbais',forma:'torus',cor:0xa855f7,
+topicos:['Verb tenses: Simple Present, Present Continuous, Simple Past, Past Continuous, Present Perfect, Past Perfect, Future tenses (will, going to)','Verb Moods: Indicative, Imperative, Subjunctive (formal expressions like "If I were you...")','Voice: Active vs Passive (be + past participle)','Reported Speech (indirect discourse)'],
+resumo:'Inglês tem 12 tempos verbais principais. Present Perfect (have/has + past participle) é o que mais confunde brasileiros (passado conectado ao presente).',
+dica:'"I have been to Paris" (já estive — experiência) ≠ "I went to Paris" (fui — momento específico). Present Perfect = ponte passado-presente.'},
+{cod:'ING 2.7',nome:'Modal Verbs',sub:'Possibilidade, obrigação, capacidade',forma:'tetra',cor:0xfb923c,
+topicos:['Modal verbs: CAN (capacidade/permissão), COULD (passado de CAN/educação), MAY (permissão/possibilidade)','MIGHT (possibilidade remota), WILL (futuro/vontade), WOULD (condicional)','SHALL (formal/sugestão), SHOULD (recomendação), MUST (obrigação forte/dedução)','OUGHT TO (recomendação ética), HAVE TO (obrigação externa)','Modais não levam "to" depois (exceto OUGHT TO, HAVE TO)','Modais não têm "-s" na 3ª pessoa: "He can swim"'],
+resumo:'Modais são verbos auxiliares que modificam o sentido do verbo principal. Sem -s, sem -ing, sem "to" (na maioria).',
+dica:'MUST = obrigação interna ou dedução lógica ("It must be cold"). HAVE TO = obrigação externa. SHOULD = recomendação suave. Não confunda!'},
+{cod:'ING 2.8-2.9',nome:'Conjunctions · Prepositions',sub:'Conectores e preposições',forma:'icosa',cor:0xf43f5e,
+topicos:['Conjunctions coordinating (and, but, or, so, for, nor, yet)','Conjunctions subordinating (because, although, while, since, if, unless, when, as)','Prepositions of time (at, on, in, for, since, by)','Prepositions of place (at, on, in, under, over, between, among)','Prepositions of movement (to, from, into, onto, through, across)','Phrasal verbs (verb + preposition: look at, give up, take off, get on)'],
+resumo:'Conjunções conectam orações. Preposições conectam palavras a outras. Phrasal verbs mudam significado completamente conforme preposição.',
+dica:'AT (hora, ponto específico), IN (mês, ano, manhã), ON (dia, data). "I work AT 9am IN July ON Monday." Phrasal verbs: decore 20-30 mais comuns.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

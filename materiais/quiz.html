@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — UNICAP 2026.2 Direito</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#050810 0%,#0a0e1a 40%,#0d1220 100%);background-attachment:fixed;
+    color:#e8eaf0;min-height:100vh;padding:22px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .box{max-width:720px;margin:0 auto;}
+  .nav-top{margin-bottom:14px;}
+  .nav-top a{font-size:13px;color:#00d4ff;text-decoration:none;}
+  .nav-top a:hover{text-decoration:underline;}
+  h1{font-size:21px;color:#fff;text-align:center;font-weight:800;letter-spacing:-0.02em;}
+  .sub{font-size:13px;color:#6b7a99;text-align:center;margin:4px 0 18px;font-family:'JetBrains Mono',monospace;}
+  .barra{background:rgba(255,255,255,0.06);height:6px;border-radius:99px;overflow:hidden;margin-bottom:6px;}
+  .barra div{background:linear-gradient(90deg,#00d4ff,#0099cc);height:100%;transition:width .4s cubic-bezier(.22,1,.36,1);border-radius:99px;}
+  .meta{display:flex;justify-content:space-between;font-size:12px;color:#6b7a99;margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
+  .card{background:rgba(19,24,41,0.70);backdrop-filter:blur(16px);border-radius:16px;padding:26px;border:1px solid rgba(0,212,255,0.12);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+  .area-tag{font-size:11px;color:#ffb800;text-transform:uppercase;letter-spacing:2px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+  .enunciado{font-size:16px;line-height:1.6;margin:10px 0 18px;color:#e8eaf0;}
+  .alt{display:block;width:100%;text-align:left;background:rgba(255,255,255,0.03);color:#e8eaf0;
+    border:1px solid rgba(255,255,255,0.08);padding:13px 15px;border-radius:10px;margin:8px 0;
+    cursor:pointer;font-size:14px;line-height:1.5;transition:all 180ms;font-family:'Inter',sans-serif;}
+  .alt:hover{border-color:rgba(0,212,255,0.4);background:rgba(0,212,255,0.06);color:#e8eaf0;}
+  .alt.certa{background:rgba(74,222,128,0.14);border-color:rgba(74,222,128,0.5);color:#4ade80;}
+  .alt.errada{background:rgba(239,68,68,0.14);border-color:rgba(239,68,68,0.5);color:#ef4444;}
+  .alt:disabled{cursor:default;}
+  .expl{margin-top:14px;padding:14px;background:rgba(0,212,255,0.06);
+    border-left:3px solid #00d4ff;border-radius:8px;font-size:13.5px;line-height:1.6;display:none;color:#c8d0e0;}
+  .expl.show{display:block;}
+  .nav{margin-top:18px;text-align:right;}
+  button.prox{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#04050a;border:none;padding:11px 24px;
+    border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;transition:all 200ms;}
+  button.prox:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,255,0.35);}
+  button.prox:disabled{opacity:0.35;cursor:default;transform:none;box-shadow:none;}
+  .fim{background:rgba(19,24,41,0.70);backdrop-filter:blur(16px);border-radius:16px;padding:36px;text-align:center;border:1px solid rgba(0,212,255,0.15);}
+  .fim .nota{font-size:52px;font-weight:700;color:#00d4ff;font-family:'JetBrains Mono',monospace;}
+  .fim h2{font-size:20px;margin:8px 0;font-weight:800;}
+  .fim .areas{text-align:left;margin:18px 0;font-size:13px;}
+  .fim .areas div{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;}
+  .fim .areas span:last-child{font-family:'JetBrains Mono',monospace;color:#00d4ff;font-weight:700;}
+  .refazer{background:rgba(255,255,255,0.06);color:#c0c8da;border:1px solid rgba(255,255,255,0.10);padding:10px 20px;
+    border-radius:9px;cursor:pointer;margin-top:10px;font-family:'Inter',sans-serif;font-weight:600;font-size:13px;transition:all 180ms;}
+  .refazer:hover{background:rgba(255,255,255,0.10);color:#e8eaf0;}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="nav-top"><a href="../dashboard.html">← Dashboard</a></div>
+  <h1>Quiz Diagnóstico — UNICAP 2026.2 Direito</h1>
+  <div class="sub">20 questões no estilo da banca · correção imediata e comentada</div>
+  <div class="barra"><div id="prog" style="width:0"></div></div>
+  <div class="meta"><span id="contador">Questão 1 de 20</span><span id="placar">Acertos: 0</span></div>
+  <div id="area"></div>
+</div>
+
+<script>
+const Q = [
+ {a:'Linguagens',e:'Um texto que apresenta uma sucessão de acontecimentos no tempo, com personagens e verbos de ação no pretérito, caracteriza-se como predominantemente:',
+  o:['descritivo','narrativo','dissertativo-argumentativo','injuntivo','expositivo'],c:1,
+  x:'Sucessão de acontecimentos no tempo + personagens + verbos de ação = tipo narrativo. Descritivo caracteriza; argumentativo defende tese; injuntivo instrui.'},
+ {a:'Linguagens',e:'A função da linguagem centrada no próprio código — como num verbete de dicionário ou num poema que fala da poesia — é a:',
+  o:['emotiva','apelativa','metalinguística','fática','referencial'],c:2,
+  x:'Metalinguística: a linguagem fala dela mesma. Foi cobrada na UNICAP 2026.1 com textos de Graciliano, Clarice e Quintana refletindo sobre o ato de escrever.'},
+ {a:'Linguagens',e:'A interpelação direta do leitor, que quase o transforma em personagem, é marca registrada de qual autor?',
+  o:['Graciliano Ramos','José de Alencar','Machado de Assis','Olavo Bilac','Gonçalves Dias'],c:2,
+  x:'Machado de Assis conversa com o leitor ao longo da narrativa (visto em Quincas Borba e Dom Casmurro). É uma de suas marcas, ao lado da ironia.'},
+ {a:'Linguagens',e:'"Ele chorou rios de lágrimas." A figura de linguagem presente é:',
+  o:['metonímia','eufemismo','hipérbole','antítese','ironia'],c:2,
+  x:'Hipérbole é o exagero proposital. "Rios de lágrimas" exagera a quantidade de choro.'},
+ {a:'Linguagens',e:'Assinale a frase em que o uso da crase está CORRETO:',
+  o:['Refiro-me à você.','Cheguei à pé na escola.','Entreguei o trabalho à professora.','Estou disposto à vencer.','Vou à algum lugar.'],c:2,
+  x:'"Entreguei à professora": teste do masculino → "entreguei ao professor" = tem crase. Antes de pronome pessoal (você), verbo (pé→não é verbo, mas "a pé" é locução sem crase) e palavra masculina não há crase.'},
+ {a:'Humanas',e:'Num hospital, um algoritmo prioriza pacientes de transplante usando um índice de "estabilidade social" que prejudica os mais vulneráveis. À luz de Kant, a conduta mais adequada é:',
+  o:['manter o índice, pois aumenta a eficiência','abandonar o critério discriminatório, para não tratar vulneráveis como meros meios','automatizar 100% da decisão','trocar o índice por renda mensal','exigir fiador dos pacientes sem rede de apoio'],c:1,
+  x:'Para Kant, a pessoa deve ser tratada como fim, nunca apenas como meio. Critérios que penalizam vulneráveis os instrumentalizam — devem ser abandonados.'},
+ {a:'Humanas',e:'Uma plataforma de streaming oferece séries "recomendadas para você" que repetem fórmulas, com capas variadas. Esse caso ilustra qual conceito?',
+  o:['solidariedade orgânica de Durkheim','ação social de Weber','Indústria Cultural e pseudo-individualização (Adorno)','mais-valia de Marx','banalidade do mal de Arendt'],c:2,
+  x:'Adorno: a Indústria Cultural padroniza obras; a pseudo-individualização cria aparência de variedade (capas diferentes) sobre conteúdos iguais.'},
+ {a:'Humanas',e:'O AI-5, de 1968, durante a Ditadura Militar brasileira, caracterizou-se por:',
+  o:['restaurar eleições diretas','ampliar liberdades de imprensa','endurecimento autoritário: recesso do Congresso, censura e suspensão de direitos','criar a Constituição Cidadã','encerrar o regime militar'],c:2,
+  x:'O AI-5 foi o auge da repressão: fechou o Congresso, instituiu censura e suspendeu direitos políticos. A Constituição "Cidadã" só viria em 1988.'},
+ {a:'Humanas',e:'Sobre a ideia de que a Amazônia é o "pulmão do mundo", é correto afirmar:',
+  o:['é verdadeira: produz 20% do O₂ que respiramos','é um mito: a floresta consome quase todo o O₂ que produz','é verdadeira: as árvores não consomem oxigênio','a floresta não influencia o clima','o oxigênio do planeta vem só das florestas'],c:1,
+  x:'A floresta madura consome na respiração quase todo o O₂ que produz. Sua importância real é a biodiversidade e a regulação climática e hídrica.'},
+ {a:'Humanas',e:'O multilateralismo defendido pelo BRICS consiste em:',
+  o:['concentrar o poder nas potências tradicionais','dar maior participação decisória às economias emergentes na ordem global','criar uma moeda única mundial obrigatória','eliminar a ONU','fechar as fronteiras dos países-membros'],c:1,
+  x:'O multilateralismo busca uma ordem mundial mais equilibrada, com mais voz para as economias emergentes (Sul Global) nas decisões globais.'},
+ {a:'Matemática',e:'Uma campanha reduz o uso de copos em 25% no 1º mês e mais 20% no 2º mês. A redução total é de:',
+  o:['45%','50%','40%','35%','5%'],c:2,
+  x:'Fatores sucessivos multiplicam: 0,75 × 0,80 = 0,60 → restam 60% → redução de 40%. Somar 25%+20% (=45%) é o erro clássico.'},
+ {a:'Matemática',e:'6 torneiras enchem um tanque em 8 horas. Quantas horas levariam 4 torneiras?',
+  o:['12 horas','6 horas','10 horas','5,3 horas','16 horas'],c:0,
+  x:'Grandezas inversamente proporcionais (menos torneiras, mais tempo): 6×8 = 4×x → x = 48/4 = 12 horas.'},
+ {a:'Matemática',e:'Na função f(x) = 20 − 2x, qual é o valor de f(7)?',
+  o:['6','14','−6','34','7'],c:0,
+  x:'f(7) = 20 − 2·7 = 20 − 14 = 6.'},
+ {a:'Matemática',e:'Numa caixa com 7 bolas numeradas de 1 a 7, qual a probabilidade de tirar a bola nº 1 na primeira retirada?',
+  o:['1/2','1/7','7/7','1/49','6/7'],c:1,
+  x:'Casos favoráveis (1) ÷ casos possíveis (7) = 1/7.'},
+ {a:'Matemática',e:'Um triângulo retângulo tem catetos 6 e 8. Qual é a hipotenusa?',
+  o:['10','12','14','48','7'],c:0,
+  x:'Pitágoras: h² = 6² + 8² = 36 + 64 = 100 → h = 10.'},
+ {a:'Natureza',e:'Qual processo de divisão celular gera quatro células com metade dos cromossomos, formando gametas?',
+  o:['mitose','meiose','fermentação','fotossíntese','difusão'],c:1,
+  x:'A meiose reduz o número de cromossomos à metade e gera 4 células — base da formação de gametas e da variabilidade genética.'},
+ {a:'Natureza',e:'A introdução de uma espécie fora de seu ambiente natural, que compete com as nativas e reduz a biodiversidade, é uma espécie:',
+  o:['endêmica','migratória','invasora','polinizadora','decompositora'],c:2,
+  x:'Espécie invasora: introduzida fora de seu habitat, sem predadores naturais, domina o ecossistema e reduz a biodiversidade nativa.'},
+ {a:'Natureza',e:'Sobre o catalisador numa reação química, é correto afirmar que ele:',
+  o:['é consumido na reação','muda os produtos finais','acelera a reação sem ser consumido','sempre diminui a velocidade','só atua a altas temperaturas'],c:2,
+  x:'O catalisador acelera a reação (reduz a energia de ativação) sem ser consumido e sem alterar os produtos.'},
+ {a:'Natureza',e:'O fenômeno pelo qual uma onda contorna obstáculos e se espalha ao passar por aberturas pequenas chama-se:',
+  o:['reflexão','refração','difração','dispersão','polarização'],c:2,
+  x:'Difração: a onda contorna obstáculos e se espalha em aberturas. Refração é mudança de meio; dispersão separa cores; reflexão é o retorno da onda.'},
+ {a:'Natureza',e:'A pressão hidrostática num ponto submerso é dada por P = d·g·h. Se a densidade dobra, mantendo g e h, a pressão hidrostática:',
+  o:['dobra','cai pela metade','não muda','fica quatro vezes maior','torna-se zero'],c:0,
+  x:'P = d·g·h é diretamente proporcional à densidade. Se d dobra, P hidrostática dobra.'},
+];
+
+let i=0, acertos=0, respondida=false;
+const porArea={};
+
+function render(){
+  respondida=false;
+  const q=Q[i];
+  document.getElementById('prog').style.width=(i/Q.length*100)+'%';
+  document.getElementById('contador').textContent=`Questão ${i+1} de ${Q.length}`;
+  document.getElementById('placar').textContent=`Acertos: ${acertos}`;
+  let alts=q.o.map((t,j)=>
+    `<button class="alt" data-j="${j}">${'ABCDE'[j]}) ${t}</button>`).join('');
+  document.getElementById('area').innerHTML=`<div class="card">
+    <div class="area-tag">${q.a}</div>
+    <div class="enunciado">${q.e}</div>
+    ${alts}
+    <div class="expl" id="expl"></div>
+    <div class="nav"><button class="prox" id="prox" disabled>Próxima →</button></div>
+  </div>`;
+  document.querySelectorAll('.alt').forEach(b=>b.onclick=()=>responder(+b.dataset.j));
+  document.getElementById('prox').onclick=()=>{i++;i<Q.length?render():fim();};
+}
+function responder(j){
+  if(respondida)return;
+  respondida=true;
+  const q=Q[i];
+  porArea[q.a]=porArea[q.a]||{c:0,t:0};
+  porArea[q.a].t++;
+  const alts=document.querySelectorAll('.alt');
+  alts.forEach((b,k)=>{
+    b.disabled=true;
+    if(k===q.c)b.classList.add('certa');
+    if(k===j&&j!==q.c)b.classList.add('errada');
+  });
+  if(j===q.c){acertos++;porArea[q.a].c++;}
+  const ex=document.getElementById('expl');
+  ex.innerHTML=(j===q.c?'<b style="color:#4ade80">Correto!</b> ':'<b style="color:#e3565b">Resposta certa: '+'ABCDE'[q.c]+'.</b> ')+q.x;
+  ex.classList.add('show');
+  document.getElementById('prox').disabled=false;
+  document.getElementById('placar').textContent=`Acertos: ${acertos}`;
+}
+function fim(){
+  document.getElementById('prog').style.width='100%';
+  const pct=Math.round(acertos/Q.length*100);
+  let msg = pct>=75?'Excelente — nível de aprovação!':pct>=50?'Bom — siga revisando os erros.':'Atenção: priorize as áreas fracas no cronograma.';
+  let areas=Object.entries(porArea).map(([a,v])=>
+    `<div><span>${a}</span><span>${v.c}/${v.t}</span></div>`).join('');
+  document.getElementById('area').innerHTML=`<div class="fim">
+    <div class="nota">${pct}%</div>
+    <h2>${acertos} de ${Q.length} acertos</h2>
+    <p style="color:#8a93a8">${msg}</p>
+    <div class="areas">${areas}</div>
+    <p style="color:#8a93a8;font-size:12px">Registre este resultado no progresso.json e refaça em 7 dias.</p>
+    <button class="refazer" onclick="location.reload()">Refazer quiz</button>
+  </div>`;
+  document.getElementById('contador').textContent='Concluído';
+  document.getElementById('placar').textContent=`Acertos: ${acertos}`;
+}
+render();
+</script>
+</body>
+</html>

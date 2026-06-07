@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz · Inglês · UNICAP 2026.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>*{font-family:'Inter',sans-serif}body{background:linear-gradient(135deg,#0a0e1a 0%,#131829 50%,#0a0e1a 100%);min-height:100vh;color:#e8eaf0}.glass{background:rgba(19,24,41,0.7);backdrop-filter:blur(12px);border:1px solid rgba(6,182,212,0.2)}.cyan{color:#00d4ff}.amber{color:#ffb800}.alt{transition:all 200ms;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}.alt:hover{background:rgba(6,182,212,0.08);border-color:#06b6d4}.alt.acerto{background:rgba(16,185,129,0.18);border-color:#10b981}.alt.erro{background:rgba(239,68,68,0.18);border-color:#ef4444}.alt.disabled{cursor:not-allowed;pointer-events:none}</style></head>
+<body class="p-4 sm:p-8">
+<header class="max-w-3xl mx-auto mb-6">
+  <a href="../index.html" class="text-sm cyan hover:underline">← Semana 1</a>
+  <div class="flex items-baseline justify-between mt-3">
+    <h1 class="text-2xl font-bold">❓ Quiz · <span style="color:#06b6d4">English</span></h1>
+    <p class="text-xs text-slate-500" id="timer">15:00</p>
+  </div>
+  <p class="text-xs text-slate-500 mt-1">15 questões · Grammar + Reading</p>
+</header>
+<section id="quizArea" class="max-w-3xl mx-auto"></section>
+<section id="resultadoArea" class="max-w-3xl mx-auto hidden glass rounded-2xl p-8 text-center">
+  <p class="text-6xl mb-4">🎯</p><p class="text-2xl font-bold mb-2">Quiz finished!</p>
+  <p class="text-4xl font-bold cyan mb-2"><span id="acertos">0</span>/15</p>
+  <p class="text-slate-400 mb-6" id="diagnostico"></p>
+  <div class="flex gap-3 justify-center">
+    <button onclick="reiniciar()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-6 py-3 rounded-lg">🔄 Retry</button>
+    <a href="../index.html" class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg">← Back</a>
+  </div>
+</section>
+<script>
+const Q=[
+  {e:'Choose the correct article: "She is ___ honest woman."',a:['a','an','the','no article','any'],c:1,exp:'AN — "honest" starts with silent "h", so the sound is vocalic (/ɒnəst/). Use "an" before vowel sounds.'},
+  {e:'Complete: "I have lived in Recife ___ 2020."',a:['for','since','during','from','at'],c:1,exp:'SINCE = ponto específico no tempo (2020 é um ano = ponto). FOR = duração (for 5 years).'},
+  {e:'Which sentence uses Present Perfect correctly?',a:['I have went to Brazil last year','I have been to Brazil twice','I have gone to Brazil yesterday','I has visited Brazil','I had go to Brazil'],c:1,exp:'B está correto: HAVE + been (past participle de "be"). Present Perfect não usa marcador de tempo definido como "yesterday" ou "last year" (esses pedem Simple Past).'},
+  {e:'Identify the modal expressing strong obligation:',a:['can','could','should','must','might'],c:3,exp:'MUST expressa obrigação forte ou certeza. Negativo "mustn\'t" = proibido. ≠ "have to" (obrigação externa).'},
+  {e:'Which is the correct possessive pronoun? "This book is ___."',a:['my','mine','me','I','myself'],c:1,exp:'MINE é possessive PRONOUN (substitui substantivo). "My" é adjetivo (precisa de substantivo: "my book"). "This book is MINE" = "This is MY book".'},
+  {e:'Choose the correct relative pronoun: "The student ___ won the prize is my friend."',a:['which','whose','who','whom','where'],c:2,exp:'WHO para pessoas como sujeito da relativa. WHICH para coisas. WHOM para pessoa como objeto (formal). WHOSE indica posse.'},
+  {e:'Identify the false friend: "I went to the LIBRARY to buy a book."',a:['library means bookstore','library means biblioteca','library means living room','library means lavanderia','no false friend'],c:1,exp:'LIBRARY = BIBLIOTECA (false friend). Livraria em inglês é BOOKSTORE. Não dá pra comprar livro na library!'},
+  {e:'Convert to reported speech: He said: "I love coffee."',a:['He said he loves coffee','He said he loved coffee','He says he loves coffee','He told he loved coffee','He said he had loved coffee'],c:1,exp:'Reported speech: "love" (present) → "loved" (past). Estrutura: He said + (that) + he LOVED coffee.'},
+  {e:'Which conjunction expresses CONTRAST?',a:['so','because','although','if','when'],c:2,exp:'ALTHOUGH = embora/apesar (contraste). Outros: though, even though, despite, in spite of. "Because" = causa. "So" = consequência.'},
+  {e:'Complete: "If I ___ rich, I would travel the world."',a:['am','was','were','have been','would be'],c:2,exp:'Second conditional (irreal): IF + PAST → WOULD + base form. Mas com "to be", usar WERE para todos os sujeitos (formal): "If I WERE rich..." (was também é aceito coloquialmente).'},
+  {e:'Choose the correct preposition: "We met ___ Monday morning ___ 9 AM."',a:['on / at','in / on','at / in','on / in','in / at'],c:0,exp:'ON Monday morning (ON para dias) + AT 9 AM (AT para hora específica).'},
+  {e:'Which phrasal verb means "to investigate"?',a:['take off','look into','give up','run out of','get on'],c:1,exp:'LOOK INTO = investigar/examinar. Take off = decolar/tirar. Give up = desistir. Run out of = ficar sem. Get on = subir (transporte) / dar-se bem com.'},
+  {e:'Convert "Open the door, please" to reported speech.',a:['She told to open the door','She said to open the door','She told me to open the door','She said me to open the door','She asked to open the door'],c:2,exp:'Imperative em reported speech: TELL + someone + TO + base form. "She told ME to open" (com objeto direto). "Said" precisaria de "that".'},
+  {e:'Which sentence has the correct word order?',a:['I always have studied English','I have always studied English','Always I have studied English','I have studied always English','Have I always studied English'],c:1,exp:'Adverbs of frequency (always, usually, often, never) vão ENTRE o auxiliar e o verbo principal: "I have ALWAYS studied" / "She has NEVER been".'},
+  {e:'In "The Constitution, which was written in 1988, guarantees rights", the comma before "which" indicates:',a:['error','non-defining relative clause','defining relative clause','question','exclamation'],c:1,exp:'Comma + WHICH = non-defining (informação extra que pode ser removida). Defining (sem vírgula) = essencial: "The book WHICH I bought is great." Aqui, a Constituição já é específica; "written in 1988" é info adicional.'}
+];
+let r=new Array(Q.length).fill(null),ts=15*60,tid=null;
+function render(){const a=document.getElementById('quizArea');a.innerHTML=Q.map((q,i)=>`<div class="glass rounded-xl p-5 mb-4"><p class="text-xs font-bold mb-2" style="color:#06b6d4">Question ${i+1}</p><p class="mb-4 leading-relaxed">${q.e}</p><div class="space-y-2">${q.a.map((alt,j)=>{let cls='alt';if(r[i]!==null){cls+=' disabled';if(j===q.c)cls+=' acerto';else if(j===r[i])cls+=' erro'}return`<div class="${cls} rounded-lg p-3 flex gap-3" onclick="resp(${i},${j})"><span class="font-bold" style="color:#06b6d4">${String.fromCharCode(65+j)})</span><span>${alt}</span></div>`}).join('')}</div>${r[i]!==null?`<p class="text-xs mt-3 ${r[i]===q.c?'text-emerald-300':'text-amber-300'}"><strong>${r[i]===q.c?'✓ Correct.':'✗ Correct answer: '+String.fromCharCode(65+q.c)+'.'}</strong> ${q.exp}</p>`:''}</div>`).join('')+`<button onclick="fim()" class="w-full bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold py-3 rounded-lg mt-4">Finish</button>`}
+function resp(i,j){if(r[i]!==null)return;r[i]=j;render()}
+function fim(){clearInterval(tid);const a=r.reduce((ac,rr,i)=>ac+(rr===Q[i].c?1:0),0);document.getElementById('quizArea').classList.add('hidden');document.getElementById('resultadoArea').classList.remove('hidden');document.getElementById('acertos').textContent=a;const p=(a/15)*100;let d='';if(p>=80)d='🔥 Strong grasp.';else if(p>=60)d='👍 Good base, review errors.';else if(p>=40)d='⚠️ Gaps. Re-read summary.';else d='🚨 Study the summary first.';document.getElementById('diagnostico').textContent=d}
+function reiniciar(){r=new Array(Q.length).fill(null);document.getElementById('quizArea').classList.remove('hidden');document.getElementById('resultadoArea').classList.add('hidden');render();ts=15*60;startTimer()}
+function startTimer(){tid=setInterval(()=>{ts--;const m=Math.floor(ts/60),s=ts%60;document.getElementById('timer').textContent=`${m}:${s.toString().padStart(2,'0')}`;if(ts<=0){clearInterval(tid);fim()}},1000)}
+render();startTimer();
+</script></body></html>

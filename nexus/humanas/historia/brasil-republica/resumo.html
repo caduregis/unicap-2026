@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Brasil República</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --gold: #d4a030; --gold-light: #e8b840; --bg: #060208; --bg2: #0c0618; --bg3: #140820; --text: #c8b8d8; --text-bright: #e8d8f0; --green: #78c870; --red: #d07060; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: linear-gradient(160deg, var(--bg) 0%, #080412 100%); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; }
+#navbar { position: sticky; top: 0; background: linear-gradient(90deg, #06020880, #0c061880); border-bottom: 1px solid #80601840; padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 16px; z-index: 50; backdrop-filter: blur(12px); }
+#nav-back { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #d4a03040; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #d4a03020; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-bright); }
+#nav-map { color: #907020; text-decoration: none; font-size: 12px; font-weight: 500; padding: 5px 12px; border: 1px solid #90702040; border-radius: 6px; transition: all .2s; }
+#nav-map:hover { background: #90702020; color: var(--gold-light); }
+main { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: #907020; margin-bottom: 32px; }
+.card { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border: 1px solid #80601840; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+.card:hover { border-color: #d4a03030; transition: border-color .3s; }
+.card h2 { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h2 .num { background: #d4a03022; border: 1px solid #d4a03040; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+p { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 10px; }
+strong { color: var(--text-bright); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+th { background: #d4a03022; color: var(--gold); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #d4a03030; }
+td { padding: 9px 12px; border-bottom: 1px solid #140820; color: var(--text); }
+tr:hover td { background: #d4a03008; }
+.timeline { position: relative; padding-left: 24px; margin-top: 12px; }
+.tl-item { position: relative; padding: 10px 0 10px 20px; border-left: 2px solid #d4a03040; }
+.tl-item:last-child { border-left-color: transparent; }
+.tl-dot { position: absolute; left: -5px; top: 14px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; }
+.tl-year { font-size: 11px; font-weight: 700; color: var(--gold); }
+.tl-text { font-size: 13px; color: var(--text); margin-top: 2px; }
+.tip-box { background: #d4a03012; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; padding: 10px 16px; margin-top: 12px; font-size: 13px; color: #e8c870; }
+.tip-box::before { content: "UNICAP "; font-weight: 700; color: var(--gold); }
+.checklist { list-style: none; margin-top: 8px; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid #140820; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.checklist li input[type=checkbox] { accent-color: var(--gold); width: 15px; height: 15px; cursor: pointer; }
+.checklist li:last-child { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+.tag-green { background: #78c87022; color: var(--green); border: 1px solid #78c87040; }
+.tag-red { background: #d0706022; color: var(--red); border: 1px solid #d0706040; }
+.tag-gold { background: #d4a03022; color: var(--gold); border: 1px solid #d4a03040; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.compare-card { background: #08040e; border-radius: 8px; padding: 14px; }
+.compare-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.compare-card.auth h4 { color: var(--red); border-bottom: 1px solid #d0706030; padding-bottom: 6px; }
+.compare-card.demo h4 { color: var(--green); border-bottom: 1px solid #78c87030; padding-bottom: 6px; }
+.compare-card p { font-size: 12px; line-height: 1.6; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.video-card { background: #08040e; border: 1px solid #d4a03030; border-radius: 8px; padding: 14px; text-align: center; }
+.video-card .ch { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+.video-card p { font-size: 11px; color: #706050; }
+.map-link { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4a03020, #806010 12); border: 1px solid #d4a03050; color: var(--gold-light); text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.map-link:hover { background: linear-gradient(135deg, #d4a03035, #80601025); transform: translateY(-1px); }
+.links-row { display: flex; justify-content: center; gap: 16px; margin: 32px 0; }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="../../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Brasil República — Resumo</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</nav>
+<main>
+  <h1>Brasil República</h1>
+  <p class="subtitle">Da República Velha à Constituição Cidadã — guia completo UNICAP 2026</p>
+  <div class="links-row"><a href="mapa3d.html" class="map-link">🏛️ Explorar Palácio do Catete 3D</a></div>
+
+  <!-- 1 -->
+  <div class="card">
+    <h2><span class="num">01</span> República Velha: Coronelismo, Café com Leite e Tenentismo</h2>
+    <p>A Primeira República (1889-1930) foi dominada pelas oligarquias estaduais, especialmente de São Paulo (café) e Minas Gerais (leite). O <strong>coronelismo</strong>: os coronéis (grandes fazendeiros) controlavam o voto rural através do "voto de cabresto" — o eleitor votava em quem o patrão mandasse.</p>
+    <p>O <strong>tenentismo</strong> surgiu como contestação: jovens oficiais insatisfeitos com a velha política realizaram revoltas.</p>
+    <table>
+      <tr><th>Revolta</th><th>Ano</th><th>O que aconteceu</th></tr>
+      <tr><td>Revolta do Forte de Copacabana</td><td>1922</td><td>18 tenentes marcharam para a morte — símbolo do tenentismo</td></tr>
+      <tr><td>Revolta Paulista</td><td>1924</td><td>Tomaram São Paulo por 3 semanas; depois marcharam</td></tr>
+      <tr><td>Coluna Prestes</td><td>1925–27</td><td>Luís Carlos Prestes liderou marcha de 25.000 km pelo interior; não foi derrotado militarmente</td></tr>
+    </table>
+    <div class="tip-box">Coronelismo é tema recorrente. A política do café-com-leite pressupunha um acordo entre as elites: alternância no poder entre SP e MG. A crise de 1929 quebrou esse acordo quando SP tentou manter Júlio Prestes ao invés de ceder a vez a MG.</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card">
+    <h2><span class="num">02</span> Revolução de 1930: Causas, Aliança Liberal e Personagens</h2>
+    <p><strong>Causas:</strong> A crise de 1929 derrubou os preços do café, o que arruinou a base econômica das oligarquias cafeeiras. Em 1930, o acordo café-com-leite foi quebrado: SP apoiou Júlio Prestes (SP), ignorando a vez de MG. Minas Gerais, Paraíba e Rio Grande do Sul formaram a <strong>Aliança Liberal</strong>.</p>
+    <p>A eleição foi fraudada (Júlio Prestes ganhou, mas as eleições eram manipuladas). O assassinato do candidato vice, João Pessoa (PB), deu o pretexto para o levante.</p>
+    <p><strong>Resultado:</strong> Golpe militar em outubro de 1930. Getúlio Vargas assume o poder como líder da Aliança Liberal apoiado por militares tenentistas.</p>
+    <div class="tip-box">A 'Revolução de 1930' não foi uma revolução — foi um golpe. Não envolveu o povo de forma organizada. Vargas chegou ao poder pelo apoio militar, não pela votação popular. Questão: 'O que foi a Aliança Liberal?' → Coalizão de oligarquias dissidentes (MG, RS, PB) contra a hegemonia paulista.</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card">
+    <h2><span class="num">03</span> Era Vargas I — Governo Provisório e Constitucional (1930-1937)</h2>
+    <p><strong>Governo Provisório (1930-34):</strong> Vargas governa por decreto; criou o Ministério do Trabalho, Indústria e Comércio; intervencionismo federal nos estados; Revolução Constitucionalista de 1932 (SP exigiu constituição — foi derrotada militarmente, mas ganhou politicamente: a Constituinte veio em 1933).</p>
+    <p><strong>Constituição de 1934:</strong> Inspirada na Constituição de Weimar (alemã). Ampliou direitos: voto feminino, ensino primário obrigatório, Justiça Eleitoral, legislação trabalhista.</p>
+    <p><strong>Governo Constitucional (1934-37):</strong> Vargas eleito pelo Congresso. Período de tensão: Intentona Comunista (1935, PCB tenta golpe, reprimida); Integralismo (movimento fascista brasileiro de Plínio Salgado).</p>
+    <div class="tip-box">A Revolução Constitucionalista de 1932 é cobrada: São Paulo lutou contra o governo federal por 3 meses. Perdeu militarmente mas ganhou politicamente (Constituinte veio). Foi o maior conflito armado da história de SP.</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card">
+    <h2><span class="num">04</span> Estado Novo (1937-1945): Estrutura, Propaganda e Industrialização</h2>
+    <p>Em novembro de 1937, Vargas deu um golpe usando como pretexto o <strong>Plano Cohen</strong> (documento falso de suposto plano comunista). Fechou o Congresso, outorgou a <strong>Constituição de 1937</strong> (apelidada de "Polaca", pois se inspirava na constituição polonesa fascista).</p>
+    <p><strong>Instrumentos de controle:</strong> DIP (Departamento de Imprensa e Propaganda) — censurava jornais, rádio e arte; promovia o culto à personalidade de Vargas. Queima de bandeiras estaduais (1937) — simbolizando a centralização.</p>
+    <p><strong>Industrialização:</strong> Criação da CSN (Companhia Siderúrgica Nacional), Volta Redonda (RJ); Vale do Rio Doce (minério de ferro); Petrobrás (depois, 1953). Estado como motor da industrialização — modelo nacional-desenvolvimentista.</p>
+    <p><strong>Fim do Estado Novo:</strong> Com a derrota do fascismo na WWII (1945), ficou insustentável manter uma ditadura inspirada no fascismo. Vargas foi deposto pelos militares em outubro de 1945.</p>
+    <div class="tip-box">Estado Novo = ditadura, mas diferente do nazismo/fascismo europeu: não criou campos de concentração, não perseguiu sistematicamente grupos étnicos. O foco era controle político e econômico, não racismo de Estado. Questão-chave: o DIP é o órgão de propaganda/censura do Estado Novo.</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <h2><span class="num">05</span> CLT e Trabalhismo: Direitos e Impacto Social</h2>
+    <p>A <strong>CLT (Consolidação das Leis do Trabalho)</strong>, promulgada em 1943, foi o maior legado social de Vargas. Consolidou direitos que existiam esparsamente em leis anteriores:</p>
+    <table>
+      <tr><th>Direito</th><th>Descrição</th></tr>
+      <tr><td>Carteira de trabalho</td><td>Registro formal do emprego; obrigatória</td></tr>
+      <tr><td>Salário mínimo</td><td>Criado em 1940; abaixo dele não se pode pagar</td></tr>
+      <tr><td>Férias remuneradas</td><td>30 dias por ano</td></tr>
+      <tr><td>Jornada de 8 horas</td><td>Limite legal da jornada diária</td></tr>
+      <tr><td>Proteção à maternidade</td><td>Licença maternidade e estabilidade</td></tr>
+      <tr><td>FGTS</td><td>Criado depois (1966), mas tem raízes na CLT</td></tr>
+    </table>
+    <p>O trabalhismo varguista criou uma identidade política: Vargas era o "pai dos pobres", protetor dos trabalhadores. Esse legado moldou o PT (criado em 1980 por sindicalistas) e o PDT.</p>
+    <div class="tip-box">CLT = concessão 'de cima para baixo' (outorga), não resultado de luta sindical como na Europa. Isso criou um sindicalismo corporativo (controlado pelo Estado). Questão: qual a diferença entre trabalhismo brasileiro e europeu? → O brasileiro foi criado pelo Estado; o europeu nasceu de lutas dos trabalhadores.</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <h2><span class="num">06</span> Democracia Populista 1945-1964</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1945</div><div class="tl-text">Vargas deposto; Dutra eleito (PSD); Constituição de 1946</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1950</div><div class="tl-text">Vargas eleito: campanha "Getúlio dá" vs. oposição. Retorna como presidente democrático</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1953</div><div class="tl-text">Criação da Petrobrás — "O petróleo é nosso"</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1954</div><div class="tl-text">Crise política: militares exigem renúncia → Vargas se suicida (24/08); carta-testamento</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1956–61</div><div class="tl-text">JK (Juscelino Kubitschek): "50 anos em 5"; Brasília inaugurada (1960); Plano de Metas; indústria automobilística</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1961</div><div class="tl-text">Jânio Quadros eleito; renuncia misteriosamente após 7 meses; crise pela posse de Jango</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1961–64</div><div class="tl-text">João Goulart (Jango) governa; propõe reformas de base (agrária, urbana, bancária); militares e direita articulam golpe</div></div>
+    </div>
+    <div class="tip-box">JK é considerado o presidente mais desenvolvimentista da história brasileira. Construiu Brasília em 1000 dias (1957-60). A inauguração de Brasília = transferência da capital do Rio de Janeiro para o interior do país. Populismo não é um termo pejorativo em ciência política — descreve um estilo de liderança com relação direta com as massas.</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card">
+    <h2><span class="num">07</span> Ditadura Militar 1964-1985: Fases, Atos Institucionais e Resistência</h2>
+    <p><strong>Golpe de 31/03/1964:</strong> militares derrubam Jango com apoio de EUA (CIA), empresários, Igreja Católica conservadora e classe média urbana. Inicia a ditadura mais longa da história brasileira (21 anos).</p>
+    <table>
+      <tr><th>Presidente</th><th>Período</th><th>Característica</th></tr>
+      <tr><td>Castello Branco</td><td>1964-67</td><td>Fase institucional; AI-1 (cassações)</td></tr>
+      <tr><td>Costa e Silva</td><td>1967-69</td><td>AI-5 (1968) — o mais duro</td></tr>
+      <tr><td>Médici</td><td>1969-74</td><td>Anos de chumbo + milagre econômico; máxima repressão</td></tr>
+      <tr><td>Geisel</td><td>1974-79</td><td>Abertura "lenta, gradual e segura"; revogação do AI-5 (1978)</td></tr>
+      <tr><td>Figueiredo</td><td>1979-85</td><td>Anistia (1979); multipartidarismo; eleições diretas negadas (1984)</td></tr>
+    </table>
+    <p><strong>Resistência:</strong> Guerrilha urbana (MR-8, ALN de Carlos Marighella); Guerrilha do Araguaia (PCdoB, 1972-74); imprensa alternativa (O Pasquim); movimento estudantil (UNE); Igreja progressista (Dom Hélder Câmara, teologia da libertação).</p>
+    <div class="tip-box">AI-5 (dezembro de 1968) = o ato mais duro: fechou o Congresso, suspendeu o habeas corpus, institucionalizou a tortura. Ocorreu após o discurso do deputado Márcio Moreira Alves. A tortura era sistemática — não foi acidente: era política de Estado. DOPS e DOI-CODI eram os órgãos de repressão.</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card">
+    <h2><span class="num">08</span> Redemocratização: Anistia, Diretas Já e Constituição 1988</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1979</div><div class="tl-text">Lei da Anistia — liberta presos políticos, permite retorno de exilados; mas também anistiou torturadores</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1980</div><div class="tl-text">Fundação do PT (Partido dos Trabalhadores) por Lula e sindicalistas do ABC paulista</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1984</div><div class="tl-text">Diretas Já: maior mobilização popular da história — 1,7 milhão em São Paulo; emenda Dante de Oliveira não passou no Congresso</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1985</div><div class="tl-text">Tancredo Neves eleito indiretamente (Colégio Eleitoral); morre antes de tomar posse → José Sarney assume</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1988</div><div class="tl-text">Promulgação da Constituição Cidadã (5 de outubro); Ulysses Guimarães preside Assembleia Constituinte</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1989</div><div class="tl-text">Primeiras eleições diretas desde 1960; Collor vence Lula no 2º turno</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1992</div><div class="tl-text">Impeachment de Collor (corrupção); Itamar Franco assume; Plano Real (1994)</div></div>
+    </div>
+    <div class="tip-box">Constituição de 1988 é fundamental para Direito: estabelece o Estado Democrático de Direito, separação dos poderes, direitos fundamentais (art. 5º), direitos sociais (art. 6º). Para UNICAP Direito: saiba que ela é o fundamento jurídico de todo o ordenamento brasileiro.</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card">
+    <h2><span class="num">09</span> Comparativo: Autoritarismo vs. Democracia no Brasil</h2>
+    <div class="compare-grid">
+      <div class="compare-card auth">
+        <h4>Períodos Autoritários</h4>
+        <p><strong>1937-45</strong> Estado Novo: fechamento do Congresso, censura, DIP, industrialização forçada<br><br><strong>1964-85</strong> Ditadura Militar: cassações, AI-5, tortura, censura, "milagre econômico", abertura gradual</p>
+      </div>
+      <div class="compare-card demo">
+        <h4>Períodos Democráticos</h4>
+        <p><strong>1945-64</strong> Democracia Populista: constituição de 1946, multipartidarismo, eleições, mas clientelismo<br><br><strong>1985-atual</strong> Nova República: Constituição de 1988, eleições diretas, direitos fundamentais, SUS</p>
+      </div>
+    </div>
+    <div class="tip-box">Questão comparativa clássica: em ambos os autoritarismos (Vargas e Militar), houve industrialização e desenvolvimento econômico. Mas com supressão de direitos. O debate: desenvolvimento justifica autoritarismo? → A resposta da Constituição de 1988 é não.</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="card">
+    <h2><span class="num">10</span> Dicas UNICAP</h2>
+    <table>
+      <tr><th>Tema</th><th>O que mais cai</th><th>Detalhe importante</th></tr>
+      <tr><td>República Velha</td><td>Coronelismo, café-com-leite</td><td>Voto de cabresto = voto controlado pelo coronel</td></tr>
+      <tr><td>Era Vargas</td><td>Estado Novo, CLT, DIP</td><td>A CLT foi outorgada, não conquistada pelos trabalhadores</td></tr>
+      <tr><td>Ditadura Militar</td><td>AI-5, milagre econômico</td><td>Médici = mais repressivo; Geisel = abertura</td></tr>
+      <tr><td>Redemocratização</td><td>Constituição 1988, Diretas Já</td><td>'Constituição Cidadã' = Ulysses Guimarães</td></tr>
+      <tr><td>Populismo</td><td>Vargas, JK, Jango</td><td>Populismo = relação direta líder-massas, sem intermediação</td></tr>
+    </table>
+  </div>
+
+  <!-- 11 -->
+  <div class="card">
+    <h2><span class="num">11</span> Checklist de Revisão</h2>
+    <ul class="checklist">
+      <li><input type="checkbox"> Sei o que era o coronelismo e a política café-com-leite</li>
+      <li><input type="checkbox"> Conheço as revoltas tenentistas (1922, 1924, Coluna Prestes)</li>
+      <li><input type="checkbox"> Sei as causas e o processo da Revolução de 1930</li>
+      <li><input type="checkbox"> Sei diferenciar Governo Provisório, Constitucional e Estado Novo</li>
+      <li><input type="checkbox"> Conheço o que era o DIP e para que servia</li>
+      <li><input type="checkbox"> Sei os principais direitos da CLT</li>
+      <li><input type="checkbox"> Conheço a carta-testamento de Vargas e seu significado político</li>
+      <li><input type="checkbox"> Sei o que JK realizou (Brasília, Plano de Metas, 50 anos em 5)</li>
+      <li><input type="checkbox"> Sei as causas do golpe de 1964</li>
+      <li><input type="checkbox"> Conheço os 5 presidentes militares e suas fases</li>
+      <li><input type="checkbox"> Sei o que foi o AI-5 e seus efeitos</li>
+      <li><input type="checkbox"> Sei o que foi o milagre econômico e a crítica a ele</li>
+      <li><input type="checkbox"> Conheço o processo de redemocratização (Anistia→Diretas Já→Constituição)</li>
+      <li><input type="checkbox"> Sei por que a Constituição de 1988 é chamada de 'Cidadã'</li>
+      <li><input type="checkbox"> Conheço o impeachment de Collor (1992)</li>
+    </ul>
+  </div>
+
+  <!-- 12 -->
+  <div class="card">
+    <h2><span class="num">12</span> Melhores Videoaulas</h2>
+    <div class="video-grid">
+      <div class="video-card"><div class="ch">Prof. Neto do Enem</div><p>YouTube — Era Vargas completa; linguagem objetiva para vestibulares</p></div>
+      <div class="video-card"><div class="ch">Parabólica</div><p>YouTube — Ditadura Militar: ótima visualização das fases e atos institucionais</p></div>
+      <div class="video-card"><div class="ch">Brasil Escola</div><p>brasilescola.uol.com.br — Artigos detalhados com exercícios e linha do tempo</p></div>
+      <div class="video-card"><div class="ch">Me Salva História</div><p>YouTube — Flashcards e resumo rápido para véspera de prova</p></div>
+    </div>
+  </div>
+
+  <div class="links-row"><a href="mapa3d.html" class="map-link">🏛️ Voltar ao Palácio do Catete 3D</a></div>
+</main>
+</body>
+</html>

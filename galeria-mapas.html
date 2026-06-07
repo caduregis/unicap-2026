@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeria de Mapas 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; min-height: 100%; overflow-x: hidden; }
+body {
+  background: #04050a;
+  color: #eef2ff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.mono { font-family: 'JetBrains Mono', monospace; }
+.cinzel { font-family: 'Cinzel', serif; }
+
+#stars-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+.nebulosa {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 60% at 15% 25%, rgba(0, 212, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 80% 70% at 85% 75%, rgba(255, 184, 0, 0.04) 0%, transparent 60%);
+}
+.vinheta {
+  position: fixed; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(ellipse 110% 95% at center, transparent 30%, rgba(0,0,0,0.5) 80%, #000 100%);
+}
+
+main { position: relative; z-index: 5; padding: 60px 40px 80px; max-width: 1400px; margin: 0 auto; }
+
+header { margin-bottom: 60px; animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-row {
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 36px;
+}
+.brand-mark {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: linear-gradient(135deg, #00d4ff 0%, #ffb800 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif; font-weight: 900; font-size: 22px;
+  color: #000; box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+}
+.brand-text { line-height: 1.2; flex: 1; }
+.brand-text .t1 { font-family: 'Cinzel', serif; font-size: 17px; font-weight: 700; letter-spacing: 0.04em; }
+.brand-text .t2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 2.5px;
+  text-transform: uppercase; color: #00d4ff; margin-top: 3px;
+}
+.back-btn {
+  padding: 10px 18px; background: rgba(10, 14, 28, 0.7); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px;
+  color: #eef2ff; font-size: 13px; font-weight: 500; text-decoration: none;
+  transition: all 280ms;
+}
+.back-btn:hover { border-color: #00d4ff; color: #00d4ff; transform: translateY(-1px); }
+
+.hero { max-width: 800px; }
+.hero .badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: #00d4ff; background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 6px 14px; border-radius: 99px; margin-bottom: 24px;
+}
+.hero .badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: #00d4ff; border-radius: 50%;
+  box-shadow: 0 0 8px #00d4ff;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+.hero h1 {
+  font-family: 'Cinzel', serif; font-size: clamp(38px, 6vw, 64px);
+  font-weight: 700; line-height: 1.05; letter-spacing: -0.01em;
+  background: linear-gradient(180deg, #fff 0%, #00d4ff 110%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 18px;
+}
+.hero p { font-size: 18px; line-height: 1.6; color: rgba(238, 242, 255, 0.7); max-width: 620px; }
+
+.stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  margin: 50px 0; padding: 28px 32px;
+  background: rgba(10, 14, 28, 0.6); backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;
+  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+.stats > div { text-align: center; }
+.stats .v {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 32px; font-weight: 700;
+  color: #00d4ff; line-height: 1;
+}
+.stats .v.gold { color: #ffb800; }
+.stats .v.green { color: #10b981; }
+.stats .v.pink { color: #ec4899; }
+.stats .l {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: rgba(238, 242, 255, 0.5); margin-top: 8px;
+}
+
+.section-title {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase; color: #00d4ff;
+  margin: 50px 0 24px; display: flex; align-items: center; gap: 14px;
+}
+.section-title::before {
+  content: ''; width: 28px; height: 2px;
+  background: #00d4ff; box-shadow: 0 0 8px #00d4ff;
+}
+.section-title .count {
+  margin-left: auto; color: rgba(238, 242, 255, 0.4);
+  font-size: 10px; letter-spacing: 1.5px;
+}
+
+.mapas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.mapa-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(10, 14, 28, 0.7) 0%, rgba(20, 24, 40, 0.7) 100%);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px; overflow: hidden;
+  text-decoration: none; color: inherit;
+  transition: all 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex; flex-direction: column;
+  min-height: 220px; cursor: pointer;
+  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.mapa-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5), 0 0 30px var(--card-glow, rgba(0,212,255,0.25));
+  border-color: var(--card-color, rgba(0,212,255,0.4));
+}
+.mapa-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--card-color, #00d4ff);
+  box-shadow: 0 0 12px var(--card-color, #00d4ff);
+}
+
+.mapa-card-vis {
+  height: 90px; position: relative; overflow: hidden;
+  background: var(--card-bg, radial-gradient(circle at 30% 40%, rgba(0,212,255,0.25), transparent 60%));
+}
+.mapa-card-vis::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(10,14,28,0.85) 100%);
+}
+.mapa-card-icon {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Cinzel', serif; font-size: 46px;
+  font-weight: 900; color: var(--card-color, #00d4ff);
+  opacity: 0.85; text-shadow: 0 0 24px var(--card-color, #00d4ff);
+}
+
+.mapa-card-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+.mapa-card-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--card-color, #00d4ff); margin-bottom: 6px;
+}
+.mapa-card h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 18px; font-weight: 700;
+  letter-spacing: -0.005em; line-height: 1.15;
+  margin-bottom: 8px; color: #fff;
+}
+.mapa-card p {
+  font-size: 12.5px; line-height: 1.55;
+  color: rgba(238, 242, 255, 0.65); flex: 1;
+}
+.mapa-card-cta {
+  margin-top: 12px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600;
+  color: var(--card-color, #00d4ff);
+  letter-spacing: 0.02em;
+}
+.mapa-card:hover .mapa-card-cta { gap: 10px; }
+
+.mapa-card.destaque {
+  grid-column: 1 / -1;
+  min-height: 320px;
+  background: linear-gradient(135deg, rgba(0,212,255,0.08) 0%, rgba(255,184,0,0.05) 100%);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  --card-color: #00d4ff;
+  --card-glow: rgba(0, 212, 255, 0.4);
+}
+.mapa-card.destaque .mapa-card-vis {
+  height: 170px;
+  background: radial-gradient(ellipse at 30% 40%, rgba(0, 212, 255, 0.4) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 60%, rgba(255, 184, 0, 0.2) 0%, transparent 50%);
+}
+.mapa-card.destaque .mapa-card-icon {
+  font-size: 90px;
+  background: linear-gradient(135deg, #00d4ff 0%, #ffb800 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.5));
+}
+.mapa-card.destaque h3 { font-size: 30px; margin-bottom: 14px; }
+.mapa-card.destaque p { font-size: 15px; max-width: 700px; }
+.mapa-card.destaque .badge-novo {
+  position: absolute; top: 18px; right: 18px;
+  background: linear-gradient(135deg, #00d4ff, #ffb800);
+  color: #000; font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: 2px;
+  padding: 5px 12px; border-radius: 99px; text-transform: uppercase;
+}
+
+.outros { margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+.outros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.outros-card {
+  padding: 18px 22px; background: rgba(10, 14, 28, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 12px;
+  text-decoration: none; color: inherit;
+  transition: all 280ms; display: flex; align-items: center; gap: 14px;
+}
+.outros-card:hover { border-color: #00d4ff; transform: translateY(-2px); background: rgba(0, 212, 255, 0.06); }
+.outros-card .ic { font-size: 26px; width: 40px; text-align: center; }
+.outros-card .ttxt { flex: 1; }
+.outros-card .ttxt .ti { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.outros-card .ttxt .ds { font-size: 12px; color: rgba(238, 242, 255, 0.55); }
+
+footer {
+  margin-top: 80px; padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center; font-size: 12px;
+  color: rgba(238, 242, 255, 0.4);
+}
+footer .b { color: #00d4ff; font-family: 'Cinzel', serif; font-weight: 700; }
+
+@media (max-width: 768px) {
+  main { padding: 32px 20px 60px; }
+  .stats { grid-template-columns: repeat(2, 1fr); padding: 20px; }
+  .stats .v { font-size: 24px; }
+  .mapa-card.destaque .mapa-card-icon { font-size: 60px; }
+  .mapa-card.destaque h3 { font-size: 22px; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars-canvas"></canvas>
+<div class="nebulosa"></div>
+<div class="vinheta"></div>
+
+<main>
+
+<header>
+  <div class="brand-row">
+    <div class="brand-mark">U</div>
+    <div class="brand-text">
+      <div class="t1">UNICAP 2026.2</div>
+      <div class="t2">galeria de mapas 3d</div>
+    </div>
+    <a class="back-btn" href="dashboard.html">← Dashboard</a>
+  </div>
+
+  <div class="hero">
+    <span class="badge">30 MAPAS · COBRINDO TODO O PROGRAMA</span>
+    <h1>Galeria de Mapas 3D</h1>
+    <p>Cada mapa é uma experiência imersiva temática para uma área do programa OFICIAL UNICAP 2026.2. Conteúdo literal do PDF Conteúdos Programáticos. Navegue, clique nos planetas/marcos, abra os tópicos.</p>
+  </div>
+</header>
+
+<section class="stats">
+  <div><div class="v">30</div><div class="l">Mapas 3D</div></div>
+  <div><div class="v gold" id="statsDias">…</div><div class="l">Dias até a prova</div></div>
+  <div><div class="v green">388</div><div class="l">Vagas Direito</div></div>
+  <div><div class="v pink">43</div><div class="l">Vagas CC Manhã</div></div>
+</section>
+
+<!-- MAPA MESTRE EM DESTAQUE -->
+<div class="section-title">Mapa Principal <span class="count">visão geral</span></div>
+
+<div class="mapas-grid">
+  <a class="mapa-card destaque" href="mapas/mapa-unicap-mestre.html">
+    <div class="badge-novo">Recomendado · começa aqui</div>
+    <div class="mapa-card-vis"><div class="mapa-card-icon">U</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">UNICAP 2026.2 · 11 ÁREAS</div>
+      <h3>Cosmic Atlas Mestre</h3>
+      <p>Visão geral de TODO o programa: 11 planetas orbitando representam Linguagens, Matemática, História, Geografia, Filosofia, Química, Física, Biologia, Redação + Direito e Ciência da Computação. Clique em qualquer planeta para tópicos oficiais, dica estratégica e peso.</p>
+      <span class="mapa-card-cta">Abrir mapa mestre →</span>
+    </div>
+  </a>
+</div>
+
+<!-- LINGUAGENS -->
+<div class="section-title">Linguagens, Códigos e suas Tecnologias <span class="count">3 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-portugues.html" style="--card-color:#22d3ee;--card-glow:rgba(34,211,238,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(34,211,238,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">P</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">LING · PORTUGUÊS</div>
+      <h3>Língua Portuguesa</h3>
+      <p>Fonologia, morfologia, sintaxe, semântica. Coesão, coerência. Análise sintática. Pontuação, ortografia oficial. Texto e gêneros textuais.</p>
+      <span class="mapa-card-cta">Explorar gramática →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-literatura-brasileira.html" style="--card-color:#a78bfa;--card-glow:rgba(167,139,250,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(167,139,250,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">L</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">LING · LITERATURA</div>
+      <h3>Literatura Brasileira</h3>
+      <p>8 escolas literárias: Quinhentismo (Anchieta) → Barroco (Gregório) → Arcadismo → Romantismo → Realismo (Machado) → Parnasianismo → Simbolismo → Modernismo (Drummond, Clarice).</p>
+      <span class="mapa-card-cta">Trilha das escolas →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-ingles.html" style="--card-color:#3b82f6;--card-glow:rgba(59,130,246,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(59,130,246,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">E</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">LING · INGLÊS</div>
+      <h3>Inglês · L.E.</h3>
+      <p>Verb tenses, reading comprehension, false friends, phrasal verbs, vocabulário acadêmico. Interpretação de texto em inglês (foco da UNICAP).</p>
+      <span class="mapa-card-cta">Reading & grammar →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- MATEMÁTICA -->
+<div class="section-title">Matemática e suas Tecnologias <span class="count">4 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-matematica-aritmetica.html" style="--card-color:#10b981;--card-glow:rgba(16,185,129,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(16,185,129,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">N</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">MAT · ARITMÉTICA</div>
+      <h3>Aritmética e Álgebra</h3>
+      <p>Conjuntos numéricos, MMC/MDC, razão, proporção, regra de 3, porcentagem, juros simples e compostos, equações 1° e 2° grau, sistemas, progressões.</p>
+      <span class="mapa-card-cta">Os números →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-matematica-funcoes.html" style="--card-color:#06b6d4;--card-glow:rgba(6,182,212,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(6,182,212,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">f</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">MAT · FUNÇÕES</div>
+      <h3>Funções</h3>
+      <p>Função afim, quadrática, modular, exponencial, logarítmica. Gráficos, domínio, contradomínio, raízes, vértice da parábola.</p>
+      <span class="mapa-card-cta">Estudo de funções →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-matematica-geometria.html" style="--card-color:#ec4899;--card-glow:rgba(236,72,153,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(236,72,153,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">△</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">MAT · GEOMETRIA</div>
+      <h3>Geometria Plana e Espacial</h3>
+      <p>Polígonos, áreas, perímetros. Triângulos (semelhança, Pitágoras). Sólidos: cubo, paralelepípedo, pirâmide, cone, cilindro, esfera. Volumes.</p>
+      <span class="mapa-card-cta">Sólidos 3D →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-matematica-trigonometria.html" style="--card-color:#f43f5e;--card-glow:rgba(244,63,94,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(244,63,94,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">∡</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">MAT · TRIG · MAT</div>
+      <h3>Trigonometria e Matrizes</h3>
+      <p>Trigonometria no triângulo retângulo e ciclo trigonométrico. Lei dos senos e cossenos. Matrizes, determinantes, sistemas lineares. Análise combinatória e probabilidade.</p>
+      <span class="mapa-card-cta">Ciclo trig →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- HISTÓRIA -->
+<div class="section-title">História — Geral e do Brasil <span class="count">7 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-historia-antiga.html" style="--card-color:#fbbf24;--card-glow:rgba(251,191,36,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(251,191,36,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">Ω</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST GERAL · 1.3</div>
+      <h3>Idade Antiga</h3>
+      <p>Pré-história, Mesopotâmia, Egito, Hebreus, Fenícios, Persas, Grécia clássica (Pártenon, Sócrates, Platão), Roma (República e Império).</p>
+      <span class="mapa-card-cta">Viagem ao mundo antigo →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-historia-medieval.html" style="--card-color:#0891b2;--card-glow:rgba(8,145,178,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(8,145,178,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">✠</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST GERAL · 1.4</div>
+      <h3>Idade Média</h3>
+      <p>Bárbaros, Bizantinos, Carlos Magno, Islamismo, Feudalismo, Igreja Católica, Cruzadas, Renascimento urbano. 476 → 1453.</p>
+      <span class="mapa-card-cta">Idade Média →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-historia-moderna.html" style="--card-color:#fb923c;--card-glow:rgba(251,146,60,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(251,146,60,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚜</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST GERAL · 1.5</div>
+      <h3>Idade Moderna</h3>
+      <p>Absolutismo, Expansão Marítima, Renascimento, Iluminismo, Reforma e Contrarreforma, 13 Colônias, Independência EUA, Revoluções Industriais.</p>
+      <span class="mapa-card-cta">1453 → 1789 →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-historia-contemporanea.html" style="--card-color:#ef4444;--card-glow:rgba(239,68,68,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(239,68,68,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚛</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST GERAL · 1.6</div>
+      <h3>Idade Contemporânea</h3>
+      <p>Revolução Francesa, Napoleão, Independências latino-americanas, séc XIX, I e II Guerras Mundiais, Revolução Russa, Guerra Fria, Globalização, Século XXI.</p>
+      <span class="mapa-card-cta">1789 → hoje →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-brasil-colonial.html" style="--card-color:#d4a017;--card-glow:rgba(212,160,23,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(45,93,58,0.4),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚜</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST BR · 2.2 · COLONIAL</div>
+      <h3>Brasil Colônia</h3>
+      <p>Engenho de açúcar, Quilombo dos Palmares, Vila Rica barroca, paus-brasis, nau portuguesa, Revolução Pernambucana 1817. 6 monumentos.</p>
+      <span class="mapa-card-cta">Voltar ao 1500 →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-brasil-imperio.html" style="--card-color:#fde047;--card-glow:rgba(253,224,71,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(253,224,71,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">♛</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST BR · 2.3-2.5</div>
+      <h3>Brasil Império</h3>
+      <p>Primeiro Reinado (Pedro I, Constituição 1824), Período Regencial (Cabanagem, Farroupilha), Segundo Reinado (Pedro II, Café, Guerra do Paraguai, Abolição 1888).</p>
+      <span class="mapa-card-cta">1822 → 1889 →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-brasil-republica.html" style="--card-color:#10b981;--card-glow:rgba(16,185,129,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(16,185,129,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">★</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">HIST BR · 2.6</div>
+      <h3>Brasil República</h3>
+      <p>República Velha, Canudos, Vargas, Estado Novo, JK, Ditadura Militar, AI-5, Anistia, Diretas Já, CF/88, Plano Real, Sarney a Bolsonaro.</p>
+      <span class="mapa-card-cta">1889 → hoje →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- FILOSOFIA + SOCIOLOGIA + ATUALIDADES -->
+<div class="section-title">Filosofia, Sociologia e Atualidades <span class="count">3 mapas · ênfase Direito</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-filosofia.html" style="--card-color:#a855f7;--card-glow:rgba(168,85,247,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(168,85,247,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">φ</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">FIL · 5 blocos</div>
+      <h3>Filosofia</h3>
+      <p>Sócrates, Platão, Aristóteles, Agostinho, Kant (imperativo categórico — cobrado 2026.1), Marx, Nietzsche, Sartre, Foucault.</p>
+      <span class="mapa-card-cta">Explorar →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-sociologia.html" style="--card-color:#f97316;--card-glow:rgba(249,115,22,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(249,115,22,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⊛</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">SOC · 5 blocos</div>
+      <h3>Sociologia</h3>
+      <p>Durkheim, Marx, Weber, Escola de Frankfurt (Adorno + Indústria Cultural — cobrado 2026.1), Bauman, Bourdieu, sociologia brasileira.</p>
+      <span class="mapa-card-cta">Explorar →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-atualidades.html" style="--card-color:#fbbf24;--card-glow:rgba(251,191,36,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(251,191,36,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚡</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">ATU · 5 blocos</div>
+      <h3>Atualidades</h3>
+      <p>Geopolítica (BRICS, Gaza, Ucrânia), Brasil 2025-2026 (Reforma Tributária, 8 jan), COP30 Belém, IA e LGPD, Direitos Humanos e ODS.</p>
+      <span class="mapa-card-cta">Mundo atual →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- GEOGRAFIA -->
+<div class="section-title">Geografia <span class="count">3 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-geografia-fisica.html" style="--card-color:#22c55e;--card-glow:rgba(34,197,94,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(34,197,94,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⛰</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">GEO · FÍSICA</div>
+      <h3>Geografia Física</h3>
+      <p>Cartografia, estrutura geológica, relevo brasileiro, clima e massas de ar, hidrografia, vegetação. Biomas brasileiros (Caatinga = exclusivo).</p>
+      <span class="mapa-card-cta">Terra física →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-geografia-humana.html" style="--card-color:#f472b6;--card-glow:rgba(244,114,182,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(244,114,182,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚇</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">GEO · HUMANA</div>
+      <h3>Geografia Humana</h3>
+      <p>População, demografia, migrações (venezuelanos, refugiados), urbanização, RM Recife, etnias e cultura, indígenas, quilombolas.</p>
+      <span class="mapa-card-cta">Pessoas e cidade →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-geografia-economica.html" style="--card-color:#fbbf24;--card-glow:rgba(251,191,36,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(251,191,36,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚙</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">GEO · ECONÔMICA</div>
+      <h3>Geografia Econômica</h3>
+      <p>Indústria, Suape, agropecuária, energia (eólica do NE), geopolítica, BRICS, Mercosul, blocos econômicos, Pernambuco regional.</p>
+      <span class="mapa-card-cta">Brasil + mundo →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- CIÊNCIAS DA NATUREZA -->
+<div class="section-title">Ciências da Natureza <span class="count">7 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-quimica-geral.html" style="--card-color:#22d3ee;--card-glow:rgba(34,211,238,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(34,211,238,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚛</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">QUÍMICA · BLOCOS 1-5</div>
+      <h3>Química Geral</h3>
+      <p>Átomos, ligações, tabela periódica, estequiometria, soluções, ácidos/bases, cinética, equilíbrio, termoquímica, radioatividade.</p>
+      <span class="mapa-card-cta">5 blocos do PDF →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-quimica-organica.html" style="--card-color:#10b981;--card-glow:rgba(16,185,129,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(16,185,129,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">C</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">QUÍMICA · BLOCO 6</div>
+      <h3>Química Orgânica</h3>
+      <p>Carbono, hidrocarbonetos, funções orgânicas, isomeria, reações, bioquímica (proteínas, lipídios, DNA).</p>
+      <span class="mapa-card-cta">Química do C →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-fisica-mecanica.html" style="--card-color:#3b82f6;--card-glow:rgba(59,130,246,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(59,130,246,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚙</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">FÍSICA · BLOCO 1</div>
+      <h3>Mecânica</h3>
+      <p>Cinemática, Leis de Newton, trabalho/energia, estática, hidrostática (Pascal, Arquimedes).</p>
+      <span class="mapa-card-cta">F = m·a →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-fisica-ondas-optica.html" style="--card-color:#f97316;--card-glow:rgba(249,115,22,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(249,115,22,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">∿</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">FÍSICA · BLOCOS 2-3</div>
+      <h3>Termo · Ondas · Óptica</h3>
+      <p>Termologia, termodinâmica, ondulatória, acústica (Doppler), óptica geométrica (espelhos, lentes).</p>
+      <span class="mapa-card-cta">Calor, som, luz →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-fisica-eletromagnetismo.html" style="--card-color:#facc15;--card-glow:rgba(250,204,21,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(250,204,21,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⚡</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">FÍSICA · BLOCO 4</div>
+      <h3>Eletromagnetismo</h3>
+      <p>Eletrostática (Coulomb), eletrodinâmica (Lei de Ohm), magnetismo, indução (Faraday/Lenz), transformadores.</p>
+      <span class="mapa-card-cta">Maxwell →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-biologia-celular.html" style="--card-color:#a78bfa;--card-glow:rgba(167,139,250,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(167,139,250,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">◉</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">BIO · BLOCO 1</div>
+      <h3>Biologia Celular</h3>
+      <p>Composição química, célula (organelas), metabolismo (respiração, fotossíntese), núcleo, DNA/RNA, mitose, meiose.</p>
+      <span class="mapa-card-cta">Vida em escala →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-biologia-genetica.html" style="--card-color:#f43f5e;--card-glow:rgba(244,63,94,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(244,63,94,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⊕</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">BIO · BLOCO 2</div>
+      <h3>Genética e Evolução</h3>
+      <p>Leis de Mendel, herança, sangue ABO, biotecnologia (CRISPR), Darwin, seleção natural, evolução humana.</p>
+      <span class="mapa-card-cta">Hereditariedade →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- BIOLOGIA · ECOLOGIA + REDAÇÃO -->
+<div class="section-title">Ecologia + Redação <span class="count">2 mapas</span></div>
+
+<div class="mapas-grid">
+
+  <a class="mapa-card" href="mapas/mapa-biologia-ecologia.html" style="--card-color:#22c55e;--card-glow:rgba(34,197,94,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(34,197,94,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">⏣</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">BIO · BLOCO 3</div>
+      <h3>Ecologia e Biodiversidade</h3>
+      <p>Ecossistemas, cadeia alimentar, ciclos biogeoquímicos, relações ecológicas, vírus (HIV, COVID), bactérias, plantas, animais.</p>
+      <span class="mapa-card-cta">Vida × ambiente →</span>
+    </div>
+  </a>
+
+  <a class="mapa-card" href="mapas/mapa-redacao.html" style="--card-color:#fbbf24;--card-glow:rgba(251,191,36,0.3);--card-bg:radial-gradient(circle at 30% 40%,rgba(251,191,36,0.3),transparent 60%);">
+    <div class="mapa-card-vis"><div class="mapa-card-icon">✎</div></div>
+    <div class="mapa-card-body">
+      <div class="mapa-card-code">REDAÇÃO · 1.000 PTS</div>
+      <h3>Redação UNICAP</h3>
+      <p>5 critérios oficiais: Estrutura (100), Apropriação (200), Argumentação (200), Relevância (200), Norma padrão (300). Estratégia, revisão.</p>
+      <span class="mapa-card-cta">Critérios oficiais →</span>
+    </div>
+  </a>
+
+</div>
+
+<!-- OUTROS ACESSOS -->
+<div class="section-title">Outros Recursos</div>
+
+<div class="outros-grid">
+  <a class="outros-card" href="nexus/index.html" style="border-color:rgba(124,96,232,0.4);background:rgba(124,96,232,0.06);">
+    <div class="ic">✦</div>
+    <div class="ttxt"><div class="ti" style="color:#a080e8;">Nexus Premium</div><div class="ds">25 mapas imersivos 3D — nova geração</div></div>
+  </a>
+  <a class="outros-card" href="dashboard.html">
+    <div class="ic">🎯</div>
+    <div class="ttxt"><div class="ti">Dashboard</div><div class="ds">Painel central com countdown</div></div>
+  </a>
+  <a class="outros-card" href="plano.html">
+    <div class="ic">📜</div>
+    <div class="ttxt"><div class="ti">Plano Visual</div><div class="ds">Estratégia completa em HTML</div></div>
+  </a>
+  <a class="outros-card" href="simulados/simulado-diagnostico.html">
+    <div class="ic">📝</div>
+    <div class="ttxt"><div class="ti">Simulado Diagnóstico</div><div class="ds">20 questões · 2h</div></div>
+  </a>
+  <a class="outros-card" href="redacao/trainer.html">
+    <div class="ic">✍️</div>
+    <div class="ttxt"><div class="ti">Redação Trainer</div><div class="ds">90 min · IA corrige</div></div>
+  </a>
+  <a class="outros-card" href="materiais/semana-1/index.html">
+    <div class="ic">📚</div>
+    <div class="ttxt"><div class="ti">Materiais Semana 1</div><div class="ds">Resumos, flashcards, quizzes</div></div>
+  </a>
+  <a class="outros-card" href="edital-resumido.md">
+    <div class="ic">📋</div>
+    <div class="ttxt"><div class="ti">Edital Resumido</div><div class="ds">9 disciplinas · conteúdo programático</div></div>
+  </a>
+  <a class="outros-card" href="cronograma.html">
+    <div class="ic">📅</div>
+    <div class="ttxt"><div class="ti">Cronograma Visual</div><div class="ds">26 dias · contador regressivo · prova 14/06</div></div>
+  </a>
+  <a class="outros-card" href="simulados/simulado-cronometrado.html">
+    <div class="ic">⏱</div>
+    <div class="ttxt"><div class="ti">Simulado Cronometrado</div><div class="ds">5h · 64 questões · gabarito 2026.1 carregado</div></div>
+  </a>
+  <a class="outros-card" href="materiais/flashcards.html">
+    <div class="ic">🃏</div>
+    <div class="ttxt"><div class="ti">Flashcards</div><div class="ds">32 cards · SM-2 · todas as áreas</div></div>
+  </a>
+  <a class="outros-card" href="materiais/quiz.html">
+    <div class="ic">✅</div>
+    <div class="ttxt"><div class="ti">Quiz Diagnóstico</div><div class="ds">20 questões · correção comentada</div></div>
+  </a>
+</div>
+
+<footer>
+  <p><span class="b">UNICAP 2026.2</span> · Sprint de 26 dias · Direito · Recife/PE</p>
+  <p style="margin-top: 6px;">Carlos Régis · prova 14/06/2026 · 30 mapas 3D + flashcards + quiz + simulado · Conteúdo LITERAL do edital oficial</p>
+</footer>
+
+</main>
+
+<script>
+(function() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+  const N = 200;
+  const stars = [];
+  for (let i = 0; i < N; i++) {
+    stars.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      size: 0.4 + Math.random() * 1.4,
+      base: 0.1 + Math.random() * 0.5,
+      phase: Math.random() * Math.PI * 2,
+      vel: 0.3 + Math.random() * 0.8
+    });
+  }
+  function frame(t) {
+    ctx.clearRect(0, 0, w, h);
+    for (const s of stars) {
+      const tw = 0.65 + Math.sin(t * 0.001 * s.vel + s.phase) * 0.35;
+      const a = s.base * tw;
+      ctx.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+      ctx.fillRect(s.x, s.y, s.size, s.size);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  window.addEventListener('resize', () => {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  });
+})();
+
+document.querySelectorAll('.mapa-card').forEach((card, i) => {
+  card.style.animationDelay = (i * 60 + 100) + 'ms';
+});
+
+// Contador dinâmico de dias até a prova
+(function() {
+  const prova = new Date('2026-06-14T08:00:00');
+  const dias = Math.max(0, Math.floor((prova - new Date()) / 86400000));
+  const el = document.getElementById('statsDias');
+  if (el) el.textContent = dias;
+})();
+</script>
+
+</body>
+</html>

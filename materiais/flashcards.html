@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — UNICAP 2026.2 Direito</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#050810 0%,#0a0e1a 40%,#0d1220 100%);background-attachment:fixed;
+    color:#e8eaf0;min-height:100vh;padding:20px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .topo{max-width:680px;margin:0 auto 18px;text-align:center;}
+  .topo a{font-size:13px;color:#00d4ff;text-decoration:none;display:inline-block;margin-bottom:10px;}
+  .topo a:hover{text-decoration:underline;}
+  .topo h1{font-size:22px;color:#fff;font-weight:800;letter-spacing:-0.02em;}
+  .topo p{font-size:13px;color:#6b7a99;margin-top:5px;}
+  .filtros{max-width:680px;margin:0 auto 16px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .filtros button{background:rgba(255,255,255,0.05);color:#c0c8da;border:1px solid rgba(255,255,255,0.08);padding:7px 14px;
+    border-radius:99px;cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;font-weight:500;transition:all 180ms;}
+  .filtros button:hover{border-color:rgba(0,212,255,0.3);color:#00d4ff;}
+  .filtros button.ativo{background:rgba(0,212,255,0.15);color:#00d4ff;border-color:#00d4ff;font-weight:700;}
+  .stats{max-width:680px;margin:0 auto 16px;display:flex;gap:10px;justify-content:center;font-size:12px;color:#6b7a99;}
+  .stats span{background:rgba(255,255,255,0.04);padding:6px 13px;border-radius:99px;border:1px solid rgba(255,255,255,0.06);}
+  .stats b{color:#00d4ff;font-family:'JetBrains Mono',monospace;}
+  .card{max-width:680px;margin:0 auto;background:rgba(19,24,41,0.70);backdrop-filter:blur(16px);border-radius:18px;
+    border:2px solid rgba(0,212,255,0.25);min-height:300px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:36px;cursor:pointer;
+    text-align:center;transition:all 200ms;box-shadow:0 8px 40px rgba(0,0,0,0.45);}
+  .card:hover{border-color:rgba(0,212,255,0.5);box-shadow:0 0 30px rgba(0,212,255,0.15),0 8px 40px rgba(0,0,0,0.5);}
+  .card:active{transform:scale(0.99);}
+  .card .tag{font-size:11px;color:#ffb800;text-transform:uppercase;letter-spacing:2px;margin-bottom:16px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+  .card .conteudo{font-size:19px;line-height:1.6;color:#e8eaf0;}
+  .card .virar{margin-top:22px;font-size:12px;color:#4b5563;}
+  .card.resposta{border-color:rgba(74,222,128,0.5);box-shadow:0 0 30px rgba(74,222,128,0.12),0 8px 40px rgba(0,0,0,0.5);}
+  .botoes{max-width:680px;margin:14px auto 0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .botoes button{border:none;padding:13px 6px;border-radius:10px;cursor:pointer;
+    font-size:13px;font-weight:700;transition:all 180ms;font-family:'Inter',sans-serif;}
+  .b-errei{background:rgba(239,68,68,0.20);color:#ef4444;border:1px solid rgba(239,68,68,0.35);}
+  .b-dificil{background:rgba(251,146,60,0.20);color:#fb923c;border:1px solid rgba(251,146,60,0.35);}
+  .b-bom{background:rgba(59,130,246,0.20);color:#60a5fa;border:1px solid rgba(59,130,246,0.35);}
+  .b-facil{background:rgba(74,222,128,0.20);color:#4ade80;border:1px solid rgba(74,222,128,0.35);}
+  .botoes button:hover{transform:translateY(-2px);filter:brightness(1.2);}
+  .botoes button:disabled{opacity:0.3;cursor:default;transform:none;}
+  .fim{max-width:680px;margin:0 auto;text-align:center;background:rgba(19,24,41,0.70);backdrop-filter:blur(16px);
+    border-radius:18px;padding:40px;border:1px solid rgba(0,212,255,0.15);}
+  .fim h2{color:#4ade80;font-size:22px;margin-bottom:12px;font-weight:800;}
+  .reset{background:rgba(255,255,255,0.06);color:#c0c8da;border:1px solid rgba(255,255,255,0.10);padding:9px 18px;
+    border-radius:9px;cursor:pointer;margin:8px 4px 0;font-size:12px;font-family:'Inter',sans-serif;font-weight:600;transition:all 180ms;}
+  .reset:hover{background:rgba(255,255,255,0.10);color:#e8eaf0;}
+</style>
+</head>
+<body>
+<div class="topo">
+  <a href="../dashboard.html">← Dashboard</a>
+  <h1>Flashcards UNICAP 2026.2 — Direito</h1>
+  <p>Clique no card para virar · classifique sua resposta · o progresso fica salvo neste navegador</p>
+</div>
+<div class="filtros" id="filtros"></div>
+<div class="stats" id="stats"></div>
+<div id="area"></div>
+<div class="botoes" id="botoes" style="display:none">
+  <button class="b-errei" data-q="0">Errei</button>
+  <button class="b-dificil" data-q="1">Difícil</button>
+  <button class="b-bom" data-q="2">Bom</button>
+  <button class="b-facil" data-q="3">Fácil</button>
+</div>
+
+<script>
+const CARDS = [
+  // REDAÇÃO
+  {m:'Redação',p:'Como os 1000 pontos da redação UNICAP se dividem?',r:'Estrutura 100 · Apropriação temática 200 · Construção dos argumentos 200 · Relevância 200 · Norma padrão 300.'},
+  {m:'Redação',p:'O que ZERA a redação na UNICAP?',r:'Fuga ao tema, fuga ao gênero, folha em branco, menos de 8 linhas, desrespeito aos direitos humanos, impropérios, desenhos e identificação do candidato.'},
+  {m:'Redação',p:'Repertório: o que diz Kant sobre a pessoa humana?',r:'A pessoa deve ser tratada sempre como um FIM, nunca apenas como um MEIO. Use em: dignidade, ética, direitos, exclusão.'},
+  {m:'Redação',p:'Repertório: o que é a "modernidade líquida" de Bauman?',r:'Tempo em que laços, identidades e certezas se tornaram frágeis e passageiros. Use em: tecnologia, redes sociais, relações.'},
+  {m:'Redação',p:'Estrutura ideal da redação UNICAP?',r:'4 parágrafos: Introdução (contexto+problema+tese) · Desenvolvimento 1 · Desenvolvimento 2 · Conclusão (retomada+proposta). 25–30 linhas, com título.'},
+  // LINGUAGENS
+  {m:'Linguagens',p:'Qual a marca registrada de Machado de Assis?',r:'Ironia fina, pessimismo, análise psicológica e a interpelação do leitor (o leitor vira quase personagem). Personagens entre o ser e o parecer.'},
+  {m:'Linguagens',p:'Quais são as 3 fases do Modernismo brasileiro?',r:'1ª (1922) ruptura — Mário e Oswald de Andrade. 2ª (1930) — Drummond, Graciliano Ramos. 3ª (1945) — Clarice Lispector, Guimarães Rosa.'},
+  {m:'Linguagens',p:'Função da linguagem focada no próprio código?',r:'Metalinguística (ex.: dicionário, poema que fala de poesia).'},
+  {m:'Linguagens',p:'Regência: o verbo "assistir" (no sentido de ver) pede o quê?',r:'Pede a preposição "a": assistir AO filme, assistir AO jogo.'},
+  {m:'Linguagens',p:'Como resolver crase rapidamente?',r:'Troque a palavra feminina por uma masculina. Se aparecer "ao", há crase. "Vou à escola" → "vou ao colégio" = tem crase.'},
+  {m:'Linguagens',p:'Marca de Graciliano Ramos?',r:'Linguagem seca e precisa; seca, miséria e exclusão (Vidas Secas, São Bernardo). Em São Bernardo, o narrador reflete sobre o próprio ato de escrever.'},
+  // HUMANAS
+  {m:'Humanas',p:'O que foi o AI-5 (1968)?',r:'Ato Institucional nº 5: o auge da repressão na ditadura militar — recesso do Congresso, censura, suspensão de direitos políticos.'},
+  {m:'Humanas',p:'O que foi a Lei de Terras de 1850?',r:'Tornou a terra acessível só por compra → impediu ex-escravizados e pobres de ter terra; favoreceu o latifúndio.'},
+  {m:'Humanas',p:'Diferencie fato social (Durkheim) em 3 traços.',r:'É exterior ao indivíduo, coercitivo (impõe-se) e geral (coletivo). Ex.: leis, língua, moda.'},
+  {m:'Humanas',p:'O que é a Indústria Cultural (Adorno)?',r:'A cultura transformada em mercadoria padronizada, guiada pelo lucro, que reduz o senso crítico. Inclui a pseudo-individualização.'},
+  {m:'Humanas',p:'A Amazônia é o "pulmão do mundo"?',r:'Mito. A floresta consome quase todo o O₂ que produz. Sua importância real é a biodiversidade e a regulação climática/hídrica.'},
+  {m:'Humanas',p:'O que defende o multilateralismo (BRICS)?',r:'Maior participação das economias emergentes nas decisões globais — uma ordem mundial mais equilibrada, com voz ao Sul Global.'},
+  {m:'Humanas',p:'Como Agostinho modifica Platão?',r:'Aceita a ideia de uma Verdade imutável, mas a situa em DEUS, e não num mundo de Formas separado.'},
+  // MATEMÁTICA
+  {m:'Matemática',p:'Descontos sucessivos de 25% e depois 20%: qual a redução total?',r:'Multiplica os fatores: 0,75 × 0,80 = 0,60 → restam 60% → redução de 40% (NÃO 45%).'},
+  {m:'Matemática',p:'Fórmula de Bhaskara e do discriminante?',r:'x = (−b ± √Δ)/2a, com Δ = b² − 4ac. Δ>0: 2 raízes; Δ=0: 1 raiz; Δ<0: nenhuma raiz real.'},
+  {m:'Matemática',p:'Teorema de Pitágoras?',r:'No triângulo retângulo: hipotenusa² = cateto² + cateto². (a² = b² + c²)'},
+  {m:'Matemática',p:'Juros simples × juros compostos?',r:'Simples: J = C·i·t (juro sempre sobre o capital inicial). Compostos: M = C·(1+i)^t (juro sobre juro).'},
+  {m:'Matemática',p:'Como achar a mediana?',r:'Coloque os dados em ordem e pegue o valor central. Se houver número par de dados, é a média dos dois centrais.'},
+  {m:'Matemática',p:'Volume da esfera?',r:'V = (4/3)·π·r³.'},
+  // NATUREZA
+  {m:'Natureza',p:'Diferença entre mitose e meiose?',r:'Mitose: 1 célula → 2 idênticas (cresce/repara). Meiose: 1 célula → 4 com metade dos cromossomos (gametas, variabilidade).'},
+  {m:'Natureza',p:'O que faz um catalisador?',r:'Acelera a reação química sem ser consumido e sem alterar os produtos finais.'},
+  {m:'Natureza',p:'O cátion é maior ou menor que o átomo neutro?',r:'Menor — perdeu elétron(s), logo perdeu repulsão e pode perder uma camada. O ânion é maior.'},
+  {m:'Natureza',p:'Cruzamento Aa × Aa: qual a proporção fenotípica?',r:'3/4 dominante : 1/4 recessivo (proporção 3:1).'},
+  {m:'Natureza',p:'O que é difração de ondas?',r:'O fenômeno em que a onda contorna obstáculos e se espalha ao passar por aberturas pequenas.'},
+  {m:'Natureza',p:'Fórmula da pressão hidrostática?',r:'P = d·g·h (densidade × gravidade × profundidade). A pressão total inclui ainda a pressão atmosférica.'},
+  {m:'Natureza',p:'Lavar as mãos previne quais viroses?',r:'Viroses de contato como gripe (influenza), hepatite A e poliomielite.'},
+  {m:'Natureza',p:'As 3 Leis de Newton?',r:'1ª Inércia · 2ª F = m·a · 3ª Ação e reação.'},
+];
+
+let estado = JSON.parse(localStorage.getItem('fc_unicap')||'{}');
+let filtro = 'Todas';
+let fila = [], atual = null, virado = false;
+
+const materias = ['Todas',...new Set(CARDS.map(c=>c.m))];
+const fdiv = document.getElementById('filtros');
+materias.forEach(m=>{
+  const b=document.createElement('button');
+  b.textContent=m; if(m==='Todas')b.classList.add('ativo');
+  b.onclick=()=>{filtro=m;[...fdiv.children].forEach(x=>x.classList.remove('ativo'));
+    b.classList.add('ativo');montarFila();};
+  fdiv.appendChild(b);
+});
+
+function montarFila(){
+  fila = CARDS.map((c,i)=>({...c,idx:i}))
+    .filter(c=>filtro==='Todas'||c.m===filtro);
+  // ordena: cards não dominados primeiro
+  fila.sort((a,b)=>(estado[a.idx]?.nivel||0)-(estado[b.idx]?.nivel||0));
+  proximo();
+}
+function proximo(){
+  virado=false;
+  document.getElementById('botoes').style.display='none';
+  if(!fila.length){ telaFim(); return; }
+  atual=fila.shift();
+  render();
+  atualizarStats();
+}
+function render(){
+  const area=document.getElementById('area');
+  area.innerHTML=`<div class="card" id="card">
+    <div class="tag">${atual.m}</div>
+    <div class="conteudo">${virado?atual.r:atual.p}</div>
+    <div class="virar">${virado?'classifique sua resposta abaixo':'clique para ver a resposta'}</div>
+  </div>`;
+  const card=document.getElementById('card');
+  if(virado)card.classList.add('resposta');
+  card.onclick=()=>{ if(!virado){virado=true;render();
+    document.getElementById('botoes').style.display='grid';} };
+}
+function atualizarStats(){
+  const total=CARDS.filter(c=>filtro==='Todas'||c.m===filtro).length;
+  const dominados=CARDS.filter((c,i)=>(filtro==='Todas'||c.m===filtro)&&(estado[i]?.nivel||0)>=3).length;
+  document.getElementById('stats').innerHTML=
+    `<span>Restantes nesta rodada: <b>${fila.length+1}</b></span>
+     <span>Dominados: <b>${dominados}/${total}</b></span>`;
+}
+function telaFim(){
+  document.getElementById('botoes').style.display='none';
+  document.getElementById('stats').innerHTML='';
+  document.getElementById('area').innerHTML=`<div class="fim">
+    <h2>Rodada concluída!</h2>
+    <p style="color:#cfd4e0">Você passou por todos os cards de <b>${filtro}</b>.</p>
+    <p style="color:#8a93a8;font-size:13px;margin-top:8px">A repetição espaçada funciona: volte amanhã, depois em 3 e 7 dias.</p>
+    <button class="reset" onclick="montarFila()">Repetir rodada</button>
+    <button class="reset" onclick="zerar()">Zerar todo o progresso</button>
+  </div>`;
+}
+function zerar(){ if(confirm('Apagar todo o progresso salvo?')){
+  estado={};localStorage.removeItem('fc_unicap');montarFila();}}
+window.zerar=zerar; window.montarFila=montarFila;
+
+document.getElementById('botoes').onclick=e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  const q=+e.target.dataset.q;
+  const cur=estado[atual.idx]||{nivel:0};
+  if(q===0)cur.nivel=0;
+  else if(q===1)cur.nivel=Math.max(0,cur.nivel);
+  else cur.nivel=(cur.nivel||0)+(q===3?2:1);
+  cur.visto=Date.now();
+  estado[atual.idx]=cur;
+  localStorage.setItem('fc_unicap',JSON.stringify(estado));
+  // card errado/difícil volta ao fim da fila
+  if(q<=1)fila.push(atual);
+  proximo();
+};
+
+montarFila();
+</script>
+</body>
+</html>

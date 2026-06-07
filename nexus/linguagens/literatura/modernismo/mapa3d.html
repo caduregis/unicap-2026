@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Semana de 22 — Formas Partidas | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #030306; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(3,3,6,0.95) 0%, rgba(3,3,6,0.0) 100%);
+  }
+  #nav a {
+    color: #e84040; text-decoration: none; font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border: 1px solid rgba(220,40,40,0.4); border-radius: 4px;
+    transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  #nav a:hover { background: rgba(220,40,40,0.15); color: #ff6060; }
+  #badge {
+    color: #fbbf24; font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 5px 14px; background: rgba(80,50,0,0.3); border: 1px solid rgba(200,160,30,0.5);
+    border-radius: 3px; text-transform: uppercase;
+  }
+  #hint {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100;
+    color: rgba(220,80,80,0.5); font-size: 12px; letter-spacing: 0.06em; pointer-events: none;
+    text-transform: uppercase; font-weight: 600;
+  }
+
+  #tooltip {
+    position: fixed; z-index: 200;
+    max-width: 420px; min-width: 300px;
+    background: linear-gradient(135deg, rgba(4,2,2,0.97) 0%, rgba(10,4,4,0.97) 100%);
+    border: 2px solid rgba(220,40,40,0.5);
+    border-radius: 4px; padding: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.9), 0 0 30px rgba(220,40,40,0.1);
+    display: none; pointer-events: none;
+  }
+  #tooltip h3 { color: #fbbf24; font-size: 15px; font-weight: 800; margin-bottom: 10px; letter-spacing: 0.05em; text-transform: uppercase; }
+  #tooltip p { color: #c09080; font-size: 12.5px; line-height: 1.7; margin-bottom: 12px; }
+  #tooltip .tip {
+    background: rgba(200,40,40,0.15); border-left: 3px solid #e11d48;
+    padding: 8px 12px; border-radius: 0 4px 4px 0;
+    color: #f09090; font-size: 11.5px; line-height: 1.6;
+  }
+  #tooltip .tip::before { content: "⚡ UNICAP: "; font-weight: 800; color: #ff4040; }
+</style>
+</head>
+<body>
+<div id="canvas-container">
+  <div id="nav">
+    <a href="../../../index.html">← Linguagens</a>
+    <div id="badge">🎨 Semana de 22 — Modernismo</div>
+    <a href="resumo.html">Resumo Modernismo →</a>
+  </div>
+  <div id="hint">Clique nas formas para explorar</div>
+</div>
+<div id="tooltip">
+  <h3 id="tt-title"></h3>
+  <p id="tt-desc"></p>
+  <div class="tip" id="tt-tip"></div>
+</div>
+
+<script>
+// ─── SCENE ─────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x030306);
+scene.fog = new THREE.FogExp2(0x030306, 0.015);
+
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth/window.innerHeight, 0.1, 80);
+camera.position.set(0, 4, 16);
+camera.lookAt(0, 2, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+// ─── LIGHTS ────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x050508, 1.8);
+scene.add(ambient);
+
+// 3 colored spotlights
+const spotR = new THREE.SpotLight(0xe11d48, 1.8, 40, Math.PI/5, 0.4);
+spotR.position.set(-8, 15, -5);
+scene.add(spotR);
+
+const spotY = new THREE.SpotLight(0xfbbf24, 1.5, 40, Math.PI/5, 0.4);
+spotY.position.set(8, 15, -5);
+scene.add(spotY);
+
+const spotB = new THREE.SpotLight(0x1d4ed8, 1.6, 40, Math.PI/5, 0.4);
+spotB.position.set(0, 15, 8);
+scene.add(spotB);
+
+// Spotlight targets
+spotR.target.position.set(0, 0, 0); scene.add(spotR.target);
+spotY.target.position.set(0, 0, 0); scene.add(spotY.target);
+spotB.target.position.set(0, 0, 0); scene.add(spotB.target);
+
+// ─── FRACTURED FLOOR ───────────────────────────────────────────
+const tileMat = new THREE.MeshLambertMaterial({ color: 0x0d0d12, side: THREE.DoubleSide });
+for(let i=0;i<30;i++){
+  const w = 1.5+Math.random()*3;
+  const d = 1.5+Math.random()*3;
+  const tileGeo = new THREE.PlaneGeometry(w, d);
+  const tile = new THREE.Mesh(tileGeo, tileMat);
+  const angle = (Math.random()-0.5)*0.35;
+  tile.rotation.x = -Math.PI/2 + angle;
+  tile.rotation.z = (Math.random()-0.5)*0.3;
+  tile.position.set(
+    (Math.random()-0.5)*24,
+    -2.5 + Math.random()*0.4,
+    (Math.random()-0.5)*20
+  );
+  scene.add(tile);
+}
+
+// ─── FLOATING GEOMETRIC FORMS ──────────────────────────────────
+const formColors = [0xe11d48, 0xfbbf24, 0x1d4ed8, 0xffffff, 0x111111, 0xe84040, 0xf0c030, 0x2060e0];
+const floatingForms = [];
+
+function randomColor(){ return formColors[Math.floor(Math.random()*formColors.length)]; }
+
+const formDefinitions = [
+  {geo: new THREE.BoxGeometry(2.5, 2.5, 2.5), pos:[0,6,0], solid:true},
+  {geo: new THREE.BoxGeometry(1.5,1.5,1.5), pos:[-6,4,-3], solid:false},
+  {geo: new THREE.TetrahedronGeometry(1.5), pos:[5,5,-2], solid:true},
+  {geo: new THREE.OctahedronGeometry(1.2), pos:[-4,2,4], solid:true},
+  {geo: new THREE.IcosahedronGeometry(1), pos:[4,2,4], solid:false},
+  {geo: new THREE.BoxGeometry(0.8,3.5,0.8), pos:[-2,1,-6], solid:true},
+  {geo: new THREE.TetrahedronGeometry(0.8), pos:[3,7,3], solid:false},
+  {geo: new THREE.BoxGeometry(3,0.4,3), pos:[0,0.5,3], solid:true},
+  {geo: new THREE.OctahedronGeometry(0.7), pos:[-7,5,2], solid:false},
+  {geo: new THREE.BoxGeometry(1.2,1.2,1.2), pos:[7,3,-4], solid:true},
+  {geo: new THREE.IcosahedronGeometry(1.4), pos:[0,9,-4], solid:false},
+  {geo: new THREE.TetrahedronGeometry(1.1), pos:[-3,8,2], solid:true},
+  {geo: new THREE.BoxGeometry(0.5,0.5,0.5), pos:[6,6,2], solid:false},
+  {geo: new THREE.OctahedronGeometry(1.8), pos:[2,1,-4], solid:true},
+];
+
+formDefinitions.forEach((fd, i) => {
+  const color = randomColor();
+  let mat;
+  if(fd.solid){
+    mat = new THREE.MeshLambertMaterial({ color });
+  } else {
+    mat = new THREE.MeshBasicMaterial({ color, wireframe: true });
+  }
+  const mesh = new THREE.Mesh(fd.geo, mat);
+  mesh.position.set(...fd.pos);
+  mesh.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+  scene.add(mesh);
+  floatingForms.push({
+    mesh,
+    basePos: [...fd.pos],
+    rotSpeed: {x: (Math.random()-0.5)*0.012, y: (Math.random()-0.5)*0.01, z: (Math.random()-0.5)*0.008},
+    floatOffset: Math.random()*Math.PI*2,
+    floatAmp: 0.4 + Math.random()*0.6,
+    pulseIdx: i
+  });
+});
+
+// ─── CONCEPT TYPOGRAPHIC PLANES ────────────────────────────────
+function makeConceptTex(title, colorHex){
+  const c = document.createElement('canvas'); c.width=512; c.height=320;
+  const ctx = c.getContext('2d');
+  const r = (colorHex>>16)&255, g=(colorHex>>8)&255, b=colorHex&255;
+  ctx.fillStyle=`rgba(${Math.max(0,r-180)},${Math.max(0,g-180)},${Math.max(0,b-180)},0.95)`;
+  ctx.fillRect(0,0,512,320);
+  // Bold colored top bar
+  ctx.fillStyle=`rgb(${r},${g},${b})`;
+  ctx.fillRect(0,0,512,8);
+  ctx.fillRect(0,312,512,8);
+  // Title text
+  ctx.fillStyle=`rgb(${r},${g},${b})`;
+  ctx.font='bold 32px Impact, Arial Black, sans-serif';
+  ctx.textAlign='center';
+  const words = title.split(' ');
+  let line='', y=70;
+  words.forEach((word, wi) => {
+    const test = line + (line?' ':'') + word;
+    if(ctx.measureText(test).width > 480 && line) {
+      ctx.fillText(line, 256, y); y+=40; line=word;
+    } else { line=test; }
+  });
+  ctx.fillText(line, 256, y);
+  // Decorative lines
+  ctx.strokeStyle=`rgba(${r},${g},${b},0.4)`;
+  ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(20,110); ctx.lineTo(492,110); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(20,210); ctx.lineTo(492,210); ctx.stroke();
+  // Click hint
+  ctx.fillStyle=`rgba(${r},${g},${b},0.6)`;
+  ctx.font='14px Inter, Arial, sans-serif';
+  ctx.fillText('[ CLIQUE PARA EXPLORAR ]', 256, 270);
+  return new THREE.CanvasTexture(c);
+}
+
+const conceptData = [
+  {
+    pos:[0, 3, 0], color: 0xe11d48,
+    title: "Semana de Arte Moderna 1922",
+    desc: "13-17 fevereiro 1922, Teatro Municipal de São Paulo. Escandalizou a burguesia paulistana com arte de vanguarda. Participantes: Mário de Andrade, Oswald de Andrade, Anita Malfatti (pintura), Tarsila do Amaral, Heitor Villa-Lobos (música). Propósito: ruptura com o Parnasianismo e o academicismo, abraço do novo e do nacional.",
+    tip: "A Semana de Arte Moderna NÃO foi imediatamente um sucesso — foi vaiada pela elite. O sucesso veio depois. Questão frequente: qual artista participou? Anita Malfatti (pintura) + Mário e Oswald (literatura) + Villa-Lobos (música)."
+  },
+  {
+    pos:[-5, 1, -5], color: 0xfbbf24,
+    title: "Mário de Andrade",
+    desc: "'Macunaíma' (1928): herói sem nenhum caráter, mistura de folclore brasileiro, crítica à identidade nacional fragmentada. 'Pauliceia Desvairada' (1922): poesia modernista, verso livre, simultaneísmo, retrato de São Paulo. Teoriza o Modernismo em 'A Escrava que não é Isaura'. Língua brasileira: defendia o português falado no Brasil (não o lusitano).",
+    tip: "'Macunaíma' é síntese do Modernismo: linguagem coloquial, mistura de culturas, crítica ao Brasil. 'Herói sem nenhum caráter' = identidade nacional como mescla, não pureza."
+  },
+  {
+    pos:[5, 0.5, -5], color: 0x1d4ed8,
+    title: "Oswald de Andrade",
+    desc: "'Manifesto Antropófago' (1928): 'Tupi or not tupi — that is the question'. Brasil deve devorar a cultura europeia e transformá-la em algo próprio. 'Manifesto Pau-Brasil' (1924): poesia como exportação, usar o Brasil como matéria-prima artística. 'Memórias Sentimentais de João Miramar', 'Serafim Ponte Grande'. Estilo: humor, ironia, telegráfico.",
+    tip: "'Tupi or not tupi' — essa frase É de Oswald, é uma paródia de Shakespeare. O Manifesto Antropófago defende devorar criticamente a cultura estrangeira. Muito cobrado em vestibulares."
+  },
+  {
+    pos:[-4, 4, 2], color: 0xe11d48,
+    title: "1ª Fase — Heroica (1922-1930)",
+    desc: "Ruptura, experimentação, busca da identidade brasileira. Verso livre, linguagem coloquial, humor, ironia, crítica social. Influências: cubismo, futurismo, expressionismo (vanguardas europeias reinterpretadas). Manifestos: Pau-Brasil (1924), Antropofágico (1928), Verde-Amarelismo.",
+    tip: "1ª fase = RUPTURA. Palavras-chave: verso livre, coloquial, humor, vanguarda, nacional. Carlos Drummond e Cecília Meireles ainda NÃO são 1ª fase — são 2ª fase."
+  },
+  {
+    pos:[4, 4, 2], color: 0xfbbf24,
+    title: "2ª Fase — Consolidação (1930-1945)",
+    desc: "Amadurecimento. Carlos Drummond de Andrade ('No meio do caminho tinha uma pedra', 'José', 'Sentimento do Mundo') — poesia existencial, angústia, brasilidade. Cecília Meireles ('Romanceiro da Inconfidência', 'Mar absoluto') — lirismo, temas universais. Jorge Amado (prosa social, Bahia). Graciliano Ramos ('Vidas Secas', 'Memórias do Cárcere').",
+    tip: "'No meio do caminho tinha uma pedra' = Drummond. Pedra como obstáculo repetitivo da vida. 'Vidas Secas' de Graciliano = sertão, seca, família, opressão. Fabiano e sua família são os personagens principais."
+  },
+  {
+    pos:[0, 1, 6], color: 0x1d4ed8,
+    title: "3ª Fase — Pós-45",
+    desc: "João Guimarães Rosa ('Grande Sertão: Veredas', 'Sagarana') — linguagem inventada, neologismos, sertão como universo metafísico. Clarice Lispector ('A Maçã no Escuro', 'A Paixão Segundo G.H.', contos) — fluxo de consciência, epifanias, existencialismo, escrita inovadora. João Cabral de Melo Neto ('Morte e Vida Severina') — poesia concreta, seco, preciso.",
+    tip: "Guimarães Rosa: 'Grande Sertão: Veredas' — Riobaldo, Diadorim, sertão. Linguagem inventada que mistura arcaísmos, regionalismos e neologismos. Clarice: 'A Hora da Estrela' (Macabéa) é o mais cobrado dela."
+  }
+];
+
+const conceptMeshes = [];
+conceptData.forEach((cd) => {
+  const tex = makeConceptTex(cd.title, cd.color);
+  const geo = new THREE.PlaneGeometry(3.5, 2.2);
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.92, side: THREE.DoubleSide });
+  const plane = new THREE.Mesh(geo, mat);
+  plane.position.set(...cd.pos);
+  plane.lookAt(camera.position);
+  scene.add(plane);
+  conceptMeshes.push({ mesh: plane, data: cd, basePos: [...cd.pos] });
+});
+
+// ─── FLOATING PARTICLES ────────────────────────────────────────
+const partCount = 200;
+const partPos = new Float32Array(partCount*3);
+for(let i=0;i<partCount;i++){
+  partPos[i*3]=(Math.random()-0.5)*30;
+  partPos[i*3+1]=Math.random()*18-3;
+  partPos[i*3+2]=(Math.random()-0.5)*25;
+}
+const partGeo = new THREE.BufferGeometry();
+partGeo.setAttribute('position', new THREE.BufferAttribute(partPos,3));
+const partColors = [0xe11d48,0xfbbf24,0x1d4ed8,0xffffff];
+const partMat = new THREE.PointsMaterial({
+  color: 0xffffff, size:0.06, transparent:true, opacity:0.5, sizeAttenuation:true
+});
+scene.add(new THREE.Points(partGeo, partMat));
+
+// ─── RAYCASTER ─────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const tooltip = document.getElementById('tooltip');
+
+renderer.domElement.addEventListener('click', e => {
+  mouse.x = (e.clientX/window.innerWidth)*2-1;
+  mouse.y = -(e.clientY/window.innerHeight)*2+1;
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = conceptMeshes.map(c=>c.mesh);
+  const hits = raycaster.intersectObjects(meshes);
+  if(hits.length>0){
+    const found = conceptMeshes.find(c=>c.mesh===hits[0].object);
+    if(found) showTooltip(e.clientX,e.clientY,found.data);
+  } else { tooltip.style.display='none'; }
+});
+
+function showTooltip(x,y,data){
+  document.getElementById('tt-title').textContent=data.title;
+  document.getElementById('tt-desc').textContent=data.desc;
+  document.getElementById('tt-tip').textContent=data.tip;
+  tooltip.style.display='block';
+  let lx=x+15; if(lx+420>window.innerWidth) lx=x-435;
+  tooltip.style.left=lx+'px';
+  tooltip.style.top=Math.max(10,y-60)+'px';
+}
+
+// ─── ORBIT CONTROLS ────────────────────────────────────────────
+let isDragging=false, lastX=0, lastY=0, camTheta=0, camPhi=0.25, camDist=17;
+renderer.domElement.addEventListener('mousedown',e=>{isDragging=true;lastX=e.clientX;lastY=e.clientY;tooltip.style.display='none';});
+renderer.domElement.addEventListener('mouseup',()=>isDragging=false);
+renderer.domElement.addEventListener('mousemove',e=>{
+  if(!isDragging)return;
+  camTheta-=(e.clientX-lastX)*0.005;
+  camPhi=Math.max(-0.2,Math.min(1.0,camPhi+(e.clientY-lastY)*0.004));
+  lastX=e.clientX;lastY=e.clientY;
+});
+renderer.domElement.addEventListener('wheel',e=>{ camDist=Math.max(6,Math.min(28,camDist+e.deltaY*0.01)); });
+
+// ─── ANIMATION ─────────────────────────────────────────────────
+let t=0;
+function animate(){
+  requestAnimationFrame(animate);
+  t+=0.008;
+
+  // Camera
+  camera.position.x=Math.sin(camTheta)*camDist;
+  camera.position.z=Math.cos(camTheta)*camDist;
+  camera.position.y=3+Math.sin(camPhi)*camDist*0.4;
+  camera.lookAt(0,2,0);
+
+  // Rotating spotlights
+  spotR.position.x=Math.sin(t*0.4)*14;
+  spotR.position.z=Math.cos(t*0.4)*8-5;
+  spotB.position.x=Math.cos(t*0.35)*12;
+  spotB.position.z=Math.sin(t*0.35)*10;
+  spotY.position.x=Math.sin(t*0.5+Math.PI)*10;
+
+  // Floating forms
+  floatingForms.forEach(f=>{
+    f.mesh.rotation.x+=f.rotSpeed.x;
+    f.mesh.rotation.y+=f.rotSpeed.y;
+    f.mesh.rotation.z+=f.rotSpeed.z;
+    f.mesh.position.y=f.basePos[1]+Math.sin(t*0.7+f.floatOffset)*f.floatAmp;
+    // Pulse scale for some
+    if(f.pulseIdx%3===0){
+      const pulse=1+Math.sin(t*1.2+f.pulseIdx)*0.08;
+      f.mesh.scale.set(pulse,1/pulse,pulse);
+    }
+  });
+
+  // Concept planes face camera
+  conceptMeshes.forEach((cm,i)=>{
+    cm.mesh.position.y=cm.basePos[1]+Math.sin(t*0.5+i*0.8)*0.3;
+    cm.mesh.lookAt(camera.position);
+  });
+
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>

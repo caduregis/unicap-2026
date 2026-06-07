@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Rua dos Lampiões — Realismo | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #07050a; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(7,5,10,0.95) 0%, rgba(7,5,10,0.0) 100%);
+  }
+  #nav a {
+    color: #c8a060; text-decoration: none; font-size: 13px; font-weight: 500;
+    padding: 6px 14px; border: 1px solid rgba(180,130,60,0.35); border-radius: 6px;
+    transition: all 0.2s;
+  }
+  #nav a:hover { background: rgba(180,130,60,0.12); color: #e0b870; }
+  #badge {
+    color: #d4a050; font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 5px 14px; background: rgba(120,70,20,0.25); border: 1px solid rgba(180,120,40,0.4);
+    border-radius: 20px;
+  }
+  #hint {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100;
+    color: rgba(180,140,80,0.55); font-size: 12px; letter-spacing: 0.04em; pointer-events: none;
+  }
+
+  #tooltip {
+    position: fixed; z-index: 200;
+    max-width: 420px; min-width: 300px;
+    background: linear-gradient(135deg, rgba(12,8,4,0.97) 0%, rgba(22,14,6,0.97) 100%);
+    border: 1px solid rgba(180,130,50,0.4);
+    border-radius: 12px; padding: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.8), 0 0 20px rgba(150,90,20,0.15);
+    display: none; pointer-events: none;
+  }
+  #tooltip h3 { color: #e0b060; font-size: 14px; font-weight: 700; margin-bottom: 10px; letter-spacing: 0.03em; }
+  #tooltip p { color: #b09060; font-size: 12.5px; line-height: 1.7; margin-bottom: 12px; }
+  #tooltip .tip {
+    background: rgba(140,90,20,0.2); border-left: 3px solid #c08030;
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    color: #d4a050; font-size: 11.5px; line-height: 1.6;
+  }
+  #tooltip .tip::before { content: "⚡ UNICAP: "; font-weight: 700; color: #e0b030; }
+</style>
+</head>
+<body>
+<div id="canvas-container">
+  <div id="nav">
+    <a href="../../../index.html">← Linguagens</a>
+    <div id="badge">🕯️ A Rua dos Lampiões — Realismo</div>
+    <a href="resumo.html">Resumo Realismo →</a>
+  </div>
+  <div id="hint">Clique nos objetos iluminados para explorar os conceitos</div>
+</div>
+<div id="tooltip">
+  <h3 id="tt-title"></h3>
+  <p id="tt-desc"></p>
+  <div class="tip" id="tt-tip"></div>
+</div>
+
+<script>
+// ─── SCENE SETUP ───────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x07050a);
+scene.fog = new THREE.Fog(0x09060c, 12, 40);
+
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth/window.innerHeight, 0.1, 80);
+camera.position.set(0, 3.5, 14);
+camera.lookAt(0, 1.5, -8);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+const ambient = new THREE.AmbientLight(0x0a0805, 2);
+scene.add(ambient);
+
+// ─── COBBLESTONE FLOOR ──────────────────────────────────────────
+function makeCobblestoneTex(){
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#100c08';
+  ctx.fillRect(0,0,512,512);
+  for(let row=0;row<16;row++){
+    for(let col=0;col<10;col++){
+      const x = col*52 + (row%2)*26;
+      const y = row*32;
+      const w = 48+Math.random()*6;
+      const h = 28+Math.random()*5;
+      const shade = Math.floor(22+Math.random()*18);
+      ctx.fillStyle = `rgb(${shade},${Math.floor(shade*0.85)},${Math.floor(shade*0.65)})`;
+      ctx.beginPath();
+      ctx.roundRect(x+1,y+1,w-2,h-2,2);
+      ctx.fill();
+      ctx.strokeStyle = '#080604';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 6);
+  return tex;
+}
+
+const floorGeo = new THREE.PlaneGeometry(20, 36);
+const floorMat = new THREE.MeshLambertMaterial({ map: makeCobblestoneTex() });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.set(0, -1, -9);
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ─── GAS LAMP POSTS ─────────────────────────────────────────────
+const lampPositions = [
+  {x:-4, z:-3}, {x:4, z:-3}, {x:-4, z:-13}, {x:4, z:-13}
+];
+const lampLights = [];
+const lampGlobes = [];
+
+lampPositions.forEach(lp => {
+  // Post
+  const postGeo = new THREE.CylinderGeometry(0.06, 0.09, 5, 8);
+  const postMat = new THREE.MeshLambertMaterial({ color: 0x1a1208 });
+  const post = new THREE.Mesh(postGeo, postMat);
+  post.position.set(lp.x, 1.5, lp.z);
+  post.castShadow = true;
+  scene.add(post);
+
+  // Arm
+  const armGeo = new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6);
+  const arm = new THREE.Mesh(armGeo, postMat);
+  arm.rotation.z = Math.PI/2;
+  arm.position.set(lp.x + (lp.x > 0 ? -0.6 : 0.6), 4.2, lp.z);
+  scene.add(arm);
+
+  // Globe
+  const globeGeo = new THREE.SphereGeometry(0.35, 16, 16);
+  const globeMat = new THREE.MeshBasicMaterial({ color: 0xffd080 });
+  const globe = new THREE.Mesh(globeGeo, globeMat);
+  globe.position.set(lp.x + (lp.x > 0 ? -0.6 : 0.6), 4.5, lp.z);
+  scene.add(globe);
+  lampGlobes.push(globe);
+
+  // Scatter halo
+  const haloGeo = new THREE.SphereGeometry(0.6, 12, 12);
+  const haloMat = new THREE.MeshBasicMaterial({ color: 0xffa030, transparent: true, opacity: 0.06, side: THREE.BackSide });
+  const haloMesh = new THREE.Mesh(haloGeo, haloMat);
+  haloMesh.position.copy(globe.position);
+  scene.add(haloMesh);
+
+  // Light
+  const pLight = new THREE.PointLight(0xffa030, 2.2, 9);
+  pLight.position.copy(globe.position);
+  scene.add(pLight);
+  lampLights.push(pLight);
+});
+
+// ─── BUILDINGS ─────────────────────────────────────────────────
+const brickMat = new THREE.MeshLambertMaterial({ color: 0x1a0f08 });
+const brickDarkMat = new THREE.MeshLambertMaterial({ color: 0x120a06 });
+
+function makeWindow(lit){
+  const geo = new THREE.BoxGeometry(0.6, 0.8, 0.05);
+  const mat = new THREE.MeshBasicMaterial({ color: lit ? 0xd4780a : 0x080504 });
+  return new THREE.Mesh(geo, mat);
+}
+
+const buildingData = [
+  {x:-8, z:-8, w:4, h:8, d:2, side:'left'},
+  {x:-8, z:-15, w:5, h:7, d:2, side:'left'},
+  {x:-8, z:-22, w:4, h:9, d:2, side:'left'},
+  {x:8, z:-8, w:4, h:6.5, d:2, side:'right'},
+  {x:8, z:-15, w:5, h:8, d:2, side:'right'},
+  {x:8, z:-22, w:3.5, h:7, d:2, side:'right'},
+];
+
+buildingData.forEach(b => {
+  const bGeo = new THREE.BoxGeometry(b.w, b.h, b.d);
+  const mat = Math.random() > 0.5 ? brickMat : brickDarkMat;
+  const building = new THREE.Mesh(bGeo, mat);
+  building.position.set(b.x, b.h/2 - 1, b.z);
+  building.castShadow = true;
+  scene.add(building);
+
+  // Windows
+  const rows = Math.floor(b.h/2.2);
+  const cols = Math.floor(b.w/1.8);
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const win = makeWindow(Math.random()>0.4);
+      win.position.set(
+        b.x + (c - cols/2 + 0.5) * 1.4,
+        r*2.0 + 0.5,
+        b.z + (b.side==='left' ? b.d/2+0.03 : -b.d/2-0.03)
+      );
+      scene.add(win);
+    }
+  }
+});
+
+// ─── NEWSPAPER STAND ───────────────────────────────────────────
+const woodMat = new THREE.MeshLambertMaterial({ color: 0x2a1a0a });
+const standBase = new THREE.Mesh(new THREE.BoxGeometry(1.5, 1.2, 0.8), woodMat);
+standBase.position.set(2, -0.4, -8);
+scene.add(standBase);
+
+function makeNewspaperTex(){
+  const c = document.createElement('canvas'); c.width=256; c.height=192;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle='#f0e8d0'; ctx.fillRect(0,0,256,192);
+  ctx.fillStyle='#1a0a04'; ctx.font='bold 18px serif';
+  ctx.fillText('Gazeta de',10,28);
+  ctx.fillText('Notícias',10,50);
+  ctx.fillStyle='#3a2010'; ctx.font='10px serif';
+  ctx.fillText('RIO DE JANEIRO, 1882',10,72);
+  ctx.fillRect(6,78,244,1);
+  ctx.font='8px serif';
+  ctx.fillText('A questão social e a nova',10,95);
+  ctx.fillText('literatura do século XIX...',10,108);
+  ctx.fillText('O romance realista conquista',10,125);
+  ctx.fillText('os leitores da corte...',10,138);
+  return new THREE.CanvasTexture(c);
+}
+
+const paperGeo = new THREE.PlaneGeometry(1.2, 0.9);
+const paperMat = new THREE.MeshBasicMaterial({ map: makeNewspaperTex(), side: THREE.DoubleSide });
+const paper = new THREE.Mesh(paperGeo, paperMat);
+paper.position.set(2, 0.4, -8);
+paper.rotation.y = 0.3;
+scene.add(paper);
+
+// ─── PHARMACY WINDOW ───────────────────────────────────────────
+function makePharmacyTex(){
+  const c = document.createElement('canvas'); c.width=256; c.height=192;
+  const ctx = c.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,192);
+  grad.addColorStop(0,'rgba(30,70,40,0.9)');
+  grad.addColorStop(1,'rgba(10,30,20,0.95)');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,256,192);
+  ctx.fillStyle='rgba(100,200,120,0.6)'; ctx.font='bold 22px serif';
+  ctx.fillText('Pharmácia',20,60);
+  ctx.fillStyle='rgba(100,200,120,0.3)'; ctx.font='12px serif';
+  ctx.fillText('Central do Rio',20,85);
+  ctx.fillStyle='rgba(80,180,100,0.4)';
+  ctx.fillRect(20,100,100,40);
+  ctx.fillStyle='rgba(60,160,80,0.3)';
+  ctx.fillRect(130,100,80,40);
+  return new THREE.CanvasTexture(c);
+}
+
+const pharmGeo = new THREE.PlaneGeometry(2.5, 2);
+const pharmMat = new THREE.MeshBasicMaterial({ map: makePharmacyTex(), side: THREE.DoubleSide, transparent: true, opacity: 0.9 });
+const pharm = new THREE.Mesh(pharmGeo, pharmMat);
+pharm.position.set(-3, 0.8, -5);
+pharm.rotation.y = 0.15;
+scene.add(pharm);
+
+const pharmLight = new THREE.PointLight(0x204830, 1, 5);
+pharmLight.position.set(-3, 1, -4.5);
+scene.add(pharmLight);
+
+// ─── RAIN PARTICLES ────────────────────────────────────────────
+const rainCount = 600;
+const rainPos = new Float32Array(rainCount * 3);
+const rainSpeeds = new Float32Array(rainCount);
+for(let i=0;i<rainCount;i++){
+  rainPos[i*3] = (Math.random()-0.5)*20;
+  rainPos[i*3+1] = Math.random()*15 - 2;
+  rainPos[i*3+2] = (Math.random()-0.5)*30 - 10;
+  rainSpeeds[i] = 0.05 + Math.random()*0.04;
+}
+const rainGeo = new THREE.BufferGeometry();
+rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rainMat = new THREE.PointsMaterial({ color: 0x4a4060, size: 0.04, transparent: true, opacity: 0.3, sizeAttenuation: true });
+const rain = new THREE.Points(rainGeo, rainMat);
+scene.add(rain);
+
+// ─── CONCEPTS ──────────────────────────────────────────────────
+const conceptData = [
+  {
+    pos: [-2, 0.5, -4], color: 0xffa030,
+    title: "Machado de Assis",
+    desc: "Maior nome do Realismo brasileiro. Fase realista: 'Memórias Póstumas de Brás Cubas' (1881, narrador defunto, ironia, pessimismo, crítica da burguesia), 'Dom Casmurro' (ciúme, ambiguidade — Capitu traiu?), 'Quincas Borba' (humanitismo, paródia ao positivismo). Características: narrador não confiável, ironia fina, análise psicológica, pessimismo.",
+    tip: "Dom Casmurro e Memórias Póstumas são os mais cobrados. Em Dom Casmurro, a ambiguidade é intencional — Machado não confirma se Capitu traiu. A UNICAP valoriza análise crítica do narrador não confiável."
+  },
+  {
+    pos: [3, 0.2, -7], color: 0xe8c060,
+    title: "Características do Realismo",
+    desc: "Objetividade e observação científica (influência do Positivismo de Comte). Determinismo: o indivíduo é produto do meio, raça e momento histórico (Taine). Análise psicológica aprofundada dos personagens. Narrador em 3ª pessoa onisciente ou narrador-personagem irônico. Crítica social da burguesia. Anti-romantismo: sem idealização, sem evasão.",
+    tip: "Realismo reage ao Romantismo: onde o romântico idealizava, o realista critica. Onde o romântico fugia, o realista observa. Compare os dois em questões de contraste."
+  },
+  {
+    pos: [-3, 0.8, -10], color: 0x60c080,
+    title: "Naturalismo",
+    desc: "Radicalização do Realismo com foco no determinismo biológico (herança genética, instintos). Aluísio Azevedo: 'O Cortiço' (retrato brutal da vida em cortiço carioca, determinismo, sexualidade, classes sociais), 'O Mulato'. Temas: pobreza extrema, vícios, sexualidade explícita, degradação social.",
+    tip: "Diferença Realismo/Naturalismo: Realismo → análise psicológica da burguesia (Machado). Naturalismo → determinismo biológico das classes baixas (Aluísio). 'O Cortiço' é o ápice naturalista."
+  },
+  {
+    pos: [2, 0.0, -12], color: 0xc0a0e0,
+    title: "Eça de Queirós (Portugal)",
+    desc: "Realismo português. 'O Crime do Padre Amaro' (crítica à Igreja e hipocrisia moral), 'O Primo Basílio' (influência do adultério na burguesia portuguesa, comparado a Madame Bovary de Flaubert). Estilo: ironia elegante, crítica social refinada.",
+    tip: "Se a questão menciona Portugal e Realismo → Eça de Queirós. Se menciona crítica à Igreja com realismo → 'O Crime do Padre Amaro'."
+  },
+  {
+    pos: [-2, 0.5, -14], color: 0xf0d080,
+    title: "Parnasianismo (poesia da época)",
+    desc: "Arte pela Arte (l'art pour l'art). Poesia de perfeição formal: soneto parnasiano, rimas ricas, descrições plásticas de esculturas e objetos. Olavo Bilac ('Via Láctea', 'Ouvir estrelas'), Alberto de Oliveira, Raimundo Correia. Temas: mitologia greco-romana, beleza formal, descrições sensoriais.",
+    tip: "Parnasianismo ≠ Realismo (são movimentos paralelos — Realismo em prosa, Parnasianismo em poesia). Olavo Bilac é o mais cobrado: identifique pela métrica perfeita, vocabulário erudito, temas clássicos."
+  },
+  {
+    pos: [3, 0.5, -15], color: 0xa0b8f0,
+    title: "Simbolismo",
+    desc: "Reação ao Parnasianismo. Poesia de sugestão, musicalidade, mistério, espiritualidade, subconsciente. Cruz e Sousa ('Broquéis', 'Faróis') — negro, filho de escravizados, maior simbolista brasileiro. Alphonsus de Guimaraens (religiosidade, Mariana). Temas: morte, transcendência, sinestesia.",
+    tip: "Cruz e Sousa: identifique pelo uso de cores (negro/branco como contraste), musicalidade extrema das palavras, imagens sensoriais sobrepostas (sinestesia). Contexto biográfico aparece em questões."
+  }
+];
+
+const conceptMeshes = [];
+conceptData.forEach((cd, i) => {
+  const group = new THREE.Group();
+
+  // Glowing paper/object on ground
+  const objGeo = new THREE.BoxGeometry(0.8, 0.1, 0.6);
+  const objMat = new THREE.MeshBasicMaterial({ color: cd.color, transparent: true, opacity: 0.8 });
+  const obj = new THREE.Mesh(objGeo, objMat);
+  group.add(obj);
+
+  // Vertical light pillar
+  const pillarGeo = new THREE.CylinderGeometry(0.05, 0.2, 1.5, 8);
+  const pillarMat = new THREE.MeshBasicMaterial({ color: cd.color, transparent: true, opacity: 0.15 });
+  const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+  pillar.position.y = 0.75;
+  group.add(pillar);
+
+  // Point light
+  const pLight = new THREE.PointLight(cd.color, 0.7, 4);
+  pLight.position.y = 0.5;
+  group.add(pLight);
+
+  group.position.set(...cd.pos);
+  scene.add(group);
+  conceptMeshes.push({ mesh: obj, data: cd, baseY: cd.pos[1] });
+});
+
+// ─── RAYCASTER ──────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const tooltip = document.getElementById('tooltip');
+
+renderer.domElement.addEventListener('click', e => {
+  mouse.x = (e.clientX/window.innerWidth)*2 - 1;
+  mouse.y = -(e.clientY/window.innerHeight)*2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = conceptMeshes.map(c => c.mesh);
+  const hits = raycaster.intersectObjects(meshes);
+  if(hits.length > 0){
+    const found = conceptMeshes.find(c => c.mesh === hits[0].object);
+    if(found) showTooltip(e.clientX, e.clientY, found.data);
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+function showTooltip(x, y, data){
+  document.getElementById('tt-title').textContent = data.title;
+  document.getElementById('tt-desc').textContent = data.desc;
+  document.getElementById('tt-tip').textContent = data.tip;
+  tooltip.style.display = 'block';
+  let lx = x + 15;
+  if(lx + 420 > window.innerWidth) lx = x - 435;
+  tooltip.style.left = lx + 'px';
+  tooltip.style.top = Math.max(10, y - 60) + 'px';
+}
+
+// ─── ORBIT CONTROLS ────────────────────────────────────────────
+let isDragging = false, lastX = 0, lastY = 0;
+let camTheta = 0, camPhi = 0.3, camDist = 15;
+
+renderer.domElement.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; lastY = e.clientY; tooltip.style.display='none'; });
+renderer.domElement.addEventListener('mouseup', () => isDragging = false);
+renderer.domElement.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  camTheta -= (e.clientX - lastX) * 0.005;
+  camPhi = Math.max(-0.1, Math.min(0.9, camPhi + (e.clientY - lastY) * 0.004));
+  lastX = e.clientX; lastY = e.clientY;
+});
+renderer.domElement.addEventListener('wheel', e => { camDist = Math.max(5, Math.min(28, camDist + e.deltaY*0.01)); });
+
+// ─── ANIMATION ─────────────────────────────────────────────────
+let t = 0;
+function animate(){
+  requestAnimationFrame(animate);
+  t += 0.007;
+
+  // Camera
+  camera.position.x = Math.sin(camTheta)*camDist;
+  camera.position.z = Math.cos(camTheta)*camDist;
+  camera.position.y = 2 + Math.sin(camPhi)*camDist*0.4;
+  camera.lookAt(0, 1.0, -8);
+
+  // Lamp flicker
+  lampLights.forEach((l, i) => {
+    l.intensity = 2.2 + Math.sin(t*7.3 + i*2.1)*0.15;
+  });
+
+  // Newspaper flutter
+  paper.rotation.z = Math.sin(t*1.5)*0.03;
+
+  // Concept glow pulse
+  conceptMeshes.forEach((cm, i) => {
+    cm.mesh.material.opacity = 0.7 + Math.sin(t*1.5 + i*0.8)*0.2;
+  });
+
+  // Rain
+  const rp = rainGeo.attributes.position;
+  for(let i=0;i<rainCount;i++){
+    rp.array[i*3+1] -= rainSpeeds[i];
+    rp.array[i*3] -= rainSpeeds[i]*0.2;
+    if(rp.array[i*3+1] < -2){
+      rp.array[i*3+1] = 13;
+      rp.array[i*3] = (Math.random()-0.5)*20;
+    }
+  }
+  rp.needsUpdate = true;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

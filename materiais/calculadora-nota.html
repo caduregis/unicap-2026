@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Calculadora de Nota — UNICAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#04060e;--bg2:#080c18;--bg3:#0e1220;
+  --cyan:#22d3ee;--gold:#f59e0b;--emerald:#10b981;--red:#ef4444;--purple:#a855f7;
+  --text:#d0e0f0;--muted:#6080a0;--border:rgba(34,211,238,0.1);
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+body{padding:0 0 40px;}
+.hdr{padding:18px 16px 14px;background:rgba(4,6,14,0.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;}
+.back-btn{color:var(--cyan);text-decoration:none;font-size:12px;font-weight:600;padding:5px 11px;border:1px solid rgba(34,211,238,0.3);border-radius:7px;}
+.title{font-size:15px;font-weight:900;background:linear-gradient(90deg,var(--cyan),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.container{max-width:600px;margin:0 auto;padding:20px 16px;}
+.info-card{background:var(--bg2);border:1px solid rgba(34,211,238,0.15);border-radius:14px;padding:16px;margin-bottom:18px;font-size:12px;color:var(--muted);line-height:1.7;}
+.info-card b{color:var(--cyan);}
+.section-title{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SLIDERS */
+.area-block{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;}
+.area-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.area-name{font-size:13px;font-weight:700;}
+.area-score{font-size:22px;font-weight:900;min-width:60px;text-align:right;}
+.slider-row{display:flex;align-items:center;gap:10px;}
+.slider{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--bg3);outline:none;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.4);}
+.slider-ling::-webkit-slider-thumb{background:var(--cyan);}
+.slider-hum::-webkit-slider-thumb{background:var(--gold);}
+.slider-mat::-webkit-slider-thumb{background:var(--emerald);}
+.slider-nat::-webkit-slider-thumb{background:var(--purple);}
+.slider-red::-webkit-slider-thumb{background:var(--red);}
+.slider-info{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.5;}
+.ling-c{color:var(--cyan);}
+.hum-c{color:var(--gold);}
+.mat-c{color:var(--emerald);}
+.nat-c{color:var(--purple);}
+.red-c{color:var(--red);}
+
+/* RESULT */
+.result-card{background:var(--bg2);border:2px solid var(--border);border-radius:16px;padding:20px;margin-top:18px;transition:border-color 300ms;}
+.result-card.ok{border-color:var(--emerald);}
+.result-card.close{border-color:var(--gold);}
+.result-card.low{border-color:var(--red);}
+.total-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px;}
+.total-label{font-size:12px;font-weight:700;color:var(--muted);}
+.total-score{font-size:42px;font-weight:900;line-height:1;}
+.total-score.ok{color:var(--emerald);}
+.total-score.close{color:var(--gold);}
+.total-score.low{color:var(--red);}
+.total-max{font-size:16px;color:var(--muted);}
+.prog-row{margin-bottom:16px;}
+.prog-label-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.prog-track{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.prog-fill-track{height:100%;border-radius:4px;transition:width 400ms ease;}
+.prog-fill-track.ok{background:linear-gradient(90deg,var(--emerald),#34d399);}
+.prog-fill-track.close{background:linear-gradient(90deg,var(--gold),#fbbf24);}
+.prog-fill-track.low{background:linear-gradient(90deg,var(--red),#f87171);}
+.cutoffs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.cutoff-card{background:var(--bg3);border-radius:10px;padding:12px;text-align:center;border:1px solid transparent;}
+.cutoff-card.aprovado{border-color:var(--emerald);background:rgba(16,185,129,0.06);}
+.cutoff-card.reprovado{border-color:var(--red);background:rgba(239,68,68,0.05);}
+.cutoff-card.perto{border-color:var(--gold);background:rgba(245,158,11,0.05);}
+.co-name{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px;}
+.co-score{font-size:18px;font-weight:900;margin-bottom:2px;}
+.co-status{font-size:10px;font-weight:700;}
+.aprovado .co-status{color:var(--emerald);}
+.reprovado .co-status{color:var(--red);}
+.perto .co-status{color:var(--gold);}
+.breakdown{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.bd-card{background:var(--bg3);border-radius:8px;padding:10px;text-align:center;}
+.bd-n{font-size:16px;font-weight:800;}
+.bd-l{font-size:9px;font-weight:600;color:var(--muted);margin-top:2px;}
+.tip-result{background:rgba(34,211,238,0.05);border-left:3px solid var(--cyan);border-radius:0 8px 8px 0;padding:10px 14px;font-size:11px;color:var(--muted);line-height:1.6;margin-top:12px;}
+.tip-result b{color:var(--text);}
+
+/* METAS */
+.metas-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:6px;}
+.meta-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.meta-card .mn{font-size:12px;font-weight:700;margin-bottom:4px;}
+.meta-card .mv{font-size:20px;font-weight:900;}
+.meta-card .ms{font-size:10px;color:var(--muted);margin-top:2px;}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row">
+    <a href="../final-sprint.html" class="back-btn">← Sprint Final</a>
+    <div class="title">Calculadora de Nota UNICAP</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="info-card">
+    <b>Como funciona o cálculo UNICAP:</b> 64 questões objetivas (16 por área × 4 áreas) + Redação 1000 pontos. Redação = 50% do total. Use os sliders abaixo para simular seu desempenho.
+  </div>
+
+  <div class="section-title">Questões por área (0–16 acertos)</div>
+
+  <div class="area-block">
+    <div class="area-hdr">
+      <div class="area-name ling-c">📖 Linguagens</div>
+      <div class="area-score ling-c" id="v-ling">13 / 16</div>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:10px;color:var(--muted);">0</span>
+      <input type="range" class="slider slider-ling" id="s-ling" min="0" max="16" value="13" oninput="calc()">
+      <span style="font-size:10px;color:var(--muted);">16</span>
+    </div>
+    <div class="slider-info">Meta: <b style="color:var(--cyan)">13/16</b> · Peso: 25% das questões · Área mais forte de Carlos (6/10)</div>
+  </div>
+
+  <div class="area-block">
+    <div class="area-hdr">
+      <div class="area-name hum-c">🏛️ Humanas</div>
+      <div class="area-score hum-c" id="v-hum">12 / 16</div>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:10px;color:var(--muted);">0</span>
+      <input type="range" class="slider slider-hum" id="s-hum" min="0" max="16" value="12" oninput="calc()">
+      <span style="font-size:10px;color:var(--muted);">16</span>
+    </div>
+    <div class="slider-info">Meta: <b style="color:var(--gold)">12/16</b> · Desempate Direito: Linguagens → Matemática → Natureza → Humanas → Idade</div>
+  </div>
+
+  <div class="area-block">
+    <div class="area-hdr">
+      <div class="area-name mat-c">📐 Matemática</div>
+      <div class="area-score mat-c" id="v-mat">8 / 16</div>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:10px;color:var(--muted);">0</span>
+      <input type="range" class="slider slider-mat" id="s-mat" min="0" max="16" value="8" oninput="calc()">
+      <span style="font-size:10px;color:var(--muted);">16</span>
+    </div>
+    <div class="slider-info">Meta: <b style="color:var(--emerald)">8/16</b> · Nível atual 5/10 · Foco em %, funções e geometria</div>
+  </div>
+
+  <div class="area-block">
+    <div class="area-hdr">
+      <div class="area-name nat-c">🔬 Natureza</div>
+      <div class="area-score nat-c" id="v-nat">6 / 16</div>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:10px;color:var(--muted);">0</span>
+      <input type="range" class="slider slider-nat" id="s-nat" min="0" max="16" value="6" oninput="calc()">
+      <span style="font-size:10px;color:var(--muted);">16</span>
+    </div>
+    <div class="slider-info">Meta: <b style="color:var(--purple)">6/16</b> · Química 3/10, Física 3/10 · Foque em biologia e conceitos básicos</div>
+  </div>
+
+  <div class="section-title">Redação (0–1000 pontos)</div>
+
+  <div class="area-block">
+    <div class="area-hdr">
+      <div class="area-name red-c">✍️ Redação</div>
+      <div class="area-score red-c" id="v-red">700</div>
+    </div>
+    <div class="slider-row">
+      <span style="font-size:10px;color:var(--muted);">0</span>
+      <input type="range" class="slider slider-red" id="s-red" min="0" max="1000" value="700" step="10" oninput="calc()">
+      <span style="font-size:10px;color:var(--muted);">1000</span>
+    </div>
+    <div class="slider-info">RED #1: <b style="color:var(--red)">640/1000</b> · Meta: 700 · Cada 70 pts extras ≈ 3 questões objetivas a mais</div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-card" id="result-card">
+    <div class="total-row">
+      <div>
+        <div class="total-label">PONTUAÇÃO ESTIMADA</div>
+        <div class="total-max" id="total-max">de 2000 pts</div>
+      </div>
+      <div class="total-score" id="total-score">1316</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label-row"><span id="prog-pct-lbl">65.8%</span><span id="prog-meta-lbl">Meta: ≥ 65%</span></div>
+      <div class="prog-track"><div class="prog-fill-track" id="prog-fill" style="width:65%"></div></div>
+    </div>
+    <div class="cutoffs">
+      <div class="cutoff-card" id="co-dir">
+        <div class="co-name">Direito Manhã</div>
+        <div class="co-score" id="co-dir-score">1200</div>
+        <div class="co-status" id="co-dir-status">Aprovado ✓</div>
+      </div>
+      <div class="cutoff-card" id="co-cc">
+        <div class="co-name">C. Computação</div>
+        <div class="co-score" id="co-cc-score">1050</div>
+        <div class="co-status" id="co-cc-status">Aprovado ✓</div>
+      </div>
+    </div>
+    <div class="breakdown">
+      <div class="bd-card"><div class="bd-n ling-c" id="bd-ling">203</div><div class="bd-l">Linguagens</div></div>
+      <div class="bd-card"><div class="bd-n hum-c" id="bd-hum">188</div><div class="bd-l">Humanas</div></div>
+      <div class="bd-card"><div class="bd-n mat-c" id="bd-mat">125</div><div class="bd-l">Matemática</div></div>
+      <div class="bd-card"><div class="bd-n nat-c" id="bd-nat">94</div><div class="bd-l">Natureza</div></div>
+    </div>
+    <div class="tip-result" id="tip-result"></div>
+  </div>
+
+  <div class="section-title">Metas do plano de estudo</div>
+  <div class="metas-grid">
+    <div class="meta-card"><div class="mn ling-c">Linguagens</div><div class="mv ling-c">13/16</div><div class="ms">81% de acerto</div></div>
+    <div class="meta-card"><div class="mn hum-c">Humanas</div><div class="mv hum-c">12/16</div><div class="ms">75% de acerto</div></div>
+    <div class="meta-card"><div class="mn mat-c">Matemática</div><div class="mv mat-c">8/16</div><div class="ms">50% de acerto</div></div>
+    <div class="meta-card"><div class="mn nat-c">Natureza</div><div class="mv nat-c">6/16</div><div class="ms">37.5% de acerto</div></div>
+  </div>
+
+</div>
+
+<script>
+const DIR_CUTOFF = 1200;
+const CC_CUTOFF  = 1000;
+const TOTAL_MAX  = 2000;
+const Q_TOTAL    = 1000;
+const Q_COUNT    = 64;
+const PTS_Q      = Q_TOTAL / Q_COUNT;
+
+function calc(){
+  const ling = parseInt(document.getElementById('s-ling').value);
+  const hum  = parseInt(document.getElementById('s-hum').value);
+  const mat  = parseInt(document.getElementById('s-mat').value);
+  const nat  = parseInt(document.getElementById('s-nat').value);
+  const red  = parseInt(document.getElementById('s-red').value);
+
+  document.getElementById('v-ling').textContent = ling + ' / 16';
+  document.getElementById('v-hum').textContent  = hum  + ' / 16';
+  document.getElementById('v-mat').textContent  = mat  + ' / 16';
+  document.getElementById('v-nat').textContent  = nat  + ' / 16';
+  document.getElementById('v-red').textContent  = red;
+
+  const pts_ling = Math.round(ling * PTS_Q);
+  const pts_hum  = Math.round(hum  * PTS_Q);
+  const pts_mat  = Math.round(mat  * PTS_Q);
+  const pts_nat  = Math.round(nat  * PTS_Q);
+  const total_q  = pts_ling + pts_hum + pts_mat + pts_nat;
+  const total    = total_q + red;
+  const pct      = (total / TOTAL_MAX * 100).toFixed(1);
+
+  document.getElementById('bd-ling').textContent = pts_ling;
+  document.getElementById('bd-hum').textContent  = pts_hum;
+  document.getElementById('bd-mat').textContent  = pts_mat;
+  document.getElementById('bd-nat').textContent  = pts_nat;
+
+  document.getElementById('total-score').textContent = total;
+  document.getElementById('prog-pct-lbl').textContent = pct + '%';
+
+  const grade = total >= DIR_CUTOFF ? 'ok' : total >= CC_CUTOFF ? 'close' : 'low';
+  document.getElementById('total-score').className = 'total-score ' + grade;
+  document.getElementById('result-card').className  = 'result-card ' + grade;
+  document.getElementById('prog-fill').className    = 'prog-fill-track ' + grade;
+  const w = Math.min(100, total / TOTAL_MAX * 100);
+  document.getElementById('prog-fill').style.width  = w + '%';
+
+  // Cutoffs
+  function setCutoff(id, cutoff, score){
+    const el    = document.getElementById(id);
+    const s_el  = document.getElementById(id + '-score');
+    const st_el = document.getElementById(id + '-status');
+    const diff  = score - cutoff;
+    if(diff >= 0){
+      el.className='cutoff-card aprovado';
+      st_el.textContent='Aprovado ✓';
+    } else if(diff >= -100){
+      el.className='cutoff-card perto';
+      st_el.textContent='Faltam ' + Math.abs(diff) + ' pts';
+    } else {
+      el.className='cutoff-card reprovado';
+      st_el.textContent='Faltam ' + Math.abs(diff) + ' pts';
+    }
+  }
+  setCutoff('co-dir', DIR_CUTOFF, total);
+  setCutoff('co-cc',  CC_CUTOFF,  total);
+  document.getElementById('co-dir-score').textContent = 'Corte ~' + DIR_CUTOFF;
+  document.getElementById('co-cc-score').textContent  = 'Corte ~' + CC_CUTOFF;
+
+  // Tip
+  let tip = '';
+  if(total >= DIR_CUTOFF){
+    tip = `<b>Na meta para Direito! 🎉</b> Com ${total} pts você estaria aprovado. Mantenha o foco — cada ponto extra aumenta sua margem de segurança.`;
+  } else if(total >= CC_CUTOFF){
+    tip = `<b>Aprovado para CC, faltam ${DIR_CUTOFF - total} pts para Direito.</b> Para subir: cada questão a mais vale ${Math.round(PTS_Q)} pts. Redação +70 pts = ~3 questões. Foque em Linguagens e Humanas.`;
+  } else {
+    const needed = DIR_CUTOFF - total;
+    const q_needed = Math.ceil((needed - 0) / PTS_Q);
+    tip = `<b>Faltam ${needed} pts para Direito.</b> Equivale a acertar ~${q_needed} questões a mais, ou subir ${needed} na redação. Linguagens (+1 questão = +${Math.round(PTS_Q)} pts) é a melhor aposta agora.`;
+  }
+  document.getElementById('tip-result').innerHTML = tip;
+}
+
+calc();
+</script>
+</body>
+</html>

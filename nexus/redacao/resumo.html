@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redação UNICAP — Guia Completo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810;
+    --surface: rgba(255,255,255,0.035);
+    --surface2: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --text: #e8eaf0;
+    --muted: #8890a4;
+    --amber: #ffb800;
+    --amber-dim: rgba(255,184,0,0.15);
+    --cyan: #00d4ff;
+    --cyan-dim: rgba(0,212,255,0.12);
+    --red: #ff4757;
+    --red-dim: rgba(255,71,87,0.12);
+    --green: #2ed573;
+    --green-dim: rgba(46,213,115,0.1);
+    --purple: #a855f7;
+    --purple-dim: rgba(168,85,247,0.1);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Ambient background glow */
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; right: 0; height: 600px;
+    background: radial-gradient(ellipse 70% 40% at 50% -10%, rgba(255,184,0,0.07) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; position: relative; z-index: 1; }
+
+  /* ── HEADER ── */
+  .header { text-align: center; padding: 60px 0 48px; }
+  .header .eyebrow {
+    font-size: 11px; letter-spacing: 0.25em; color: var(--amber);
+    text-transform: uppercase; margin-bottom: 16px; font-weight: 600;
+  }
+  .header h1 {
+    font-size: clamp(36px, 6vw, 58px); font-weight: 800;
+    background: linear-gradient(135deg, #fff 30%, #ffb800 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .header .subtitle {
+    font-size: 16px; color: var(--muted); margin-bottom: 32px; letter-spacing: 0.02em;
+  }
+  .header .subtitle span { color: var(--amber); font-weight: 600; }
+
+  .btn-3d {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #ffb800, #ff8c00);
+    color: #0a0600; font-weight: 700; font-size: 15px;
+    padding: 14px 28px; border-radius: 12px; text-decoration: none;
+    transition: all 0.25s; box-shadow: 0 4px 24px rgba(255,184,0,0.3);
+    letter-spacing: 0.01em;
+  }
+  .btn-3d:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(255,184,0,0.45); }
+
+  .countdown-badge {
+    display: inline-block; margin-left: 16px;
+    background: rgba(255,184,0,0.1); border: 1px solid rgba(255,184,0,0.25);
+    color: var(--amber); padding: 8px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; vertical-align: middle;
+  }
+
+  /* ── SECTIONS ── */
+  .section { margin-bottom: 48px; }
+  .section-title {
+    font-size: 11px; letter-spacing: 0.2em; color: var(--muted);
+    text-transform: uppercase; font-weight: 600;
+    margin-bottom: 20px; padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin-bottom: 16px;
+  }
+  .card:hover { border-color: rgba(255,255,255,0.13); background: var(--surface2); }
+
+  /* ── UNICAP BOX ── */
+  .unicap-box {
+    background: linear-gradient(135deg, rgba(255,184,0,0.06) 0%, rgba(255,184,0,0.02) 100%);
+    border: 1px solid rgba(255,184,0,0.2);
+    border-left: 4px solid var(--amber);
+    border-radius: 0 16px 16px 0;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+  }
+  .unicap-box h3 { color: var(--amber); font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .unicap-box ul { list-style: none; }
+  .unicap-box ul li {
+    color: #c8cad4; font-size: 14px; padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .unicap-box ul li:last-child { border-bottom: none; }
+  .unicap-box ul li::before { content: "▸"; color: var(--amber); flex-shrink: 0; margin-top: 1px; }
+  .unicap-box .tag {
+    display: inline-block; background: rgba(255,184,0,0.15);
+    color: var(--amber); font-size: 11px; font-weight: 700;
+    padding: 2px 8px; border-radius: 4px; letter-spacing: 0.05em;
+    margin-left: 6px;
+  }
+
+  /* ── CRITERIO CARDS ── */
+  .criterio-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .criterio-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent-color, var(--amber));
+    border-radius: 16px 16px 0 0;
+  }
+  .criterio-card:hover { border-color: rgba(255,255,255,0.13); transform: translateY(-1px); }
+
+  .criterio-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 16px; }
+  .criterio-name { font-size: 18px; font-weight: 700; color: #fff; }
+  .criterio-pts {
+    font-size: 22px; font-weight: 800; color: var(--accent-color, var(--amber));
+    white-space: nowrap; text-align: right;
+  }
+  .criterio-pts span { font-size: 12px; display: block; color: var(--muted); font-weight: 500; text-align: right; }
+  .criterio-desc { font-size: 14px; color: #b0b8c8; line-height: 1.75; margin-bottom: 16px; }
+  .criterio-tip {
+    background: rgba(0,0,0,0.2);
+    border-left: 3px solid var(--accent-color, var(--amber));
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+  }
+  .criterio-tip .tip-label {
+    font-size: 10px; letter-spacing: 0.2em; color: var(--accent-color, var(--amber));
+    font-weight: 700; margin-bottom: 8px; text-transform: uppercase;
+  }
+  .criterio-tip p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ── TEMPLATE VISUAL ── */
+  .template-container { display: flex; flex-direction: column; gap: 8px; }
+  .para-block {
+    border-radius: 12px;
+    padding: 18px 22px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .para-block::before {
+    content: attr(data-num);
+    position: absolute; left: -12px; top: 50%; transform: translateY(-50%);
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent-color, var(--amber));
+    color: #000; font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif;
+  }
+  .para-block-inner { margin-left: 20px; }
+  .para-block .para-title {
+    font-size: 13px; font-weight: 700; color: #fff;
+    margin-bottom: 6px; letter-spacing: 0.03em;
+  }
+  .para-block .para-lines { font-size: 12px; color: var(--muted); }
+  .para-block .para-desc { font-size: 13px; color: #8890a4; margin-top: 4px; }
+
+  .connector { text-align: center; color: var(--muted); font-size: 18px; padding: 2px 0; }
+
+  /* ── ZEROS BOX ── */
+  .zeros-box {
+    background: linear-gradient(135deg, rgba(255,71,87,0.08) 0%, rgba(255,71,87,0.03) 100%);
+    border: 1px solid rgba(255,71,87,0.25);
+    border-left: 4px solid var(--red);
+    border-radius: 0 16px 16px 0;
+    padding: 28px 32px;
+  }
+  .zeros-box h3 { color: var(--red); font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .zeros-box ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .zeros-box ul li {
+    background: rgba(255,71,87,0.08);
+    border: 1px solid rgba(255,71,87,0.15);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px; color: #e0a0a8;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .zeros-box ul li::before { content: "✕"; color: var(--red); font-size: 12px; flex-shrink: 0; margin-top: 1px; font-weight: 700; }
+
+  /* ── REPERTÓRIOS ── */
+  .tema-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tema-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 24px;
+    transition: all 0.2s;
+  }
+  .tema-card:hover { border-color: rgba(255,255,255,0.13); background: var(--surface2); }
+  .tema-card h4 {
+    font-size: 14px; font-weight: 700; color: #fff;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  }
+  .tema-tag {
+    font-size: 10px; letter-spacing: 0.1em;
+    padding: 2px 8px; border-radius: 4px; font-weight: 700;
+  }
+  .tema-card .rep-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px; color: #8890a4;
+  }
+  .tema-card .rep-item:last-child { border-bottom: none; }
+  .tema-card .rep-item strong { color: var(--text); font-weight: 600; display: block; font-size: 13px; }
+  .tema-card .rep-item span { font-size: 12px; }
+
+  /* ── CHECKLIST ── */
+  .checklist { display: flex; flex-direction: column; gap: 8px; }
+  .check-item {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-item:hover { background: var(--surface2); border-color: rgba(255,255,255,0.13); }
+  .check-item input[type="checkbox"] { display: none; }
+  .check-box {
+    width: 20px; height: 20px; border-radius: 6px;
+    border: 2px solid rgba(255,255,255,0.2);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; position: relative;
+  }
+  .check-item.checked .check-box {
+    background: var(--green); border-color: var(--green);
+  }
+  .check-item.checked .check-box::after {
+    content: '✓'; color: #000; font-size: 12px; font-weight: 800;
+  }
+  .check-item .check-text { font-size: 14px; color: #c0c8d8; }
+  .check-item.checked .check-text { color: var(--green); text-decoration: line-through; opacity: 0.7; }
+
+  .check-progress {
+    background: rgba(46,213,115,0.1); border: 1px solid rgba(46,213,115,0.2);
+    border-radius: 10px; padding: 16px 20px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .check-progress .prog-text { font-size: 14px; color: var(--green); font-weight: 600; }
+  .check-progress .prog-bar-wrap { flex: 1; background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; }
+  .check-progress .prog-bar { background: var(--green); border-radius: 4px; height: 6px; transition: width 0.4s; }
+
+  /* ── VIDEOAULAS ── */
+  .video-grid { display: flex; flex-direction: column; gap: 12px; }
+  .video-card {
+    display: flex; align-items: center; gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 22px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .video-card:hover { background: var(--surface2); border-color: rgba(255,255,255,0.13); transform: translateX(4px); }
+  .video-badge {
+    background: rgba(255,0,0,0.8);
+    color: #fff; font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 4px; flex-shrink: 0; letter-spacing: 0.05em;
+  }
+  .video-card .video-title { font-size: 14px; font-weight: 600; color: #fff; }
+  .video-card .video-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .video-arrow { margin-left: auto; color: var(--muted); font-size: 16px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 60px; padding-top: 32px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer a {
+    color: var(--muted); text-decoration: none; font-size: 14px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.2s;
+  }
+  .footer a:hover { color: var(--text); border-color: rgba(255,255,255,0.2); background: var(--surface); }
+  .footer a.amber { color: var(--amber); border-color: rgba(255,184,0,0.25); }
+  .footer a.amber:hover { background: rgba(255,184,0,0.08); }
+
+  /* ── MISC UTILS ── */
+  .badge-amber {
+    background: var(--amber-dim); color: var(--amber);
+    border: 1px solid rgba(255,184,0,0.25);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    padding: 3px 10px; border-radius: 6px; vertical-align: middle;
+  }
+  .badge-cyan {
+    background: var(--cyan-dim); color: var(--cyan);
+    border: 1px solid rgba(0,212,255,0.25);
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 6px; vertical-align: middle;
+  }
+  .badge-red {
+    background: var(--red-dim); color: var(--red);
+    border: 1px solid rgba(255,71,87,0.25);
+    font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 6px; vertical-align: middle;
+  }
+
+  .points-bar {
+    display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
+  }
+  .points-seg {
+    flex: 1; min-width: 100px;
+    border-radius: 10px; padding: 14px 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .points-seg .pts-val { font-size: 20px; font-weight: 800; }
+  .points-seg .pts-label { font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 500; }
+
+  code, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+
+  @media (max-width: 600px) {
+    .zeros-box ul { grid-template-columns: 1fr; }
+    .tema-grid { grid-template-columns: 1fr; }
+    .header h1 { font-size: 32px; }
+    .card { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ══ HEADER ═══════════════════════════════════════════════════════════ -->
+  <div class="header">
+    <div class="eyebrow">UNICAP NEXUS · MODULO REDAÇÃO</div>
+    <h1>Redação UNICAP</h1>
+    <div class="subtitle">
+      <span>50% da nota total</span> · Desempate #1 · 0 a 1000 pontos
+    </div>
+    <div style="display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap;">
+      <a href="mapa3d.html" class="btn-3d">
+        <span>🗺</span> Abrir Mapa 3D — O Scriptorium
+      </a>
+      <div class="countdown-badge">Prova em <span id="countdown">—</span> dias</div>
+    </div>
+  </div>
+
+  <!-- ══ PONTUAÇÃO DISTRIBUIÇÃO ══════════════════════════════════════════ -->
+  <div class="points-bar">
+    <div class="points-seg" style="--accent:var(--muted);">
+      <div class="pts-val" style="color:#c0c8d8;">100</div>
+      <div class="pts-label">Estrutura</div>
+    </div>
+    <div class="points-seg">
+      <div class="pts-val" style="color:var(--cyan);">200</div>
+      <div class="pts-label">Tema</div>
+    </div>
+    <div class="points-seg">
+      <div class="pts-val" style="color:var(--cyan);">200</div>
+      <div class="pts-label">Argumentos</div>
+    </div>
+    <div class="points-seg">
+      <div class="pts-val" style="color:var(--purple);">200</div>
+      <div class="pts-label">Relevância</div>
+    </div>
+    <div class="points-seg" style="background:rgba(255,184,0,0.06); border-color:rgba(255,184,0,0.2);">
+      <div class="pts-val" style="color:var(--amber);">300 ★</div>
+      <div class="pts-label">Norma Padrão</div>
+    </div>
+    <div class="points-seg" style="background:rgba(255,255,255,0.02);">
+      <div class="pts-val" style="color:#fff;">1000</div>
+      <div class="pts-label">Total</div>
+    </div>
+  </div>
+
+  <!-- ══ UNICAP BOX ══════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">O que a UNICAP cobra na Redação</div>
+    <div class="unicap-box">
+      <h3>Especificidades da Banca UNICAP</h3>
+      <ul>
+        <li>Gênero obrigatório: <strong style="color:#fff;">dissertativo-argumentativo</strong> seguindo a BNCC — qualquer outro gênero é eliminatório</li>
+        <li>1 a 2 textos motivadores por prova — tendência 2026.1: 1 texto literário + 1 texto jornalístico<span class="tag">CONFIRMADO</span></li>
+        <li>Tema 2026.1: <strong style="color:#fff;">"Pequenos gestos para preservar o meio ambiente"</strong> — textos de Ricardo Azevedo e Millôr Fernandes</li>
+        <li>Temas com alta probabilidade em 2026.2: <span class="tag">desigualdade social</span> <span class="tag">saúde mental</span> <span class="tag">tecnologia</span> <span class="tag">educação</span></li>
+        <li>Avaliação criteriosa em 5 critérios — cada um com peso definido em pontos</li>
+        <li>Título é <strong style="color:var(--amber);">OBRIGATÓRIO</strong> na UNICAP — ausência de título implica perda de pontos imediata em Estrutura</li>
+        <li>Limite: mínimo 8 linhas, máximo 30 linhas — sair desse intervalo é eliminatório</li>
+        <li>Proposta de intervenção: exigida na conclusão, deve ser específica (agente + ação + finalidade)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══ OS 5 CRITÉRIOS ════════════════════════════════════════════════== -->
+  <div class="section">
+    <div class="section-title">Os 5 Critérios de Avaliação</div>
+
+    <!-- ESTRUTURA -->
+    <div class="criterio-card" style="--accent-color: #8890a4;">
+      <div class="criterio-header">
+        <div>
+          <div class="criterio-name">1. Estrutura do Texto</div>
+        </div>
+        <div class="criterio-pts">100<span>pontos</span></div>
+      </div>
+      <div class="criterio-desc">
+        Avalia se o texto tem <strong>forma dissertativo-argumentativa reconhecível</strong>: introdução, desenvolvimento e conclusão com limites claros. O título é exigido pela UNICAP e entra nesse critério. O texto precisa ter entre 8 e 30 linhas — abaixo de 8 é eliminatório. Parágrafos devem ser demarcados com recuo (5 espaços ou 1 tab) ou espaçamento de linha. A progressão temática precisa ser observável: o leitor deve conseguir identificar onde começa cada parte.
+      </div>
+      <div class="criterio-tip">
+        <div class="tip-label">DICA UNICAP</div>
+        <p>Treine criar títulos que expressem um ponto de vista, não apenas o tema. Em vez de "Meio Ambiente", prefira algo como "A responsabilidade silenciosa do cotidiano". Títulos que antecipam uma tese demonstram maturidade argumentativa.</p>
+      </div>
+    </div>
+
+    <!-- TEMA -->
+    <div class="criterio-card" style="--accent-color: var(--cyan);">
+      <div class="criterio-header">
+        <div>
+          <div class="criterio-name">2. Apropriação Temática</div>
+        </div>
+        <div class="criterio-pts" style="color:var(--cyan);">200<span>pontos</span></div>
+      </div>
+      <div class="criterio-desc">
+        A prova fornece um ou dois textos motivadores. O candidato deve demonstrar que <strong>leu, compreendeu e dialogou</strong> com esses textos sem copiá-los. Fuga ao tema — escrever sobre assunto diferente do proposto — resulta em nota ZERO em toda a prova, não apenas nesse critério. A tese deve aparecer explicitamente na introdução, ser desenvolvida nos parágrafos e retomada/expandida na conclusão. Simples reformulação do tema sem posicionamento crítico pontua baixo.
+      </div>
+      <div class="criterio-tip">
+        <div class="tip-label">DICA UNICAP</div>
+        <p>Antes de escrever, sublinhe a palavra-chave do tema e leia os motivadores duas vezes. Na introdução, cite ou parafraseie um dos textos motivadores para mostrar diálogo — isso sinaliza à banca que você não ignorou o material fornecido. Textos de 2026.1 eram de Azevedo e Millôr; pratique identificar a posição argumentativa de cada texto rapidamente.</p>
+      </div>
+    </div>
+
+    <!-- ARGUMENTOS -->
+    <div class="criterio-card" style="--accent-color: #60a5fa;">
+      <div class="criterio-header">
+        <div>
+          <div class="criterio-name">3. Construção dos Argumentos</div>
+        </div>
+        <div class="criterio-pts" style="color:#60a5fa;">200<span>pontos</span></div>
+      </div>
+      <div class="criterio-desc">
+        Cada parágrafo de desenvolvimento deve conter: (1) <strong>tópico frasal</strong> — afirmação que sustenta a tese; (2) <strong>evidência concreta</strong> — dado, exemplo histórico, obra, estatística; (3) <strong>análise</strong> — ligação explícita entre evidência e argumento. Argumentos progressivos: o primeiro parágrafo apresenta o argumento mais contextual/geral, o segundo aprofunda um aspecto mais específico. Evite: "desde os primórdios da humanidade", "o ser humano por natureza", "é importante ressaltar que" — marcadores de senso comum que a banca penaliza.
+      </div>
+      <div class="criterio-tip">
+        <div class="tip-label">DICA UNICAP</div>
+        <p>Uma evidência é qualquer informação verificável externa à sua opinião: "Segundo dados do IBGE de 2023, 33% dos brasileiros vivem abaixo da linha de pobreza" vale muito mais do que "muitas pessoas são pobres no Brasil". Construa um banco mental de 3 evidências por tema possível antes da prova.</p>
+      </div>
+    </div>
+
+    <!-- RELEVÂNCIA -->
+    <div class="criterio-card" style="--accent-color: var(--purple);">
+      <div class="criterio-header">
+        <div>
+          <div class="criterio-name">4. Relevância da Argumentação</div>
+        </div>
+        <div class="criterio-pts" style="color:var(--purple);">200<span>pontos</span></div>
+      </div>
+      <div class="criterio-desc">
+        Avalia o <strong>impacto social</strong> da argumentação: os argumentos tratam de questões que importam para a sociedade brasileira e global? A proposta de intervenção na conclusão precisa de três elementos obrigatórios: <strong>Agente</strong> (quem vai agir — ex: "O Governo Federal", "As escolas públicas", "A mídia"), <strong>Ação</strong> (o que vai fazer — ex: "deve criar programas de conscientização"), <strong>Finalidade</strong> (para quê — ex: "a fim de garantir o acesso universal à informação"). Propostas genéricas como "todos devem fazer a sua parte" pontuam minimamente.
+      </div>
+      <div class="criterio-tip">
+        <div class="tip-label">DICA UNICAP</div>
+        <p>Uma proposta forte para Direito: "O Estado brasileiro, por meio do Poder Judiciário e do sistema de defensoria pública, deve ampliar o acesso à orientação jurídica nas periferias, a fim de reduzir a assimetria de informação que perpetua a desigualdade social no Brasil." Três elementos, específico, viável e conectado ao tema.</p>
+      </div>
+    </div>
+
+    <!-- NORMA -->
+    <div class="criterio-card" style="--accent-color: var(--amber); background: rgba(255,184,0,0.03);">
+      <div class="criterio-header">
+        <div>
+          <div class="criterio-name">5. Domínio da Norma Padrão <span class="badge-amber">MAIOR PESO</span></div>
+        </div>
+        <div class="criterio-pts">300<span>pontos — 30% da redação</span></div>
+      </div>
+      <div class="criterio-desc">
+        O critério de maior peso isolado — <strong>30% da nota da redação</strong>. Abrange: ortografia (incluindo acentuação gráfica), concordância verbal (sujeito-verbo) e nominal (substantivo-adjetivo), regência verbal e nominal, uso correto de vírgulas e demais sinais de pontuação, coesão textual via conectivos adequados, coerência sequencial, adequação ao registro formal escrito. Proibido: gírias, abreviações (vc, pq, tb), linguagem coloquial, repetição excessiva do mesmo vocábulo.
+      </div>
+      <div class="criterio-tip">
+        <div class="tip-label">DICA UNICAP</div>
+        <p>Os erros mais comuns que custam pontos: vírgula entre sujeito e predicado ("A educação, é fundamental" — errado), crase em pronomes ("à ela" — errado), acento em palavras paroxítonas terminadas em ditongo ("ideia" sem acento desde o Acordo de 2009). Reserve os últimos 5 minutos da prova exclusivamente para revisar norma — é o tempo mais rentável.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TEMPLATE ESTRUTURAL ════════════════════════════════════════════= -->
+  <div class="section">
+    <div class="section-title">Estrutura Parágrafo a Parágrafo</div>
+    <div class="card" style="padding:32px;">
+      <div class="template-container">
+
+        <div class="para-block" data-num="1" style="--accent-color:var(--cyan); background:rgba(0,212,255,0.04); border-color:rgba(0,212,255,0.15);">
+          <div class="para-block-inner">
+            <div class="para-title" style="color:var(--cyan);">INTRODUÇÃO</div>
+            <div class="para-lines">3 a 4 linhas · ~4 frases</div>
+            <div class="para-desc">
+              <strong>Contextualização</strong> (1 frase — situar o leitor no tema, pode citar o motivador) + <strong>problematização</strong> (1 frase — qual o problema/tensão central?) + <strong>tese</strong> (1 frase — sua posição clara sobre o tema) + <strong>anúncio</strong> (1 frase opcional — antecipa os argumentos).
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="para-block" data-num="2" style="--accent-color:#60a5fa; background:rgba(96,165,250,0.04); border-color:rgba(96,165,250,0.15);">
+          <div class="para-block-inner">
+            <div class="para-title" style="color:#60a5fa;">DESENVOLVIMENTO 1 — Argumento Principal</div>
+            <div class="para-lines">6 a 8 linhas · ~6 frases</div>
+            <div class="para-desc">
+              <strong>Tópico frasal</strong> (1 frase — afirmação que sustenta a tese) + <strong>explicação</strong> (1-2 frases — desenvolvimento do argumento) + <strong>evidência</strong> (1-2 frases — dado concreto, fato histórico, obra, estatística com fonte) + <strong>análise</strong> (1-2 frases — como a evidência confirma o argumento e se relaciona com a tese).
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="para-block" data-num="3" style="--accent-color:var(--purple); background:rgba(168,85,247,0.04); border-color:rgba(168,85,247,0.15);">
+          <div class="para-block-inner">
+            <div class="para-title" style="color:var(--purple);">DESENVOLVIMENTO 2 — Aprofundamento</div>
+            <div class="para-lines">6 a 8 linhas · ~6 frases</div>
+            <div class="para-desc">
+              <strong>Tópico frasal</strong> (ângulo diferente, mais específico que o primeiro argumento) + <strong>evidência 2</strong> (diferente da anterior, preferencialmente de área diferente — se usou dado no D1, use obra literária ou fato histórico aqui) + <strong>análise aprofundada</strong> (conectar ao contexto brasileiro, mostrar consequências do problema ou da solução).
+            </div>
+          </div>
+        </div>
+
+        <div class="connector" style="color:rgba(255,255,255,0.2);">↓ (opcional)</div>
+
+        <div class="para-block" data-num="★" style="--accent-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.07); opacity:0.7;">
+          <div class="para-block-inner">
+            <div class="para-title" style="color:rgba(255,255,255,0.5);">DESENVOLVIMENTO 3 — Contraponto (opcional)</div>
+            <div class="para-lines">5 a 6 linhas · concessão + refutação</div>
+            <div class="para-desc" style="color:rgba(136,144,164,0.7);">
+              Reconhece uma posição contrária ("Embora alguns argumentem que...") e a refuta com argumento mais forte. Eleva a sofisticação argumentativa. Use apenas se tiver certeza da refutação — um contra-argumento fraco prejudica.
+            </div>
+          </div>
+        </div>
+
+        <div class="connector">↓</div>
+
+        <div class="para-block" data-num="4" style="--accent-color:var(--amber); background:rgba(255,184,0,0.04); border-color:rgba(255,184,0,0.2);">
+          <div class="para-block-inner">
+            <div class="para-title" style="color:var(--amber);">CONCLUSÃO — Proposta de Intervenção</div>
+            <div class="para-lines">4 a 5 linhas · retomada + proposta</div>
+            <div class="para-desc">
+              <strong>Retomada da tese</strong> (1 frase — reformule, não copie) + <strong>síntese</strong> (1 frase — integra os dois argumentos) + <strong>proposta de intervenção</strong> (2 frases — AGENTE + AÇÃO + FINALIDADE, específica e viável). A proposta deve decorrer logicamente dos argumentos desenvolvidos.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ZEROS AUTOMÁTICOS ══════════════════════════════════════════════= -->
+  <div class="section">
+    <div class="section-title">Motivos de Nota Zero</div>
+    <div class="zeros-box">
+      <h3>⚠ Erros que zeram a prova inteira</h3>
+      <ul>
+        <li>Fuga ao tema — texto não responde ao proposto</li>
+        <li>Texto em branco ou ilegível</li>
+        <li>Menos de 8 linhas escritas</li>
+        <li>Gênero errado — narrativa, carta, poema, etc.</li>
+        <li>Cópia integral dos textos motivadores</li>
+        <li>Palavras ofensivas ou atentatórias aos direitos humanos</li>
+        <li>Identificação — nome, assinatura, rubrica no texto</li>
+        <li>Texto inteiramente em outra língua</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══ REPERTÓRIOS ════════════════════════════════════════════════════= -->
+  <div class="section">
+    <div class="section-title">Repertório Culto por Tema</div>
+    <div class="tema-grid">
+
+      <div class="tema-card">
+        <h4>Meio Ambiente <span class="tema-tag badge-cyan">2026.1</span></h4>
+        <div class="rep-item">
+          <strong>COP30 — Belém, 2025</strong>
+          <span>Conferência da ONU no Brasil sobre clima — uso como fato atual de impacto global</span>
+        </div>
+        <div class="rep-item">
+          <strong>IPCC — Relatório 2023</strong>
+          <span>"Aquecimento de 1.5°C até 2030 sem mudanças estruturais" — dado internacional verificável</span>
+        </div>
+        <div class="rep-item">
+          <strong>Sérgio Buarque de Holanda</strong>
+          <span>"Raízes do Brasil" — mentalidade exploradora vs. cuidado com o território nacional</span>
+        </div>
+      </div>
+
+      <div class="tema-card">
+        <h4>Desigualdade Social <span class="tema-tag badge-amber">Alta prob.</span></h4>
+        <div class="rep-item">
+          <strong>IBGE — PNAD 2022</strong>
+          <span>Os 10% mais ricos concentram 42,1% da renda nacional — dado específico e impactante</span>
+        </div>
+        <div class="rep-item">
+          <strong>Constituição Federal de 1988</strong>
+          <span>Art. 3°: erradicar a pobreza e reduzir as desigualdades como objetivo fundamental da República</span>
+        </div>
+        <div class="rep-item">
+          <strong>"Raízes do Brasil" — Sérgio Buarque de Holanda</strong>
+          <span>Conceito do "homem cordial" e herança patrimonialista como raiz da desigualdade estrutural</span>
+        </div>
+      </div>
+
+      <div class="tema-card">
+        <h4>Saúde Mental <span class="tema-tag badge-amber">Alta prob.</span></h4>
+        <div class="rep-item">
+          <strong>OMS — 2023</strong>
+          <span>1 em cada 8 pessoas no mundo vive com algum transtorno mental; no Brasil, 50% dos casos sem tratamento</span>
+        </div>
+        <div class="rep-item">
+          <strong>Donald W. Winnicott — psicanalista</strong>
+          <span>Teoria do "espaço transicional" — importância das relações afetivas na formação da saúde mental</span>
+        </div>
+        <div class="rep-item">
+          <strong>Pandemia pós-Covid (2021-2023)</strong>
+          <span>Aumento de 27,6% em transtornos depressivos globais (Lancet, 2021) — dado com fonte científica</span>
+        </div>
+      </div>
+
+      <div class="tema-card">
+        <h4>Tecnologia / Redes Sociais <span class="tema-tag" style="background:rgba(168,85,247,0.15);color:var(--purple);border:1px solid rgba(168,85,247,0.3);">Relevante</span></h4>
+        <div class="rep-item">
+          <strong>Byung-Chul Han — "Sociedade do Cansaço" (2010)</strong>
+          <span>Sujeito de desempenho hiperconectado que se autoexplora — crítica à lógica da produtividade digital</span>
+        </div>
+        <div class="rep-item">
+          <strong>LGPD — Lei 13.709/2018</strong>
+          <span>Lei Geral de Proteção de Dados — Marco regulatório brasileiro para privacidade digital</span>
+        </div>
+        <div class="rep-item">
+          <strong>Deep Fakes e desinformação</strong>
+          <span>Relatório Reuters Institute 2023: 56% dos brasileiros consomem notícias por redes sociais sem verificação</span>
+        </div>
+      </div>
+
+      <div class="tema-card" style="grid-column: 1 / -1;">
+        <h4>Educação <span class="tema-tag badge-amber">Alta prob.</span></h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+          <div class="rep-item">
+            <strong>Paulo Freire — "Pedagogia do Oprimido" (1968)</strong>
+            <span>Crítica à "educação bancária" — aluno como depósito passivo de conteúdo vs. construção crítica do saber</span>
+          </div>
+          <div class="rep-item">
+            <strong>PISA 2022 — OCDE</strong>
+            <span>Brasil ocupa 65° em leitura e 66° em matemática entre 81 países — dado para contextualizar crise educacional</span>
+          </div>
+          <div class="rep-item">
+            <strong>ECA — Lei 8.069/1990</strong>
+            <span>Art. 53: direito à educação de qualidade como direito fundamental da criança e do adolescente</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ CHECKLIST ══════════════════════════════════════════════════════= -->
+  <div class="section">
+    <div class="section-title">Checklist — Antes de Entregar</div>
+
+    <div class="check-progress">
+      <div class="prog-text" id="prog-text">0 de 10 revisados</div>
+      <div class="prog-bar-wrap">
+        <div class="prog-bar" id="prog-bar" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="checklist" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Título escrito e adequado ao tema</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Entre 8 e 30 linhas contadas</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Gênero dissertativo-argumentativo — não narrativo, não carta</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Tese clara e explícita na introdução</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Pelo menos 2 evidências concretas e verificáveis</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Proposta de intervenção com agente + ação + finalidade</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Revisei ortografia das palavras que tenho dúvida</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Revisei concordância sujeito-verbo em todo o texto</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Revisei uso das vírgulas — sem separar sujeito do predicado</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <input type="checkbox"><div class="check-box"></div>
+        <div class="check-text">Não copiei trechos inteiros dos textos motivadores</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VIDEOAULAS ═════════════════════════════════════════════════════= -->
+  <div class="section">
+    <div class="section-title">Melhores Videoaulas</div>
+    <div class="video-grid">
+
+      <a href="https://www.youtube.com/results?search_query=Prof+Lucas+Felpi+redacao+nota+1000+passo+a+passo" target="_blank" class="video-card">
+        <span class="video-badge">YT</span>
+        <div>
+          <div class="video-title">Prof. Lucas Felpi — Redação nota 1000 passo a passo</div>
+          <div class="video-sub">Detalhado nos critérios · Melhor para entender a estrutura de avaliação</div>
+        </div>
+        <span class="video-arrow">↗</span>
+      </a>
+
+      <a href="https://www.youtube.com/results?search_query=Descomplica+como+fazer+redacao+dissertativa+argumentativa" target="_blank" class="video-card">
+        <span class="video-badge">YT</span>
+        <div>
+          <div class="video-title">Descomplica — Como fazer redação dissertativa</div>
+          <div class="video-sub">Visão geral rápida · Bom para revisão antes da prova</div>
+        </div>
+        <span class="video-arrow">↗</span>
+      </a>
+
+      <a href="https://www.youtube.com/results?search_query=Brasil+Escola+estrutura+redacao+vestibular" target="_blank" class="video-card">
+        <span class="video-badge">YT</span>
+        <div>
+          <div class="video-title">Brasil Escola — Estrutura da redação de vestibular</div>
+          <div class="video-sub">Foco na estrutura formal · Complementa os critérios UNICAP</div>
+        </div>
+        <span class="video-arrow">↗</span>
+      </a>
+
+      <a href="https://www.youtube.com/results?search_query=Curso+Enem+Oficial+proposta+de+intervencao+perfeita+redacao" target="_blank" class="video-card">
+        <span class="video-badge">YT</span>
+        <div>
+          <div class="video-title">Curso Enem Oficial — Proposta de intervenção perfeita</div>
+          <div class="video-sub">Agente + ação + finalidade na prática · Direto ao ponto</div>
+        </div>
+        <span class="video-arrow">↗</span>
+      </a>
+
+      <a href="https://www.youtube.com/results?search_query=Noslen+conectivos+coesao+textual+redacao" target="_blank" class="video-card">
+        <span class="video-badge">YT</span>
+        <div>
+          <div class="video-title">Noslen — Conectivos para redação (coesão textual)</div>
+          <div class="video-sub">Impacta direto no critério Norma Padrão · Aprenda os conectivos certos para cada função</div>
+        </div>
+        <span class="video-arrow">↗</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <div class="footer">
+    <a href="../index.html">← Voltar ao Hub</a>
+    <a href="mapa3d.html" class="amber">🗺 Mapa 3D — O Scriptorium →</a>
+  </div>
+
+</div>
+
+<script>
+  // Countdown
+  const provaDate = new Date('2026-06-14T08:00:00');
+  const hoje = new Date();
+  const diff = Math.ceil((provaDate - hoje) / (1000 * 60 * 60 * 24));
+  const el = document.getElementById('countdown');
+  if (el) {
+    if (diff > 0) {
+      el.textContent = diff;
+      el.style.color = diff <= 14 ? '#ff4757' : (diff <= 30 ? '#ffb800' : '#2ed573');
+    } else {
+      el.textContent = 'hoje';
+      el.style.color = '#ff4757';
+    }
+  }
+
+  // Checklist
+  function toggleCheck(item) {
+    item.classList.toggle('checked');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('.check-item');
+    const done = document.querySelectorAll('.check-item.checked').length;
+    const total = items.length;
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('prog-text').textContent = `${done} de ${total} revisados`;
+    document.getElementById('prog-bar').style.width = pct + '%';
+  }
+</script>
+</body>
+</html>

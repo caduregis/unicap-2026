@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecologia · Biodiversidade · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">ECOLOGIA · DIVERSIDADE</div><div class="lt2">biomas · plantas · animais · vírus</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">⏣</div><div class="bt"><div class="l1">Ecologia · Diversidade</div><div class="l2">Biologia · Bloco 3</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · BIO ECOLOGIA</span><h1>Ecologia e Biodiversidade</h1><p>Ecossistemas, biomas, diversidade de plantas, animais e vírus. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#22c55e', corHex2:'#16a34a', bg:'#04140a', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'BIO E1',nome:'Ecossistemas · Cadeias · Ciclos',sub:'Fluxo de E e matéria',forma:'octa',cor:0x22c55e,
+topicos:['Ecologia: estudo das relações entre seres vivos e o ambiente','Conceitos: indivíduo, espécie, população, comunidade, ecossistema, biosfera','Habitat (endereço) × nicho ecológico (profissão)','Cadeia alimentar: produtor → consumidor primário → consumidor secundário → ...','Teia alimentar (várias cadeias entrelaçadas)','Níveis tróficos: produtores (autótrofos), consumidores (heterótrofos), decompositores (fungos e bactérias)','Pirâmides ecológicas: números, biomassa, energia (sempre crescente na direção dos produtores)','Lei dos 10%: apenas 10% da energia passa para o próximo nível trófico','Fluxo de matéria (cíclico) × fluxo de energia (unidirecional)','Ciclos biogeoquímicos: água, carbono, oxigênio, nitrogênio, fósforo, enxofre','Ciclo do carbono: fotossíntese (CO₂→matéria orgânica) × respiração/decomposição/queima (matéria→CO₂)','Aquecimento global: aumento do CO₂ atmosférico'],
+resumo:'Energia FLUI (vai e vem mas não volta) e Matéria CIRCULA (em ciclos fechados). Decompositores são essenciais para fechar os ciclos.',
+dica:'PIRÂMIDE DE ENERGIA: sempre crescente da base (produtores). Lei dos 10% — perda em cada nível. Aquecimento global = ciclo do C desregulado.'},
+{cod:'BIO E2',nome:'Relações Ecológicas · Sucessão',sub:'Inter e intra-específicas, sucessão',forma:'dodeca',cor:0x16a34a,
+topicos:['Relações intraespecíficas (mesma espécie): sociedade (formigas), colônia (corais), competição intraespecífica, canibalismo','Relações interespecíficas (espécies diferentes):','HARMÔNICAS: mutualismo/protocooperação (líquens, polinização), comensalismo (rêmora-tubarão), inquilinismo','DESARMÔNICAS: predação, competição interespecífica, parasitismo (verme-humano), amensalismo (alelopatia)','Sucessão ecológica: primária (rocha nua) × secundária (área desmatada)','Comunidade pioneira → série → clímax','Resiliência × resistência dos ecossistemas','Espécies endêmicas (exclusivas de uma região)','Espécies invasoras/exóticas (caramujo africano, javali, dengue/Aedes)','Conservação: in situ (Unidades de Conservação) × ex situ (zoológicos, bancos de germoplasma)'],
+resumo:'Vida é interação. Relações ecológicas podem ser benéficas, prejudiciais ou neutras. Sucessão constrói biodiversidade ao longo do tempo.',
+dica:'MUTUALISMO = ambos ganham (líquen = alga + fungo). COMENSALISMO = um ganha, outro não se afeta (rêmora). PARASITISMO = um ganha, outro perde.'},
+{cod:'BIO E3',nome:'Diversidade · Vírus · Bactérias',sub:'Reinos · classificação',forma:'tetra',cor:0xef4444,
+topicos:['Vírus: acelulares, parasitas intracelulares obrigatórios','Estrutura: capsídeo (proteico) + material genético (DNA ou RNA, nunca ambos)','Bacteriófagos, vírus de DNA × RNA','Viroses: HIV (AIDS), dengue, zika, chikungunya, sarampo, raiva, gripe, COVID-19 (SARS-CoV-2), Ebola, herpes','Vacinas: ativam sistema imunológico (imunidade adquirida ativa)','Pandemia da COVID-19 (2020-2023): coronavírus, vacinação','Reinos de Whittaker (1969): Monera, Protista, Fungi, Plantae, Animalia','Domínios (Woese, 1990): Bacteria, Archaea, Eukarya','Reino Monera: bactérias e cianobactérias (procariontes)','Bactérias: classificação por forma (cocos, bacilos, espirilos, vibriões), Gram+ × Gram-','Doenças bacterianas: tuberculose, cólera, tétano, sífilis, gonorreia, hanseníase, meningite, lepra','Antibióticos × resistência bacteriana (superbactérias)','Reino Protista: protozoários (causam doenças: Doença de Chagas, malária, leishmaniose, amebíase) e algas','Reino Fungi: cogumelos, leveduras, fungos filamentosos; micoses, candidíase'],
+resumo:'Vírus, bactérias, protozoários e fungos podem ser benéficos (decomposição, fermentação, antibióticos) ou patogênicos (doenças).',
+dica:'⚠️ AIDS, COVID-19, DENGUE são causadas por VÍRUS. CHAGAS, MALÁRIA, LEISHMANIOSE por PROTOZOÁRIOS. TUBERCULOSE, CÓLERA, HANSENÍASE por BACTÉRIAS.'},
+{cod:'BIO E4',nome:'Diversidade Vegetal',sub:'Briófitas, pteridófitas, gimnospermas, angiospermas',forma:'icosa',cor:0x84cc16,
+topicos:['Reino Plantae: organismos eucariontes, fotossintetizantes, multicelulares','Características: parede de celulose, cloroplasto, autotróficas','Evolução vegetal: conquista do meio terrestre','Briófitas (musgos, hepáticas): sem vasos condutores, sem flor/fruto/semente; dependem de água para reprodução','Pteridófitas (samambaias, avencas, cavalinhas): com vasos (xilema/floema), sem flor/fruto/semente; ainda dependem de água','Gimnospermas (pinheiros, sequoias, araucárias): com semente DESNUDA, sem fruto','Angiospermas (a maioria das plantas atuais): com semente protegida por fruto, com flor','Estruturas: raiz, caule, folha, flor, fruto, semente','Fotossíntese: fase clara (tilacoide) + escura (estroma)','Hormônios vegetais: auxinas, giberelinas, citocininas, ácido abscísico, etileno','Reprodução: assexuada (vegetativa: estaquia, mergulhia) × sexuada (flores e gametas)','Polinização: vento, água, animais (especialmente abelhas e morcegos)','Frutos: classificação, dispersão'],
+resumo:'Plantas evoluíram da água para terra. Briófitas (musgos) → Pteridófitas (samambaias) → Gimnospermas (pinheiros) → Angiospermas (flores).',
+dica:'ANGIOSPERMAS dominam a Terra hoje (~90% das plantas). Pra ter flor e fruto, precisa ser angiosperma. Vasos condutores: xilema (água, baixo→alto), floema (seiva elaborada).'},
+{cod:'BIO E5',nome:'Diversidade Animal',sub:'Filos · vertebrados · invertebrados',forma:'torus',cor:0xfb923c,
+topicos:['Reino Animalia: eucariontes, heterótrofos, multicelulares','Invertebrados: 95% das espécies animais','Filo Porifera (esponjas): mais simples','Filo Cnidaria (águas-vivas, corais, anêmonas): cnidócitos','Filo Platyhelminthes (vermes chatos): planárias, tênia (esquistossomose)','Filo Nematoda (vermes redondos): lombriga, ancilóstomos','Filo Annelida (anelados): minhocas, sanguessugas','Filo Mollusca: lesmas, caracóis, polvos, lulas','Filo Arthropoda: maior filo, 80% das espécies; insetos, aranhas, crustáceos, miriápodes','Insetos: 6 patas (Hexapoda), o grupo mais diverso da Terra','Filo Echinodermata: estrelas-do-mar, ouriços','Vertebrados: Filo Chordata, subfilo Vertebrata','Peixes (cartilaginosos: tubarões; ósseos: dourado, tucunaré, salmão)','Anfíbios: sapos, rãs, salamandras (pele permeável, dependem da água)','Répteis: cobras, lagartos, tartarugas, crocodilos (escamas, ovo amniótico)','Aves: penas, voo, ovos com casca calcária','Mamíferos: glândulas mamárias, pelos; monotremos (ornitorrinco), marsupiais (canguru), placentários (humano)','Sistemas: digestório, respiratório, circulatório, excretor, nervoso, endócrino, reprodutor, locomotor','Anatomia humana, fisiologia'],
+resumo:'Animais: do mais simples (esponja) ao mais complexo (mamíferos). Artrópodes dominam em número de espécies. Mamíferos dominam ecologicamente.',
+dica:'INSETOS são os mais diversos do planeta (mais de 1 milhão de espécies). MAMÍFEROS: monotremos põem ovos (ornitorrinco). Anfíbios: pele permeável, vida dupla (água+terra).'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

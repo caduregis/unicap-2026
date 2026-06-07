@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Ateliê dos Três — Marx, Durkheim e Weber</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #030206; font-family: 'Inter', sans-serif; overflow: hidden; color: #c8b8d8; }
+#canvas { display: block; width: 100vw; height: 100vh; }
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: linear-gradient(90deg, #030208ee, #06040eee);
+  border-bottom: 1px solid #ffffff10;
+  display: flex; align-items: center; padding: 0 20px; gap: 12px; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+#nav-back { color: #e8c870; text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #e8c87040; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #e8c87020; }
+#nav-badge { background: linear-gradient(135deg, #ff302022, #3060e018, #e8c87012); border: 1px solid #ffffff30; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600; color: #e8d8b0; }
+.zone-label { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px; }
+.z-marx { background: #ff302018; color: #ff8060; border: 1px solid #ff302040; }
+.z-durk { background: #ffe8c018; color: #f8d090; border: 1px solid #ffe8c040; }
+.z-weber { background: #3060e018; color: #80a0ff; border: 1px solid #3060e040; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: #e8d8b0; }
+#nav-link { color: #706050; text-decoration: none; font-size: 12px; padding: 5px 12px; border: 1px solid #70605040; border-radius: 6px; transition: all .2s; }
+#nav-link:hover { background: #70605020; color: #e8c870; }
+#tooltip { position: fixed; pointer-events: none; z-index: 200; background: #06040ef0; border: 1px solid #ffffff40; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #e8d8b0; max-width: 220px; opacity: 0; transition: opacity .2s; backdrop-filter: blur(10px); }
+#popup { position: fixed; z-index: 300; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.92); background: linear-gradient(135deg, #06040e, #0c0818); border-radius: 14px; padding: 28px 32px; max-width: 560px; width: 90%; opacity: 0; pointer-events: none; transition: all .3s; backdrop-filter: blur(20px); box-shadow: 0 20px 60px #00000090; }
+#popup.active { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+#popup.marx { border: 1px solid #ff303070; box-shadow: 0 20px 60px #00000090, 0 0 40px #ff202018; }
+#popup.durk { border: 1px solid #f0c04070; box-shadow: 0 20px 60px #00000090, 0 0 40px #f0c04018; }
+#popup.weber { border: 1px solid #3060e070; box-shadow: 0 20px 60px #00000090, 0 0 40px #3060e018; }
+#popup-title { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+#popup.marx #popup-title { color: #ff8060; }
+#popup.durk #popup-title { color: #f8d090; }
+#popup.weber #popup-title { color: #80a0ff; }
+#popup-desc { font-size: 13px; line-height: 1.7; color: #c8b8d8; margin-bottom: 16px; }
+#popup-tip { border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 12px; line-height: 1.6; }
+#popup.marx #popup-tip { background: #ff303018; border-left: 3px solid #ff3030; color: #ff9070; }
+#popup.durk #popup-tip { background: #f0c04018; border-left: 3px solid #f0c040; color: #f8d890; }
+#popup.weber #popup-tip { background: #3060e018; border-left: 3px solid #3060e0; color: #90b0ff; }
+#popup-tip::before { content: "UNICAP "; font-weight: 700; }
+#popup.marx #popup-tip::before { color: #ff3030; }
+#popup.durk #popup-tip::before { color: #f0c040; }
+#popup.weber #popup-tip::before { color: #3060e0; }
+#popup-close { position: absolute; top: 14px; right: 16px; background: none; border: 1px solid #ffffff30; color: #a09898; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+#popup-close:hover { background: #ffffff18; }
+#hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #06040a90; border: 1px solid #ffffff20; border-radius: 20px; padding: 6px 18px; font-size: 11px; color: #706080; z-index: 100; backdrop-filter: blur(6px); }
+#overlay { position: fixed; inset: 0; z-index: 250; pointer-events: none; opacity: 0; background: #00000060; transition: opacity .3s; }
+#overlay.active { pointer-events: all; opacity: 1; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<nav id="navbar">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-badge">⚙️ O Ateliê dos Três — Sociologia</span>
+  <span class="zone-label z-marx">Marx</span>
+  <span class="zone-label z-durk">Durkheim</span>
+  <span class="zone-label z-weber">Weber</span>
+  <span id="nav-title">O Ateliê dos Três</span>
+  <a href="resumo.html" id="nav-link">Resumo →</a>
+</nav>
+<div id="tooltip"></div>
+<div id="overlay"></div>
+<div id="popup">
+  <button id="popup-close">✕</button>
+  <div id="popup-title"></div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"></div>
+</div>
+<div id="hint">Explore as três zonas: Marx (esquerda) • Durkheim (centro) • Weber (direita) • Clique nos objetos</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const CONCEPTS = [
+  {
+    name: "O Materialismo Histórico e Dialético (Marx)",
+    zone: "marx",
+    pos: [-11, 1.4, 0],
+    desc: "Karl Marx (1818-1883): toda história é a história da luta de classes. Materialismo histórico: são as condições materiais (meios de produção) que determinam a consciência e as ideias (infraestrutura → superestrutura). Dialética hegeliana adaptada: tese (burguesia) + antítese (proletariado) → síntese (comunismo). O capitalismo explora o trabalhador através da mais-valia (surplus value).",
+    tip: "Mais-valia = a diferença entre o valor que o trabalhador produz e o que recebe como salário. O capitalista se apropria dessa diferença. Questão: 'O que é alienação para Marx?' → O trabalhador se torna estranho ao produto de seu trabalho, ao processo e a si mesmo."
+  },
+  {
+    name: "Classes Sociais e Revolução (Marx)",
+    zone: "marx",
+    pos: [-9, 0.9, 1.5],
+    desc: "Marx dividiu a sociedade capitalista em: BURGUESIA (detentora dos meios de produção) vs. PROLETARIADO (vende apenas sua força de trabalho). A luta de classes é o motor da história. O proletariado deve tomar consciência de sua situação (consciência de classe) e realizar a revolução, abolindo a propriedade privada e criando uma sociedade sem classes. O Estado burguês serve para manter a dominação de classe.",
+    tip: "Superestrutura (Estado, religião, ideologia, família) serve para reproduzir e legitimar a infraestrutura econômica. Questão: 'O que Marx entendia por ideologia?' → Sistema de ideias que legitima a dominação da classe dominante ('as ideias da classe dominante são as ideias dominantes')."
+  },
+  {
+    name: "O Fato Social (Durkheim)",
+    zone: "durk",
+    pos: [0, 2, -1],
+    desc: "Émile Durkheim (1858-1917): a sociologia é a ciência dos FATOS SOCIAIS. Fato social: toda maneira de agir, pensar e sentir que é exterior ao indivíduo e exerce sobre ele uma coerção. Características: exterioridade (existe fora do indivíduo), coercitividade (pressão para conformidade), generalidade (compartilhado pelo grupo). Ex.: língua, religião, moral, direito.",
+    tip: "Durkheim é o pai do funcionalismo: a sociedade funciona como um organismo onde cada parte tem uma função para manter a coesão. Questão: 'O que Durkheim chamava de coesão social?' → Solidariedade: mecânica (sociedades simples, todos iguais) vs. orgânica (sociedades complexas, divisão do trabalho)."
+  },
+  {
+    name: "Anomia e Suicídio (Durkheim)",
+    zone: "durk",
+    pos: [2, 0.95, 0],
+    desc: "Em 'O Suicídio' (1897), Durkheim transformou um ato individual num fenômeno social. Tipos: Egoísta (fraca integração social), Altruísta (excesso de integração — soldados), Anômico (perturbação da regulação social, ex.: crise econômica). ANOMIA: ausência ou fraqueza das normas sociais que regulam o comportamento, criando desorientação. Ocorre em períodos de mudança social rápida.",
+    tip: "A anomia durkheimiana é crucial para entender violência e desigualdade. Questão: 'Como Durkheim explica o suicídio de forma sociológica?' → Como fenômeno coletivo determinado pelo grau de integração e regulação social, não pela psicologia individual."
+  },
+  {
+    name: "A Burocracia e a Ação Social (Weber)",
+    zone: "weber",
+    pos: [11, 1.2, -0.5],
+    desc: "Max Weber (1864-1920): o objeto da sociologia é a AÇÃO SOCIAL (ação que leva em conta o comportamento dos outros). 4 tipos: racional com relação a fins (instrumental), racional com relação a valores, afetiva e tradicional. A burocracia é o tipo mais racional de organização: hierarquia formal, regras escritas, especialização, impessoalidade. Weber temia a 'jaula de ferro' da burocracia racional.",
+    tip: "'Jaula de ferro' (iron cage) = a burocracia e o capitalismo racionalizado aprisionam o ser humano numa rotina desumanizante. Questão: 'O que Weber entendia por ação social racional com relação a fins?' → Ação calculada para atingir objetivos específicos, avaliando meios e fins racionalmente."
+  },
+  {
+    name: "Dominação e Protestantismo (Weber)",
+    zone: "weber",
+    pos: [9, 1, 1],
+    desc: "Tipos de dominação legítima: TRADICIONAL (costumes, hereditariedade — rei feudal), CARISMÁTICA (dons pessoais do líder — profeta, Hitler) e RACIONAL-LEGAL (leis, regras, cargos — democracia moderna). Em 'A Ética Protestante e o Espírito do Capitalismo': o calvinismo (predestinação + sucesso como sinal divino) criou uma ética do trabalho árduo e reinvestimento que favoreceu o capitalismo.",
+    tip: "Weber NÃO diz que o protestantismo CAUSOU o capitalismo — diz que criou uma AFINIDADE ELETIVA (condição favorável). Questão clássica: 'Por que Weber é importante para entender o capitalismo?' → Mostra a dimensão cultural/religiosa (ética protestante) além da econômica que Marx enfatizou."
+  },
+  {
+    name: "Os Três Fundadores: Comparação",
+    zone: "durk",
+    pos: [0, 1, 2],
+    desc: "MARX: conflito de classes como motor histórico, materialismo, revolução necessária, crítico do capitalismo. DURKHEIM: coesão social, fatos sociais, funcionalismo, reforma social (não revolução). WEBER: compreensão (verstehen) da ação social, papel das ideias e cultura, burocracia, tipos ideais. Todos partem de diferentes problemas: Marx = por que há exploração? Durkheim = o que mantém a sociedade coesa? Weber = como os atores dão sentido à ação?",
+    tip: "Questão de comparação é muito comum: 'Para qual autor a religião é o ópio do povo?' → Marx. 'Quem estudou suicídio sociologicamente?' → Durkheim. 'Quem criou a teoria da burocracia?' → Weber. 'Quem analisou a ética protestante?' → Weber."
+  }
+];
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x030206);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x040308, 20, 60);
+
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 8, 16);
+camera.lookAt(0, 2, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.target.set(0, 2, 0);
+controls.maxDistance = 30;
+controls.minDistance = 5;
+controls.maxPolarAngle = Math.PI * 0.75;
+
+// GLOBAL LIGHTING
+const ambLight = new THREE.AmbientLight(0x080608, 0.6);
+scene.add(ambLight);
+
+// FLOOR
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(44, 24), new THREE.MeshLambertMaterial({ color: 0x0c0a10 }));
+floor.rotation.x = -Math.PI / 2;
+scene.add(floor);
+
+// CEILING
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(44, 24), new THREE.MeshLambertMaterial({ color: 0x070610 }));
+ceiling.rotation.x = Math.PI / 2;
+ceiling.position.y = 9;
+scene.add(ceiling);
+
+// BACK WALL
+const backWall = new THREE.Mesh(new THREE.PlaneGeometry(44, 9), new THREE.MeshLambertMaterial({ color: 0x080610 }));
+backWall.position.set(0, 4.5, -10);
+scene.add(backWall);
+
+// FRONT WALL
+const frontWall = new THREE.Mesh(new THREE.PlaneGeometry(44, 9), new THREE.MeshLambertMaterial({ color: 0x080610 }));
+frontWall.position.set(0, 4.5, 10);
+frontWall.rotation.y = Math.PI;
+scene.add(frontWall);
+
+// LEFT/RIGHT WALLS
+const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 9), new THREE.MeshLambertMaterial({ color: 0x070510 }));
+leftWall.rotation.y = Math.PI / 2;
+leftWall.position.set(-20, 4.5, 0);
+scene.add(leftWall);
+const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 9), new THREE.MeshLambertMaterial({ color: 0x070510 }));
+rightWall.rotation.y = -Math.PI / 2;
+rightWall.position.set(20, 4.5, 0);
+scene.add(rightWall);
+
+// DIVIDING WALLS (partial)
+const divWallMat = new THREE.MeshLambertMaterial({ color: 0x151015, side: THREE.DoubleSide });
+const div1 = new THREE.Mesh(new THREE.BoxGeometry(0.28, 5, 10), divWallMat);
+div1.position.set(-5, 2.5, 0);
+scene.add(div1);
+const div2 = new THREE.Mesh(new THREE.BoxGeometry(0.28, 5, 10), divWallMat);
+div2.position.set(5, 2.5, 0);
+scene.add(div2);
+
+// ============ ZONE LEFT: MARX ============
+const marxLight = new THREE.PointLight(0xff2010, 2.5, 18);
+marxLight.position.set(-14, 3, 0);
+scene.add(marxLight);
+
+// Factory window (left wall)
+const factoryCanvas = document.createElement('canvas');
+factoryCanvas.width = 256; factoryCanvas.height = 192;
+const fCtx = factoryCanvas.getContext('2d');
+const factGrad = fCtx.createRadialGradient(128, 192, 0, 128, 192, 200);
+factGrad.addColorStop(0, '#ff4010');
+factGrad.addColorStop(0.4, '#881808');
+factGrad.addColorStop(1, '#0a0204');
+fCtx.fillStyle = factGrad;
+fCtx.fillRect(0, 0, 256, 192);
+fCtx.fillStyle = '#1a0804';
+fCtx.fillRect(30, 60, 20, 120); // chimney
+fCtx.fillRect(90, 80, 20, 100);
+fCtx.fillRect(50, 100, 80, 80); // factory building
+fCtx.fillStyle = '#ff8020';
+fCtx.fillRect(28, 56, 24, 8); // smoke
+fCtx.fillRect(88, 76, 24, 8);
+const factTex = new THREE.CanvasTexture(factoryCanvas);
+const factWindow = new THREE.Mesh(new THREE.PlaneGeometry(4, 3), new THREE.MeshLambertMaterial({ map: factTex, emissive: 0x200804, emissiveIntensity: 0.6 }));
+factWindow.position.set(-19.8, 2.5, 0);
+factWindow.rotation.y = Math.PI / 2;
+scene.add(factWindow);
+
+// Marx desk
+const marxDesk = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.14, 1.6), new THREE.MeshLambertMaterial({ color: 0x180a08 }));
+marxDesk.position.set(-11, 0.84, 0);
+scene.add(marxDesk);
+const marxLegL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.84, 0.15), new THREE.MeshLambertMaterial({ color: 0x100604 }));
+marxLegL.position.set(-12.5, 0.42, 0);
+scene.add(marxLegL);
+const marxLegR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.84, 0.15), new THREE.MeshLambertMaterial({ color: 0x100604 }));
+marxLegR.position.set(-9.5, 0.42, 0);
+scene.add(marxLegR);
+
+// Das Kapital (big red book)
+const kapitalBook = new THREE.Mesh(new THREE.BoxGeometry(0.38, 0.62, 0.28), new THREE.MeshLambertMaterial({ color: 0x8a0808, emissive: 0x1a0000, emissiveIntensity: 0.2 }));
+kapitalBook.position.set(-11.5, 1.22, -0.4);
+scene.add(kapitalBook);
+
+// Stack of manuscripts
+for (let mi = 0; mi < 5; mi++) {
+  const ms = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.02 + mi * 0.01, 0.6), new THREE.MeshLambertMaterial({ color: 0xd8c8a8 }));
+  ms.position.set(-10.5 + mi * 0.04, 0.93 + mi * 0.025, 0.2);
+  ms.rotation.y = (Math.random() - 0.5) * 0.3;
+  scene.add(ms);
+}
+
+// Gear suggestion (Marx zone, left of desk)
+const gearRing = new THREE.Mesh(new THREE.TorusGeometry(0.8, 0.12, 8, 16), new THREE.MeshLambertMaterial({ color: 0x402010 }));
+gearRing.position.set(-13, 1.5, -0.8);
+gearRing.rotation.x = Math.PI / 8;
+scene.add(gearRing);
+
+// Marx concept objects (interactive)
+const marxConcept1 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.64, 0.3), new THREE.MeshLambertMaterial({ color: 0x8a0808, emissive: 0x000000 }));
+marxConcept1.position.set(-11.5, 1.22, -0.4);
+marxConcept1.userData.concept = CONCEPTS[0];
+marxConcept1.userData.zone = 'marx';
+
+const marxManifesto = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.7), new THREE.MeshLambertMaterial({ color: 0xd0b890, side: THREE.DoubleSide, emissive: 0x000000 }));
+marxManifesto.position.set(-10.2, 0.98, 0.25);
+marxManifesto.rotation.x = -Math.PI / 2;
+marxManifesto.rotation.z = 0.2;
+marxManifesto.userData.concept = CONCEPTS[1];
+marxManifesto.userData.zone = 'marx';
+
+// ============ ZONE CENTER: DURKHEIM ============
+const durkLight = new THREE.PointLight(0xffe8d0, 3, 18);
+durkLight.position.set(0, 6, 0);
+scene.add(durkLight);
+
+// Durkheim work table
+const durkDesk = new THREE.Mesh(new THREE.BoxGeometry(4, 0.14, 2), new THREE.MeshLambertMaterial({ color: 0x2a1e12 }));
+durkDesk.position.set(0, 0.84, 0);
+scene.add(durkDesk);
+const durkLegL = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.84, 0.15), new THREE.MeshLambertMaterial({ color: 0x1a1008 }));
+durkLegL.position.set(-1.8, 0.42, 0);
+scene.add(durkLegL);
+const durkLegR = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.84, 0.15), new THREE.MeshLambertMaterial({ color: 0x1a1008 }));
+durkLegR.position.set(1.8, 0.42, 0);
+scene.add(durkLegR);
+
+// Graph stand (behind desk)
+const graphStand = new THREE.Mesh(new THREE.BoxGeometry(0.08, 2, 0.08), new THREE.MeshLambertMaterial({ color: 0x201808 }));
+graphStand.position.set(0, 1.4, -1.2);
+scene.add(graphStand);
+const graphBoard = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.08, 1.4), new THREE.MeshLambertMaterial({ color: 0x181008 }));
+graphBoard.position.set(0, 2.2, -1.2);
+scene.add(graphBoard);
+
+// Statistics chart on stand
+const statsCanvas = document.createElement('canvas');
+statsCanvas.width = 256; statsCanvas.height = 192;
+const sCtx = statsCanvas.getContext('2d');
+sCtx.fillStyle = '#f0e8d0';
+sCtx.fillRect(0, 0, 256, 192);
+sCtx.strokeStyle = '#c8a860'; sCtx.lineWidth = 1;
+for (let si = 0; si < 256; si += 32) { sCtx.beginPath(); sCtx.moveTo(si, 0); sCtx.lineTo(si, 192); sCtx.stroke(); }
+for (let si = 0; si < 192; si += 24) { sCtx.beginPath(); sCtx.moveTo(0, si); sCtx.lineTo(256, si); sCtx.stroke(); }
+sCtx.strokeStyle = '#2a6a40'; sCtx.lineWidth = 2;
+sCtx.beginPath();
+[30,50,100,120,160,200,240].forEach((x, i) => {
+  const y = 180 - [20, 40, 60, 90, 120, 80, 50][i];
+  if (i === 0) sCtx.moveTo(x, y); else sCtx.lineTo(x, y);
+});
+sCtx.stroke();
+sCtx.fillStyle = '#2a4030'; sCtx.font = 'bold 12px serif'; sCtx.textAlign = 'center';
+sCtx.fillText('SUICÍDIOS POR INTEGRAÇÃO SOCIAL', 128, 18);
+const statsTex = new THREE.CanvasTexture(statsCanvas);
+const statsBoard = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.2), new THREE.MeshLambertMaterial({ map: statsTex }));
+statsBoard.position.set(0, 2.22, -1.14);
+scene.add(statsBoard);
+
+// Durkheim concept objects
+const durkChart = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 0.08, 1.4), new THREE.MeshLambertMaterial({ color: 0x181008, emissive: 0x000000 }));
+durkChart.position.set(0, 2.2, -1.2);
+durkChart.userData.concept = CONCEPTS[2];
+durkChart.userData.zone = 'durk';
+
+const durkStats = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.1), new THREE.MeshLambertMaterial({ map: statsTex, emissive: 0x000000 }));
+durkStats.position.set(2, 0.96, 0);
+durkStats.rotation.x = -Math.PI / 2;
+durkStats.rotation.z = 0.1;
+durkStats.userData.concept = CONCEPTS[3];
+durkStats.userData.zone = 'durk';
+
+// ============ ZONE RIGHT: WEBER ============
+const weberLight = new THREE.PointLight(0xd0e0ff, 2, 18);
+weberLight.position.set(14, 6, 0);
+scene.add(weberLight);
+
+// Weber heavy desk
+const weberDesk = new THREE.Mesh(new THREE.BoxGeometry(3.5, 0.18, 1.8), new THREE.MeshLambertMaterial({ color: 0x1a1410 }));
+weberDesk.position.set(11, 0.85, 0);
+scene.add(weberDesk);
+const weberLegL = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.85, 0.18), new THREE.MeshLambertMaterial({ color: 0x120e0a }));
+weberLegL.position.set(9.4, 0.42, 0);
+scene.add(weberLegL);
+const weberLegR = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.85, 0.18), new THREE.MeshLambertMaterial({ color: 0x120e0a }));
+weberLegR.position.set(12.6, 0.42, 0);
+scene.add(weberLegR);
+
+// Filing cabinets
+const cabinetMat = new THREE.MeshLambertMaterial({ color: 0x1a2030 });
+for (let ci = 0; ci < 3; ci++) {
+  const cab = new THREE.Mesh(new THREE.BoxGeometry(0.9, 3, 0.5), cabinetMat);
+  cab.position.set(18 - ci * 1.1, 1.5, -7);
+  scene.add(cab);
+  const handle = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.04, 0.08), new THREE.MeshLambertMaterial({ color: 0x3a4050 }));
+  handle.position.set(18 - ci * 1.1, 2, -6.72);
+  scene.add(handle);
+  const handle2 = handle.clone();
+  handle2.position.y = 1;
+  scene.add(handle2);
+}
+
+// Typewriter
+const typewriter = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 0.55), new THREE.MeshLambertMaterial({ color: 0x282830 }));
+typewriter.position.set(12.5, 1.14, -0.5);
+scene.add(typewriter);
+const twKeys = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.06, 0.2), new THREE.MeshLambertMaterial({ color: 0x303040 }));
+twKeys.position.set(12.5, 1.36, -0.4);
+scene.add(twKeys);
+
+// Weber concept objects
+const weberObj1 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.4, 0.56), new THREE.MeshLambertMaterial({ color: 0x282830, emissive: 0x000000 }));
+weberObj1.position.set(11, 1.14, -0.5);
+weberObj1.userData.concept = CONCEPTS[4];
+weberObj1.userData.zone = 'weber';
+
+const weberObj2 = new THREE.Mesh(new THREE.BoxGeometry(0.9, 3, 0.52), new THREE.MeshLambertMaterial({ color: 0x1a2030, emissive: 0x000000 }));
+weberObj2.position.set(18, 1.5, -7);
+weberObj2.userData.concept = CONCEPTS[5];
+weberObj2.userData.zone = 'weber';
+
+// ============ CENTRAL ROUND TABLE ============
+const roundTable = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.1, 0.12, 16), new THREE.MeshLambertMaterial({ color: 0x201618 }));
+roundTable.position.set(0, 0.7, 4);
+scene.add(roundTable);
+// 3 chairs around the round table
+[0, 1, 2].forEach(i => {
+  const angle = (i / 3) * Math.PI * 2 + Math.PI / 6;
+  const cx = Math.sin(angle) * 1.8;
+  const cz = 4 + Math.cos(angle) * 1.8;
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.06, 0.6), new THREE.MeshLambertMaterial({ color: 0x160e18 }));
+  seat.position.set(cx, 0.5, cz);
+  scene.add(seat);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.8, 0.06), new THREE.MeshLambertMaterial({ color: 0x160e18 }));
+  back.position.set(cx, 0.9, cz + Math.cos(angle) * 0.3);
+  scene.add(back);
+  [[-0.3, 0, 0], [0.3, 0, 0], [-0.3, 0, 0.5], [0.3, 0, 0.5]].forEach(([lx, ly, lz]) => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5, 4), new THREE.MeshLambertMaterial({ color: 0x100c14 }));
+    leg.position.set(cx + lx, 0.25, cz + lz - 0.25);
+    scene.add(leg);
+  });
+});
+
+// Round table concept (center of the studio)
+const roundTableClickable = new THREE.Mesh(
+  new THREE.CylinderGeometry(1.2, 1.1, 0.14, 16),
+  new THREE.MeshLambertMaterial({ color: 0x201618, emissive: 0x000000 })
+);
+roundTableClickable.position.set(0, 0.7, 4);
+roundTableClickable.userData.concept = CONCEPTS[6];
+roundTableClickable.userData.zone = 'durk';
+
+const centerLight = new THREE.PointLight(0xe0c8ff, 1, 6);
+centerLight.position.set(0, 2, 4);
+scene.add(centerLight);
+
+// ALL clickable objects
+const clickables = [marxConcept1, marxManifesto, durkChart, durkStats, weberObj1, weberObj2, roundTableClickable];
+clickables.forEach(o => scene.add(o));
+
+// Raycaster
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredObj = null;
+
+const ZONE_COLORS = {
+  marx: { hover: 0x200800, click: 0x300a02 },
+  durk: { hover: 0x181000, click: 0x241800 },
+  weber: { hover: 0x081020, click: 0x102030 }
+};
+const POPUP_CLASSES = ['marx', 'durk', 'weber'];
+
+const tooltip = document.getElementById('tooltip');
+const popup = document.getElementById('popup');
+const overlay = document.getElementById('overlay');
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(clickables);
+  if (hits.length > 0) {
+    const obj = hits[0].object;
+    if (hoveredObj !== obj) {
+      if (hoveredObj) hoveredObj.material.emissive = new THREE.Color(0x000000);
+      hoveredObj = obj;
+      const zc = ZONE_COLORS[obj.userData.zone];
+      obj.material.emissive = new THREE.Color(zc ? zc.hover : 0x101010);
+    }
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = obj.userData.concept.name;
+    document.body.style.cursor = 'pointer';
+  } else {
+    if (hoveredObj) { hoveredObj.material.emissive = new THREE.Color(0x000000); hoveredObj = null; }
+    tooltip.style.opacity = '0';
+    document.body.style.cursor = 'default';
+  }
+}
+
+function onMouseClick(e) {
+  if (e.target.id === 'popup-close' || e.target.id === 'overlay') { closePopup(); return; }
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(clickables);
+  if (hits.length > 0) {
+    const obj = hits[0].object;
+    const c = obj.userData.concept;
+    document.getElementById('popup-title').textContent = c.name;
+    document.getElementById('popup-desc').textContent = c.desc;
+    document.getElementById('popup-tip').textContent = c.tip;
+    POPUP_CLASSES.forEach(cl => popup.classList.remove(cl));
+    popup.classList.add('active');
+    popup.classList.add(c.zone || 'durk');
+    overlay.classList.add('active');
+  }
+}
+function closePopup() { popup.classList.remove('active'); overlay.classList.remove('active'); }
+document.getElementById('popup-close').addEventListener('click', closePopup);
+document.getElementById('overlay').addEventListener('click', closePopup);
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('click', onMouseClick);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+  // Marx zone: factory glow flickers
+  marxLight.intensity = 2.2 + Math.sin(t * 2.3) * 0.6;
+  // Marx gear rotates
+  gearRing.rotation.z += 0.006;
+  // Durkheim stats light steady
+  durkLight.intensity = 2.8 + Math.sin(t * 0.4) * 0.2;
+  // Weber cabinet subtle sway
+  weberLight.intensity = 1.8 + Math.sin(t * 1.1) * 0.2;
+  // Center table light pulse
+  centerLight.intensity = 0.8 + Math.sin(t * 0.9) * 0.3;
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

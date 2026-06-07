@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Sala de Controle — Guerras e Guerra Fria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #01030a; font-family: 'Inter', sans-serif; overflow: hidden; color: #90b0d0; }
+#canvas { display: block; width: 100vw; height: 100vh; }
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: linear-gradient(90deg, #010308ee, #020510ee);
+  border-bottom: 1px solid #3060ff1a;
+  display: flex; align-items: center; padding: 0 20px; gap: 16px; z-index: 100;
+  backdrop-filter: blur(8px);
+}
+#nav-back { color: #3060ff; text-decoration: none; font-size: 13px; font-weight: 500; padding: 6px 12px; border: 1px solid #3060ff40; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #3060ff20; }
+#nav-badge { background: linear-gradient(135deg, #3060ff22, #20408018); border: 1px solid #3060ff50; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600; color: #60a0ff; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: #c0d8f0; }
+#nav-link { color: #204080; text-decoration: none; font-size: 12px; font-weight: 500; padding: 5px 12px; border: 1px solid #20408040; border-radius: 6px; transition: all .2s; }
+#nav-link:hover { background: #20408020; color: #3060ff; }
+#tooltip { position: fixed; pointer-events: none; z-index: 200; background: #01030af0; border: 1px solid #3060ff60; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #80c0ff; max-width: 220px; opacity: 0; transition: opacity .2s; backdrop-filter: blur(10px); }
+#popup { position: fixed; z-index: 300; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(.92); background: linear-gradient(135deg, #010310, #020820); border: 1px solid #3060ff70; border-radius: 14px; padding: 28px 32px; max-width: 540px; width: 90%; opacity: 0; pointer-events: none; transition: all .3s; backdrop-filter: blur(20px); box-shadow: 0 20px 60px #00000090, 0 0 40px #3060ff18; }
+#popup.active { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+#popup-title { font-size: 17px; font-weight: 700; color: #60a0ff; margin-bottom: 14px; }
+#popup-desc { font-size: 13px; line-height: 1.7; color: #90b0d0; margin-bottom: 16px; }
+#popup-tip { background: #3060ff18; border-left: 3px solid #3060ff; border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 12px; line-height: 1.6; color: #80c0ff; }
+#popup-tip::before { content: "UNICAP "; font-weight: 700; color: #3060ff; }
+#popup-close { position: absolute; top: 14px; right: 16px; background: none; border: 1px solid #3060ff40; color: #3060ff; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+#popup-close:hover { background: #3060ff30; }
+#hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #01030a90; border: 1px solid #3060ff30; border-radius: 20px; padding: 6px 18px; font-size: 11px; color: #204080; z-index: 100; backdrop-filter: blur(6px); }
+#overlay { position: fixed; inset: 0; z-index: 250; pointer-events: none; opacity: 0; background: #00000060; transition: opacity .3s; }
+#overlay.active { pointer-events: all; opacity: 1; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<nav id="navbar">
+  <a href="../../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-badge">📡 Sala de Controle — Contemporânea</span>
+  <span id="nav-title">A Sala de Controle</span>
+  <a href="resumo.html" id="nav-link">Resumo →</a>
+</nav>
+<div id="tooltip"></div>
+<div id="overlay"></div>
+<div id="popup">
+  <button id="popup-close">✕</button>
+  <div id="popup-title"></div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"></div>
+</div>
+<div id="hint">Passe o mouse sobre as pastas na mesa de comando • Clique para estudar</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const FOLDERS = [
+  { name: "1ª Guerra Mundial (1914-18)", pos: [-3, 0.91, -1], color: 0x806030, desc: "Causas MAIN: Militarismo, Alianças (Tríplice Entente vs. Tríplice Aliança), Imperialismo, Nacionalismo. Estopim: assassinato do Arquiduque Franz Ferdinand em Sarajevo (28/06/1914). Trincheiras, armas químicas, guerra de desgaste. 10 milhões de mortos. Resultado: derrota da Alemanha, Tratado de Versalhes (1919) — punições severas que criaram ressentimento alemão, preparando o caminho para Hitler.", tip: "O Tratado de Versalhes é o elo entre WWI e WWII. Questão frequente: 'O que causou a ascensão do nazismo?' → Entre outras causas, as punições humilhantes do Tratado de Versalhes. O Brasil participou enviando missão médica e a Divisão Naval de Operações de Guerra." },
+  { name: "2ª Guerra Mundial (1939-45)", pos: [3, 0.91, -1], color: 0x803030, desc: "Hitler invade a Polônia (09/1939). Países do Eixo: Alemanha, Itália, Japão. Aliados: Reino Unido, França, URSS (1941+), EUA (1941+). Eventos-chave: Holocausto (~6 milhões de judeus), Operação Barbarossa, Pearl Harbor, Dia D (06/06/1944), bombas atômicas em Hiroshima e Nagasaki (agosto 1945). O Brasil declarou guerra ao Eixo em 1942 → FEB (Força Expedicionária Brasileira) no front italiano.", tip: "O Brasil na WWII: FEB lutou em Montese (Itália). 'A cobra está fumando' = expressão de que o improvável aconteceu (Brasil participar da guerra). Questão sobre o Holocausto: Conferência de Wannsee (1942) = planejamento da 'Solução Final' do nazismo." },
+  { name: "Guerra Fria (1947-1991)", pos: [-3, 0.91, 1], color: 0x203060, desc: "Divisão bipolar do mundo em dois blocos: Capitalismo (EUA, OTAN) vs. Socialismo (URSS, Pacto de Varsóvia). Doutrina Truman (1947), Plano Marshall (reconstrução europeia), Berlim Dividida, Guerra da Coreia (1950-53), Cuba (Revolução 1959 + Crise dos Mísseis 1962), Guerra do Vietnã, corrida espacial (Sputnik 1957, Apollo 1969). Fim: queda do Muro de Berlim (1989), dissolução da URSS (1991).", tip: "A Guerra Fria não foi apenas geopolítica — foi cultural e ideológica. América Latina ficou no campo de disputas: ditaduras militares pró-EUA (incluindo Brasil 1964) eram apoiadas pela CIA. Questão: 'O que foi a Doutrina Truman?' → Política de contenção do comunismo através de apoio econômico/militar." },
+  { name: "Descolonização e Terceiro Mundo", pos: [3, 0.91, 1], color: 0x305020, desc: "Pós-WWII: potências europeias enfraquecidas. Índia independente (1947, Gandhi — não violência). África: maioria independente nos anos 1960. Conferência de Bandung (1955): 29 países afro-asiáticos criam o Movimento dos Países Não-Alinhados — terceira via entre capitalismo e socialismo. África do Sul: apartheid (1948-1994, Nelson Mandela preso 27 anos, liberado 1990).", tip: "Gandhi e Martin Luther King usaram a resistência não-violenta. Questão: 'Qual a diferença entre descolonização africana e asiática?' A africana foi mais violenta (guerras de libertação: Angola, Moçambique, Argélia). A asiática teve casos de divisão religiosa (Índia/Paquistão)." },
+  { name: "Globalização e Mundo Contemporâneo", pos: [0, 0.91, 2], color: 0x204040, desc: "Pós-1991: unipolaridade dos EUA, expansão do capitalismo global, revolução digital (internet, redes sociais). OMC, NAFTA, MERCOSUL, União Europeia. Crises: financeira 2008, pandemia COVID-19 2020. Novos desafios: aquecimento global, terrorismo (11/09/2001), multipolaridade emergente (China, Rússia, BRICS). O século XXI = crise da ordem liberal internacional.", tip: "Para UNICAP: a globalização gerou desenvolvimento desigual. O Brasil participa do MERCOSUL (com Argentina, Paraguai, Uruguai) e BRICS (Brasil, Rússia, Índia, China, África do Sul). O 11 de setembro (2001) iniciou a 'guerra ao terror' e redefiniu a geopolítica mundial." },
+  { name: "Totalitarismos do Séc. XX", pos: [0, 0.91, -2], color: 0x602010, desc: "Nazismo (Hitler, 1933-45): estado racial, antissemitismo, Holocausto, expansionismo. Fascismo (Mussolini, 1922-43): estado corporativista, culto ao líder, militarismo. Stalinismo (URSS): ditadura do partido, gulags, coletivização forçada, purgas. Hannah Arendt ('As Origens do Totalitarismo'): o que os une? Ideologia totalizante + controle total do Estado + violência sistemática.", tip: "Hannah Arendt é frequentemente cobrada em vestibulares de Humanas. 'Banalidade do mal' (sobre Eichmann) = pessoas comuns cometem atrocidades ao simplesmente 'obedecer ordens'. Questão: 'O que diferencia totalitarismo de autoritarismo?' → Totalitarismo quer controlar TUDO (vida pública E privada); autoritarismo foca no político." }
+];
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x01030a);
+renderer.shadowMap.enabled = true;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x010308, 15, 50);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 8, 14);
+camera.lookAt(0, 1, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.target.set(0, 1, 0);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.3;
+controls.maxDistance = 25;
+controls.minDistance = 5;
+controls.maxPolarAngle = Math.PI * 0.75;
+
+// LIGHTING
+const ambLight = new THREE.AmbientLight(0x020408, 0.5);
+scene.add(ambLight);
+const tableRimLight = new THREE.PointLight(0x1030ff, 2, 10);
+tableRimLight.position.set(0, 0.4, 0);
+scene.add(tableRimLight);
+const warningLight = new THREE.PointLight(0xff1000, 3, 20);
+warningLight.position.set(2, 8, -2);
+scene.add(warningLight);
+
+// BUNKER WALLS
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x0a0e14 });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), new THREE.MeshLambertMaterial({ color: 0x080c10 }));
+floor.rotation.x = -Math.PI / 2;
+scene.add(floor);
+const backWall = new THREE.Mesh(new THREE.PlaneGeometry(22, 14), wallMat);
+backWall.position.set(0, 7, -12);
+scene.add(backWall);
+const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), wallMat);
+leftWall.rotation.y = Math.PI / 2; leftWall.position.set(-12, 7, 0);
+scene.add(leftWall);
+const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(24, 14), wallMat);
+rightWall.rotation.y = -Math.PI / 2; rightWall.position.set(12, 7, 0);
+scene.add(rightWall);
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), wallMat);
+ceiling.rotation.x = Math.PI / 2; ceiling.position.y = 10;
+scene.add(ceiling);
+
+// Concrete supports/pillars
+for (let i = 0; i < 4; i++) {
+  const side = i % 2 === 0 ? -1 : 1;
+  const z = i < 2 ? -6 : 2;
+  const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.8, 10, 0.8), new THREE.MeshLambertMaterial({ color: 0x0c1018 }));
+  pillar.position.set(side * 10, 5, z);
+  scene.add(pillar);
+}
+
+// WORLD MAP on back wall
+const mapCanvas = document.createElement('canvas');
+mapCanvas.width = 1024; mapCanvas.height = 512;
+const mCtx = mapCanvas.getContext('2d');
+mCtx.fillStyle = '#010820';
+mCtx.fillRect(0, 0, 1024, 512);
+mCtx.strokeStyle = '#102040';
+mCtx.lineWidth = 1;
+for (let g = 0; g < 1024; g += 64) { mCtx.beginPath(); mCtx.moveTo(g, 0); mCtx.lineTo(g, 512); mCtx.stroke(); }
+for (let g = 0; g < 512; g += 64) { mCtx.beginPath(); mCtx.moveTo(0, g); mCtx.lineTo(1024, g); mCtx.stroke(); }
+// Draw simplified continents
+mCtx.fillStyle = '#0a2840';
+mCtx.fillRect(100, 150, 200, 180); // Americas
+mCtx.fillRect(340, 120, 180, 200); // Europe/Africa
+mCtx.fillRect(540, 100, 300, 200); // Asia
+mCtx.fillRect(740, 280, 120, 120); // Australia
+// East vs West zones
+mCtx.fillStyle = 'rgba(30,60,200,0.15)';
+mCtx.fillRect(100, 100, 280, 300);
+mCtx.fillStyle = 'rgba(200,30,30,0.15)';
+mCtx.fillRect(500, 100, 400, 300);
+mCtx.strokeStyle = '#3060ff'; mCtx.lineWidth = 2;
+mCtx.strokeRect(102, 102, 276, 296);
+mCtx.strokeStyle = '#ff3030';
+mCtx.strokeRect(502, 102, 396, 296);
+mCtx.fillStyle = '#3060ff'; mCtx.font = 'bold 18px monospace'; mCtx.textAlign = 'center';
+mCtx.fillText('WEST', 240, 80);
+mCtx.fillStyle = '#ff4040';
+mCtx.fillText('EAST', 700, 80);
+mCtx.strokeStyle = '#d4b020'; mCtx.lineWidth = 2;
+mCtx.strokeRect(10, 10, 1004, 492);
+// Arrow suggestions
+mCtx.strokeStyle = '#ff8020'; mCtx.lineWidth = 2;
+mCtx.beginPath(); mCtx.moveTo(380, 256); mCtx.lineTo(500, 256); mCtx.stroke();
+mCtx.beginPath(); mCtx.moveTo(490, 248); mCtx.lineTo(500, 256); mCtx.lineTo(490, 264); mCtx.stroke();
+const mapTex = new THREE.CanvasTexture(mapCanvas);
+const worldMap = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), new THREE.MeshLambertMaterial({ map: mapTex, emissive: 0x010408, emissiveIntensity: 0.3 }));
+worldMap.position.set(0, 5, -11.9);
+scene.add(worldMap);
+
+// COMMAND TABLE
+const tableMat = new THREE.MeshLambertMaterial({ color: 0x141820 });
+const commandTable = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4, 0.15, 32), tableMat);
+commandTable.position.y = 0.8;
+scene.add(commandTable);
+const tableRim = new THREE.Mesh(new THREE.TorusGeometry(4.15, 0.08, 8, 32), new THREE.MeshLambertMaterial({ color: 0x3060ff, emissive: 0x1020a0, emissiveIntensity: 0.8 }));
+tableRim.position.y = 0.88;
+scene.add(tableRim);
+
+// Table surface world map
+const tableMapC = document.createElement('canvas');
+tableMapC.width = 512; tableMapC.height = 512;
+const tmCtx = tableMapC.getContext('2d');
+tmCtx.fillStyle = '#0a1020';
+tmCtx.fillRect(0, 0, 512, 512);
+tmCtx.strokeStyle = '#102840';
+tmCtx.lineWidth = 1;
+for (let gi = 0; gi < 512; gi += 32) {
+  tmCtx.beginPath(); tmCtx.moveTo(gi, 0); tmCtx.lineTo(gi, 512); tmCtx.stroke();
+  tmCtx.beginPath(); tmCtx.moveTo(0, gi); tmCtx.lineTo(512, gi); tmCtx.stroke();
+}
+tmCtx.strokeStyle = '#1040a0'; tmCtx.lineWidth = 2;
+tmCtx.beginPath(); tmCtx.arc(256, 256, 230, 0, Math.PI * 2); tmCtx.stroke();
+const tableMapTex = new THREE.CanvasTexture(tableMapC);
+const tableMapMesh = new THREE.Mesh(new THREE.CircleGeometry(4.1, 32), new THREE.MeshLambertMaterial({ map: tableMapTex }));
+tableMapMesh.rotation.x = -Math.PI / 2;
+tableMapMesh.position.y = 0.92;
+scene.add(tableMapMesh);
+
+// SCREENS on side walls
+function makeScreen(x, y, z, rotY) {
+  const sc = document.createElement('canvas');
+  sc.width = 256; sc.height = 192;
+  const sCtx = sc.getContext('2d');
+  sCtx.fillStyle = '#020810';
+  sCtx.fillRect(0, 0, 256, 192);
+  sCtx.strokeStyle = '#00ff60'; sCtx.lineWidth = 1;
+  for (let li = 0; li < 8; li++) {
+    sCtx.beginPath(); sCtx.moveTo(0, 24 * li); sCtx.lineTo(256, 24 * li); sCtx.stroke();
+  }
+  sCtx.fillStyle = '#00ff60'; sCtx.font = '12px monospace'; sCtx.textAlign = 'left';
+  sCtx.fillText('SYSTEM STATUS: ACTIVE', 10, 20);
+  sCtx.fillStyle = '#ff4000';
+  sCtx.fillText('ALERT LVL: CRITICAL', 10, 50);
+  sCtx.fillStyle = '#00cc40';
+  sCtx.fillText('WARHEADS: [CLASSIFIED]', 10, 80);
+  sCtx.fillText('TRACKING: ACTIVE', 10, 110);
+  const scTex = new THREE.CanvasTexture(sc);
+  const scMesh = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 2.5), new THREE.MeshLambertMaterial({ map: scTex, emissive: 0x001008, emissiveIntensity: 0.4 }));
+  scMesh.position.set(x, y, z);
+  scMesh.rotation.y = rotY;
+  scene.add(scMesh);
+  const scLight = new THREE.PointLight(0x00ff60, 0.8, 6);
+  scLight.position.set(x + Math.sin(rotY) * 0.5, y, z + Math.cos(rotY) * 0.5);
+  scene.add(scLight);
+}
+makeScreen(-9, 4, -4, Math.PI / 2);
+makeScreen(-9, 4, 2, Math.PI / 2);
+makeScreen(9, 4, -4, -Math.PI / 2);
+makeScreen(9, 4, 2, -Math.PI / 2);
+
+// PUSHPINS on world map
+const pushpinPositions = [[-3, 6, -11.8], [1, 5.5, -11.8], [4, 6.5, -11.8], [-1, 4, -11.8], [6, 5, -11.8]];
+pushpinPositions.forEach(([px, py, pz]) => {
+  const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.3, 6), new THREE.MeshLambertMaterial({ color: 0xff3000 }));
+  pin.position.set(px, py, pz);
+  scene.add(pin);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 4), new THREE.MeshLambertMaterial({ color: 0xff6020 }));
+  head.position.set(px, py + 0.2, pz);
+  scene.add(head);
+});
+
+// FOLDERS on table
+const folderMeshes = [];
+FOLDERS.forEach((f, i) => {
+  const fc = document.createElement('canvas');
+  fc.width = 256; fc.height = 192;
+  const fCtx = fc.getContext('2d');
+  fCtx.fillStyle = '#' + f.color.toString(16).padStart(6, '0') + '88';
+  fCtx.fillRect(0, 0, 256, 192);
+  fCtx.strokeStyle = '#' + f.color.toString(16).padStart(6, '0');
+  fCtx.lineWidth = 2; fCtx.strokeRect(4, 4, 248, 184);
+  fCtx.fillStyle = '#e8e0c8'; fCtx.font = 'bold 13px serif'; fCtx.textAlign = 'center';
+  const words = f.name.split(' ');
+  let line = ''; let ln = 0;
+  words.forEach(w => {
+    if ((line + w).length > 22 && line.length > 0) {
+      fCtx.fillText(line.trim(), 128, 90 + ln * 20);
+      line = w + ' '; ln++;
+    } else { line += w + ' '; }
+  });
+  fCtx.fillText(line.trim(), 128, 90 + ln * 20);
+  const fTex = new THREE.CanvasTexture(fc);
+  const folderMesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.2, 1.6),
+    new THREE.MeshLambertMaterial({ map: fTex, side: THREE.DoubleSide, emissive: 0x000000 })
+  );
+  folderMesh.position.set(f.pos[0], f.pos[1], f.pos[2]);
+  folderMesh.rotation.x = -Math.PI / 2;
+  folderMesh.rotation.z = (Math.random() - 0.5) * 0.25;
+  folderMesh.userData.concept = f;
+  scene.add(folderMesh);
+  folderMeshes.push(folderMesh);
+  const fLight = new THREE.PointLight(0x60a0ff, 0.5, 3);
+  fLight.position.set(f.pos[0], 1.5, f.pos[2]);
+  scene.add(fLight);
+});
+
+// Raycaster
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = null;
+const tooltip = document.getElementById('tooltip');
+const popup = document.getElementById('popup');
+const overlay = document.getElementById('overlay');
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(folderMeshes);
+  if (hits.length > 0) {
+    const obj = hits[0].object;
+    if (hovered !== obj) {
+      if (hovered) hovered.material.emissive = new THREE.Color(0x000000);
+      hovered = obj;
+      obj.material.emissive = new THREE.Color(0x102030);
+    }
+    tooltip.style.opacity = '1';
+    tooltip.style.left = (e.clientX + 14) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = obj.userData.concept.name;
+    document.body.style.cursor = 'pointer';
+  } else {
+    if (hovered) { hovered.material.emissive = new THREE.Color(0x000000); hovered = null; }
+    tooltip.style.opacity = '0';
+    document.body.style.cursor = 'default';
+  }
+}
+
+function onMouseClick(e) {
+  if (e.target.id === 'popup-close' || e.target.id === 'overlay') { closePopup(); return; }
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(folderMeshes);
+  if (hits.length > 0) {
+    const c = hits[0].object.userData.concept;
+    document.getElementById('popup-title').textContent = c.name;
+    document.getElementById('popup-desc').textContent = c.desc;
+    document.getElementById('popup-tip').textContent = c.tip;
+    popup.classList.add('active');
+    overlay.classList.add('active');
+    controls.autoRotate = false;
+  }
+}
+function closePopup() { popup.classList.remove('active'); overlay.classList.remove('active'); controls.autoRotate = true; }
+document.getElementById('popup-close').addEventListener('click', closePopup);
+document.getElementById('overlay').addEventListener('click', closePopup);
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('click', onMouseClick);
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+  // Warning light pulse
+  warningLight.intensity = 2 + Math.sin(t * 2) * 1.5;
+  warningLight.color.setHex(Math.sin(t * 2) > 0 ? 0xff1000 : 0xff4000);
+  // Table rim glow
+  tableRimLight.intensity = 1.5 + Math.sin(t * 1.3) * 0.5;
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

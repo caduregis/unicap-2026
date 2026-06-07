@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funções — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#030108;
+  color:#c8b8e8;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  padding-bottom:60px;
+}
+a { color:#8866cc; text-decoration:none; transition:color 0.2s; }
+a:hover { color:#bb99ff; }
+
+/* Nav */
+#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(3,1,8,0.95); border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(12px);
+}
+#nav-back, #nav-map {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5); font-size:12px; font-weight:500;
+  padding:7px 14px; border-radius:7px; transition:all 0.2s;
+}
+#nav-back:hover, #nav-map:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#nav-title {
+  font-size:13px; font-weight:600; letter-spacing:0.08em;
+  text-transform:uppercase; color:rgba(255,255,255,0.3);
+}
+
+/* Hero */
+.hero {
+  padding:60px 24px 40px;
+  text-align:center;
+  max-width:860px;
+  margin:0 auto;
+}
+.hero-badge {
+  display:inline-block;
+  background:rgba(124,96,232,0.12); border:1px solid rgba(124,96,232,0.25);
+  color:#9977dd; font-size:11px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size:clamp(28px,5vw,44px); font-weight:700; line-height:1.15;
+  background:linear-gradient(135deg,#c8b8f8,#8855cc,#6633aa);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:16px;
+}
+.hero p {
+  font-size:15px; color:rgba(200,180,240,0.5); max-width:560px; margin:0 auto;
+  line-height:1.7;
+}
+
+/* Content */
+.content { max-width:860px; margin:0 auto; padding:0 24px; }
+
+/* Section */
+.section {
+  margin-bottom:40px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:14px;
+  overflow:hidden;
+}
+.section-header {
+  padding:20px 24px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; gap:12px;
+}
+.section-num {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,#5533aa,#3322aa);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#cc99ff; flex-shrink:0;
+}
+.section-title {
+  font-size:17px; font-weight:700;
+  background:linear-gradient(90deg,#d4b8f8,#9966dd);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.section-body { padding:20px 24px; }
+
+/* Cards */
+.card-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px;
+  margin-top:8px;
+}
+.card {
+  background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px; padding:16px;
+  border-left:3px solid;
+}
+.card.blue { border-left-color:#4488ff; }
+.card.purple { border-left-color:#8855cc; }
+.card.green { border-left-color:#44cc88; }
+.card.orange { border-left-color:#ff8844; }
+.card.cyan { border-left-color:#44ccff; }
+.card.red { border-left-color:#ff5555; }
+.card h3 { font-size:13px; font-weight:700; color:#d4c8f0; margin-bottom:8px; }
+.card p { font-size:12px; color:#8878a8; line-height:1.65; }
+
+/* Formula blocks */
+.formula-block {
+  background:rgba(124,96,232,0.06); border:1px solid rgba(124,96,232,0.15);
+  border-radius:10px; padding:14px 18px; margin:10px 0;
+  font-family:'Courier New',monospace; font-size:13px;
+  color:#b8a0e8; line-height:1.7;
+}
+
+/* Table */
+table {
+  width:100%; border-collapse:collapse; font-size:13px;
+  margin-top:10px;
+}
+th {
+  background:rgba(124,96,232,0.12); color:#c8b0f0;
+  font-weight:600; font-size:12px; letter-spacing:0.06em;
+  text-transform:uppercase; padding:10px 14px; text-align:left;
+}
+td { padding:10px 14px; color:#9080b0; border-bottom:1px solid rgba(255,255,255,0.04); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+
+/* Question cards */
+.question-card {
+  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px; padding:20px; margin-bottom:16px;
+}
+.question-card .q-label {
+  font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;
+  color:#7755bb; margin-bottom:10px;
+}
+.question-card .q-text { font-size:14px; color:#c0b0e0; margin-bottom:14px; font-weight:500; }
+.question-card .q-answer {
+  background:rgba(68,204,136,0.06); border:1px solid rgba(68,204,136,0.15);
+  border-radius:8px; padding:12px 16px; font-size:12px; color:#88c8a0; line-height:1.6;
+}
+.q-answer strong { color:#66ff99; }
+
+/* Tip box */
+.tip-box {
+  background:rgba(255,170,0,0.06); border:1px solid rgba(255,170,0,0.15);
+  border-radius:10px; padding:14px 18px; margin-top:12px;
+  font-size:12px; color:#b89944; line-height:1.6;
+}
+.tip-box strong { color:#ffcc44; }
+
+/* Text utilities */
+.text-body { font-size:14px; color:#9080b0; line-height:1.7; margin-bottom:12px; }
+.text-sm { font-size:12px; color:#7060a0; line-height:1.6; }
+
+/* Big formula table */
+.formula-table td { font-family:'Courier New',monospace; }
+.formula-table td:first-child { color:#cc99ff; font-weight:600; }
+.formula-table td:last-child { color:#8899cc; }
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Matemática · Funções</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</div>
+
+<div class="hero">
+  <div class="hero-badge">Matemática</div>
+  <h1>Funções</h1>
+  <p>Guia completo para o UNICAP 2026 — do conceito básico à composição e transformações, com questões comentadas.</p>
+</div>
+
+<div class="content">
+
+  <!-- Seção 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">Conceitos Fundamentais</div>
+    </div>
+    <div class="section-body">
+      <p class="text-body">Uma <strong style="color:#d4b8f8">função</strong> f de A em B é uma relação que associa a cada elemento de A um único elemento de B. A função é uma das ideias mais importantes da matemática por modelar dependência entre grandezas.</p>
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Domínio</h3>
+          <p>Conjunto A — todos os valores de entrada possíveis. Para f(x)=√x, o domínio é x≥0. Para f(x)=1/x, domínio é ℝ−{0}.</p>
+        </div>
+        <div class="card purple">
+          <h3>Imagem</h3>
+          <p>Conjunto de todos os valores que f(x) efetivamente assume. Pode ser menor que o contradomínio. Ex: f(x)=x² tem imagem ℝ≥0 mesmo com domínio ℝ.</p>
+        </div>
+        <div class="card green">
+          <h3>Contradomínio</h3>
+          <p>Conjunto B, declarado como possível destino. A imagem está contida no contradomínio. Quando Im=CD, a função é sobrejetora.</p>
+        </div>
+        <div class="card orange">
+          <h3>Injetora, Sobrejetora, Bijetora</h3>
+          <p>Injetora: elementos distintos têm imagens distintas. Sobrejetora: Im=CD. Bijetora: injetora E sobrejetora — permite definir a inversa f⁻¹.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+f: A → B é função ⟺ ∀x ∈ A, ∃! y ∈ B tal que f(x) = y
+Domínio natural: maior conjunto onde f faz sentido
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Questões pedem para determinar o domínio de funções compostas como f(x) = √(x−3) + 1/(x−5). Resolva cada restrição separada e intersecte.</div>
+    </div>
+  </div>
+
+  <!-- Seção 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">Função Linear e Afim (1º Grau)</div>
+    </div>
+    <div class="section-body">
+      <p class="text-body">A função afim tem a forma f(x) = ax + b, onde a é o coeficiente angular (taxa de variação) e b é o coeficiente linear (intersecção com o eixo y).</p>
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Crescimento</h3>
+          <p>Se a > 0: função crescente. Se a &lt; 0: função decrescente. Se a = 0: constante (f(x) = b).</p>
+        </div>
+        <div class="card cyan">
+          <h3>Zero da Função</h3>
+          <p>Zero ou raiz: valor de x onde f(x) = 0. Para ax+b=0: x = −b/a. É o ponto onde o gráfico cruza o eixo x.</p>
+        </div>
+        <div class="card green">
+          <h3>Gráfico</h3>
+          <p>Sempre uma reta. Dois pontos determinam a reta. O coeficiente angular a = tan(θ), ângulo que a reta faz com o eixo x.</p>
+        </div>
+        <div class="card purple">
+          <h3>Função Linear Pura</h3>
+          <p>Caso especial onde b = 0: f(x) = ax. Passa pela origem. Proporcionalidade direta entre y e x.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+f(x) = ax + b
+Zero: x₀ = −b/a
+Coeficiente angular entre dois pontos: a = (y₂−y₁)/(x₂−x₁)
+Gráfico: reta com inclinação a e intersecção y = b
+</div>
+    </div>
+  </div>
+
+  <!-- Seção 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">Função Quadrática (2º Grau)</div>
+    </div>
+    <div class="section-body">
+      <p class="text-body">A função quadrática f(x) = ax² + bx + c (a ≠ 0) tem como gráfico uma parábola. O sinal de a determina se abre para cima ou para baixo.</p>
+      <div class="card-grid">
+        <div class="card red">
+          <h3>Vértice</h3>
+          <p>Ponto máximo ou mínimo da parábola. Coordenadas: xᵥ = −b/(2a); yᵥ = −Δ/(4a) ou yᵥ = f(xᵥ). Se a>0, vértice é mínimo. Se a&lt;0, vértice é máximo.</p>
+        </div>
+        <div class="card orange">
+          <h3>Discriminante Δ</h3>
+          <p>Δ = b² − 4ac. Se Δ>0: duas raízes reais distintas. Se Δ=0: raiz dupla (uma raiz real). Se Δ&lt;0: sem raízes reais (parábola não toca o eixo x).</p>
+        </div>
+        <div class="card blue">
+          <h3>Bhaskara</h3>
+          <p>Fórmula para encontrar raízes: x = (−b ± √Δ) / (2a). Exige Δ ≥ 0 para raízes reais. As duas raízes somam −b/a e multiplicam c/a (Relações de Girard).</p>
+        </div>
+        <div class="card purple">
+          <h3>Forma Fatorada</h3>
+          <p>Se Δ ≥ 0: f(x) = a(x − x₁)(x − x₂). Útil para analisar sinal: quando a função é positiva ou negativa. Sinal de a nas extremidades.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+f(x) = ax² + bx + c  (a ≠ 0)
+Δ = b² − 4ac
+x = (−b ± √Δ) / (2a)
+Vértice: xᵥ = −b/(2a),  yᵥ = −Δ/(4a)
+Soma das raízes: x₁+x₂ = −b/a
+Produto das raízes: x₁·x₂ = c/a
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Questões frequentes: (1) encontrar vértice e raízes; (2) montar equação dado que passa por três pontos; (3) analisar para quais valores de x a função é negativa. Domine o sinal da parábola.</div>
+    </div>
+  </div>
+
+  <!-- Seção 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">Função Exponencial e Logarítmica</div>
+    </div>
+    <div class="section-body">
+      <p class="text-body">A função exponencial f(x) = aᵇˣ modela crescimento e decaimento. A logarítmica é sua inversa. São funções mutuamente inversas quando mesma base.</p>
+      <div class="card-grid">
+        <div class="card green">
+          <h3>Exponencial f(x) = bˣ</h3>
+          <p>b > 0, b ≠ 1. Se b > 1: crescente, explode para +∞. Se 0 &lt; b &lt; 1: decrescente, tende a 0. Sempre passa por (0,1). Assíntota horizontal y = 0.</p>
+        </div>
+        <div class="card orange">
+          <h3>Logarítmica f(x) = log_b(x)</h3>
+          <p>Inversa da exponencial. Domínio: x > 0. Se b > 1: crescente. Se 0 &lt; b &lt; 1: decrescente. Passa por (1,0) e (b,1). Assíntota vertical x = 0.</p>
+        </div>
+        <div class="card blue">
+          <h3>Propriedades do Logaritmo</h3>
+          <p>log(AB) = log A + log B. log(A/B) = log A − log B. log(Aⁿ) = n·log A. Mudança de base: log_b(a) = log(a)/log(b).</p>
+        </div>
+        <div class="card cyan">
+          <h3>Base e e Base 10</h3>
+          <p>ln = log_e (logaritmo natural). log = log₁₀ (logaritmo decimal). ln e = 1; ln 1 = 0. log 10 = 1; log 100 = 2; log 0,1 = −1.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Exponencial: f(x) = a · bˣ  →  f(x) > 0 para todo x
+Logarítmica: f(x) = log_b(x)  →  definida só para x > 0
+
+log_b(b) = 1      log_b(1) = 0      log_b(bˣ) = x
+b^(log_b(x)) = x  (inversa)
+
+Propriedades:
+  log(A·B) = logA + logB
+  log(A/B) = logA − logB
+  log(Aⁿ) = n·logA
+  Mudança de base: log_b(a) = log(a)/log(b)
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Equações exponenciais: iguale as bases. Ex: 4ˣ = 8 → 2²ˣ = 2³ → 2x = 3 → x = 3/2. Logaritmos aparecem em pH = −log[H⁺] e em problemas de decaimento radioativo.</div>
+    </div>
+  </div>
+
+  <!-- Seção 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">Composição e Função Inversa</div>
+    </div>
+    <div class="section-body">
+      <p class="text-body">A composição aplica funções em sequência. A inversa "desfaz" a operação original, retornando ao valor inicial.</p>
+      <div class="card-grid">
+        <div class="card purple">
+          <h3>Composição (f∘g)(x)</h3>
+          <p>Significa f(g(x)): aplica g primeiro, depois f ao resultado. Ordem importa: f∘g ≠ g∘f em geral. Leia "f de g de x".</p>
+        </div>
+        <div class="card blue">
+          <h3>Como Calcular (f∘g)(x)</h3>
+          <p>Substitua o x de f pelo g(x) inteiro. Se f(x)=x²+1 e g(x)=2x−3, então f(g(x)) = (2x−3)²+1 = 4x²−12x+9+1 = 4x²−12x+10.</p>
+        </div>
+        <div class="card green">
+          <h3>Função Inversa f⁻¹</h3>
+          <p>Só existe para funções bijetoras. Para encontrar: escreva y = f(x), troque x↔y, isole y — esse y é f⁻¹(x). Verificação: f(f⁻¹(x)) = x.</p>
+        </div>
+        <div class="card orange">
+          <h3>Gráfico da Inversa</h3>
+          <p>O gráfico de f⁻¹ é o reflexo do gráfico de f em relação à bissetriz y = x. Se (a,b) está em f, então (b,a) está em f⁻¹.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Composição: (f∘g)(x) = f(g(x))
+Domínio de f∘g: {x ∈ Dom(g) : g(x) ∈ Dom(f)}
+
+Inversa: f⁻¹(x) tal que f(f⁻¹(x)) = x e f⁻¹(f(x)) = x
+Exemplo: f(x) = 3x + 2  →  y = 3x+2  →  x = 3y+2  →  y = (x−2)/3
+Portanto: f⁻¹(x) = (x−2)/3
+</div>
+    </div>
+  </div>
+
+  <!-- Seção 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title">Gráficos e Transformações</div>
+    </div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Translação Vertical</h3>
+          <p>g(x) = f(x) + k: sobe k unidades se k > 0; desce se k &lt; 0. Mantém a forma do gráfico, move verticalmente.</p>
+        </div>
+        <div class="card purple">
+          <h3>Translação Horizontal</h3>
+          <p>g(x) = f(x − h): desloca h unidades para a direita se h > 0; para a esquerda se h &lt; 0. Atenção: sinal contrário ao esperado.</p>
+        </div>
+        <div class="card red">
+          <h3>Reflexões</h3>
+          <p>−f(x): reflete em relação ao eixo x (inverte y). f(−x): reflete em relação ao eixo y (inverte x). −f(−x): rotação de 180° em torno da origem.</p>
+        </div>
+        <div class="card green">
+          <h3>Esticamento / Compressão</h3>
+          <p>a·f(x): multiplica por a na direção y. Se |a|>1: estica. Se 0&lt;|a|&lt;1: comprime. f(bx): afeta na direção x (b>1 comprime, 0&lt;b&lt;1 estica).</p>
+        </div>
+      </div>
+      <div class="formula-block">
+g(x) = a · f(b(x − h)) + k
+  a  = amplitude vertical (estica/comprime em y)
+  b  = compressão horizontal (período = T/b para periódicas)
+  h  = deslocamento horizontal (para direita se h > 0)
+  k  = deslocamento vertical (para cima se k > 0)
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Dado o gráfico de y = f(x), identificar o de y = −f(x+2) − 1: reflete no eixo x, desloca 2 unidades para a esquerda e 1 unidade abaixo. Analise cada transformação separadamente.</div>
+    </div>
+  </div>
+
+  <!-- Seção 7 — Questões UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div class="section-title">Questões-Tipo UNICAP — Resolvidas</div>
+    </div>
+    <div class="section-body">
+
+      <div class="question-card">
+        <div class="q-label">Questão 1 — Função 2º Grau</div>
+        <div class="q-text">A função f(x) = x² − 6x + 8 possui raízes x₁ e x₂. Determine o vértice da parábola e o intervalo em que f(x) &lt; 0.</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          Δ = (−6)² − 4·1·8 = 36 − 32 = 4<br>
+          x = (6 ± 2)/2 → x₁ = 2, x₂ = 4<br>
+          Vértice: xᵥ = −(−6)/(2·1) = 3; yᵥ = f(3) = 9 − 18 + 8 = <strong>−1</strong><br>
+          Vértice = (3, −1). Como a = 1 > 0 (parábola abre pra cima):<br>
+          f(x) &lt; 0 para <strong>2 &lt; x &lt; 4</strong> (entre as raízes).
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-label">Questão 2 — Composição</div>
+        <div class="q-text">Dadas f(x) = 2x + 1 e g(x) = x² − 3, calcule (f∘g)(2) e a inversa f⁻¹(x).</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          g(2) = 4 − 3 = 1<br>
+          (f∘g)(2) = f(g(2)) = f(1) = 2(1)+1 = <strong>3</strong><br><br>
+          Inversa de f: y = 2x+1 → 2x = y−1 → x = (y−1)/2<br>
+          Portanto: <strong>f⁻¹(x) = (x−1)/2</strong><br>
+          Verificação: f(f⁻¹(x)) = 2·(x−1)/2 + 1 = x−1+1 = x ✓
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-label">Questão 3 — Função Exponencial</div>
+        <div class="q-text">Uma população de bactérias dobra a cada hora. Começando com 500 bactérias, quantas haverá após 5 horas? Em que hora haverá mais de 16.000 bactérias?</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          Modelo: f(t) = 500 · 2^t<br>
+          Após 5 horas: f(5) = 500 · 32 = <strong>16.000 bactérias</strong><br><br>
+          Para f(t) > 16.000: 500 · 2^t > 16.000 → 2^t > 32 → 2^t > 2^5 → t > 5<br>
+          Portanto, a partir de t = <strong>5 horas</strong> há mais de 16.000 bactérias.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Seção 8 — Tabela de Fórmulas -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <div class="section-title">Tabela de Fórmulas Essenciais</div>
+    </div>
+    <div class="section-body">
+      <table class="formula-table">
+        <thead>
+          <tr>
+            <th>Conceito</th>
+            <th>Fórmula</th>
+            <th>Observação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Função afim</td><td>f(x) = ax + b</td><td>Zero: x = −b/a</td></tr>
+          <tr><td>Bhaskara</td><td>x = (−b ± √Δ) / 2a</td><td>Δ = b² − 4ac</td></tr>
+          <tr><td>Vértice da parábola</td><td>xᵥ = −b/2a ; yᵥ = −Δ/4a</td><td>Min (a>0) ou Máx (a&lt;0)</td></tr>
+          <tr><td>Soma das raízes</td><td>x₁ + x₂ = −b/a</td><td>Relação de Girard</td></tr>
+          <tr><td>Produto das raízes</td><td>x₁ · x₂ = c/a</td><td>Relação de Girard</td></tr>
+          <tr><td>Exponencial</td><td>f(x) = a · bˣ</td><td>b > 0, b ≠ 1</td></tr>
+          <tr><td>Logaritmo — produto</td><td>log(AB) = logA + logB</td><td>Mesma base</td></tr>
+          <tr><td>Logaritmo — quociente</td><td>log(A/B) = logA − logB</td><td>Mesma base</td></tr>
+          <tr><td>Logaritmo — potência</td><td>log(Aⁿ) = n · logA</td><td>Mesma base</td></tr>
+          <tr><td>Mudança de base</td><td>log_b(a) = log(a)/log(b)</td><td>Qualquer base</td></tr>
+          <tr><td>Composição</td><td>(f∘g)(x) = f(g(x))</td><td>g primeiro, depois f</td></tr>
+          <tr><td>Translação horizontal</td><td>f(x − h): desloca h para direita</td><td>h > 0 → direita</td></tr>
+          <tr><td>Translação vertical</td><td>f(x) + k: sobe k unidades</td><td>k > 0 → sobe</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>

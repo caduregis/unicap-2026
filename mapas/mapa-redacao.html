@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redação UNICAP · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">REDAÇÃO UNICAP</div><div class="lt2">1.000 pontos · 5 critérios oficiais</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">✎</div><div class="bt"><div class="l1">Redação UNICAP</div><div class="l2">Critérios oficiais · 1.000 pts</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · REDAÇÃO</span><h1>Redação UNICAP</h1><p>Dissertativo-argumentativo · 25-30 linhas · 1.000 pontos divididos em 5 critérios oficiais. Tópicos LITERAIS do edital UNICAP.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em critério</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#fbbf24', corHex2:'#f59e0b', bg:'#1a1404', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'RED 1',nome:'Estrutura · 100 pts',sub:'3 partes · introdução, desenvolvimento, conclusão',forma:'tetra',cor:0xfbbf24,
+topicos:['ESTRUTURA da redação (peso 100 pontos)','Tipo textual: DISSERTATIVO-ARGUMENTATIVO','Estrutura clássica em 3 partes:','INTRODUÇÃO (1 parágrafo, ~3-5 linhas): contextualização do tema + tese (sua posição)','DESENVOLVIMENTO (2 a 3 parágrafos, ~6-8 linhas cada): apresenta argumentos com dados, exemplos, citações; cada parágrafo um argumento','CONCLUSÃO (1 parágrafo, ~3-5 linhas): retoma a tese e propõe solução/intervenção','25 a 30 linhas (ou conforme edital UNICAP 2026.2)','Parágrafos visíveis (não fazer parágrafo único)','Não pode fugir do tema, não pode ter forma poética, não pode ter dialógo'],
+resumo:'Estrutura é o esqueleto da redação. Sem ela, o resto desmorona. 3 partes obrigatórias: introdução, desenvolvimento, conclusão.',
+dica:'A REDAÇÃO ZERA se: fugir totalmente do tema, escrever em forma não dissertativa (poema, narração), ter menos de 7 linhas, copiar a coletânea. Cuidado!'},
+{cod:'RED 2',nome:'Apropriação ao Tema · 200 pts',sub:'Fidelidade · proposta · coletânea',forma:'octa',cor:0xf59e0b,
+topicos:['APROPRIAÇÃO AO TEMA (peso 200 pontos)','Critério mais sensível: fugir do tema é catastrófico','Tema × proposta: o tema é genérico; a proposta dá o recorte específico','Leia a PROPOSTA com calma: o que estão pedindo?','Coletânea (textos motivadores): use como ponto de partida, mas NÃO copie','Não tangenciar: ficar perto do tema mas não tratar diretamente também penaliza','Dialogar com a coletânea (não ignorá-la, não copiá-la)','Atualizar com repertório próprio (não restringir-se à coletânea)'],
+resumo:'Apropriação ao tema = você TRATAR o tema proposto, sem fugir, sem tangenciar. Vale 200 pontos (2º maior peso).',
+dica:'Antes de escrever, RESPONDA: "Sobre o que a banca quer que eu fale?" Sublinhe palavras-chave da proposta. Faça brainstorm de argumentos antes do rascunho.'},
+{cod:'RED 3',nome:'Argumentação · 200 pts',sub:'Coerência · qualidade dos argumentos',forma:'dodeca',cor:0xa855f7,
+topicos:['ARGUMENTAÇÃO (peso 200 pontos)','Coerência: argumentos consistentes, não contradições','Profundidade: argumentos sólidos, não senso comum','Tipos de argumento: por autoridade (citação de filósofo, especialista), por exemplo, por dados estatísticos, por causa-consequência, por analogia','REPERTÓRIO sociocultural: filosofia, sociologia, literatura, atualidades, História, Cinema, etc.','Cada parágrafo de desenvolvimento: 1 argumento bem desenvolvido','Estrutura do parágrafo argumentativo: tópico frasal + desenvolvimento + exemplo + conclusão parcial','Pertinência: argumentos devem ser RELEVANTES para a tese','Evitar: chavões ("nos dias atuais", "desde os primórdios"), generalizações, "achismos"','Citações: nome do autor + obra/ano (Karl Marx, 1867; "O Capital")','Repertório forte = nota 1.000'],
+resumo:'Argumentação é o coração da redação. 200 pontos. Argumentos bons = repertório + lógica + relevância. Cite autores, dados, exemplos históricos.',
+dica:'⚠️ REPERTÓRIO PRONTO pra vestibular: Filósofos (Sartre, Hannah Arendt, Bauman), Cientistas (Darwin, Einstein), Literatura (Machado, Drummond), Sociólogos (Florestan Fernandes, DaMatta), História (Vargas, Holocausto).'},
+{cod:'RED 4',nome:'Relevância de Conteúdo · 200 pts',sub:'Repertório · profundidade · análise',forma:'icosa',cor:0x06b6d4,
+topicos:['RELEVÂNCIA DE CONTEÚDO (peso 200 pontos)','O que faz uma redação ser "diferenciada":','Repertório sociocultural produtivo (não só citado, mas usado para argumentar)','Profundidade analítica (não ficar na superfície)','Capacidade de problematizar (problemas + causas + consequências + soluções)','Originalidade (não cair em lugares-comuns)','Atualidade (referências atuais, mas sem ser efêmero)','Proposta de intervenção viável e detalhada','MAPEAR causas (históricas, sociais, econômicas, culturais)','MAPEAR consequências (concretas, mensuráveis)','PROPOR solução: agente (quem vai fazer) + ação (o que vai fazer) + meio (como) + finalidade (para quê) + detalhamento'],
+resumo:'Diferencial = repertório + profundidade. Não basta escrever certo: precisa CONTEÚDO RELEVANTE. 200 pontos.',
+dica:'PROPOSTA DE INTERVENÇÃO (5 elementos): Agente + Ação + Meio + Finalidade + Detalhamento. Ex: "O Ministério da Educação (agente) deve criar (ação) campanhas de conscientização (meio) por meio de mídias sociais (detalhamento), para combater fake news (finalidade)".'},
+{cod:'RED 5',nome:'Norma Padrão · 300 pts',sub:'Gramática · ortografia · concordância',forma:'torus',cor:0xef4444,
+topicos:['NORMA PADRÃO (peso 300 pontos — MAIOR peso!)','Gramática: morfologia, sintaxe, pontuação','Ortografia: acentos, hífens, ç/c, x/ch, s/z/x','Concordância verbal: sujeito-verbo (singular/plural)','Concordância nominal: substantivo + adjetivos','Regência verbal e nominal','Pontuação: vírgula em sujeito composto, oração subordinada, aposto, vocativo','Crase: artigo + preposição "à"','Pronomes: colocação (próclise, mesóclise, ênclise)','Conectivos (coesão): porém, todavia, contudo, ademais, ademais, dessa forma, consequentemente, ou seja, portanto','Vocabulário variado: evite repetição, use sinônimos','Pessoa do discurso: prefira 3ª pessoa (impessoal); evite "eu acho", "na minha opinião"','EVITE: erros de ortografia grosseiros (concertar/consertar, mas/mais, mau/mal, há/a)','Evite gírias, marcas linguísticas regionais informais'],
+resumo:'Norma padrão tem o MAIOR peso (300/1000). Por isso revise gramática! Acentos, vírgulas, concordância, regência são tudo.',
+dica:'⚠️ MAIOR PESO da redação UNICAP: 300 pontos só em GRAMÁTICA. Estude: concordância verbal/nominal, regência, pontuação (vírgula), crase. Erros caros aqui zeram tudo.'},
+{cod:'RED 6',nome:'Estratégia de Prova',sub:'Planejamento · revisão · cronograma',forma:'octa',cor:0x10b981,
+topicos:['Tempo de prova: ~60-90 minutos para redação (do total da prova)','Etapas: LEITURA da proposta (5 min) → PLANEJAMENTO/rascunho mental (10 min) → ESCRITA (35-45 min) → REVISÃO (10 min)','Sublinhe palavras-chave da proposta','Faça brainstorm: 5-8 ideias soltas, depois escolha as 2-3 melhores como argumentos','Estruture mentalmente: introdução, 2-3 argumentos no desenvolvimento, conclusão com proposta','Revisão: leia em VOZ BAIXA para "ouvir" o texto','Cheque concordâncias, vírgulas, repetições, acentos','Cuidado com a CALIGRAFIA (corrige humano)','TREINE: 1 redação por semana até a prova, idealmente com correção','Temas frequentes UNICAP: educação, saúde pública, violência urbana, direitos humanos, meio ambiente, tecnologia/redes sociais, desigualdade social, questões nordestinas (seca, êxodo, cultura local)'],
+resumo:'Boa redação NÃO é "improviso brilhante". É PLANEJAMENTO + ESTRUTURA + REVISÃO. Treine semanalmente.',
+dica:'Faça 1 redação por SEMANA até 14/06/2026 = 4 redações treinadas. Use os critérios oficiais como checklist de auto-correção. Peça para alguém corrigir.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acesso Mobile — Carlos Régis</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0e1a; color: #fff; font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 24px; gap: 20px; }
+  h1 { font-size: 1.4rem; color: #00d4ff; text-align: center; }
+  p  { font-size: 0.9rem; color: #8892a4; text-align: center; }
+  .card { background: #151b2e; border: 1px solid #1e2d40; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; max-width: 360px; }
+  canvas { border-radius: 8px; }
+  .label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; }
+  .url   { font-size: 0.85rem; color: #00d4ff; word-break: break-all; text-align: center; background: #0f172a; padding: 10px 14px; border-radius: 8px; width: 100%; }
+  .links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 360px; }
+  .link-btn { background: #151b2e; border: 1px solid #1e2d40; border-radius: 12px; padding: 14px 10px; text-align: center; text-decoration: none; color: #e2e8f0; font-size: 0.8rem; transition: border-color .2s; display: flex; flex-direction: column; gap: 4px; }
+  .link-btn span { font-size: 1.4rem; }
+  .link-btn:hover { border-color: #00d4ff; color: #00d4ff; }
+  .tip { background: #1a2744; border: 1px solid #2a3f6f; border-radius: 12px; padding: 14px 18px; max-width: 360px; font-size: 0.82rem; color: #94a3b8; line-height: 1.6; width: 100%; }
+  .tip strong { color: #00d4ff; }
+  .sep { color: #1e2d40; font-size: 0.75rem; }
+</style>
+</head>
+<body>
+
+<h1>📱 Acesso Mobile — Carlos Régis</h1>
+<p>Escaneie o QR Code com a câmera do celular</p>
+<p style="color:#ef4444;font-size:.8rem;">⚡ Conecte o celular no mesmo WiFi do PC</p>
+
+<div class="card">
+  <div class="label">App Principal</div>
+  <canvas id="qr-main"></canvas>
+  <div class="url">http://192.168.0.27:8080/mobile-app.html</div>
+</div>
+
+<div class="tip">
+  <strong>Como instalar no celular (Android):</strong><br>
+  1. Abre o link no Chrome<br>
+  2. Menu ⋮ → "Adicionar à tela inicial"<br>
+  3. Pronto — vira ícone como app
+</div>
+
+<p class="sep">─── outros apps ───</p>
+
+<div class="links">
+  <a class="link-btn" href="http://192.168.0.27:8080/dopamina.html">
+    <span>⚡</span>Modo Boss
+  </a>
+  <a class="link-btn" href="http://192.168.0.27:8080/pm2-estudos.html">
+    <span>📚</span>PM2 Hoje
+  </a>
+  <a class="link-btn" href="http://192.168.0.27:8080/dashboard.html">
+    <span>🎯</span>Dashboard
+  </a>
+  <a class="link-btn" href="http://192.168.0.27:8080/imprimir.html">
+    <span>🖨️</span>Imprimir
+  </a>
+</div>
+
+<div class="card" style="margin-top:8px;">
+  <div class="label">PM2 — Prova Amanhã 7h</div>
+  <canvas id="qr-pm2"></canvas>
+  <div class="url">http://192.168.0.27:8080/pm2-estudos.html</div>
+</div>
+
+<script>
+  QRCode.toCanvas(document.getElementById('qr-main'),
+    'http://192.168.0.27:8080/mobile-app.html',
+    { width: 220, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+
+  QRCode.toCanvas(document.getElementById('qr-pm2'),
+    'http://192.168.0.27:8080/pm2-estudos.html',
+    { width: 220, margin: 2, color: { dark: '#000000', light: '#ffffff' } });
+</script>
+</body>
+</html>

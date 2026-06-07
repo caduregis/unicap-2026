@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aristóteles — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c89830;
+  --gold-light: #d8b048;
+  --gold-dim: rgba(200,152,48,0.13);
+  --bg: #060805;
+  --bg2: #0c0e08;
+  --bg3: #121508;
+  --text: #b8c0a0;
+  --text-bright: #d8e0c0;
+  --green: #68d060;
+  --green-bg: rgba(70,190,60,0.08);
+  --border: rgba(200,152,48,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; line-height:1.6; }
+a { color:var(--gold); text-decoration:none; }
+a:hover { color:var(--gold-light); }
+
+.topbar { background:rgba(0,0,0,0.6); border-bottom:1px solid var(--border); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); }
+.topbar-left { display:flex; gap:12px; }
+.btn-nav { padding:7px 16px; border:1px solid var(--border); border-radius:8px; color:var(--gold); font-size:13px; font-weight:500; letter-spacing:0.04em; background:rgba(0,0,0,0.3); transition:all 0.2s; }
+.btn-nav:hover { background:var(--gold-dim); border-color:rgba(200,152,48,0.5); color:var(--gold-light); }
+.topbar-title { font-size:14px; font-weight:600; color:var(--gold-light); letter-spacing:0.06em; }
+
+.hero { text-align:center; padding:60px 24px 40px; background:linear-gradient(180deg, rgba(200,152,48,0.05) 0%, transparent 100%); border-bottom:1px solid var(--border); }
+.hero-tag { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.hero h1 { font-size:42px; font-weight:800; color:var(--text-bright); letter-spacing:-0.02em; margin-bottom:10px; }
+.hero-sub { font-size:16px; color:rgba(184,192,160,0.7); max-width:580px; margin:0 auto 24px; }
+.hero-chips { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.chip { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid var(--border); background:var(--gold-dim); color:var(--gold-light); letter-spacing:0.04em; }
+
+.container { max-width:900px; margin:0 auto; padding:0 24px 80px; }
+.section { margin-top:48px; background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.section-header { padding:20px 28px 16px; border-bottom:1px solid var(--border); background:linear-gradient(90deg, rgba(200,152,48,0.06) 0%, transparent 100%); display:flex; align-items:center; gap:14px; }
+.section-icon { font-size:22px; }
+.section-title { font-size:18px; font-weight:700; color:var(--text-bright); letter-spacing:0.01em; }
+.section-body { padding:24px 28px; }
+p { margin-bottom:14px; color:var(--text); font-size:15px; }
+p:last-child { margin-bottom:0; }
+strong { color:var(--text-bright); font-weight:600; }
+em { color:var(--gold-light); font-style:italic; }
+
+.highlight-box { background:var(--gold-dim); border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; font-size:15px; color:var(--text-bright); font-style:italic; }
+.unicap-tip { background:var(--green-bg); border-left:3px solid rgba(70,190,60,0.5); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; }
+.unicap-tip-label { font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--green); text-transform:uppercase; margin-bottom:6px; }
+.unicap-tip p { font-size:14px; color:#a8dea0; margin:0; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+@media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
+.col-box { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px; }
+.col-box h4 { font-size:13px; font-weight:700; color:var(--gold-light); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px; }
+.col-box ul { list-style:none; }
+.col-box ul li { font-size:14px; color:var(--text); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.col-box ul li:last-child { border-bottom:none; }
+.col-box ul li::before { content:"› "; color:var(--gold); font-weight:700; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:rgba(200,152,48,0.1); color:var(--gold-light); font-weight:700; padding:11px 16px; text-align:left; letter-spacing:0.04em; font-size:13px; border-bottom:1px solid var(--border); }
+td { padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+td:first-child { color:var(--gold-light); font-weight:600; }
+
+.virtue-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:16px 0; }
+@media(max-width:600px) { .virtue-grid { grid-template-columns:1fr; } }
+.virtue-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; }
+.virtue-excess { font-size:12px; color:#e07060; margin-bottom:4px; }
+.virtue-name { font-size:14px; font-weight:700; color:var(--gold-light); margin-bottom:4px; }
+.virtue-defect { font-size:12px; color:#a0a8c0; }
+.virtue-middle { font-size:11px; color:var(--green); margin-top:4px; font-weight:600; text-transform:uppercase; }
+
+.regime-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin:16px 0; }
+@media(max-width:600px) { .regime-grid { grid-template-columns:1fr; } }
+.regime-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.regime-type { font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.regime-good { color:var(--green); }
+.regime-bad { color:#e07060; }
+.regime-name { font-size:14px; font-weight:700; color:var(--text-bright); margin-bottom:4px; }
+.regime-desc { font-size:12px; color:var(--text); }
+
+.silogismo { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:20px; margin:16px 0; }
+.sil-line { font-size:15px; color:var(--text); padding:6px 0; }
+.sil-label { font-size:11px; color:var(--gold); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-right:10px; }
+.sil-conclusion { color:var(--text-bright); font-weight:600; border-top:1px solid var(--border); margin-top:8px; padding-top:8px; }
+
+.checklist { list-style:none; margin:0; }
+.checklist li { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; color:var(--text); }
+.checklist li:last-child { border-bottom:none; }
+.check-box { width:20px; height:20px; min-width:20px; border:2px solid var(--border); border-radius:5px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; margin-top:1px; }
+.check-box.done { background:var(--gold); border-color:var(--gold); }
+.check-box.done::after { content:'✓'; color:#000; font-size:11px; font-weight:700; }
+
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+.video-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all 0.2s; }
+.video-card:hover { border-color:rgba(200,152,48,0.4); background:var(--gold-dim); }
+.video-platform { font-size:11px; color:var(--gold); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.video-title { font-size:13px; color:var(--text-bright); font-weight:500; line-height:1.4; }
+.video-desc { font-size:12px; color:rgba(184,192,160,0.6); margin-top:4px; }
+.badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; letter-spacing:0.04em; border:1px solid; }
+.badge-gold { color:var(--gold); border-color:rgba(200,152,48,0.4); background:rgba(200,152,48,0.08); }
+.badge-green { color:var(--green); border-color:rgba(70,190,60,0.4); background:rgba(70,190,60,0.08); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../../../index.html" class="btn-nav">← Hub Principal</a>
+    <a href="mapa3d.html" class="btn-nav">🌿 Mapa 3D — Liceu</a>
+  </div>
+  <div class="topbar-title">FILOSOFIA — ARISTÓTELES</div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Filosofia Grega • Séc. IV a.C.</div>
+  <h1>Aristóteles</h1>
+  <div class="hero-sub">O pai da Lógica, da Biologia, da Política. O filósofo do mundo concreto.</div>
+  <div class="hero-chips">
+    <span class="chip">Silogismo</span>
+    <span class="chip">Hylomorfismo</span>
+    <span class="chip">Eudaimonia</span>
+    <span class="chip">Zoon Politikon</span>
+    <span class="chip">Teleologia</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Contexto -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📖</span>
+      <div class="section-title">Quem era Aristóteles</div>
+    </div>
+    <div class="section-body">
+      <p>Aristóteles (384-322 a.C.) nasceu em Estagira (por isso chamado de "o Estagirita"). Estudou na Academia de Platão por 20 anos — mas divergiu fundamentalmente do mestre. Fundou o <strong>Liceu</strong> em Atenas (335 a.C.), onde ensinava caminhando (por isso seus seguidores foram chamados de "peripatéticos" — aqueles que caminham).</p>
+      <p>Foi tutor do jovem <strong>Alexandre o Grande</strong> (343-340 a.C.). Produziu a maior enciclopédia do conhecimento antigo: lógica, biologia, física, ética, política, retórica, poética, metafísica.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>A diferença fundamental de método: Platão parte das Ideias para o mundo (dedutivo, racionalista). Aristóteles parte da observação do mundo concreto para princípios gerais (indutivo, empirismo moderado). Esta diferença explica todas as divergências entre os dois.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lógica -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔣</span>
+      <div class="section-title">Lógica — O Organon</div>
+    </div>
+    <div class="section-body">
+      <p>Aristóteles criou a <strong>lógica formal</strong> — o estudo das formas válidas de raciocínio. O conjunto de suas obras lógicas é chamado de <em>Organon</em> (instrumento). A lógica é, para Aristóteles, uma <em>ferramenta</em> para todas as ciências — não uma ciência em si mesma.</p>
+      <p>A peça central da lógica aristotélica é o <strong>silogismo</strong>:</p>
+      <div class="silogismo">
+        <div class="sil-line"><span class="sil-label">Premissa Maior</span>Todo homem é mortal.</div>
+        <div class="sil-line"><span class="sil-label">Premissa Menor</span>Sócrates é homem.</div>
+        <div class="sil-line sil-conclusion"><span class="sil-label">Conclusão</span>Logo, Sócrates é mortal.</div>
+      </div>
+      <p>As <strong>10 Categorias</strong> do ser segundo Aristóteles: substância, quantidade, qualidade, relação, lugar, tempo, posição, estado, ação, paixão. A substância é a categoria fundamental — é "o que algo é".</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão sobre lógica: reconhecer a estrutura do silogismo. Atenção: um silogismo pode ter forma válida mas conclusão falsa se uma premissa for falsa. Ex: "Todo mamífero voa / Baleia é mamífero / Logo, baleia voa" — forma válida, premissa errada. Aristóteles = "pai da Lógica formal".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metafísica -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌌</span>
+      <div class="section-title">Metafísica — O Ser e o Hylomorfismo</div>
+    </div>
+    <div class="section-body">
+      <p>Na <em>Metafísica</em>, Aristóteles desenvolve sua crítica a Platão e propõe o <strong>hylomorfismo</strong> (hyle = matéria, morphe = forma):</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Crítica a Platão</h4>
+          <ul>
+            <li>Ideias/Formas não existem separadas das coisas</li>
+            <li>As formas são IMANENTES (estão NA coisa)</li>
+            <li>Não resolve o problema: cria o "terceiro homem"</li>
+            <li>As Ideias não explicam o movimento do mundo</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Hylomorfismo</h4>
+          <ul>
+            <li>Cada ser = matéria (hyle) + forma (morphe)</li>
+            <li>Matéria: o substrato, o "de que" algo é feito</li>
+            <li>Forma: o que faz algo ser o que é (essência)</li>
+            <li>Forma ≠ Platão: não existe separada da matéria</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Potência e Ato:</strong> Todo ser tem uma potência (o que pode ser) e um ato (o que está sendo). A semente é um carvalho em potência. O carvalho adulto é o ato realizado. <em>Todo movimento é passagem da potência ao ato</em>.</p>
+      <p>O <strong>Motor Imóvel</strong>: para evitar regressão infinita na cadeia de movimentos, Aristóteles postula um ser que move sem ser movido — Ato Puro, sem potência, perfeito. O Deus de Aristóteles é filosófico, não religioso — é a causa final de todo o movimento do universo.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Hylomorfismo em uma frase: "Todo ser concreto = matéria + forma — inseparáveis". Diferença chave de Platão: Aristóteles coloca as formas DENTRO das coisas (imanente); Platão coloca fora (transcendente). O Motor Imóvel de Aristóteles influenciou São Tomás de Aquino nas provas da existência de Deus.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ética -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌿</span>
+      <div class="section-title">Ética — Eudaimonia e o Meio-Termo</div>
+    </div>
+    <div class="section-body">
+      <p>A ética aristotélica (desenvolvida na <em>Ética a Nicômaco</em>) é chamada de <strong>ética das virtudes</strong> ou <strong>eudaimonismo</strong>. O objetivo da vida humana é a <em>eudaimonia</em> — traduzida como felicidade, florescimento humano, ou bem-viver.</p>
+      <div class="highlight-box">Eudaimonia ≠ prazer momentâneo. É o florescimento de toda a natureza humana — usando a razão em sua plenitude, desenvolvendo virtudes, vivendo em comunidade. É uma qualidade de vida toda, não um momento.</div>
+      <p>A <strong>virtude como meio-termo (mesotes)</strong>: cada virtude está entre dois vícios extremos:</p>
+      <div class="virtue-grid">
+        <div class="virtue-card">
+          <div class="virtue-excess">EXCESSO: Temeridade</div>
+          <div class="virtue-name">CORAGEM</div>
+          <div class="virtue-defect">FALTA: Covardia</div>
+          <div class="virtue-middle">Meio-Termo</div>
+        </div>
+        <div class="virtue-card">
+          <div class="virtue-excess">EXCESSO: Prodigalidade</div>
+          <div class="virtue-name">GENEROSIDADE</div>
+          <div class="virtue-defect">FALTA: Mesquinhez</div>
+          <div class="virtue-middle">Meio-Termo</div>
+        </div>
+        <div class="virtue-card">
+          <div class="virtue-excess">EXCESSO: Arrogância</div>
+          <div class="virtue-name">MAGNANIMIDADE</div>
+          <div class="virtue-defect">FALTA: Humildade Excessiva</div>
+          <div class="virtue-middle">Meio-Termo</div>
+        </div>
+      </div>
+      <p>A virtude se adquire por <strong>hábito</strong> (ethos → ética). Não somos virtuosos por natureza — tornamo-nos virtuosos pela prática repetida de atos virtuosos.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Ética aristotélica vs. kantiana: Aristóteles foca no caráter e no florescimento humano (ética das virtudes). Kant foca no dever e na razão universal (ética deontológica). Questão frequente: "O que Aristóteles entendia por felicidade?" → Eudaimonia = florescimento humano pelo exercício da razão e das virtudes — não prazer sensorial.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Política -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏙️</span>
+      <div class="section-title">Política — Zoon Politikon e os Regimes</div>
+    </div>
+    <div class="section-body">
+      <p>Na obra <em>Política</em>, Aristóteles desenvolve sua teoria política a partir de uma premissa fundamental:</p>
+      <div class="highlight-box">"O homem é por natureza um animal político (zoon politikon)." — Aristóteles. Fora da polis, só um deus ou uma besta.</div>
+      <p>A <em>polis</em> (cidade-estado) não é uma criação artificial do contrato social — é a forma natural e necessária de vida humana. O homem que não precisa da polis transcende ou degradou a humanidade.</p>
+      <p>Aristóteles classifica os regimes políticos:</p>
+      <div class="regime-grid">
+        <div class="regime-card">
+          <div class="regime-type regime-good">Bom</div>
+          <div class="regime-name">Monarquia</div>
+          <div class="regime-desc">Um governa para o bem comum</div>
+        </div>
+        <div class="regime-card">
+          <div class="regime-type regime-good">Bom</div>
+          <div class="regime-name">Aristocracia</div>
+          <div class="regime-desc">Poucos virtuosos governam para o bem comum</div>
+        </div>
+        <div class="regime-card">
+          <div class="regime-type regime-good">Bom</div>
+          <div class="regime-name">Politeia</div>
+          <div class="regime-desc">Muitos governam para o bem comum (classe média)</div>
+        </div>
+        <div class="regime-card">
+          <div class="regime-type regime-bad">Degenerado</div>
+          <div class="regime-name">Tirania</div>
+          <div class="regime-desc">Um governa para si mesmo</div>
+        </div>
+        <div class="regime-card">
+          <div class="regime-type regime-bad">Degenerado</div>
+          <div class="regime-name">Oligarquia</div>
+          <div class="regime-desc">Poucos ricos governam para si</div>
+        </div>
+        <div class="regime-card">
+          <div class="regime-type regime-bad">Degenerado</div>
+          <div class="regime-name">Democracia</div>
+          <div class="regime-desc">Muitos pobres governam em interesse próprio</div>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Para Aristóteles, a democracia é um regime DEGENERADO (governo do povo em interesse próprio, não do bem comum). Aristóteles preferia a POLITEIA (mistura moderada de oligarquia e democracia, governada pela classe média). Esta visão contrasta com o conceito moderno de democracia — questão frequente em provas que pedem comparação histórica.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Biologia e Teleologia -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔬</span>
+      <div class="section-title">Biologia e Teleologia</div>
+    </div>
+    <div class="section-body">
+      <p>Aristóteles foi o primeiro grande <strong>biólogo sistemático</strong> da história. Classificou mais de 500 espécies animais, descreveu anatomia de polvos, abelhas, golfinhos, elefantes. Propôs a <em>scala naturae</em> (escada da natureza):</p>
+      <div class="highlight-box">Minerais → Plantas → Animais simples → Animais complexos → Humanos → Divino. Cada nível tem mais faculdades: plantas têm alma vegetativa (nutrição/reprodução); animais têm + alma sensitiva (percepção/movimento); humanos têm + alma racional (razão).</div>
+      <p>A <strong>teleologia</strong> é central em Aristóteles: cada ser tem uma <em>telos</em> (finalidade) que é sua forma de perfeição. A bolota tem como telos ser um carvalho; o olho tem como telos ver; o homem tem como telos a eudaimonia. Tudo no mundo natural visa sua própria perfeição.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>A teleologia aristotélica foi adaptada pela filosofia medieval cristã (especialmente São Tomás de Aquino, século XIII): cada coisa foi criada por Deus com uma finalidade. Questão: "O que é teleologia?" → Cada ser tem uma finalidade interna que direciona seu desenvolvimento rumo à sua perfeição.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aristóteles vs. Platão -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <div class="section-title">Aristóteles vs. Platão — Distinção Fundamental</div>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Platão</th><th>Aristóteles</th></tr></thead>
+          <tbody>
+            <tr><td>As Formas/Ideias</td><td>Transcendentes: existem separadas das coisas, num mundo próprio</td><td>Imanentes: existem nas próprias coisas (hylomorfismo)</td></tr>
+            <tr><td>Como conhecemos</td><td>Reminiscência: a alma recorda o que já viu no mundo das Ideias</td><td>Observação + razão: os sentidos fornecem dados, a razão abstrai os princípios</td></tr>
+            <tr><td>Corpo e Alma</td><td>Dualismo: alma imortal é prisioneira do corpo mortal</td><td>Unidade: corpo e alma são matéria e forma do mesmo ser (morte = dissolução)</td></tr>
+            <tr><td>Método filosófico</td><td>Dedutivo: parte das Ideias perfeitas para entender o mundo</td><td>Indutivo: parte da observação do mundo para chegar a princípios gerais</td></tr>
+            <tr><td>Regime ideal</td><td>Aristocracia de filósofos-reis</td><td>Politeia (classe média governa)</td></tr>
+            <tr><td>Arte e Poesia</td><td>Imita a cópia do real: afasta da verdade (3 graus de afastamento)</td><td>Catarse: a arte purifica as emoções, é pedagogicamente útil</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>O contraste central: Platão = transcendente, racionalista, dualista. Aristóteles = imanente, empirista moderado, unitário. A pintura de Rafael "A Escola de Atenas" resume isso visualmente. Muitas questões de vestibular pedem essa distinção diretamente.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <div class="section-title">Checklist de Domínio — Aristóteles</div>
+    </div>
+    <div class="section-body">
+      <ul class="checklist" id="checklist-aristoteles">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Construir um silogismo válido e identificar uma falácia</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar o hylomorfismo (matéria + forma) e criticar Platão com ele</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Distinguir potência de ato com exemplos concretos</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar eudaimonia e dar 3 exemplos de virtude como meio-termo</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Classificar os 6 regimes políticos (3 bons + 3 degenerados)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar "zoon politikon" e por que Aristóteles critica a democracia</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Definir teleologia com exemplo biológico e filosófico</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Fazer tabela comparativa Aristóteles vs. Platão em 5 pontos</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <div class="section-title">Recursos de Vídeo Recomendados</div>
+    </div>
+    <div class="section-body">
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Canal Filosofia Animada — Aristóteles</div>
+          <div class="video-desc">Lógica, ética e política animados</div>
+          <div class="badge-row"><span class="badge badge-green">Iniciante</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Prof. Anderson Lima — Aristóteles</div>
+          <div class="video-desc">Metafísica, ética e política para vestibular</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Me Salva! — Ética Aristotélica</div>
+          <div class="video-desc">Eudaimonia e virtudes com questões</div>
+          <div class="badge-row"><span class="badge badge-gold">Revisão</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Descomplica — Platão e Aristóteles</div>
+          <div class="video-desc">Comparação direta para vestibular</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCheck(el) { el.classList.toggle('done'); saveChecklist(); }
+function saveChecklist() {
+  const boxes = document.querySelectorAll('#checklist-aristoteles .check-box');
+  const state = Array.from(boxes).map(b => b.classList.contains('done'));
+  localStorage.setItem('check-aristoteles', JSON.stringify(state));
+}
+function loadChecklist() {
+  const saved = localStorage.getItem('check-aristoteles');
+  if (saved) {
+    const state = JSON.parse(saved);
+    const boxes = document.querySelectorAll('#checklist-aristoteles .check-box');
+    state.forEach((done, i) => { if (done && boxes[i]) boxes[i].classList.add('done'); });
+  }
+}
+loadChecklist();
+</script>
+</body>
+</html>

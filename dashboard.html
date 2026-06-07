@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNICAP 2026.2 · Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0e1a;
+  --bg2:#131829;
+  --bg3:#1a2035;
+  --cyan:#00d4ff;
+  --amber:#ffb800;
+  --emerald:#10b981;
+  --red:#ef4444;
+  --text:#e8eaf0;
+  --muted:#8a93a8;
+  --border:rgba(0,212,255,0.1);
+}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding:24px 20px 40px;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+.max{max-width:1200px;margin:0 auto;}
+
+/* Glass card */
+.card{
+  background:rgba(19,24,41,0.7);
+  border:1px solid var(--border);
+  border-radius:16px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  backdrop-filter:blur(12px);
+  transition:border-color 250ms;
+}
+.card:hover{border-color:rgba(0,212,255,0.22);}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.f1{animation:fadeUp 300ms ease-out both;}
+.f2{animation:fadeUp 300ms 80ms ease-out both;}
+.f3{animation:fadeUp 300ms 160ms ease-out both;}
+.f4{animation:fadeUp 300ms 240ms ease-out both;}
+.f5{animation:fadeUp 300ms 320ms ease-out both;}
+
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+.pulse{animation:pulse 2.4s ease-in-out infinite;}
+
+/* Header */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:28px;
+  flex-wrap:wrap;
+}
+.header h1{font-size:clamp(22px,4vw,34px);font-weight:900;letter-spacing:-0.5px;}
+.header h1 span{color:var(--cyan);}
+.header-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+.header-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;color:var(--muted);
+  text-align:right;
+}
+
+/* Countdown hero */
+.hero{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:24px;
+  align-items:center;
+  padding:32px 36px;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,0.06),transparent 60%);
+  pointer-events:none;
+}
+.hero-left{}
+.hero-label{
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:8px;
+}
+.hero-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:clamp(64px,12vw,110px);
+  font-weight:700;
+  line-height:1;
+  background:linear-gradient(135deg,var(--cyan),var(--amber));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;
+}
+.hero-detail{font-size:13px;color:var(--muted);margin-top:10px;font-family:'JetBrains Mono',monospace;}
+.hero-prova{font-size:13px;color:var(--amber);font-weight:600;margin-top:4px;}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;}
+.btn-start{
+  background:linear-gradient(135deg,var(--emerald),#059669);
+  color:#fff;
+  font-weight:700;font-size:16px;
+  padding:14px 28px;
+  border:none;border-radius:12px;
+  cursor:pointer;
+  display:flex;align-items:center;gap:10px;
+  transition:transform 220ms,box-shadow 220ms;
+  white-space:nowrap;
+  box-shadow:0 4px 20px rgba(16,185,129,0.35);
+}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(16,185,129,0.5);}
+.btn-start:active{transform:translateY(0);}
+.last-session{font-size:12px;color:var(--muted);text-align:right;}
+
+/* Grid 2 cols */
+.grid2{display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-bottom:20px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px;}
+.grid2x2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+
+/* Hoje card */
+.hoje-card{padding:24px;}
+.hoje-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.hoje-title{font-size:18px;font-weight:700;}
+.hoje-title span{color:var(--cyan);}
+.hoje-date{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.hoje-topico{
+  font-size:15px;color:#ccd;line-height:1.6;
+  padding:14px 16px;
+  background:rgba(0,212,255,0.05);
+  border-left:3px solid var(--cyan);
+  border-radius:0 8px 8px 0;
+  margin-bottom:20px;
+}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.stat{text-align:center;padding:14px 8px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid rgba(255,255,255,0.06);}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;}
+.stat-val.cyan{color:var(--cyan);}
+.stat-val.amber{color:var(--amber);}
+.stat-val.emerald{color:var(--emerald);}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+
+/* Streak card */
+.streak-card{padding:24px;}
+.streak-card h2{font-size:16px;font-weight:700;margin-bottom:12px;}
+.streak-num{
+  font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--amber));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1;
+}
+.streak-label{font-size:13px;color:var(--muted);margin-top:6px;}
+.streak-record{font-size:12px;color:var(--muted);margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);}
+
+/* Quick links */
+.quick-links{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+.quick-link{
+  padding:16px 14px;
+  text-align:center;
+  border-radius:12px;
+  text-decoration:none;
+  color:var(--text);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:transform 200ms,border-color 200ms;
+}
+.quick-link:hover{transform:translateY(-3px);}
+.quick-link .icon{font-size:26px;}
+.quick-link .name{font-size:12px;font-weight:600;}
+.quick-link .desc{font-size:10px;color:var(--muted);}
+
+/* Progress bars */
+.progress-section{padding:24px;margin-bottom:20px;}
+.progress-section h2{font-size:16px;font-weight:700;margin-bottom:18px;}
+.progress-item{margin-bottom:16px;}
+.progress-item:last-child{margin-bottom:0;}
+.progress-header{display:flex;justify-content:space-between;margin-bottom:6px;}
+.progress-name{font-size:14px;font-weight:500;}
+.progress-pct{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.progress-bar{height:8px;border-radius:99px;background:rgba(255,255,255,0.06);overflow:hidden;}
+.progress-fill{height:100%;border-radius:99px;transition:width 800ms cubic-bezier(0.22,1,0.36,1);}
+.fill-cyan{background:linear-gradient(90deg,var(--cyan),#0099cc);}
+.fill-amber{background:linear-gradient(90deg,var(--amber),#ff8c00);}
+.fill-emerald{background:linear-gradient(90deg,var(--emerald),#059669);}
+.fill-red{background:linear-gradient(90deg,#f59e0b,#ef4444);}
+.fill-purple{background:linear-gradient(90deg,#a855f7,#7c3aed);}
+
+/* Chart section */
+.chart-section{padding:24px;}
+.chart-section h2{font-size:16px;font-weight:700;margin-bottom:16px;}
+.chart-wrap{position:relative;height:220px;}
+
+/* Revisões */
+.rev-section{padding:24px;}
+.rev-section h2{font-size:16px;font-weight:700;margin-bottom:16px;}
+.rev-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 12px;border-radius:8px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  margin-bottom:8px;
+}
+.rev-item:last-child{margin-bottom:0;}
+.rev-name{font-size:13px;font-weight:500;}
+.rev-date{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:2px;}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.badge.alta{background:rgba(239,68,68,0.2);color:#f87171;}
+.badge.media{background:rgba(0,212,255,0.15);color:var(--cyan);}
+
+/* Heatmap */
+.heatmap-section{padding:24px;margin-bottom:20px;}
+.heatmap-section h2{font-size:16px;font-weight:700;margin-bottom:16px;}
+.heatmap-grid{display:flex;flex-wrap:wrap;gap:4px;}
+.hm-cell{
+  width:16px;height:16px;border-radius:3px;
+  background:rgba(255,255,255,0.04);
+  cursor:pointer;transition:transform 150ms;
+  position:relative;
+}
+.hm-cell:hover{transform:scale(1.6);z-index:10;}
+.hm-cell.today{box-shadow:0 0 0 2px var(--amber);}
+.hm-h1{background:rgba(0,212,255,0.2);}
+.hm-h2{background:rgba(0,212,255,0.4);}
+.hm-h3{background:rgba(0,212,255,0.65);}
+.hm-h4{background:rgba(0,212,255,0.9);box-shadow:0 0 8px rgba(0,212,255,0.4);}
+.heatmap-legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--muted);}
+.hm-cell-sm{width:12px;height:12px;border-radius:2px;background:rgba(255,255,255,0.04);}
+
+/* Quote */
+.quote-section{
+  padding:28px 32px;text-align:center;margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.quote-section::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,184,0,0.05),transparent);
+  pointer-events:none;
+}
+.quote-text{font-size:clamp(15px,2.5vw,20px);font-style:italic;color:#ccd;line-height:1.7;position:relative;}
+.quote-author{margin-top:10px;color:var(--amber);font-size:13px;font-weight:600;position:relative;}
+
+/* Footer */
+footer{text-align:center;font-size:12px;color:rgba(138,147,168,0.5);padding-top:20px;border-top:1px solid rgba(255,255,255,0.04);}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,0.82);
+  backdrop-filter:blur(8px);
+  z-index:1000;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:20px;
+  overflow-y:auto;
+  opacity:0;pointer-events:none;
+  transition:opacity 200ms;
+}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{
+  background:#131829;
+  border:1px solid rgba(0,212,255,0.18);
+  border-radius:20px;
+  max-width:700px;width:100%;
+  box-shadow:0 24px 80px rgba(0,0,0,0.7);
+  transform:translateY(16px);
+  transition:transform 220ms;
+  margin:auto;
+  overflow:hidden;
+}
+.modal-overlay.show .modal{transform:translateY(0);}
+
+/* Modal header band */
+.modal-header{
+  padding:24px 28px 18px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.08),rgba(16,185,129,0.06));
+  border-bottom:1px solid rgba(0,212,255,0.1);
+}
+.modal-title{font-size:21px;font-weight:800;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--muted);}
+.modal-meta-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.modal-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.2);}
+.modal-badge.amber{background:rgba(255,184,0,0.12);color:var(--amber);border-color:rgba(255,184,0,0.25);}
+.modal-badge.emerald{background:rgba(16,185,129,0.12);color:var(--emerald);border-color:rgba(16,185,129,0.25);}
+.modal-badge.red{background:rgba(239,68,68,0.12);color:#f87171;border-color:rgba(239,68,68,0.25);}
+
+/* Tabs */
+.modal-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.06);padding:0 28px;background:#0e1220;}
+.modal-tab{
+  padding:12px 18px;font-size:13px;font-weight:600;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--muted);
+  transition:color 150ms,border-color 150ms;
+  white-space:nowrap;
+}
+.modal-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.modal-tab:hover:not(.active){color:var(--text);}
+
+/* Tab panels */
+.modal-body{padding:22px 28px;max-height:52vh;overflow-y:auto;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-thumb{background:rgba(0,212,255,0.2);border-radius:2px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Assunto block */
+.modal-topico{
+  padding:14px 16px;
+  background:rgba(0,212,255,0.06);
+  border-left:3px solid var(--cyan);
+  border-radius:0 10px 10px 0;
+  font-size:14px;color:#ccd;line-height:1.7;
+  margin-bottom:16px;
+}
+
+/* Section label */
+.modal-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin:18px 0 10px;}
+.modal-section-label:first-child{margin-top:0;}
+
+/* Roteiro */
+.roteiro-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.roteiro-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:9px;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);
+}
+.roteiro-tempo{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--amber);min-width:50px;}
+.roteiro-ativ{font-size:13px;color:var(--text);}
+.roteiro-tool{font-size:11px;color:var(--muted);margin-left:auto;}
+
+/* Links de materiais */
+.modal-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+@media(max-width:600px){.modal-links{grid-template-columns:1fr;}}
+.modal-link{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;
+  border-radius:10px;
+  border:1px solid rgba(0,212,255,0.15);
+  background:rgba(0,212,255,0.04);
+  text-decoration:none;color:var(--text);
+  font-size:13px;font-weight:500;
+  transition:background 180ms,border-color 180ms;
+}
+.modal-link:hover{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.35);}
+.modal-link-icon{font-size:18px;flex-shrink:0;}
+.modal-link-info{display:flex;flex-direction:column;}
+.modal-link-name{font-size:13px;font-weight:600;}
+.modal-link-desc{font-size:10px;color:var(--muted);margin-top:1px;}
+
+/* Vídeos */
+.video-list{display:flex;flex-direction:column;gap:8px;}
+.video-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:12px 14px;border-radius:10px;
+  background:rgba(239,68,68,0.05);
+  border:1px solid rgba(239,68,68,0.15);
+  text-decoration:none;
+  transition:background 180ms,border-color 180ms;
+}
+.video-item:hover{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);}
+.video-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;min-width:22px;padding-top:1px;}
+.video-info{flex:1;}
+.video-nome{font-size:13px;font-weight:600;color:var(--text);}
+.video-porque{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.video-abrir{font-size:11px;font-weight:700;color:#f87171;white-space:nowrap;padding-top:2px;}
+
+/* Método */
+.metodo-tecnica{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:10px;
+  background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);
+  margin-bottom:16px;
+}
+.metodo-tecnica-nome{font-size:15px;font-weight:700;color:#c084fc;}
+.metodo-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.metodo-step{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 14px;border-radius:9px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+}
+.metodo-step-n{
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(168,85,247,0.25);color:#c084fc;
+  font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.metodo-step-txt{font-size:13px;color:#ccd;line-height:1.6;}
+.metodo-dica{
+  padding:10px 14px;border-radius:9px;
+  background:rgba(255,184,0,0.06);border-left:3px solid var(--amber);
+  font-size:12px;color:#ccd;line-height:1.6;
+}
+.metodo-dica-label{font-weight:700;color:var(--amber);}
+
+/* Footer actions */
+.modal-actions{
+  display:flex;gap:10px;
+  padding:16px 28px 22px;
+  border-top:1px solid rgba(255,255,255,0.05);
+  background:#0e1220;
+}
+.btn-cancel{
+  flex:1;padding:12px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:transparent;color:var(--muted);
+  cursor:pointer;font-size:14px;font-weight:600;
+  transition:background 200ms;
+}
+.btn-cancel:hover{background:rgba(255,255,255,0.06);}
+.btn-confirm{
+  flex:2;padding:12px;border-radius:10px;
+  border:none;
+  background:linear-gradient(135deg,var(--emerald),#059669);
+  color:#fff;cursor:pointer;
+  font-size:14px;font-weight:700;
+  transition:transform 200ms,box-shadow 200ms;
+  box-shadow:0 4px 16px rgba(16,185,129,0.3);
+}
+.btn-confirm:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(16,185,129,0.45);}
+
+/* Responsive */
+@media(max-width:768px){
+  .grid2,.grid3,.grid2x2{grid-template-columns:1fr;}
+  .hero{grid-template-columns:1fr;text-align:center;}
+  .hero-right{align-items:center;}
+  body{padding:16px 14px 32px;}
+}
+@media(max-width:480px){
+  .quick-links{grid-template-columns:repeat(2,1fr);}
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="max f1">
+  <header class="header">
+    <div>
+      <h1>UNICAP 2026.2 · <span>Direito</span></h1>
+      <p class="header-sub">Carlos Régis · Recife/PE · 1ª opção Direito Manhã · 2ª opção CC Manhã</p>
+    </div>
+    <div class="header-date mono" id="headerDate">—</div>
+  </header>
+</div>
+
+<!-- HERO: COUNTDOWN + START -->
+<div class="max f1">
+  <div class="card hero" style="margin-bottom:20px;">
+    <div class="hero-left">
+      <p class="hero-label">Faltam para a prova</p>
+      <p class="hero-num mono" id="diasNum">--</p>
+      <p class="hero-detail mono" id="heroDetalhe">calculando...</p>
+      <p class="hero-prova">14 de junho de 2026 · 8h15 · UNICAP Boa Vista</p>
+    </div>
+    <div class="hero-right">
+      <button class="btn-start" onclick="abrirModal()">
+        ⚡ Iniciar Sessão
+      </button>
+      <p class="last-session" id="lastSession">Nenhuma sessão registrada</p>
+    </div>
+  </div>
+</div>
+
+<!-- HOJE + STREAK -->
+<div class="max f2">
+  <div class="grid2" style="margin-bottom:20px;">
+
+    <div class="card hoje-card">
+      <div class="hoje-header">
+        <h2 class="hoje-title">📌 Hoje · <span id="diaSemana">—</span></h2>
+        <span class="hoje-date" id="dataHoje">—</span>
+      </div>
+      <div class="hoje-topico" id="topicoHoje">Carregando plano do dia...</div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-val amber" id="horasHoje">—</div>
+          <div class="stat-label">Meta horas</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val cyan" id="flashcardsHoje">—</div>
+          <div class="stat-label">Flashcards</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val emerald" id="quizzesHoje">—</div>
+          <div class="stat-label">Quizzes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card streak-card">
+      <h2>🔥 Streak</h2>
+      <div class="streak-num" id="streakNum">0</div>
+      <div class="streak-label">dias consecutivos de estudo</div>
+      <div class="streak-record" id="streakRecord">Recorde: 0 dias</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ACESSO RÁPIDO -->
+<div class="max f3">
+  <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+    <p style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--muted)">ACESSO RÁPIDO</p>
+    <div class="quick-links">
+      <a href="final-sprint.html" class="quick-link card" style="border-color:rgba(245,197,66,0.55);background:rgba(245,197,66,0.07);">
+        <span class="icon">⚡</span>
+        <span class="name" style="color:#f5c542;">Sprint Final</span>
+        <span class="desc">Contador · Revisão · Prova</span>
+      </a>
+      <a href="hub.html" class="quick-link card" style="border-color:rgba(0,212,255,0.45);background:rgba(0,212,255,0.07);">
+        <span class="icon">🗂️</span>
+        <span class="name" style="color:var(--cyan);">Hub Geral</span>
+        <span class="desc">Tudo em 1 lugar · busca</span>
+      </a>
+      <a href="nexus/index.html" class="quick-link card" style="border-color:rgba(124,96,232,0.4);background:rgba(124,96,232,0.06);">
+        <span class="icon">✦</span>
+        <span class="name" style="color:#a080e8;">Nexus Premium</span>
+        <span class="desc">25 mapas temáticos</span>
+      </a>
+      <a href="galeria-mapas.html" class="quick-link card" style="border-color:rgba(0,212,255,0.25);">
+        <span class="icon">🗺️</span>
+        <span class="name" style="color:var(--cyan);">Mapas 3D</span>
+        <span class="desc">30 mapas interativos</span>
+      </a>
+      <a href="materiais/flashcards.html" class="quick-link card">
+        <span class="icon">🃏</span>
+        <span class="name">Flashcards</span>
+        <span class="desc">32 cards · SM-2</span>
+      </a>
+      <a href="simulados/simulado-cronometrado.html" class="quick-link card" style="border-color:rgba(239,68,68,0.25);">
+        <span class="icon">⏱️</span>
+        <span class="name" style="color:#f87171;">Simulado</span>
+        <span class="desc">5h cronometrado</span>
+      </a>
+      <a href="redacao/trainer.html" class="quick-link card" style="border-color:rgba(255,184,0,0.25);">
+        <span class="icon">✍️</span>
+        <span class="name" style="color:var(--amber);">Redação</span>
+        <span class="desc">Trainer + guia</span>
+      </a>
+      <a href="materiais/quiz.html" class="quick-link card">
+        <span class="icon">🎯</span>
+        <span class="name">Quiz</span>
+        <span class="desc">20 questões comentadas</span>
+      </a>
+      <a href="cronograma.html" class="quick-link card">
+        <span class="icon">📅</span>
+        <span class="name">Cronograma</span>
+        <span class="desc">Visão 26 dias</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- REDAÇÕES -->
+<div class="max f3b">
+  <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+    <p style="font-size:14px;font-weight:700;margin-bottom:14px;color:var(--muted)">✍️ REDAÇÕES — 4 até a prova · RED #1 feita ✅</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;">
+        <span style="font-size:20px;">✅</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;color:#34d399;">RED #1 — Meio Ambiente (VEST UNICAP 2026.1)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Feita em 21/05/2026 · Nota inicial: ~640 / 1000 · Versão nota 1000 disponível</div>
+        </div>
+        <a href="materiais/redacao/01-meio-ambiente-correcao.html" style="font-size:11px;font-weight:600;color:var(--cyan);text-decoration:none;white-space:nowrap;padding:6px 12px;border:1px solid rgba(0,212,255,0.3);border-radius:8px;">Ver correção →</a>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,184,0,0.04);border:1px solid rgba(255,184,0,0.15);border-radius:10px;">
+        <span style="font-size:20px;">⏳</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--amber);">RED #2 — Desigualdade Social</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">Prevista: 27/05/2026 (quarta)</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:10px;">
+        <span style="font-size:20px;">⏳</span>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--muted);">RED #3 — Saúde Mental · RED #4 — Saúde Mental (versão final)</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px;">RED #3 rascunho: 31/05 · RED #4 versão final: 03/06/2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROGRESSO + GRÁFICO -->
+<div class="max f4">
+  <div class="grid2x2">
+
+    <div class="card progress-section">
+      <h2>📊 Progresso por matéria</h2>
+      <div id="progressoBars"></div>
+    </div>
+
+    <div class="card chart-section">
+      <h2>📈 Evolução nos simulados</h2>
+      <div class="chart-wrap">
+        <canvas id="simChart"></canvas>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:8px;" id="simNota">Nenhum simulado registrado ainda.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- REVISÕES + HEATMAP -->
+<div class="max f5">
+  <div class="grid2x2">
+
+    <div class="card rev-section">
+      <h2>🔁 Próximas revisões</h2>
+      <div id="proximasRevs"></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:12px;">Espaçamento: D+1 · D+3 · D+7 · D+14</p>
+    </div>
+
+    <div class="card heatmap-section" style="margin-bottom:0;">
+      <h2>🗓️ Heatmap de estudo</h2>
+      <div class="heatmap-grid" id="heatmapGrid"></div>
+      <div class="heatmap-legend">
+        <span>menos</span>
+        <div class="hm-cell-sm"></div>
+        <div class="hm-cell-sm hm-h1"></div>
+        <div class="hm-cell-sm hm-h2"></div>
+        <div class="hm-cell-sm hm-h3"></div>
+        <div class="hm-cell-sm hm-h4"></div>
+        <span>mais</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- QUOTE -->
+<div class="max f5" style="margin-top:20px;">
+  <div class="card quote-section">
+    <p class="quote-text" id="quoteText">"Per aspera ad astra."</p>
+    <p class="quote-author" id="quoteAuthor">— Sêneca</p>
+  </div>
+</div>
+
+<div class="max">
+  <footer>UNICAP 2026.2 · Direito Manhã · Carlos Régis · D-<span id="footerDias">?</span> para a prova</footer>
+</div>
+
+<!-- MODAL DE SESSÃO -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">⚡ Sessão de hoje</h2>
+      <p class="modal-sub" id="modalSub">—</p>
+      <div class="modal-meta-row" id="modalMeta"></div>
+    </div>
+    <div class="modal-tabs" id="modalTabs">
+      <div class="modal-tab active" onclick="switchTab('plano',this)">📋 Plano</div>
+      <div class="modal-tab" onclick="switchTab('videos',this)">🎬 Vídeos</div>
+      <div class="modal-tab" onclick="switchTab('metodo',this)">💡 Método</div>
+    </div>
+    <div class="modal-body">
+      <div class="tab-panel active" id="tab-plano">
+        <div class="modal-topico" id="modalTopico">—</div>
+        <div class="modal-section-label">⏱️ Roteiro da sessão</div>
+        <div class="roteiro-list" id="modalRoteiro"></div>
+        <div class="modal-section-label">📚 Materiais disponíveis</div>
+        <div class="modal-links" id="modalLinks"></div>
+      </div>
+      <div class="tab-panel" id="tab-videos">
+        <div class="modal-section-label">🎬 Videoaulas recomendadas para hoje</div>
+        <div class="video-list" id="modalVideos"></div>
+        <p style="font-size:11px;color:var(--muted);margin-top:14px;">Use velocidade 1.25–1.5x · Pause a cada 5 min e recapitule sem olhar</p>
+      </div>
+      <div class="tab-panel" id="tab-metodo">
+        <div class="modal-section-label">💡 Técnica recomendada</div>
+        <div class="metodo-tecnica" id="modalMetodoNome"></div>
+        <div class="modal-section-label">Passo a passo</div>
+        <div class="metodo-steps" id="modalMetodoSteps"></div>
+        <div class="metodo-dica" id="modalMetodoDica"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModalDireto()">Cancelar</button>
+      <button class="btn-confirm" id="btnConfirm" onclick="confirmarSessao()">Começar agora →</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ============================================================
+// CRONOGRAMA — 19/05 a 14/06
+// ============================================================
+const PLANO = {
+  '2026-05-19': {
+    tema: 'Humanas: História Geral (Grécia, Roma) + Brasil Colonial · Secundário: Filosofia Antiga (Sócrates, Platão)',
+    materia: 'Humanas', horas: 6, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa História Antiga', desc:'Grécia, Roma interativo', url:'mapas/mapa-historia-antiga.html'},
+      {icon:'🗺️', nome:'Mapa Brasil Colonial', desc:'Exploração, jesuítas, ciclos', url:'mapas/mapa-brasil-colonial.html'},
+      {icon:'🗺️', nome:'Mapa Filosofia', desc:'Sócrates, Platão, Aristóteles', url:'mapas/mapa-filosofia.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 32 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Humanas', desc:'20 questões comentadas', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-historia-antiga.html',
+    videos: [
+      {nome:'Antiguidade clássica – Grécia e Roma · Curso Enem', porque:'Visão geral da polis grega e da república romana — tópico direto da prova UNICAP', url:'https://www.youtube.com/results?search_query=gr%C3%A9cia+roma+antiguidade+vestibular+curso+enem'},
+      {nome:'Brasil Colônia completo · Me Salva!', porque:'Cobre ciclos econômicos, Companhia Geral, Inconfidência — recorrente nas provas', url:'https://www.youtube.com/results?search_query=brasil+col%C3%B4nia+me+salva'},
+      {nome:'Sócrates + Mito da Caverna · Débora Aladim', porque:'Filosofia Antiga cai direto em Humanas e em Redação (repertório)', url:'https://www.youtube.com/results?search_query=socrates+mito+caverna+aladim'},
+    ],
+    metodo: {
+      tecnica:'📖 Leitura Ativa + Mapa Mental',
+      passos:[
+        'Abra o mapa 3D interativo e explore cada nó por 5 min. Não leia passivamente — clique, explore, tente lembrar.',
+        'Assista ao vídeo em 1.5x. A cada 5 min, pause e recite em voz alta o que acabou de ver.',
+        'Feche tudo e escreva no papel: O QUE EU LEMBRO sobre Grécia, Roma, Brasil Colonial. Preencha as lacunas depois.',
+        'Rode os Flashcards (SM-2). Marque "difícil" nos que você hesitou — eles voltam amanhã.',
+        'Quiz de saída: 10 questões cronometrado. Score abaixo de 60% → revisão rápida do mapa.',
+      ],
+      dica:'💡 Dica UNICAP: a prova de Humanas cobra INTERPRETAÇÃO, não decoreba. Leia cada questão buscando a RELAÇÃO entre conceitos (causa-efeito, comparação, consequência).',
+    },
+    roteiro:[
+      {tempo:'45min', atividade:'Vídeo Grécia e Roma (1.5x)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Explorar Mapa 3D História Antiga', ferramenta:'mapa-historia-antiga.html'},
+      {tempo:'45min', atividade:'Vídeo Brasil Colonial + anotações', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Explorar Mapa Brasil Colonial', ferramenta:'mapa-brasil-colonial.html'},
+      {tempo:'30min', atividade:'Vídeo Sócrates / Mapa Filosofia', ferramenta:'YouTube + mapa'},
+      {tempo:'30min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'30min', atividade:'Quiz 10 questões Humanas', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-20': {
+    tema: 'Linguagens: Português (tipologia + análise sintática) + Literatura Romântica · Inglês: verb tenses',
+    materia: 'Linguagens', horas: 6, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa Português', desc:'Gramática + tipologia textual', url:'mapas/mapa-portugues.html'},
+      {icon:'🗺️', nome:'Mapa Literatura Brasileira', desc:'Períodos literários', url:'mapas/mapa-literatura-brasileira.html'},
+      {icon:'🗺️', nome:'Mapa Inglês', desc:'Gramática + leitura', url:'mapas/mapa-ingles.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · revisão espaçada', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Linguagens', desc:'20 questões comentadas', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-portugues.html',
+    videos:[
+      {nome:'Tipologia textual – Noslen', porque:'Tipo de texto cai em TODAS as provas UNICAP — narrativo, dissertativo, injuntivo', url:'https://www.youtube.com/results?search_query=tipologia+textual+noslen'},
+      {nome:'Romantismo Brasileiro – 3 gerações · Débora Aladim', porque:'Literatura Romântica é o período mais cobrado pela UNICAP em vestibulares anteriores', url:'https://www.youtube.com/results?search_query=romantismo+brasileiro+3+geracoes+aladim'},
+      {nome:'Verb Tenses para Vestibular · Curso Enem', porque:'Inglês na UNICAP é interpretação — dominar os tempos verbais resolve 80% das questões', url:'https://www.youtube.com/results?search_query=verb+tenses+vestibular+ingles'},
+    ],
+    metodo:{
+      tecnica:'✏️ Leitura + Resolução de Questão Imediata',
+      passos:[
+        'Vídeo tipologia (20 min 1.5x). Depois: sem ver o vídeo, escreva os 5 tipos de texto com 1 exemplo cada.',
+        'Abra o Mapa Português. Foque nas figuras de linguagem e funções — são as mais cobradas na UNICAP.',
+        'Vídeo Romantismo. Após, teste: "Quais os 3 autores principais e 1 obra cada?"',
+        'Inglês: leia um parágrafo, identifique o tempo verbal e traduza a ideia central. Sem dicionário.',
+        'Flashcards + Quiz de saída.',
+      ],
+      dica:'💡 Dica UNICAP: Linguagens tem textos de apoio em TODAS as questões. Treine ler o texto antes de ver as alternativas, identificando tese e argumentos.',
+    },
+    roteiro:[
+      {tempo:'30min', atividade:'Vídeo tipologia textual (1.5x)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa Português interativo', ferramenta:'mapa-portugues.html'},
+      {tempo:'45min', atividade:'Vídeo Romantismo + anotações', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa Literatura Brasileira', ferramenta:'mapa-literatura-brasileira.html'},
+      {tempo:'30min', atividade:'Inglês: vídeo + leitura de texto', ferramenta:'YouTube + mapa-ingles.html'},
+      {tempo:'30min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'25min', atividade:'Quiz Linguagens 10 questões', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-21': {
+    tema: '🛑 Dia livre — RED #1 feita ✅. Sem estudo hoje. Começo real: domingo 24/05.',
+    materia: 'Descanso', horas: 0, flashcards: 0, quizzes: 0,
+    links: [], rota: null, videos:[],
+    metodo:{tecnica:'🛌 Dia Livre', passos:['Nenhuma obrigação de estudo hoje.','RED #1 foi entregue — isso já conta.','Descanse para começar forte no domingo 24/05.'], dica:'💡 Descanso antes de uma semana intensa é parte do plano, não sabotagem.'},
+    roteiro:[{tempo:'Dia todo', atividade:'Descanso — próximo estudo: domingo 24/05', ferramenta:'—'}],
+  },
+  '2026-05-22': {
+    tema: '🛑 Dia livre — sem estudo. Olimpíada de Português (evento externo, sem pressão).',
+    materia: 'Descanso', horas: 0, flashcards: 0, quizzes: 0,
+    links: [], rota: null, videos:[],
+    metodo:{tecnica:'🛌 Dia Livre', passos:['Nada de UNICAP hoje.','Olimpíada de Português: experiência extra, sem pressão.','Preserve energia para domingo.'], dica:'💡 Dois dias de descanso antes de 21 dias de sprint intenso é a decisão certa.'},
+    roteiro:[{tempo:'Dia todo', atividade:'Dia livre — Olimpíada de Português (se quiser)', ferramenta:'—'}],
+  },
+  '2026-05-23': {
+    tema: '⚡ SIMULADO ENEM 3 — 1° dia · Evento externo, não há sessão UNICAP hoje.',
+    materia: 'Evento', horas: 0, flashcards: 0, quizzes: 0,
+    links: [], rota: null,
+    videos:[], metodo:{tecnica:'🎯 Dia de Simulado Externo', passos:['Foco total no Simulado ENEM 3.','Não estude UNICAP hoje — preserve energia.','Após o simulado: anote quais áreas sentiram mais dificuldade.'], dica:'💡 Use o simulado ENEM como diagnóstico real — observe onde você trava e leve isso pro plano UNICAP.'},
+    roteiro:[{tempo:'Dia todo', atividade:'Simulado ENEM 3 — 1° dia', ferramenta:'Evento externo'}],
+  },
+  '2026-05-24': {
+    tema: '🚀 1º DIA DE ESTUDO — Humanas completo: História Antiga (Grécia/Roma) + Brasil Colonial + Filosofia Antiga + Geografia · Igreja 16h',
+    materia: 'Humanas', horas: 5, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa História Antiga', desc:'Grécia e Roma — conteúdo base', url:'mapas/mapa-historia-antiga.html'},
+      {icon:'🗺️', nome:'Mapa Brasil Colonial', desc:'Ciclos econômicos + jesuítas', url:'mapas/mapa-brasil-colonial.html'},
+      {icon:'🗺️', nome:'Mapa Filosofia', desc:'Sócrates, Platão, Aristóteles', url:'mapas/mapa-filosofia.html'},
+      {icon:'🗺️', nome:'Mapa Geografia Humana', desc:'Urbanização, blocos econômicos', url:'mapas/mapa-geografia-humana.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Humanas', desc:'10 questões de fixação', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-historia-antiga.html',
+    videos:[
+      {nome:'Antiguidade Clássica – Grécia e Roma · Curso Enem', porque:'1° conteúdo do sprint — base de Humanas, sempre cai na UNICAP', url:'https://www.youtube.com/results?search_query=gr%C3%A9cia+roma+antiguidade+vestibular+curso+enem'},
+      {nome:'Brasil Colônia completo · Me Salva!', porque:'Capitanias, ciclo da cana, Igreja e Inconfidência — recorrente nas provas', url:'https://www.youtube.com/results?search_query=brasil+col%C3%B4nia+me+salva'},
+      {nome:'Mito da Caverna + Sócrates · Débora Aladim', porque:'Filosofia Antiga cai direto em Humanas E serve de repertório para redação', url:'https://www.youtube.com/results?search_query=mito+da+caverna+socrates+aladim'},
+    ],
+    metodo:{
+      tecnica:'📖 Leitura Ativa em Blocos (1 tópico por vez)',
+      passos:[
+        'Bloco 1 — Grécia/Roma: vídeo 30min + mapa interativo 30min. Escreva 5 fatos de memória depois.',
+        'Bloco 2 — Brasil Colonial: vídeo 30min + mapa 20min. Foco: ciclos econômicos e Reforma Pombalina.',
+        'Bloco 3 — Filosofia Antiga: vídeo Sócrates/Mito da Caverna 20min + mapa 20min.',
+        'Bloco 4 — Geografia: só o mapa de Humana/Geopolítica (20min — conteúdo de apoio).',
+        'Flashcards SM-2 + Quiz 10 questões de Humanas.',
+      ],
+      dica:'💡 Igreja às 16h: começa às 8h ou 9h e para às 15h. 5h de estudo focado valem mais do que 8h disperso. Este é o 1° dia real — estabeleça o ritmo.',
+    },
+    roteiro:[
+      {tempo:'30min', atividade:'Vídeo Grécia e Roma (1.5x)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa História Antiga interativo', ferramenta:'mapa-historia-antiga.html'},
+      {tempo:'30min', atividade:'Vídeo Brasil Colonial (1.5x)', ferramenta:'YouTube'},
+      {tempo:'20min', atividade:'Mapa Brasil Colonial interativo', ferramenta:'mapa-brasil-colonial.html'},
+      {tempo:'20min', atividade:'Vídeo Sócrates + Mito da Caverna', ferramenta:'YouTube'},
+      {tempo:'20min', atividade:'Mapa Filosofia interativo', ferramenta:'mapa-filosofia.html'},
+      {tempo:'20min', atividade:'Mapa Geografia Humana (geopolítica)', ferramenta:'mapa-geografia-humana.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Quiz 10 questões Humanas', ferramenta:'materiais/quiz.html'},
+      {tempo:'16h', atividade:'Igreja', ferramenta:'—'},
+    ],
+  },
+  '2026-05-25': {
+    tema: 'Sociologia: Durkheim, Weber, Marx · Linguagens: Português tipologia textual (intro) · Verificar ensaios',
+    materia: 'Humanas + Linguagens', horas: 5, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa Sociologia', desc:'Marx, Weber, Durkheim', url:'mapas/mapa-sociologia.html'},
+      {icon:'🗺️', nome:'Mapa Português', desc:'Tipologia + funções da linguagem', url:'mapas/mapa-portugues.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Humanas', desc:'Sociologia + Filosofia', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-sociologia.html',
+    videos:[
+      {nome:'Marx, Weber e Durkheim – Sociologia Clássica · Curso Enem', porque:'Os três clássicos são os MAIS COBRADOS em Humanas — dominar a diferença entre eles é fundamental', url:'https://www.youtube.com/results?search_query=sociologia+cl%C3%A1ssica+marx+weber+durkheim'},
+      {nome:'Tipologia Textual · Professor Noslen', porque:'Tipo de texto cai em TODA prova UNICAP — narrativo, dissertativo, injuntivo, descritivo', url:'https://www.youtube.com/results?search_query=tipologia+textual+noslen'},
+    ],
+    metodo:{
+      tecnica:'📊 Tabela Comparativa + Transição de Matéria',
+      passos:[
+        'Manhã: escreva de memória o que sabe sobre Marx, Durkheim e Weber (5 min, sem consultar).',
+        'Vídeo Sociologia Clássica (1.5x) + montagem da tabela comparativa no caderno.',
+        'Mapa Sociologia interativo — corrija sua tabela.',
+        'Tarde: vídeo tipologia textual (20 min, 1.5x). Identificar os 5 tipos de texto com exemplo.',
+        'Mapa Português — só a parte de tipologia e funções da linguagem (30 min).',
+        'Flashcards + Quiz de Sociologia.',
+      ],
+      dica:'💡 Verificar horário dos ensaios antes de montar o dia. Se houver ensaio à tarde, faça Sociologia de manhã e Português depois ou vice-versa.',
+    },
+    roteiro:[
+      {tempo:'10min', atividade:'Tabela Marx/Weber/Durkheim de memória', ferramenta:'Caderno'},
+      {tempo:'40min', atividade:'Vídeo Sociologia Clássica (1.5x)', ferramenta:'YouTube'},
+      {tempo:'20min', atividade:'Completar tabela + verificar', ferramenta:'Caderno'},
+      {tempo:'30min', atividade:'Mapa Sociologia interativo', ferramenta:'mapa-sociologia.html'},
+      {tempo:'25min', atividade:'Vídeo Tipologia Textual (1.5x)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa Português — tipologia + funções', ferramenta:'mapa-portugues.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'15min', atividade:'Quiz 10 questões Sociologia', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-26': {
+    tema: '⚡ REPOSIÇÃO 3 dias — Humanas: Hist. Antiga (Grécia/Roma) + Brasil Colonial/Imperial + República + Filosofia Antiga (Sócrates/Platão) + Sociologia + Geografia · Linguagens: Português tipologia (intro)',
+    materia: 'Humanas + Linguagens', horas: 7, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'✦', nome:'Nexus: Hist. Antiga/Medieval', desc:'Grécia + Roma — mapa premium', url:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Brasil Colonial/Imperial', desc:'1500–1889 — mapa premium', url:'nexus/humanas/historia/brasil-colonial-imperial/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Brasil República', desc:'1889 → hoje — mapa premium', url:'nexus/humanas/historia/brasil-republica/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Sócrates + Platão', desc:'Filosofia Antiga — mapas premium', url:'nexus/humanas/filosofia/socrates/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Sociologia', desc:'Marx, Weber, Durkheim — premium', url:'nexus/humanas/sociologia/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Geografia', desc:'Brasil + Geopolítica — premium', url:'nexus/humanas/geografia/mapa3d.html'},
+      {icon:'🗺️', nome:'Mapa Português', desc:'Tipologia textual — intro', url:'mapas/mapa-portugues.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards', url:'materiais/flashcards.html'},
+    ], rota:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html',
+    videos:[
+      {nome:'Antiguidade Clássica – Grécia e Roma · Curso Enem', porque:'1° bloco da reposição — Hist. Antiga é base de Humanas e cai direto na UNICAP', url:'https://www.youtube.com/results?search_query=gr%C3%A9cia+roma+antiguidade+vestibular+curso+enem'},
+      {nome:'Sócrates + Mito da Caverna · Débora Aladim', porque:'Filosofia Antiga serve de repertório para redação e cai direto em Humanas', url:'https://www.youtube.com/results?search_query=socrates+mito+caverna+aladim'},
+      {nome:'Marx, Weber, Durkheim – Sociologia Clássica · Curso Enem', porque:'Os três clássicos são os MAIS COBRADOS em Humanas — distingui-los é fundamental', url:'https://www.youtube.com/results?search_query=sociologia+cl%C3%A1ssica+marx+weber+durkheim'},
+    ],
+    metodo:{
+      tecnica:'⚡ Reposição em Blocos (Nexus + visão estrutural)',
+      passos:[
+        'BLOCO 1 (1h): Hist. Antiga — Nexus mapa Grécia/Roma 30min + vídeo Antiguidade 30min.',
+        'BLOCO 2 (50min): Brasil Colonial/Imperial — Nexus mapa 30min + Nexus República 20min.',
+        'BLOCO 3 (50min): Filosofia — Nexus Sócrates 25min + Nexus Platão (Alegoria da Caverna) 25min.',
+        'BLOCO 4 (40min): Sociologia — Nexus Marx/Weber/Durkheim + tabela comparativa de memória.',
+        'BLOCO 5 (20min): Geografia — Nexus mapa (blocos econômicos, biomas).',
+        'BLOCO 6 (25min): Português tipologia — mapa + 5 tipos de texto de memória.',
+        'Flashcards 20 cards + Quiz Humanas de saída.',
+      ],
+      dica:'💡 Reposição: foque em ESTRUTURA, não em detalhes. Seu objetivo hoje é construir o esqueleto de cada área — os detalhes vêm na revisão de 02/06. Use os mapas Nexus premium que cobrem tudo.',
+    },
+    roteiro:[
+      {tempo:'30min', atividade:'Nexus: Hist. Antiga/Medieval — Grécia/Roma', ferramenta:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html'},
+      {tempo:'30min', atividade:'Vídeo Antiguidade Clássica (1.5x)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Nexus: Brasil Colonial/Imperial', ferramenta:'nexus/humanas/historia/brasil-colonial-imperial/mapa3d.html'},
+      {tempo:'20min', atividade:'Nexus: Brasil República (navegação rápida)', ferramenta:'nexus/humanas/historia/brasil-republica/mapa3d.html'},
+      {tempo:'25min', atividade:'Nexus: Sócrates — Maiêutica + Julgamento', ferramenta:'nexus/humanas/filosofia/socrates/mapa3d.html'},
+      {tempo:'25min', atividade:'Nexus: Platão — Alegoria da Caverna', ferramenta:'nexus/humanas/filosofia/platao/mapa3d.html'},
+      {tempo:'30min', atividade:'Nexus: Sociologia + tabela Marx/Weber/Durkheim', ferramenta:'nexus/humanas/sociologia/mapa3d.html'},
+      {tempo:'20min', atividade:'Nexus: Geografia (blocos econômicos, biomas)', ferramenta:'nexus/humanas/geografia/mapa3d.html'},
+      {tempo:'20min', atividade:'Pausa / almoço', ferramenta:'—'},
+      {tempo:'25min', atividade:'Mapa Português — tipologia textual (intro)', ferramenta:'mapa-portugues.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Quiz Humanas 10 questões', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-27': {
+    tema: 'Linguagens COMPLETO: Português (gramática + figuras) + Literatura (Romantismo/Realismo/Modernismo) + Inglês · ✍️ REDAÇÃO #2 — Desigualdade Social',
+    materia: 'Linguagens', horas: 7, flashcards: 15, quizzes: 1,
+    links: [
+      {icon:'✦', nome:'Nexus: Português', desc:'Gramática + figuras — premium', url:'nexus/linguagens/portugues/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Romantismo', desc:'Gonçalves Dias, Alencar — premium', url:'nexus/linguagens/literatura/romantismo/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Realismo', desc:'Machado de Assis — premium', url:'nexus/linguagens/literatura/realismo/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Modernismo', desc:'Semana de 22, Drummond — premium', url:'nexus/linguagens/literatura/modernismo/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Inglês', desc:'Leitura + gramática — premium', url:'nexus/linguagens/ingles/mapa3d.html'},
+      {icon:'✍️', nome:'Redação Trainer', desc:'Escrever RED #2 aqui', url:'redacao/trainer.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 15 cards', url:'materiais/flashcards.html'},
+    ], rota:'nexus/linguagens/portugues/mapa3d.html',
+    videos:[
+      {nome:'Romantismo Brasileiro – 3 gerações · Débora Aladim', porque:'Romantismo é o período literário MAIS cobrado pela UNICAP — Alencar, Álvares de Azevedo, G. Dias', url:'https://www.youtube.com/results?search_query=romantismo+brasileiro+3+geracoes+aladim'},
+      {nome:'Modernismo 1ª + 2ª fase · Estratégia Vestibulares', porque:'Semana de 22 + Drummond/Graciliano — cobrados em provas recentes da UNICAP', url:'https://www.youtube.com/results?search_query=modernismo+1+2+fase+vestibular+drummond'},
+      {nome:'Desigualdade Social – repertório para redação · Curso Enem', porque:'Tema da RED #2 de hoje — domine dados (Gini, IBGE, Oxfam) antes de escrever', url:'https://www.youtube.com/results?search_query=desigualdade+social+repertorio+redacao'},
+    ],
+    metodo:{
+      tecnica:'🔤 Linguagens em Série + ✍️ Escrita Focada',
+      passos:[
+        'MANHÃ — Linguagens: Nexus Português (figuras + gramática) 30min → Nexus Romantismo 25min → Nexus Realismo 20min → Nexus Modernismo (vídeo + mapa) 45min → Nexus Inglês 20min.',
+        'Pausa de 20 min.',
+        'TARDE — RED #2: vídeo repertório 15min → ESCREVER RED #2 40min (cronometrado) → autocorrigir 5 critérios 20min.',
+        'Flashcards SM-2 15 cards + Quiz Literatura 15 questões.',
+      ],
+      dica:'💡 RED #2 (Desigualdade Social): dados concretos — Gini 0,543, top 1% detém 33% da renda (Oxfam). Proposta com AGENTE+AÇÃO+FINALIDADE: "O Estado (agente) deve ampliar o Bolsa Família e cotas em universidades (ação) para reduzir o abismo social (finalidade)."',
+    },
+    roteiro:[
+      {tempo:'30min', atividade:'Nexus: Português — figuras de linguagem + gramática', ferramenta:'nexus/linguagens/portugues/mapa3d.html'},
+      {tempo:'25min', atividade:'Nexus: Romantismo (Gonçalves Dias, Alencar)', ferramenta:'nexus/linguagens/literatura/romantismo/mapa3d.html'},
+      {tempo:'20min', atividade:'Nexus: Realismo (Machado de Assis)', ferramenta:'nexus/linguagens/literatura/realismo/mapa3d.html'},
+      {tempo:'30min', atividade:'Vídeo Modernismo 1ª + 2ª fase (1.5x)', ferramenta:'YouTube'},
+      {tempo:'20min', atividade:'Nexus: Modernismo (Drummond, Graciliano)', ferramenta:'nexus/linguagens/literatura/modernismo/mapa3d.html'},
+      {tempo:'20min', atividade:'Nexus: Inglês — leitura e gramática', ferramenta:'nexus/linguagens/ingles/mapa3d.html'},
+      {tempo:'20min', atividade:'Pausa / almoço', ferramenta:'—'},
+      {tempo:'15min', atividade:'Vídeo repertório Desigualdade Social', ferramenta:'YouTube'},
+      {tempo:'40min', atividade:'✍️ ESCREVER REDAÇÃO #2 — cronometrado', ferramenta:'redacao/trainer.html'},
+      {tempo:'20min', atividade:'Autocorreção RED #2 (5 critérios UNICAP)', ferramenta:'redacao/trainer.html'},
+      {tempo:'15min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'15min', atividade:'Quiz Literatura', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-28': {
+    tema: '🔁 Flashcards somente — sessão leve (livre apenas após 20h)',
+    materia: 'Revisão', horas: 1.5, flashcards: 30, quizzes: 0,
+    links: [
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 30 cards de revisão espaçada', url:'materiais/flashcards.html'},
+    ], rota:'materiais/flashcards.html',
+    videos:[],
+    metodo:{
+      tecnica:'🃏 Revisão Espaçada Pura',
+      passos:[
+        'Apenas Flashcards SM-2. Não abra novos conteúdos.',
+        'Marque cada card: Errei / Difícil / Bom / Fácil — o algoritmo decide quando revisar.',
+        'Foco nos cards de Humanas e Linguagens (semanas 1-2).',
+        'Pare em 1.5h. Dia de descanso ativo é parte do plano.',
+      ],
+      dica:'💡 Revisão espaçada é mais eficiente que estudar mais horas hoje. O cérebro consolida memórias durante o descanso.',
+    },
+    roteiro:[
+      {tempo:'90min', atividade:'Flashcards SM-2 — revisão espaçada (após 20h)', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-05-29': {
+    tema: 'Matemática: %, juros, regra de 3, funções 1°/2° grau · Biologia: célula, ecologia, genética',
+    materia: 'Matemática', horas: 6, flashcards: 15, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa Mat. Aritmética', desc:'%, juros, regra de 3', url:'mapas/mapa-matematica-aritmetica.html'},
+      {icon:'🗺️', nome:'Mapa Mat. Funções', desc:'Funções 1° e 2° grau', url:'mapas/mapa-matematica-funcoes.html'},
+      {icon:'🗺️', nome:'Mapa Biologia Celular', desc:'Organelas, divisão celular', url:'mapas/mapa-biologia-celular.html'},
+      {icon:'🗺️', nome:'Mapa Biologia Ecologia', desc:'Biomas, cadeias, ciclos', url:'mapas/mapa-biologia-ecologia.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 15 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Matemática', desc:'Resolução comentada', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-matematica-aritmetica.html',
+    videos:[
+      {nome:'Porcentagem e Juros Simples · Ferretto', porque:'Porcentagem/juros é o tópico de Matemática MAIS cobrado na UNICAP — dominar vale até 3 questões', url:'https://www.youtube.com/results?search_query=porcentagem+juros+ferretto+vestibular'},
+      {nome:'Funções de 1° e 2° grau · Ferretto', porque:'Funções aparecem em pelo menos 2 questões — foque em reconhecer o tipo e calcular raízes', url:'https://www.youtube.com/results?search_query=fun%C3%A7%C3%A3o+afim+quadr%C3%A1tica+ferretto'},
+      {nome:'Citologia – Organelas · Me Salva!', porque:'Biologia celular é o subtópico mais frequente em Ciências da Natureza na UNICAP', url:'https://www.youtube.com/results?search_query=citologia+organelas+me+salva'},
+    ],
+    metodo:{
+      tecnica:'📐 Resolver Antes de Ver (Matemática)',
+      passos:[
+        'Para cada tipo de questão matemática: TENTE resolver primeiro. Mesmo que erre — isso ativa o aprendizado.',
+        'Vídeo Ferretto em 1.25x (não 1.5x — Matemática precisa de tempo para processar).',
+        'Refaça os exemplos do vídeo SEM olhar a solução. Verifique depois.',
+        'Biologia: vídeo de organelas + Mapa 3D interativo. Clique em cada organela e teste: "qual a função?"',
+        'Flashcards + Quiz de saída matemática.',
+      ],
+      dica:'💡 Matemática UNICAP: cada questão vale muito. Não tente todas — resolva 8-10 bem feitas ao invés de 16 mal feitas. Ordem: porcentagem → funções → geometria.',
+    },
+    roteiro:[
+      {tempo:'50min', atividade:'Vídeo % e Juros + exercícios do vídeo', ferramenta:'YouTube'},
+      {tempo:'40min', atividade:'Mapa Aritmética + 5 questões', ferramenta:'mapa-matematica-aritmetica.html'},
+      {tempo:'50min', atividade:'Vídeo Funções 1°/2° grau + exercícios', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa Funções interativo', ferramenta:'mapa-matematica-funcoes.html'},
+      {tempo:'40min', atividade:'Biologia: vídeo organelas + Mapa 3D', ferramenta:'YouTube + mapa-biologia-celular.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Quiz Matemática comentado', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-05-30': {
+    tema: '⚡ SIMULADO ENEM 3 — 2° dia · Evento externo, não há sessão UNICAP hoje.',
+    materia: 'Evento', horas: 0, flashcards: 0, quizzes: 0,
+    links: [], rota: null,
+    videos:[], metodo:{tecnica:'🎯 Dia de Simulado Externo', passos:['Foco total no Simulado ENEM 3 — 2° dia.','Não estude UNICAP hoje.','Após: anote as matérias onde sentiu maior dificuldade para priorizar na semana seguinte.'], dica:'💡 Após o simulado, faça a lista: "Os 3 tópicos onde eu mais errei." Isso vira sua prioridade para 31/05.'},
+    roteiro:[{tempo:'Dia todo', atividade:'Simulado ENEM 3 — 2° dia', ferramenta:'Evento externo'}],
+  },
+  '2026-05-31': {
+    tema: 'Revisão Simulado Enem 3 completo (D1+D2) · ✍️ REDAÇÃO #3 (rascunho + correção)',
+    materia: 'Revisão', horas: 4, flashcards: 15, quizzes: 0,
+    links: [
+      {icon:'✍️', nome:'Redação Trainer', desc:'Escrever RED #3 — Saúde Mental', url:'redacao/trainer.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 15 cards revisão', url:'materiais/flashcards.html'},
+      {icon:'🗺️', nome:'Galeria de Mapas', desc:'Revisar mapas dos tópicos errados', url:'galeria-mapas.html'},
+    ], rota:'redacao/trainer.html',
+    videos:[
+      {nome:'Saúde Mental – repertório para redação · Estratégia', porque:'Tema da RED #3 — colete dados, causas e propostas antes de escrever', url:'https://www.youtube.com/results?search_query=saude+mental+repertorio+redacao+vestibular'},
+    ],
+    metodo:{
+      tecnica:'🔍 Análise de Erro + Escrita Focada',
+      passos:[
+        'Reveja os erros do Simulado ENEM D1+D2. Liste os 3 tópicos com mais erros.',
+        'Abra o mapa correspondente a cada tópico (10 min cada — revisão rápida).',
+        'Vídeo repertório Saúde Mental (15 min). Anote: 2 dados, 2 causas, 1 proposta.',
+        'ESCREVER REDAÇÃO #3 — 40 min cronometrados. Tema: Saúde Mental.',
+        'Autocorrigir com os 5 critérios UNICAP. Identificar o critério mais fraco.',
+      ],
+      dica:'💡 RED #3: foque na TESE. Uma boa tese define o tom de toda a redação. Exemplo: "A negligência estatal com saúde mental perpetua ciclos de sofrimento e exclusão social."',
+    },
+    roteiro:[
+      {tempo:'60min', atividade:'Revisar erros D1+D2 + mapas dos tópicos fracos', ferramenta:'Gabarito + galeria-mapas.html'},
+      {tempo:'15min', atividade:'Vídeo repertório Saúde Mental', ferramenta:'YouTube'},
+      {tempo:'40min', atividade:'✍️ ESCREVER REDAÇÃO #3 — cronometrado', ferramenta:'redacao/trainer.html'},
+      {tempo:'20min', atividade:'Autocorreção RED #3 (5 critérios)', ferramenta:'redacao/trainer.html'},
+      {tempo:'25min', atividade:'Flashcards SM-2 revisão', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-06-01': {
+    tema: '📝 PM2 (escola) — descanso ativo, só flashcards (1h máximo)',
+    materia: 'Revisão', horas: 1, flashcards: 20, quizzes: 0,
+    links: [{icon:'🃏', nome:'Flashcards', desc:'SM-2 · revisão espaçada', url:'materiais/flashcards.html'}],
+    rota:'materiais/flashcards.html', videos:[],
+    metodo:{tecnica:'🃏 Revisão Espaçada', passos:['Só Flashcards hoje. PM2 consome energia.','20 min antes de dormir — máximo.'], dica:'💡 Descanso ativo. O cérebro consolida na noite.'},
+    roteiro:[{tempo:'20min', atividade:'Flashcards SM-2 (após PM2)', ferramenta:'materiais/flashcards.html'}],
+  },
+  '2026-06-02': {
+    tema: 'Humanas revisão: Filosofia + Sociologia (pontos fracos) · Atualidades',
+    materia: 'Humanas', horas: 6, flashcards: 20, quizzes: 1,
+    links: [
+      {icon:'✦', nome:'Nexus: Sócrates', desc:'Método socrático — premium', url:'nexus/humanas/filosofia/socrates/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Platão', desc:'Alegoria da Caverna — premium', url:'nexus/humanas/filosofia/platao/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Iluminismo', desc:'Voltaire, Rousseau, Kant — premium', url:'nexus/humanas/filosofia/iluminismo/mapa3d.html'},
+      {icon:'✦', nome:'Nexus: Sociologia', desc:'Marx, Weber, Durkheim — premium', url:'nexus/humanas/sociologia/mapa3d.html'},
+      {icon:'🗺️', nome:'Mapa Atualidades', desc:'Geopolítica, BRICS, IA', url:'mapas/mapa-atualidades.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Humanas', desc:'20 questões comentadas', url:'materiais/quiz.html'},
+    ], rota:'nexus/humanas/filosofia/socrates/mapa3d.html',
+    videos:[
+      {nome:'Contratualismo – Hobbes, Locke, Rousseau · Noslen', porque:'O contratualismo é o tópico de Filosofia que mais cai — dominar a diferença é obrigatório', url:'https://www.youtube.com/results?search_query=contratualismo+hobbes+locke+rousseau+vestibular'},
+      {nome:'Weber: ação social e burocracia · Estratégia', porque:'Weber é o sociólogo mais cobrado em questões de Sociologia na UNICAP', url:'https://www.youtube.com/results?search_query=weber+acao+social+burocracia+vestibular'},
+      {nome:'Atualidades 2025 – Conflitos e Geopolítica · Politize!', porque:'Atualidades é repertório direto para a Redação e para questões de Humanas', url:'https://www.youtube.com/results?search_query=atualidades+2025+geopolitica+politize'},
+    ],
+    metodo:{
+      tecnica:'🔁 Revisão por Lacunas (não releia o que já sabe)',
+      passos:[
+        'Antes de abrir qualquer material: escreva tudo que lembra de Filosofia (5 min). Identifique as lacunas.',
+        'Foque APENAS nas lacunas — não releia o que já sabe. Use o mapa para preencher.',
+        'Mesmo processo para Sociologia: tabela comparativa Marx/Weber/Durkheim de memória, depois corrija.',
+        'Atualidades: 30 min de leitura focada — 2 notícias internacionais, 1 nacional.',
+        'Quiz de saída + Flashcards.',
+      ],
+      dica:'💡 Revisão de Filosofia UNICAP: as questões pedem relação de conceitos. Pratique conectar: Hobbes → medo → Estado absoluto → Leviatã. Cadeia de conexões, não definições isoladas.',
+    },
+    roteiro:[
+      {tempo:'10min', atividade:'Escrever de memória: Filosofia (lacunas)', ferramenta:'Caderno'},
+      {tempo:'50min', atividade:'Nexus Filosofia (Sócrates+Platão+Iluminismo) + vídeo contratualismo', ferramenta:'YouTube + nexus/humanas/filosofia/'},
+      {tempo:'10min', atividade:'Tabela Marx/Weber/Durkheim de memória', ferramenta:'Caderno'},
+      {tempo:'50min', atividade:'Nexus Sociologia — preencher lacunas + vídeo Weber', ferramenta:'YouTube + nexus/humanas/sociologia/mapa3d.html'},
+      {tempo:'30min', atividade:'Atualidades: leitura + mapa', ferramenta:'mapa-atualidades.html'},
+      {tempo:'30min', atividade:'Flashcards + Quiz Humanas', ferramenta:'materiais/flashcards.html + quiz.html'},
+    ],
+  },
+  '2026-06-03': {
+    tema: 'Linguagens: Inglês + Português (figuras de linguagem, funções) · ✍️ REDAÇÃO #4 — Saúde Mental',
+    materia: 'Linguagens', horas: 6, flashcards: 15, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa Inglês', desc:'Grammar + leitura', url:'mapas/mapa-ingles.html'},
+      {icon:'🗺️', nome:'Mapa Português', desc:'Figuras + funções linguagem', url:'mapas/mapa-portugues.html'},
+      {icon:'✍️', nome:'Redação Trainer', desc:'Escrever RED #4 aqui', url:'redacao/trainer.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 15 cards', url:'materiais/flashcards.html'},
+    ], rota:'redacao/trainer.html',
+    videos:[
+      {nome:'Figuras de Linguagem completo · Aprova Total', porque:'Figuras de linguagem aparecem em pelo menos 2 questões de Linguagens na UNICAP', url:'https://www.youtube.com/results?search_query=figuras+de+linguagem+aprova+total'},
+      {nome:'Interpretação de Texto em Inglês · Curso Enem', porque:'Inglês UNICAP é 100% interpretação — foque em cognatos, contexto e tempos verbais', url:'https://www.youtube.com/results?search_query=ingles+interpretacao+texto+vestibular'},
+      {nome:'Saúde Mental – dados e causas para redação', porque:'Tema da RED #4 — anote dados do IBGE e OMS sobre transtornos mentais no Brasil', url:'https://www.youtube.com/results?search_query=saude+mental+brasil+dados+redacao'},
+    ],
+    metodo:{
+      tecnica:'✍️ Sprint de Redação com Repertório Preparado',
+      passos:[
+        'Manhã: Figuras de linguagem (vídeo + mapa). Faça 5 exemplos de memória de cada figura.',
+        'Inglês: leia 2 textos do mapa. Sublinhe cognatos e identifique o tempo verbal central.',
+        'Vídeo repertório Saúde Mental (15 min). Anote: 1 dado estatístico, 1 causa estrutural, 1 proposta.',
+        'ESCREVER RED #4 — 40 min cronometrado. Use o repertório anotado.',
+        'Autocorrigir. Foco: a tese ficou clara? A proposta tem agente+ação+finalidade?',
+      ],
+      dica:'💡 RED #4: esta é a última redação antes da prova. Trate com seriedade de prova real. Escreva a mão se possível — simula melhor as condições da UNICAP.',
+    },
+    roteiro:[
+      {tempo:'40min', atividade:'Figuras de linguagem — vídeo + mapa', ferramenta:'YouTube + mapa-portugues.html'},
+      {tempo:'30min', atividade:'Inglês: textos do mapa interativo', ferramenta:'mapa-ingles.html'},
+      {tempo:'15min', atividade:'Vídeo repertório Saúde Mental', ferramenta:'YouTube'},
+      {tempo:'40min', atividade:'✍️ ESCREVER REDAÇÃO #4 — cronometrado', ferramenta:'redacao/trainer.html'},
+      {tempo:'25min', atividade:'Autocorreção RED #4 critérios UNICAP', ferramenta:'redacao/trainer.html'},
+      {tempo:'30min', atividade:'Flashcards + Quiz Linguagens', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-06-04': {
+    tema: '🔁 Flashcards somente — sessão leve (livre apenas após 20h)',
+    materia: 'Revisão', horas: 1.5, flashcards: 30, quizzes: 0,
+    links: [{icon:'🃏', nome:'Flashcards', desc:'SM-2 · 30 cards de todas as matérias', url:'materiais/flashcards.html'}],
+    rota:'materiais/flashcards.html', videos:[],
+    metodo:{tecnica:'🃏 Revisão Espaçada', passos:['30 cards SM-2 — todas as matérias.','Apenas após 20h. Dia de descanso ativo.'], dica:'💡 Com 10 dias para a prova, a revisão espaçada é mais valiosa que conteúdo novo.'},
+    roteiro:[{tempo:'90min', atividade:'Flashcards SM-2 — 30 cards (após 20h)', ferramenta:'materiais/flashcards.html'}],
+  },
+  '2026-06-05': {
+    tema: 'Matemática: geometria plana, probabilidade, estatística · Química: tabela periódica, ligações',
+    materia: 'Matemática', horas: 6, flashcards: 15, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Mapa Mat. Geometria', desc:'Áreas, perímetros, sólidos', url:'mapas/mapa-matematica-geometria.html'},
+      {icon:'🗺️', nome:'Mapa Química Geral', desc:'Tabela periódica e ligações', url:'mapas/mapa-quimica-geral.html'},
+      {icon:'🗺️', nome:'Mapa Química Orgânica', desc:'Funções orgânicas', url:'mapas/mapa-quimica-organica.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 15 cards', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Matemática', desc:'Geometria + probabilidade', url:'materiais/quiz.html'},
+    ], rota:'mapas/mapa-matematica-geometria.html',
+    videos:[
+      {nome:'Geometria Plana – Áreas e Perímetros · Curso Enem', porque:'Geometria plana vale 2-3 questões de Matemática — área do círculo e triângulo são garantidas', url:'https://www.youtube.com/results?search_query=geometria+plana+areas+perimetros+vestibular'},
+      {nome:'Probabilidade + Análise Combinatória · Ferretto', porque:'Probabilidade é o tópico de Matemática com melhor custo-benefício — lógica mais que cálculo', url:'https://www.youtube.com/results?search_query=probabilidade+ferretto+vestibular'},
+      {nome:'Tabela Periódica e Ligações Químicas · Me Salva!', porque:'Química cai em 2-3 questões de Natureza — dominar ligações resolve metade delas', url:'https://www.youtube.com/results?search_query=tabela+periodica+ligacoes+me+salva'},
+    ],
+    metodo:{
+      tecnica:'📐 Resolução Orientada (fórmula → exemplo → questão)',
+      passos:[
+        'Geometria: anote as 5 fórmulas de área mais cobradas (círculo, triângulo, retângulo, trapézio, losango). Memorize.',
+        'Vídeo geometria (1.25x) + resolva 5 questões do mapa interativo.',
+        'Probabilidade: escreva a fórmula básica. Resolva 5 problemas de progressão de dificuldade.',
+        'Química: tabela periódica — famílias e períodos, eletronegatividade, tipos de ligação.',
+        'Flashcards + Quiz saída.',
+      ],
+      dica:'💡 Química UNICAP: não vai cobrar estequiometria complexa. Foque em: identificar tipo de ligação, localizar elemento na tabela, reconhecer função orgânica.',
+    },
+    roteiro:[
+      {tempo:'50min', atividade:'Geometria: vídeo + mapa + 5 questões', ferramenta:'YouTube + mapa-matematica-geometria.html'},
+      {tempo:'40min', atividade:'Probabilidade: vídeo + exercícios', ferramenta:'YouTube'},
+      {tempo:'40min', atividade:'Química: vídeo tabela + mapa', ferramenta:'YouTube + mapa-quimica-geral.html'},
+      {tempo:'30min', atividade:'Química Orgânica: funções principais', ferramenta:'mapa-quimica-organica.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Quiz Matemática/Química', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-06-06': {
+    tema: '🎯 SIMULADO UNICAP INTERNO — simulado-cronometrado.html · 8h15 às 13h15 real · Tarde: correção',
+    materia: 'Simulado', horas: 5, flashcards: 0, quizzes: 0,
+    links: [
+      {icon:'⏱️', nome:'Simulado Cronometrado', desc:'5h — condições reais de prova', url:'simulados/simulado-cronometrado.html'},
+      {icon:'🎯', nome:'Quiz Diagnóstico', desc:'Após o simulado', url:'simulados/simulado-diagnostico.html'},
+    ], rota:'simulados/simulado-cronometrado.html',
+    videos:[],
+    metodo:{
+      tecnica:'🏆 Simulado em Condições Reais',
+      passos:[
+        'COMEÇAR ÀS 8H15 — simule o horário real da prova.',
+        'NÃO consulte nada durante o simulado. Simule condição de prova real.',
+        'Gerencie o tempo: 50 min por área + 40 min para redação.',
+        'Após: corrija IMEDIATAMENTE enquanto a memória está fresca.',
+        'Anote por área: quantos acertou, quais errou, qual o padrão dos erros.',
+      ],
+      dica:'💡 O simulado interno é seu TERMÔMETRO REAL. Se acertar 40+/64 hoje + redação acima de 600, está no caminho da aprovação. Seja honesto na correção.',
+    },
+    roteiro:[
+      {tempo:'8h15–13h15', atividade:'🎯 SIMULADO UNICAP COMPLETO — 5 horas', ferramenta:'simulados/simulado-cronometrado.html'},
+      {tempo:'14h–17h', atividade:'Correção detalhada — área por área', ferramenta:'Gabarito do simulado'},
+      {tempo:'17h–18h', atividade:'Listar os 5 tópicos com mais erro', ferramenta:'Caderno — plano de revisão 07-08/06'},
+    ],
+  },
+  '2026-06-07': {
+    tema: 'Revisão do Simulado UNICAP — só os erros · História: linha do tempo república',
+    materia: 'Revisão', horas: 4, flashcards: 20, quizzes: 0,
+    links: [
+      {icon:'🗺️', nome:'Mapa Brasil República', desc:'Revisão dos erros de história', url:'mapas/mapa-brasil-republica.html'},
+      {icon:'🗺️', nome:'Galeria Mapas', desc:'Acesse o mapa do tópico errado', url:'galeria-mapas.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards foco nos erros', url:'materiais/flashcards.html'},
+    ], rota:'galeria-mapas.html',
+    videos:[
+      {nome:'República Velha a Era Vargas · Curso Enem', porque:'Linha do tempo do Brasil República — revisão dos erros de Humanas do simulado', url:'https://www.youtube.com/results?search_query=republica+velha+era+vargas+vestibular'},
+    ],
+    metodo:{
+      tecnica:'🔍 Cirurgia nos Erros (não revise o que acertou)',
+      passos:[
+        'Pegue o gabarito do simulado. Para cada erro: identifique o PORQUÊ do erro (falta de conteúdo, leitura errada, ou desatenção).',
+        'Erros de conteúdo: abra o mapa daquele tópico e leia por 10 min.',
+        'Erros de interpretação: releia a questão e identifique onde a leitura falhou.',
+        'Erros de desatenção: anote para não repetir na prova real.',
+        'Flashcards focados nos tópicos errados.',
+      ],
+      dica:'💡 Não revise o que você acertou. Cada minuto aqui vale mais nos seus pontos fracos. O simulado revelou — agora você opera nos erros.',
+    },
+    roteiro:[
+      {tempo:'60min', atividade:'Análise detalhada dos erros do simulado', ferramenta:'Gabarito + caderno'},
+      {tempo:'60min', atividade:'Revisão dos tópicos com mais erro (mapas)', ferramenta:'galeria-mapas.html'},
+      {tempo:'30min', atividade:'Vídeo Brasil República (se foi fraco)', ferramenta:'YouTube'},
+      {tempo:'30min', atividade:'Mapa Brasil República interativo', ferramenta:'mapa-brasil-republica.html'},
+      {tempo:'20min', atividade:'Flashcards SM-2 — foco nos erros', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-06-08': {
+    tema: 'Revisão áreas mais fracas do simulado UNICAP · Flashcards intensivo',
+    materia: 'Revisão', horas: 3, flashcards: 30, quizzes: 0,
+    links: [
+      {icon:'🗺️', nome:'Galeria Mapas', desc:'30 mapas — foco nas áreas fracas', url:'galeria-mapas.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 30 cards intensivo', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Geral', desc:'20 questões comentadas', url:'materiais/quiz.html'},
+    ], rota:'materiais/flashcards.html',
+    videos:[],
+    metodo:{
+      tecnica:'🃏 Flashcard Intensivo + Mapa das Áreas Fracas',
+      passos:[
+        'Defina as 2 áreas mais fracas do simulado. Só essas — não abra novas matérias.',
+        'Mapa interativo de cada área fraca: 30 min cada.',
+        'Flashcards intensivo: 30 cards — foco nas matérias fracas.',
+        'Pare em 3h. Preserve energia para o sprint final.',
+      ],
+      dica:'💡 Faltam 6 dias. NENHUM conteúdo novo. Só consolidação do que você já estudou.',
+    },
+    roteiro:[
+      {tempo:'60min', atividade:'Mapa área fraca #1 do simulado', ferramenta:'galeria-mapas.html'},
+      {tempo:'60min', atividade:'Mapa área fraca #2 do simulado', ferramenta:'galeria-mapas.html'},
+      {tempo:'40min', atividade:'Flashcards SM-2 intensivo — 30 cards', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Quiz geral — 10 questões comentadas', ferramenta:'materiais/quiz.html'},
+    ],
+  },
+  '2026-06-09': {
+    tema: '🏆 OBMEP hoje — Descanso após a prova. Nada de UNICAP hoje.',
+    materia: 'Evento', horas: 0, flashcards: 0, quizzes: 0,
+    links: [], rota: null,
+    videos:[], metodo:{tecnica:'🏆 Dia de Prova Externa', passos:['OBMEP é a prioridade hoje.','Nada de UNICAP. Descanse após a OBMEP.'], dica:'💡 Descanso intencional antes do sprint final.'},
+    roteiro:[{tempo:'Dia todo', atividade:'OBMEP — foco total', ferramenta:'Evento externo'}],
+  },
+  '2026-06-10': {
+    tema: 'REVISÃO GERAL: Humanas (pontos fracos) + Linguagens — sem conteúdo novo',
+    materia: 'Revisão', horas: 6, flashcards: 25, quizzes: 1,
+    links: [
+      {icon:'🗺️', nome:'Galeria Mapas', desc:'30 mapas interativos', url:'galeria-mapas.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 25 cards revisão geral', url:'materiais/flashcards.html'},
+      {icon:'🎯', nome:'Quiz Geral', desc:'20 questões comentadas', url:'materiais/quiz.html'},
+      {icon:'✍️', nome:'Reler Redações', desc:'RED #1, #2, #3, #4', url:'redacao/trainer.html'},
+    ], rota:'galeria-mapas.html',
+    videos:[],
+    metodo:{
+      tecnica:'🔄 Revisão Total em Ciclos',
+      passos:[
+        'Ciclo 1 (2h): Humanas — abra a galeria e percorra todos os mapas de Humanas em sequência. Não leia tudo — só o que não lembra.',
+        'Ciclo 2 (2h): Linguagens — mapas de Português, Literatura, Inglês. Foco em figuras de linguagem e períodos literários.',
+        'Ciclo 3 (1h): Quiz geral — 20 questões misto. Anote os erros.',
+        'Ciclo 4 (1h): Flashcards SM-2 — todas as matérias.',
+      ],
+      dica:'💡 Faltam 4 dias. Modo CONSOLIDAÇÃO. O que você não sabe hoje você não vai aprender antes da prova. Foque no que sabe e solidifique.',
+    },
+    roteiro:[
+      {tempo:'2h', atividade:'Galeria Mapas — Humanas completo', ferramenta:'galeria-mapas.html'},
+      {tempo:'2h', atividade:'Galeria Mapas — Linguagens completo', ferramenta:'galeria-mapas.html'},
+      {tempo:'60min', atividade:'Quiz Geral 20 questões', ferramenta:'materiais/quiz.html'},
+      {tempo:'60min', atividade:'Flashcards SM-2 — 25 cards geral', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-06-11': {
+    tema: 'Reler todas as redações escritas — não escrever nova · Flashcards (após 20h)',
+    materia: 'Revisão', horas: 1.5, flashcards: 20, quizzes: 0,
+    links: [
+      {icon:'📄', nome:'Correção RED #1', desc:'Meio Ambiente — nota ~640', url:'materiais/redacao/01-meio-ambiente-correcao.html'},
+      {icon:'✍️', nome:'Redação Trainer', desc:'Releia RED #2, #3, #4', url:'redacao/trainer.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 20 cards (após 20h)', url:'materiais/flashcards.html'},
+    ], rota:'materiais/redacao/01-meio-ambiente-correcao.html',
+    videos:[],
+    metodo:{
+      tecnica:'📝 Revisão das Redações — Absorção do Padrão',
+      passos:[
+        'Releia as 4 redações que você escreveu.',
+        'Para cada uma: identifique o que você fez BEM (para repetir na prova).',
+        'Identifique também o ponto mais fraco de cada uma.',
+        'Flashcards leves após 20h — apenas 20 cards.',
+      ],
+      dica:'💡 Faltam 3 dias. NÃO escreva redação nova. Releia as antigas para absorver seu próprio estilo vencedor e os erros a evitar.',
+    },
+    roteiro:[
+      {tempo:'45min', atividade:'Reler RED #1, #2, #3, #4 — pontos fortes e fracos', ferramenta:'redacao/trainer.html'},
+      {tempo:'45min', atividade:'Flashcards SM-2 — 20 cards (após 20h)', ferramenta:'materiais/flashcards.html'},
+    ],
+  },
+  '2026-06-12': {
+    tema: 'REVISÃO LEVE: mapas mentais, flashcards, fórmulas Matemática/Natureza · Preparar mochila',
+    materia: 'Revisão', horas: 4, flashcards: 30, quizzes: 0,
+    links: [
+      {icon:'🗺️', nome:'Galeria Mapas', desc:'Revisão visual rápida', url:'galeria-mapas.html'},
+      {icon:'🃏', nome:'Flashcards', desc:'SM-2 · 30 cards — revisão final', url:'materiais/flashcards.html'},
+      {icon:'🗺️', nome:'Mapa Mat. Aritm.', desc:'Fórmulas: % e juros', url:'mapas/mapa-matematica-aritmetica.html'},
+      {icon:'🗺️', nome:'Mapa Química', desc:'Tabela periódica e ligações', url:'mapas/mapa-quimica-geral.html'},
+    ], rota:'galeria-mapas.html',
+    videos:[],
+    metodo:{
+      tecnica:'👁️ Revisão Visual Rápida (Speed Review)',
+      passos:[
+        'Percorra a galeria completa de mapas — 2 min por mapa. Não leia — só visualize.',
+        'Fórmulas de Matemática: escreva as 8 fórmulas mais cobradas de memória.',
+        'Tabela periódica: famílias, períodos, eletronegatividade — escreva de memória.',
+        'Flashcards — 30 cards de todas as matérias.',
+        'Preparar mochila: documento, lápis, borracha, caneta preta (2), lanche, água.',
+      ],
+      dica:'💡 Faltam 2 dias. LEVEZA é a palavra. Não adianta aprender coisa nova — consolide o que já sabe e preserve energia para amanhã.',
+    },
+    roteiro:[
+      {tempo:'60min', atividade:'Speed Review galeria de mapas (2 min/mapa)', ferramenta:'galeria-mapas.html'},
+      {tempo:'30min', atividade:'Fórmulas Matemática de memória', ferramenta:'mapa-matematica-aritmetica.html'},
+      {tempo:'30min', atividade:'Tabela periódica + ligações de memória', ferramenta:'mapa-quimica-geral.html'},
+      {tempo:'60min', atividade:'Flashcards SM-2 — 30 cards revisão geral', ferramenta:'materiais/flashcards.html'},
+      {tempo:'20min', atividade:'Preparar mochila e kit da prova', ferramenta:'—'},
+    ],
+  },
+  '2026-06-13': {
+    tema: '🛌 Descanso total — NÃO vai ao Simulado Enem 4. Revisão leve máx 30min. Alimentação boa. Dormir cedo às 22h.',
+    materia: 'Pré-prova', horas: 0, flashcards: 0, quizzes: 0,
+    links: [{icon:'🃏', nome:'Flashcards (só 30min)', desc:'Revisão levíssima — apenas hoje à noite', url:'materiais/flashcards.html'}],
+    rota: null,
+    videos:[],
+    metodo:{
+      tecnica:'🛌 Protocolo Pré-Prova',
+      passos:[
+        'MANHÃ: Alimentação boa. Nada de estudo intenso.',
+        'TARDE: Máximo 30 min de Flashcards leves. Nada novo.',
+        'NOITE: Conferir mochila: RG/CPF, lápis (2), caneta preta (2), borracha, apontador, lanche, água.',
+        'Definir rota até UNICAP Boa Vista. Prever trânsito.',
+        'Dormir às 22h. Acordar às 6h30.',
+      ],
+      dica:'🛌 Descanso é estudo. Seu cérebro consolida memórias durante o sono. Dormir bem vale mais que qualquer revisão de última hora.',
+    },
+    roteiro:[
+      {tempo:'Manhã', atividade:'Descanso + alimentação nutritiva', ferramenta:'—'},
+      {tempo:'30min', atividade:'Flashcards levíssimos (à tarde)', ferramenta:'materiais/flashcards.html'},
+      {tempo:'À noite', atividade:'Conferir mochila + rota + dormir às 22h', ferramenta:'—'},
+    ],
+  },
+  '2026-06-14': {
+    tema: '🏆 DIA DA PROVA UNICAP · 8h15 às 13h15 · Acordar 6h30 · Chegar ao local 7h00 · Portões fecham 8h00',
+    materia: 'PROVA', horas: 5, flashcards: 0, quizzes: 0,
+    links: [], rota: null,
+    videos:[],
+    metodo:{
+      tecnica:'🏆 Execução — Estratégia de Prova',
+      passos:[
+        '6h30: Acordar. Café da manhã leve + água. Não estude nada.',
+        '7h00: Chegar ao local. Portões fecham às 8h00.',
+        'Primeira hora: Redação (40 min) + Linguagens (20 min).',
+        'Questões objetivas: leia o texto de apoio antes das alternativas. Elimine 2, depois escolha.',
+        'Matemática: só tente as que você tem certeza. Não fique preso em uma questão.',
+      ],
+      dica:'🏆 Você estudou, você está pronto. Confie no seu preparo. Execute o plano.',
+    },
+    roteiro:[
+      {tempo:'6h30', atividade:'Acordar + café da manhã', ferramenta:'—'},
+      {tempo:'7h00', atividade:'Chegar ao local — UNICAP Boa Vista', ferramenta:'—'},
+      {tempo:'8h15–13h15', atividade:'🏆 PROVA UNICAP 2026.2 — EXECUTE!', ferramenta:'—'},
+    ],
+  },
+};
+
+// ============================================================
+// STATE
+// ============================================================
+const SK = 'unicap-2026-state';
+function loadState() {
+  try {
+    const r = localStorage.getItem(SK);
+    if (r) return JSON.parse(r);
+  } catch(e) {}
+  return {
+    streak: 0, streakRecord: 0,
+    diasEstudados: {},
+    simulados: [],
+    progresso: { Linguagens:0, 'Ciências Humanas':0, 'Ciências da Natureza':0, Matemática:0, Redação:0 },
+    revisoes: [
+      { topico:'Ler PLANO.md — estratégia completa', data:'2026-05-19', urgencia:'alta' },
+      { topico:'Humanas: História Geral + Filosofia Antiga', data:'2026-05-19', urgencia:'alta' },
+      { topico:'Abrir simulado-cronometrado.html', data:'2026-06-06', urgencia:'media' },
+    ],
+    ultimaSessao: null,
+    sessaoHojeRota: null,
+  };
+}
+function save(s) { try { localStorage.setItem(SK, JSON.stringify(s)); } catch(e) {} }
+let ST = loadState();
+
+// ============================================================
+// QUOTES
+// ============================================================
+const QUOTES = [
+  {t:'"Per aspera ad astra."', a:'— Sêneca'},
+  {t:'"Não é porque algo é difícil que não ousamos; é porque não ousamos que se torna difícil."', a:'— Sêneca'},
+  {t:'"O que não me destrói, me fortalece."', a:'— Nietzsche'},
+  {t:'"Aquele que tem um porquê para viver pode enfrentar qualquer como."', a:'— Nietzsche'},
+  {t:'"A vida é curta para os que correm, longa para os que pensam."', a:'— Marco Aurélio'},
+  {t:'"A felicidade da sua vida depende da qualidade dos seus pensamentos."', a:'— Marco Aurélio'},
+  {t:'"O homem é aquilo que ele faz com o que fizeram dele."', a:'— Sartre'},
+  {t:'"Conhece-te a ti mesmo."', a:'— Sócrates'},
+  {t:'"Toda glória vem de ousar começar."', a:'— Marco Aurélio'},
+  {t:'"A educação é a arma mais poderosa que você pode usar para mudar o mundo."', a:'— Nelson Mandela'},
+];
+
+// ============================================================
+// UTILS
+// ============================================================
+function todayKey() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function diasRestantes() {
+  const prova = new Date('2026-06-14T08:15:00');
+  const ms = prova - new Date();
+  return { dias: Math.floor(ms/86400000), horas: Math.floor((ms%86400000)/3600000), min: Math.floor((ms%3600000)/60000) };
+}
+const DIAS_SEMANA = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+function renderHeader() {
+  const d = new Date();
+  document.getElementById('headerDate').textContent =
+    `${DIAS_SEMANA[d.getDay()]}, ${d.toLocaleDateString('pt-BR')}`;
+}
+
+function renderCountdown() {
+  const {dias, horas, min} = diasRestantes();
+  document.getElementById('diasNum').textContent = dias > 0 ? dias : (dias === 0 ? 'HOJE' : '—');
+  document.getElementById('heroDetalhe').textContent = `${horas}h ${min}min restantes · Semana ${Math.ceil((26-dias+1)/7)} do sprint`;
+  document.getElementById('footerDias').textContent = dias;
+}
+
+function renderHoje() {
+  const d = new Date();
+  document.getElementById('diaSemana').textContent = DIAS_SEMANA[d.getDay()];
+  document.getElementById('dataHoje').textContent = d.toLocaleDateString('pt-BR');
+  const k = todayKey();
+  const item = PLANO[k];
+  if (item) {
+    document.getElementById('topicoHoje').textContent = item.tema;
+    document.getElementById('horasHoje').textContent = item.horas > 0 ? item.horas + 'h' : '—';
+    document.getElementById('flashcardsHoje').textContent = item.flashcards || '—';
+    document.getElementById('quizzesHoje').textContent = item.quizzes || '—';
+  } else {
+    document.getElementById('topicoHoje').textContent = 'Sem atividade definida para hoje no PLANO.md.';
+    document.getElementById('horasHoje').textContent = '—';
+    document.getElementById('flashcardsHoje').textContent = '—';
+    document.getElementById('quizzesHoje').textContent = '—';
+  }
+  const ul = ST.ultimaSessao;
+  document.getElementById('lastSession').textContent = ul ? `Última sessão: ${ul}` : 'Nenhuma sessão registrada';
+}
+
+function renderStreak() {
+  document.getElementById('streakNum').textContent = ST.streak;
+  document.getElementById('streakRecord').textContent = `Recorde: ${ST.streakRecord} dias`;
+}
+
+function renderProgresso() {
+  const cores = {
+    'Linguagens':'fill-cyan','Ciências Humanas':'fill-amber',
+    'Ciências da Natureza':'fill-emerald','Matemática':'fill-purple','Redação':'fill-red'
+  };
+  const container = document.getElementById('progressoBars');
+  container.innerHTML = Object.entries(ST.progresso).map(([mat, pct]) => `
+    <div class="progress-item">
+      <div class="progress-header">
+        <span class="progress-name">${mat}</span>
+        <span class="progress-pct">${pct}%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill ${cores[mat]||'fill-cyan'}" style="width:${pct}%"></div>
+      </div>
+    </div>`).join('');
+}
+
+let chartInst = null;
+function renderChart() {
+  const ctx = document.getElementById('simChart').getContext('2d');
+  if (chartInst) chartInst.destroy();
+  const labels = ST.simulados.length
+    ? ST.simulados.map(s => s.data)
+    : ['Diagnóstico','Sim 1 (22/05)','Sim UNICAP (06/06)','Sprint Final'];
+  const data = ST.simulados.length
+    ? ST.simulados.map(s => s.score)
+    : [null,null,null,null];
+  chartInst = new Chart(ctx, {
+    type:'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Nota %', data, borderColor:'#00d4ff', backgroundColor:'rgba(0,212,255,0.1)',
+          fill:true, tension:0.35, pointBackgroundColor:'#ffb800',
+          pointRadius:5, pointHoverRadius:8, spanGaps:true },
+        { label:'Meta (600)', data:[60,60,60,60], borderColor:'rgba(255,184,0,0.4)',
+          borderDash:[5,5], pointRadius:0, fill:false }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color:'#8a93a8', font:{family:'Inter',size:11} } } },
+      scales: {
+        y:{ beginAtZero:true, max:100,
+            ticks:{ color:'#8a93a8', callback: v => v+'%' },
+            grid:{ color:'rgba(255,255,255,0.04)' } },
+        x:{ ticks:{ color:'#8a93a8' }, grid:{ color:'rgba(255,255,255,0.04)' } }
+      }
+    }
+  });
+  if (ST.simulados.length)
+    document.getElementById('simNota').textContent =
+      `Último: ${ST.simulados.at(-1).data} · ${ST.simulados.at(-1).score}%`;
+}
+
+function renderRevisoes() {
+  const c = document.getElementById('proximasRevs');
+  const itens = ST.revisoes.slice(0,5);
+  c.innerHTML = itens.length ? itens.map(r => `
+    <div class="rev-item">
+      <div>
+        <div class="rev-name">${r.topico}</div>
+        <div class="rev-date">${r.data}</div>
+      </div>
+      <span class="badge ${r.urgencia}">${r.urgencia}</span>
+    </div>`).join('') : '<p style="font-size:13px;color:var(--muted)">Nenhuma revisão pendente.</p>';
+}
+
+function renderHeatmap() {
+  const g = document.getElementById('heatmapGrid');
+  const inicio = new Date('2026-05-19');
+  const hoje = todayKey();
+  g.innerHTML = '';
+  for (let i = 0; i < 27; i++) {
+    const d = new Date(inicio);
+    d.setDate(d.getDate() + i);
+    const k = d.toISOString().slice(0,10);
+    const h = ST.diasEstudados[k] || 0;
+    const cls = h >= 4 ? 'hm-h4' : h >= 3 ? 'hm-h3' : h >= 2 ? 'hm-h2' : h >= 1 ? 'hm-h1' : '';
+    const isToday = k === hoje ? 'today' : '';
+    const label = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    g.innerHTML += `<div class="hm-cell ${cls} ${isToday}" title="${label} · ${h}h estudadas"></div>`;
+  }
+}
+
+function renderQuote() {
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  document.getElementById('quoteText').textContent = q.t;
+  document.getElementById('quoteAuthor').textContent = q.a;
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+let modalRota = null;
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+function abrirModal() {
+  const k = todayKey();
+  const item = PLANO[k];
+  const overlay = document.getElementById('modalOverlay');
+
+  // Reset to first tab
+  switchTab('plano', document.querySelector('.modal-tab'));
+
+  if (!item) {
+    document.getElementById('modalTitle').textContent = '⚡ Sessão de hoje';
+    document.getElementById('modalSub').textContent = 'Sem plano definido para hoje.';
+    document.getElementById('modalMeta').innerHTML = '';
+    document.getElementById('modalTopico').textContent = 'Consulte o PLANO.md para o cronograma atualizado.';
+    document.getElementById('modalRoteiro').innerHTML = '';
+    document.getElementById('modalLinks').innerHTML = '';
+    document.getElementById('modalVideos').innerHTML = '<p style="color:var(--muted);font-size:13px;">Sem vídeos definidos.</p>';
+    document.getElementById('modalMetodoNome').innerHTML = '';
+    document.getElementById('modalMetodoSteps').innerHTML = '';
+    document.getElementById('modalMetodoDica').innerHTML = '';
+    document.getElementById('btnConfirm').textContent = 'Ir para Galeria de Mapas →';
+    modalRota = 'galeria-mapas.html';
+    overlay.classList.add('show');
+    return;
+  }
+
+  const d = new Date();
+  const {dias} = diasRestantes();
+
+  // Header
+  document.getElementById('modalTitle').textContent = `⚡ Sessão — ${DIAS_SEMANA[d.getDay()]}`;
+  document.getElementById('modalSub').textContent = `${d.toLocaleDateString('pt-BR')} · ${item.materia}`;
+  document.getElementById('modalMeta').innerHTML = [
+    `<span class="modal-badge">${dias}d para a prova</span>`,
+    item.horas > 0 ? `<span class="modal-badge amber">⏱ ${item.horas}h de estudo</span>` : '',
+    item.flashcards > 0 ? `<span class="modal-badge emerald">🃏 ${item.flashcards} flashcards</span>` : '',
+    item.quizzes > 0 ? `<span class="modal-badge red">🎯 ${item.quizzes} quiz</span>` : '',
+    item.videos && item.videos.length > 0 ? `<span class="modal-badge">🎬 ${item.videos.length} vídeos</span>` : '',
+  ].join('');
+
+  // Aba PLANO: topico + roteiro + links
+  document.getElementById('modalTopico').textContent = item.tema;
+
+  document.getElementById('modalRoteiro').innerHTML = (item.roteiro || []).map(r =>
+    `<div class="roteiro-item">
+      <span class="roteiro-tempo">${r.tempo}</span>
+      <span class="roteiro-ativ">${r.atividade}</span>
+      <span class="roteiro-tool">${r.ferramenta}</span>
+    </div>`
+  ).join('') || '<p style="color:var(--muted);font-size:13px;">Roteiro não definido para este dia.</p>';
+
+  document.getElementById('modalLinks').innerHTML = (item.links || []).map(l =>
+    `<a class="modal-link" href="${l.url}" target="_self">
+      <span class="modal-link-icon">${l.icon}</span>
+      <div class="modal-link-info">
+        <span class="modal-link-name">${l.nome}</span>
+        ${l.desc ? `<span class="modal-link-desc">${l.desc}</span>` : ''}
+      </div>
+    </a>`
+  ).join('') || '<p style="color:var(--muted);font-size:13px;">Sem materiais específicos hoje.</p>';
+
+  // Aba VÍDEOS
+  const vids = item.videos || [];
+  document.getElementById('modalVideos').innerHTML = vids.length > 0 ? vids.map((v, i) =>
+    `<a class="video-item" href="${v.url}" target="_blank" rel="noopener">
+      <span class="video-num">${String(i+1).padStart(2,'0')}</span>
+      <div class="video-info">
+        <div class="video-nome">${v.nome}</div>
+        <div class="video-porque">${v.porque}</div>
+      </div>
+      <span class="video-abrir">Abrir ↗</span>
+    </a>`
+  ).join('') : '<p style="color:var(--muted);font-size:13px;">Nenhum vídeo definido para este dia.</p>';
+
+  // Aba MÉTODO
+  const m = item.metodo || {};
+  document.getElementById('modalMetodoNome').innerHTML = m.tecnica
+    ? `<span style="font-size:20px;margin-right:4px;">💡</span><span class="metodo-tecnica-nome">${m.tecnica}</span>`
+    : '<span style="color:var(--muted)">Método não definido.</span>';
+
+  document.getElementById('modalMetodoSteps').innerHTML = (m.passos || []).map((p, i) =>
+    `<div class="metodo-step">
+      <div class="metodo-step-n">${i+1}</div>
+      <div class="metodo-step-txt">${p}</div>
+    </div>`
+  ).join('');
+
+  document.getElementById('modalMetodoDica').innerHTML = m.dica
+    ? `<span class="metodo-dica-label">Dica: </span>${m.dica.replace(/^💡 Dica[^:]*: /, '')}`
+    : '';
+
+  // Botão e rota
+  if (item.rota) {
+    document.getElementById('btnConfirm').textContent = 'Registrar e Começar →';
+    modalRota = item.rota;
+  } else {
+    document.getElementById('btnConfirm').textContent = 'Entendido ✓';
+    modalRota = null;
+  }
+
+  overlay.classList.add('show');
+}
+
+function fecharModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) fecharModalDireto();
+}
+function fecharModalDireto() {
+  document.getElementById('modalOverlay').classList.remove('show');
+  modalRota = null;
+}
+
+function confirmarSessao() {
+  // Registra sessão
+  const k = todayKey();
+  ST.ultimaSessao = new Date().toLocaleString('pt-BR');
+  if (!ST.diasEstudados[k]) ST.diasEstudados[k] = 0;
+  ST.diasEstudados[k] += 1;
+
+  // Streak
+  if (ST.diasEstudados[k] === 1) {
+    const ontem = new Date(); ontem.setDate(ontem.getDate()-1);
+    const ok = ontem.toISOString().slice(0,10);
+    ST.streak = ST.diasEstudados[ok] ? ST.streak + 1 : 1;
+  }
+  if (ST.streak > ST.streakRecord) ST.streakRecord = ST.streak;
+  save(ST);
+
+  if (modalRota) {
+    window.location.href = modalRota;
+  } else {
+    fecharModalDireto();
+    renderStreak();
+    renderHeatmap();
+    renderHoje();
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  renderHeader();
+  renderCountdown();
+  renderHoje();
+  renderStreak();
+  renderProgresso();
+  renderChart();
+  renderRevisoes();
+  renderHeatmap();
+  renderQuote();
+  setInterval(renderCountdown, 60000);
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Círculo Sagrado — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">O Círculo Sagrado</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x02010a);
+scene.fog = new THREE.FogExp2(0x02010a, 0.018);
+
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth/window.innerHeight, 0.1, 150);
+camera.position.set(0, 11, 18);
+camera.lookAt(0, 0, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.target.set(0, 1, 0);
+controls.minDistance = 5;
+controls.maxDistance = 40;
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0x080420, 0.8);
+scene.add(ambientLight);
+// Central blue light — at center of unit circle
+const centerLight = new THREE.PointLight(0x4466ff, 2.5, 35);
+centerLight.position.set(0, 2, 0);
+scene.add(centerLight);
+const rimLight1 = new THREE.PointLight(0x8844ff, 1.2, 25);
+rimLight1.position.set(-10, 8, -5);
+scene.add(rimLight1);
+const rimLight2 = new THREE.PointLight(0x4488ff, 0.8, 20);
+rimLight2.position.set(10, 6, 5);
+scene.add(rimLight2);
+
+// Floor — dark stone
+const floorGeo = new THREE.PlaneGeometry(40, 40);
+const floorMat = new THREE.MeshStandardMaterial({ color: 0x04020e, roughness: 0.95 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -0.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Unit Circle on the floor — white LINE, radius 5 units in scene coords
+const circleRadius = 5;
+const circleSegments = 128;
+const circlePts = [];
+for(let i=0; i<=circleSegments; i++) {
+  const angle = (i/circleSegments) * Math.PI * 2;
+  circlePts.push(new THREE.Vector3(
+    circleRadius * Math.cos(angle),
+    -0.48,
+    circleRadius * Math.sin(angle)
+  ));
+}
+const circleGeo = new THREE.BufferGeometry().setFromPoints(circlePts);
+const circleMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 });
+scene.add(new THREE.Line(circleGeo, circleMat));
+
+// Axis lines on floor
+function addFloorLine(x1,z1,x2,z2,color,opacity) {
+  const pts = [new THREE.Vector3(x1,-0.47,z1), new THREE.Vector3(x2,-0.47,z2)];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color, transparent:true, opacity });
+  scene.add(new THREE.Line(geo, mat));
+}
+// X axis
+addFloorLine(-7.5, 0, 7.5, 0, 0xffffff, 0.5);
+// Z axis (Y in 2D)
+addFloorLine(0, -7.5, 0, 7.5, 0xffffff, 0.5);
+
+// Radial lines for 30, 45, 60, 90 degrees
+const notableAngles = [
+  { deg: 30,  color: 0xffaa44 },
+  { deg: 45,  color: 0xff88cc },
+  { deg: 60,  color: 0x88ffcc },
+  { deg: 90,  color: 0x88aaff },
+  { deg: 120, color: 0x88ffcc },
+  { deg: 135, color: 0xff88cc },
+  { deg: 150, color: 0xffaa44 },
+];
+notableAngles.forEach(({ deg, color }) => {
+  const rad = deg * Math.PI / 180;
+  addFloorLine(0, 0, circleRadius*Math.cos(rad), circleRadius*Math.sin(rad), color, 0.4);
+});
+
+// Angle labels as sprites
+function makeAngleLabel(text, x, y, z) {
+  const c = document.createElement('canvas');
+  c.width = 96; c.height = 48;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = 'rgba(200,180,255,0.8)';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 48, 24);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent:true }));
+  sp.position.set(x, y, z);
+  sp.scale.set(1.2, 0.6, 1);
+  scene.add(sp);
+}
+makeAngleLabel('0°',   6.2, 0.1, 0);
+makeAngleLabel('90°',  0, 0.1, -6.2);
+makeAngleLabel('180°', -6.5, 0.1, 0);
+makeAngleLabel('270°', 0, 0.1, 6.5);
+makeAngleLabel('30°',  5.2, 0.1, -2.5);
+makeAngleLabel('45°',  4.0, 0.1, -4.0);
+makeAngleLabel('60°',  2.5, 0.1, -5.2);
+
+// Floating right triangle in the center — 3D, made with THREE.Line
+const triGroup = new THREE.Group();
+triGroup.position.set(0, 1.5, 0);
+const rightAngleLeg = 2.2;
+const triPts = [
+  new THREE.Vector3(0, 0, 0),
+  new THREE.Vector3(rightAngleLeg, 0, 0),
+  new THREE.Vector3(rightAngleLeg, rightAngleLeg, 0),
+  new THREE.Vector3(0, 0, 0)
+];
+const triGeo = new THREE.BufferGeometry().setFromPoints(triPts);
+const triMat = new THREE.LineBasicMaterial({ color: 0x88aaff });
+triGroup.add(new THREE.Line(triGeo, triMat));
+// Right angle indicator
+const raPts = [
+  new THREE.Vector3(rightAngleLeg - 0.25, 0, 0),
+  new THREE.Vector3(rightAngleLeg - 0.25, 0.25, 0),
+  new THREE.Vector3(rightAngleLeg, 0.25, 0)
+];
+const raGeo = new THREE.BufferGeometry().setFromPoints(raPts);
+triGroup.add(new THREE.Line(raGeo, new THREE.LineBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.6 })));
+scene.add(triGroup);
+
+// Animated radius line (rotates around circle)
+const radiusPts = [new THREE.Vector3(0, -0.46, 0), new THREE.Vector3(circleRadius, -0.46, 0)];
+const radiusGeo = new THREE.BufferGeometry().setFromPoints(radiusPts);
+const radiusMat = new THREE.LineBasicMaterial({ color: 0xffdd44, transparent:true, opacity:0.8 });
+const radiusLine = new THREE.Line(radiusGeo, radiusMat);
+scene.add(radiusLine);
+
+// Moving point on circle
+const movingDot = new THREE.Mesh(
+  new THREE.SphereGeometry(0.18, 10, 10),
+  new THREE.MeshStandardMaterial({ color: 0xffdd44, emissive: 0xffaa00, emissiveIntensity: 1.0 })
+);
+scene.add(movingDot);
+
+// Stone columns at cardinal directions
+const colMat = new THREE.MeshStandardMaterial({ color: 0x0a0818, roughness: 0.95, metalness: 0.1 });
+[[5,0,0],[-5,0,0],[0,0,5],[0,0,-5]].forEach(([x,y,z]) => {
+  const col = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 8, 8), colMat);
+  col.position.set(x, 3.5, z);
+  col.castShadow = true;
+  scene.add(col);
+  // Capital
+  const cap = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.3, 0.9), colMat);
+  cap.position.set(x, 7.65, z);
+  scene.add(cap);
+});
+
+// Dark cylindrical temple walls
+const templeWall = new THREE.Mesh(
+  new THREE.CylinderGeometry(13, 13, 18, 36, 1, true),
+  new THREE.MeshStandardMaterial({ color: 0x03010e, side: THREE.BackSide, roughness: 1 })
+);
+scene.add(templeWall);
+
+// Star ceiling — 250 points
+const starCount = 250;
+const starPos = new Float32Array(starCount * 3);
+for(let i=0; i<starCount; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.random() * Math.PI * 0.45;
+  const r = 12.5;
+  starPos[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPos[i*3+1] = 7 + r * Math.cos(phi);
+  starPos[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+}
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, transparent:true, opacity:0.85 });
+scene.add(new THREE.Points(starGeo, starMat));
+
+// Study nodes — blue-violet spheres
+function makeNode(x, y, z) {
+  const m = new THREE.Mesh(
+    new THREE.SphereGeometry(0.32, 12, 12),
+    new THREE.MeshStandardMaterial({ color: 0x8888ff, emissive: 0x4444cc, emissiveIntensity: 0.8, roughness:0.2, metalness:0.3 })
+  );
+  m.position.set(x, y, z);
+  scene.add(m);
+  return m;
+}
+
+const n1 = makeNode(-7, 3.0, 3);
+const n2 = makeNode(7, 3.0, 3);
+const n3 = makeNode(-6, 4.0, -5);
+const n4 = makeNode(6, 4.0, -5);
+const n5 = makeNode(0, 5.5, -7);
+const n6 = makeNode(0, 3.5, 5);
+
+const nodes = [
+  {
+    mesh: n1,
+    title: 'Seno, Cosseno e Tangente',
+    body: 'No triângulo retângulo: sin=CO/H; cos=CA/H; tan=CO/CA (onde CO=cateto oposto, CA=cateto adjacente, H=hipotenusa). Mnemônico: SOH-CAH-TOA. No círculo unitário: P=(cos θ, sin θ).',
+    tip: '<strong>UNICAP:</strong> Dado um triângulo retângulo com lados conhecidos, calcular sin, cos e tan de um ângulo.'
+  },
+  {
+    mesh: n2,
+    title: 'Valores Notáveis',
+    body: 'sin 30°=1/2; cos 30°=√3/2; tan 30°=√3/3. sin 45°=cos 45°=√2/2; tan 45°=1. sin 60°=√3/2; cos 60°=1/2; tan 60°=√3. sin 90°=1; cos 90°=0; tan 90°=indefinida.',
+    tip: '<strong>UNICAP:</strong> Tabela dos valores notáveis é cobrada diretamente. Decore os ângulos 30, 45, 60, 90.'
+  },
+  {
+    mesh: n3,
+    title: 'Funções Trigonométricas',
+    body: 'y=sin(x): período 2π, amplitude 1. y=cos(x): período 2π, defasagem π/2 em relação ao seno. y=tan(x): período π, assíntotas em ±π/2. Transformações: a·sin(bx+c)+d (amplitude a, período 2π/b, fase c, deslocamento d).',
+    tip: '<strong>UNICAP:</strong> Identificar período e amplitude de y=2·sin(3x). Período = 2π/3.'
+  },
+  {
+    mesh: n4,
+    title: 'Lei dos Senos',
+    body: 'Em qualquer triângulo: a/sin A = b/sin B = c/sin C = 2R (R=circunraio). Usar quando: dados 2 ângulos e 1 lado (AAL), ou 2 lados e ângulo oposto (LAL oposto). Permite calcular lados e ângulos de triângulos oblíquos.',
+    tip: '<strong>UNICAP:</strong> Triângulo com 2 ângulos e 1 lado dado. Encontrar os outros lados com lei dos senos.'
+  },
+  {
+    mesh: n5,
+    title: 'Lei dos Cossenos',
+    body: 'c²=a²+b²-2ab·cos C. Generalização do Teorema de Pitágoras (quando C=90°, cos90°=0, vira c²=a²+b²). Usar quando: dados 3 lados (LLL), ou 2 lados e ângulo entre eles (LAL). Encontrar ângulo: cos C=(a²+b²-c²)/(2ab).',
+    tip: '<strong>UNICAP:</strong> Dado triângulo com lados 5,7,8 — encontrar o maior ângulo usando lei dos cossenos.'
+  },
+  {
+    mesh: n6,
+    title: 'Identidades Trigonométricas',
+    body: 'sin²θ+cos²θ=1 (fundamental). tan θ=sin θ/cos θ. 1+tan²θ=sec²θ. 1+cot²θ=csc²θ. Adição: sin(A+B)=sinA·cosB+cosA·sinB. cos(A+B)=cosA·cosB-sinA·sinB. Arco duplo: sin(2A)=2sinA·cosA.',
+    tip: '<strong>UNICAP:</strong> Simplificar expressões usando sin²+cos²=1. Também: demonstrar identidades básicas.'
+  }
+];
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX/window.innerWidth)*2-1;
+  mouse.y = -(e.clientY/window.innerHeight)*2+1;
+});
+
+window.addEventListener('click', e => {
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n=>n.mesh));
+  if(hits.length) {
+    const nd = nodes.find(n=>n.mesh===hits[0].object);
+    if(nd){
+      document.getElementById('popup-title').textContent = nd.title;
+      document.getElementById('popup-body').textContent = nd.body;
+      document.getElementById('popup-tip').innerHTML = nd.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Animate radius line rotating
+  const angle = t * 0.5; // slow rotation
+  const px = circleRadius * Math.cos(angle);
+  const pz = circleRadius * Math.sin(angle);
+
+  // Update radius line points
+  const radiusPositions = radiusGeo.attributes.position;
+  radiusPositions.setXYZ(1, px, -0.46, pz);
+  radiusPositions.needsUpdate = true;
+
+  // Update moving dot
+  movingDot.position.set(px, -0.3, pz);
+
+  // Floating triangle
+  triGroup.position.y = 1.5 + Math.sin(t * 0.4) * 0.3;
+  triGroup.rotation.y = t * 0.2;
+
+  // Center light pulse
+  centerLight.intensity = 2.0 + Math.sin(t * 1.8) * 0.6;
+
+  // Node float
+  if(!nodes[0].mesh.userData.baseY) {
+    nodes.forEach(nd => nd.mesh.userData.baseY = nd.mesh.position.y);
+  }
+  nodes.forEach((nd, i) => {
+    nd.mesh.position.y = nd.mesh.userData.baseY + Math.sin(t*0.55+i*1.3)*0.22;
+  });
+
+  // Hover
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n=>n.mesh));
+  nodes.forEach(nd => {
+    const isHit = hits.length && hits[0].object === nd.mesh;
+    const target = isHit ? 1.35 : 1.0;
+    nd.mesh.scale.lerp(new THREE.Vector3(target,target,target), 0.12);
+    nd.mesh.material.emissiveIntensity = isHit ? 1.5 : 0.8;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

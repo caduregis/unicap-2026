@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Geografia | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #3080d0;
+    --gold-dim: rgba(48,128,208,0.12);
+    --gold-border: rgba(48,128,208,0.22);
+    --green: #28a050;
+    --green-dim: rgba(40,160,80,0.1);
+    --green-border: rgba(40,160,80,0.25);
+    --bg: #020308;
+    --surface: #060810;
+    --surface2: #0a0c14;
+    --text: #a8c8e0;
+    --text-dim: #405870;
+    --orange: #d07030;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); line-height: 1.7; }
+
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(2,3,8,0.97); border-bottom: 1px solid var(--gold-border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(8px);
+  }
+  .topnav a { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .topnav a:hover { text-decoration: underline; }
+  .nav-links { display: flex; gap: 16px; }
+  .badge { font-size: 12px; font-weight: 600; color: #60b0f0; background: var(--gold-dim); border: 1px solid var(--gold-border); padding: 4px 12px; border-radius: 20px; }
+
+  .hero { padding: 60px 32px 48px; background: linear-gradient(180deg, #020810 0%, var(--bg) 100%); text-align: center; border-bottom: 1px solid var(--gold-border); }
+  .hero h1 { font-size: clamp(22px, 4vw, 38px); font-weight: 700; color: #fff; margin-bottom: 12px; }
+  .hero h1 span { color: #60b0f0; }
+  .hero p { color: var(--text-dim); font-size: 15px; max-width: 600px; margin: 0 auto 24px; }
+  .hero-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn { display: inline-block; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; letter-spacing: 0.04em; }
+  .btn-blue { background: var(--gold); color: #fff; }
+  .btn-blue:hover { background: #4090e0; }
+  .btn-outline { border: 1px solid var(--gold-border); color: #60b0f0; background: transparent; }
+  .btn-outline:hover { background: var(--gold-dim); }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+  .section { margin: 40px 0; background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; }
+  .section-header { padding: 20px 28px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; }
+  .section-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-dim); border: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #60b0f0; flex-shrink: 0; }
+  .section-header h2 { font-size: 16px; font-weight: 700; color: #fff; }
+  .section-body { padding: 24px 28px; }
+  .section-body p { font-size: 14px; color: var(--text); margin-bottom: 14px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { background: var(--gold-dim); color: #60b0f0; padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--gold-border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); vertical-align: top; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+  .highlight { background: rgba(48,128,208,0.07); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: var(--text); }
+  .highlight strong { color: #60b0f0; }
+  .green-box { background: var(--green-dim); border-left: 3px solid var(--green); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: #90d0a0; }
+  .green-box strong { color: var(--green); }
+  .orange-box { background: rgba(208,112,48,0.07); border-left: 3px solid var(--orange); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: #d0a080; }
+  .orange-box strong { color: var(--orange); }
+
+  /* BIOMES */
+  .biomes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  .biome-card { background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .biome-header { padding: 8px 14px; font-size: 12px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
+  .biome-body { padding: 10px 14px; font-size: 12px; color: var(--text); }
+  .biome-body .area { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .b-amazonia .biome-header { background: rgba(20,140,60,0.4); }
+  .b-cerrado .biome-header { background: rgba(160,160,40,0.4); }
+  .b-atlantica .biome-header { background: rgba(20,100,60,0.4); }
+  .b-caatinga .biome-header { background: rgba(180,120,20,0.4); }
+  .b-pampa .biome-header { background: rgba(40,100,180,0.4); }
+  .b-pantanal .biome-header { background: rgba(20,80,140,0.4); }
+  @media (max-width: 600px) { .biomes-grid { grid-template-columns: 1fr; } }
+
+  /* REGIONS */
+  .regions-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; }
+  .region-card { background: var(--surface2); border-radius: 8px; padding: 12px 10px; text-align: center; }
+  .region-name { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .region-states { font-size: 11px; color: var(--text-dim); margin-bottom: 6px; }
+  .region-fact { font-size: 11px; color: var(--text); }
+  @media (max-width: 700px) { .regions-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* CLIMATE */
+  .climate-rows { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+  .climate-row { display: grid; grid-template-columns: 160px 1fr; gap: 12px; background: var(--surface2); border-radius: 8px; padding: 12px 14px; }
+  .climate-name { font-size: 13px; font-weight: 600; color: #fff; }
+  .climate-info { font-size: 12px; color: var(--text); }
+  @media (max-width: 600px) { .climate-row { grid-template-columns: 1fr; } }
+
+  .checklist { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+  .check-box { width: 18px; height: 18px; border: 1.5px solid var(--gold-border); border-radius: 4px; flex-shrink: 0; margin-top: 1px; background: var(--gold-dim); }
+  @media (max-width: 600px) { .checklist { grid-template-columns: 1fr; } }
+
+  .dica { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .dica:last-child { border-bottom: none; }
+  .dica-num { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dica p { font-size: 13.5px; color: var(--text); margin: 0; }
+  .dica strong { color: #60b0f0; }
+
+  .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .video-card { background: var(--surface2); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 16px; }
+  .video-card .title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .video-card .sub { font-size: 12px; color: var(--text-dim); }
+  @media (max-width: 600px) { .videos { grid-template-columns: 1fr; } }
+
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+  .stat-box { background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 10px; padding: 12px 20px; text-align: center; flex: 1; min-width: 120px; }
+  .stat-box .num { font-size: 20px; font-weight: 700; color: #60b0f0; display: block; }
+  .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  footer { text-align: center; padding: 48px 24px; border-top: 1px solid var(--gold-border); color: var(--text-dim); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  b { color: #fff; }
+  ul { padding-left: 20px; }
+  ul li { font-size: 13.5px; color: var(--text); margin-bottom: 6px; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag-high { background: rgba(220,60,40,0.2); color: #e08070; }
+  .tag-med { background: rgba(200,160,40,0.2); color: #d0b060; }
+  .tag-low { background: rgba(40,160,80,0.2); color: #70c090; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="../../index.html">&#8592; Nexus</a>
+  <div class="nav-links">
+    <a href="mapa3d.html" class="btn btn-outline" style="padding:5px 14px;font-size:12px;">Mapa 3D</a>
+    <span class="badge">GEOGRAFIA</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Geografia do Brasil e <span>Geopolítica</span></h1>
+  <p>Regiões, biomas, clima, urbanização e geopolítica — para dominar Humanas no vestibular UNICAP 2026.2</p>
+  <div class="hero-cta">
+    <a href="mapa3d.html" class="btn btn-blue">Ver Mapa 3D Interativo</a>
+    <a href="../../../dashboard.html" class="btn btn-outline">Dashboard</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 1: POR QUE GEOGRAFIA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Por que Geografia importa na UNICAP?</h2>
+    </div>
+    <div class="section-body">
+      <p>Humanas na UNICAP integra História, Geografia, Sociologia e Filosofia. As questões de Geografia frequentemente se conectam com temas históricos (colonização, urbanização, desigualdade) e contemporâneos (meio ambiente, globalização, geopolítica). Para o curso de Direito, questões sobre ordenamento do território, desigualdade regional e direito ambiental têm base geográfica.</p>
+      <div class="stat-row">
+        <div class="stat-box"><span class="num">2-3</span><span class="lbl">questões/prova</span></div>
+        <div class="stat-box"><span class="num">6</span><span class="lbl">biomas nacionais</span></div>
+        <div class="stat-box"><span class="num">5</span><span class="lbl">regiões do Brasil</span></div>
+        <div class="stat-box"><span class="num">Alta</span><span class="lbl">conexão c/ atualidades</span></div>
+      </div>
+      <div class="highlight" style="margin-top:16px;">
+        <strong>Conexão com o Direito:</strong> Questões sobre desmatamento remetem ao Direito Ambiental; desigualdade regional ao Direito Social; conflitos de terra ao Direito Agrário. A base geográfica enriquece o repertório da redação e de questões interdisciplinares.
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: REGIÕES DO BRASIL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Brasil: Regiões, Estados e Dados Básicos</h2>
+    </div>
+    <div class="section-body">
+      <div class="regions-grid">
+        <div class="region-card" style="border-top:3px solid #28a050;">
+          <div class="region-name">Norte</div>
+          <div class="region-states">AM, PA, AC, RO, RR, AP, TO</div>
+          <div class="region-fact">59% do território. Menor densidade. Amazônia. Manaus (polo industrial).</div>
+        </div>
+        <div class="region-card" style="border-top:3px solid #d08020;">
+          <div class="region-name">Nordeste</div>
+          <div class="region-states">BA, PE, CE, MA, PB, RN, PI, SE, AL</div>
+          <div class="region-fact">Semiárido interior. Caatinga. 2ª região mais populosa. Rio S. Francisco.</div>
+        </div>
+        <div class="region-card" style="border-top:3px solid #a0a020;">
+          <div class="region-name">Centro-Oeste</div>
+          <div class="region-states">MT, MS, GO, DF</div>
+          <div class="region-fact">Cerrado. Agronegócio. Capital nacional (Brasília). Pantanal.</div>
+        </div>
+        <div class="region-card" style="border-top:3px solid #2060cc;">
+          <div class="region-name">Sudeste</div>
+          <div class="region-states">SP, RJ, MG, ES</div>
+          <div class="region-fact">+40% do PIB. Mais industrializado. São Paulo = megalópole. Mata Atlântica fragmentada.</div>
+        </div>
+        <div class="region-card" style="border-top:3px solid #4090d0;">
+          <div class="region-name">Sul</div>
+          <div class="region-states">PR, SC, RS</div>
+          <div class="region-fact">Subtropical (4 estações). Pinheiro-araucária. IDH mais alto. Gaúcho, açoriano, alemão.</div>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Indicador</th><th>Valor</th><th>Contexto</th></tr></thead>
+        <tbody>
+          <tr><td>Área total</td><td>8,5 milhões km²</td><td>5º maior do mundo</td></tr>
+          <tr><td>População</td><td>~215 milhões</td><td>6ª maior do mundo</td></tr>
+          <tr><td>Taxa de urbanização</td><td>87%</td><td>Uma das maiores da América Latina</td></tr>
+          <tr><td>IDH</td><td>0,754 (2022)</td><td>Alto — mas desigualdade regional enorme</td></tr>
+          <tr><td>PIB</td><td>~US$ 2,2 trilhões</td><td>7ª-9ª economia mundial (oscila)</td></tr>
+          <tr><td>Fronteiras</td><td>10 países</td><td>Faz fronteira com todos da América do Sul exceto Equador e Chile</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3: BIOMAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Biomas Brasileiros</h2>
+    </div>
+    <div class="section-body">
+      <div class="biomes-grid">
+        <div class="biome-card b-amazonia">
+          <div class="biome-header">Amazônia</div>
+          <div class="biome-body">
+            <div class="area">49% do Brasil · ~4 mi km²</div>
+            Maior floresta tropical do mundo. Maior biodiversidade. Rio Amazonas (maior em volume). Maior ameaça: desmatamento para pecuária/soja. <span class="tag tag-high">Alta degradação</span>
+          </div>
+        </div>
+        <div class="biome-card b-cerrado">
+          <div class="biome-header">Cerrado</div>
+          <div class="biome-body">
+            <div class="area">24% do Brasil · ~2 mi km²</div>
+            Savana tropical. 2º maior bioma. ~50% da biodiversidade de aves e plantas é endêmica. ~80% destruído para agronegócio. <span class="tag tag-high">Mais ameaçado</span>
+          </div>
+        </div>
+        <div class="biome-card b-atlantica">
+          <div class="biome-header">Mata Atlântica</div>
+          <div class="biome-body">
+            <div class="area">15% original · hoje 12-15%</div>
+            Alta biodiversidade. Do RN ao RS (costa). Restaram 12-15% do original — a mais destruída historicamente. Inclui 70% da população brasileira em seu entorno. <span class="tag tag-high">Mais destruída</span>
+          </div>
+        </div>
+        <div class="biome-card b-caatinga">
+          <div class="biome-header">Caatinga</div>
+          <div class="biome-body">
+            <div class="area">11% do Brasil · ~845 mil km²</div>
+            Única no mundo. Semiárido nordestino. Vegetação adaptada à seca. Mandacaru, xique-xique. Secas prolongadas (polígono das secas). <span class="tag tag-med">Ameaça moderada</span>
+          </div>
+        </div>
+        <div class="biome-card b-pampa">
+          <div class="biome-header">Pampa</div>
+          <div class="biome-body">
+            <div class="area">2,5% do Brasil · ~177 mil km²</div>
+            Exclusivo do RS (parte do bioma Argentina/Uruguai). Campos abertos, pecuária extensiva. Ameaçado pela expansão do agronegócio (soja). <span class="tag tag-med">Ameaça moderada</span>
+          </div>
+        </div>
+        <div class="biome-card b-pantanal">
+          <div class="biome-header">Pantanal</div>
+          <div class="biome-body">
+            <div class="area">2% do Brasil · ~150 mil km²</div>
+            Maior planície alagada do mundo. MT e MS. Rico em biodiversidade (aves, onça). Incêndios crescentes (2020: recorde). <span class="tag tag-med">Em risco crescente</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="orange-box">
+        <strong>Para a prova — diferencie:</strong> Mata Atlântica = bioma mais DESTRUÍDO historicamente (12% restante). Cerrado = bioma com maior TAXA ATUAL de destruição. Essa distinção cai em questões de atualidades e de biomas.
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: CLIMAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Climas do Brasil</h2>
+    </div>
+    <div class="section-body">
+      <div class="climate-rows">
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#40cc60;">Equatorial</div>
+            <div style="font-size:11px;color:var(--text-dim);">Amazônia / Norte</div>
+          </div>
+          <div class="climate-info">Temperatura alta (25-28°C), chuvas abundantes e bem distribuídas (2.000-3.000mm/ano), umidade relativa alta. Sem estação seca definida. Floresta Amazônica depende desse regime.</div>
+        </div>
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#90c040;">Tropical</div>
+            <div style="font-size:11px;color:var(--text-dim);">Centro-Oeste, interior SE e NE</div>
+          </div>
+          <div class="climate-info">Chuvas sazonais (inverno seco, verão chuvoso). Temperatura alta o ano todo. Estação seca bem marcada. Corresponde ao Cerrado.</div>
+        </div>
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#d08020;">Semiárido</div>
+            <div style="font-size:11px;color:var(--text-dim);">Nordeste interior ("polígono das secas")</div>
+          </div>
+          <div class="climate-info">Chuvas irregulares e escassas (300-800mm/ano). Seca pode durar meses a anos. Temperatura alta. Fenômenos: seca, secas periódicas, El Niño piora. Caatinga e problema histórico-social da região.</div>
+        </div>
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#4090d0;">Subtropical</div>
+            <div style="font-size:11px;color:var(--text-dim);">Sul do Brasil (PR, SC, RS)</div>
+          </div>
+          <div class="climate-info">4 estações bem definidas. Inverno com geadas (RS), neve em altitude (SC/PR). Chuvas bem distribuídas. Permite cultivo de uva, maçã, trigo.</div>
+        </div>
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#7060c0;">Trop. de Altitude</div>
+            <div style="font-size:11px;color:var(--text-dim);">Serras do Sudeste</div>
+          </div>
+          <div class="climate-info">Temperaturas mais amenas devido à altitude. Chuvas no verão, seco no inverno. Presente em Minas Gerais (Diamantina, Ouro Preto), SP (serra) e RJ (serra).</div>
+        </div>
+        <div class="climate-row">
+          <div>
+            <div class="climate-name" style="color:#c0a030;">Equatorial Atlântico</div>
+            <div style="font-size:11px;color:var(--text-dim);">Costa NE (MA, PI, CE)</div>
+          </div>
+          <div class="climate-info">Influência da ZCIT (Zona de Convergência Intertropical). Chuvas concentradas em um período mais curto (março-maio). Menos úmido que o equatorial amazônico.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: HIDROGRAFIA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Hidrografia: Principais Bacias e Rios</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Bacia</th><th>Rios Principais</th><th>Importância</th><th>Estados</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Bacia Amazônica</b></td>
+            <td>Amazonas, Negro, Tapajós, Xingu, Madeira</td>
+            <td>Maior do mundo em volume (20% da água doce superficial do planeta). Navegação. Biodiversidade.</td>
+            <td>AM, PA, AC, RO, MT, AP, RR</td>
+          </tr>
+          <tr>
+            <td><b>Bacia do São Francisco</b></td>
+            <td>Rio São Francisco ("Velho Chico")</td>
+            <td>Único rio perene que corta o semiárido. Transposição polêmica. Identidade histórica do Nordeste.</td>
+            <td>MG, BA, PE, SE, AL</td>
+          </tr>
+          <tr>
+            <td><b>Bacia do Paraná/Prata</b></td>
+            <td>Paraná, Paraguai, Iguaçu, Tietê</td>
+            <td>Mais importante economicamente. Itaipu (BR-PY). Cataratas do Iguaçu. Navegação fluvial.</td>
+            <td>SP, PR, MS, GO, MT, MG</td>
+          </tr>
+          <tr>
+            <td><b>Bacia Tocantins-Araguaia</b></td>
+            <td>Tocantins, Araguaia</td>
+            <td>Hidroelétricas (Tucuruí — 2ª maior BR). Navegação interior. Ilha do Bananal (maior ilha fluvial).</td>
+            <td>TO, PA, GO, MT, MA</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Hidroelétricas:</strong> Brasil gera ~65-70% de sua eletricidade de usinas hidroelétricas. Maiores: Itaipu (BR-PY, Rio Paraná), Belo Monte (Rio Xingu, PA), Tucuruí (Rio Tocantins, PA). A dependência hídrica é vulnerabilidade: secas reduzem geração e causam crises energéticas.
+      </div>
+
+      <div class="green-box">
+        <strong>Transposição do São Francisco:</strong> Obra de integração hídrica do Nordeste — canais desviam parte das águas do S. Francisco para o semiárido de PE, CE, PB, RN. Polêmica: ecologistas vs. necessidade social. Para a prova: contexto de desigualdade regional.
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: URBANIZAÇÃO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Urbanização Brasileira e Desigualdade Regional</h2>
+    </div>
+    <div class="section-body">
+      <p>O Brasil urbanizou-se rapidamente no séc. XX: de ~30% urbano em 1940 para 87% em 2020. Esse processo foi acelerado, desordenado e gerou enorme desigualdade espacial.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Metrópole</th><th>Pop. Municipal</th><th>Pop. RM</th><th>Destaque</th></tr></thead>
+        <tbody>
+          <tr><td><b>São Paulo</b></td><td>~12,3 mi</td><td>~22 mi</td><td>Maior cidade do Brasil e América do Sul. Polo financeiro e industrial.</td></tr>
+          <tr><td><b>Rio de Janeiro</b></td><td>~6,7 mi</td><td>~13 mi</td><td>2ª cidade. Centro cultural. Turismo. Favelas: segregação socioespacial visível.</td></tr>
+          <tr><td><b>Brasília (DF)</b></td><td>~3,1 mi</td><td>~4,5 mi</td><td>Capital federal. Planejada (Lúcio Costa, Oscar Niemeyer, 1960). Patrimônio UNESCO.</td></tr>
+          <tr><td><b>Salvador</b></td><td>~2,9 mi</td><td>~4,3 mi</td><td>3ª cidade. Maior população negra fora da África. Capital do Brasil colonial (1549-1763).</td></tr>
+          <tr><td><b>Fortaleza</b></td><td>~2,7 mi</td><td>~4 mi</td><td>Maior cidade do Nordeste junto com Recife. Turismo, aquicultura, calçados.</td></tr>
+          <tr><td><b>Manaus</b></td><td>~2,2 mi</td><td>~2,5 mi</td><td>Zona Franca. Polo industrial na Amazônia. Isolamento geográfico.</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>Desigualdade Regional:</b> O IDH varia enormemente entre regiões. Sudeste e Sul têm IDH equivalente a países desenvolvidos (0,8+). Norte e Nordeste têm IDH médio (~0,7). Desafios: acesso à saúde, educação, saneamento básico.</p>
+
+      <div class="orange-box">
+        <strong>Êxodo Rural e Favelização:</strong> A migração do campo para a cidade sem planejamento resultou em favelas, palafitas e ocupações irregulares. São Paulo tem 1,5 milhão em favelas (Paraisópolis, Heliópolis). Rio tem complexo do Alemão, Rocinha, Maré. Esse é tema frequente em questões de geografia urbana e sociologia.
+      </div>
+    </div>
+  </div>
+
+  <!-- 7: GEOPOLÍTICA REGIONAL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Geopolítica Regional: MERCOSUL, BRICS, UNASUL</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Bloco/Org.</th><th>Criação</th><th>Membros</th><th>Natureza</th><th>Limitações</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>MERCOSUL</b></td><td>1991 (Tratado de Assunção)</td>
+            <td>Brasil, Argentina, Uruguai, Paraguai; Venezuela (suspensa)</td>
+            <td>União aduaneira + mercado comum incompleto</td>
+            <td>Sem moeda única, sem livre circulação plena, instabilidade política argentina e venezuelana</td>
+          </tr>
+          <tr>
+            <td><b>BRICS</b></td><td>2009 (acrônimo de 2001)</td>
+            <td>Brasil, Rússia, Índia, China, África do Sul; + novos (2024)</td>
+            <td>Foro de economias emergentes</td>
+            <td>Não é bloco econômico formal; interesses nem sempre convergem</td>
+          </tr>
+          <tr>
+            <td><b>UNASUL</b></td><td>2008</td>
+            <td>12 países sul-americanos</td>
+            <td>Integração política e estratégica</td>
+            <td>Crises políticas levaram vários países a suspender participação</td>
+          </tr>
+          <tr>
+            <td><b>OEA</b></td><td>1948</td>
+            <td>35 países das Américas</td>
+            <td>Organização hemisférica: democracia, direitos humanos</td>
+            <td>Influência norte-americana é crítica para países da esquerda latino-americana</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Política Externa Brasileira:</strong> Tradição de não-intervenção nos assuntos internos de outros Estados, multilateralismo, solução pacífica de controvérsias e busca por autonomia estratégica. Esses princípios estão na Constituição de 1988, art. 4°.
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: GEOPOLÍTICA MUNDIAL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Geopolítica Mundial: Ordem Multipolar</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Evolução da ordem mundial:</b> Guerra Fria (1947-1991): bipolaridade EUA vs. URSS. Pós-1991: unipolaridade americana. Anos 2000-2020: emergência de China, BRICS, novos conflitos regionais → multipolaridade em formação.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Fenômeno</th><th>Conteúdo</th><th>Relevância para a prova</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Ascensão da China</b></td>
+            <td>2ª maior economia. Maior exportador. Iniciativa "Cinturão e Rota". Disputas no Mar do Sul da China.</td>
+            <td>Competição EUA-China é o principal eixo da geopolítica atual. Afeta o Brasil (China é 1º parceiro comercial).</td>
+          </tr>
+          <tr>
+            <td><b>Consenso de Washington</b></td>
+            <td>1989: FMI/BM impuseram privatizações, liberalização e ajuste fiscal aos emergentes</td>
+            <td>Questão clássica: consequências para Brasil nos anos 1990 (privatizações, abertura comercial)</td>
+          </tr>
+          <tr>
+            <td><b>Globalização</b></td>
+            <td>Integração de mercados, cadeias produtivas globais, fluxo de informação</td>
+            <td>Globalização cria vencedores e perdedores — desindustrialização de países emergentes</td>
+          </tr>
+          <tr>
+            <td><b>Terrorismo Pós-11/09</b></td>
+            <td>Ataques de 2001 → "Guerra ao Terror" (EUA no Afeganistão, Iraque)</td>
+            <td>Mudou o direito internacional (Guantánamo, surveillance), a segurança global e a política externa americana</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9: MEIO AMBIENTE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Meio Ambiente: Aquecimento, Acordos e Brasil</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Mudanças climáticas:</b> A queima de combustíveis fósseis + desmatamento elevam CO₂ e metano na atmosfera → efeito estufa → aquecimento global → eventos extremos (secas, inundações, furacões mais intensos).</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Acordo/COP</th><th>Ano</th><th>O que definiu</th></tr></thead>
+        <tbody>
+          <tr><td><b>Protocolo de Kyoto</b></td><td>1997</td><td>Países desenvolvidos devem reduzir emissões. EUA nunca ratificou. Metas insuficientes.</td></tr>
+          <tr><td><b>Acordo de Paris</b></td><td>COP21, 2015</td><td>Limitar aquecimento a 1,5-2°C. Cada país apresenta metas voluntárias (NDCs). Brasil: -43% emissões até 2030.</td></tr>
+          <tr><td><b>COP30</b></td><td>2025, Belém (PA)</td><td>Brasil sediará a COP30 — enorme relevância simbólica (Amazônia). Discussão sobre financiamento climático.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="green-box">
+        <strong>Brasil e energia renovável:</strong> Brasil é um dos líderes mundiais — ~80% da eletricidade vem de fontes renováveis (hidráulica + solar + eólica + biomassa). A Região Nordeste tem o maior potencial eólico do país. Essa é uma questão de atualidades e orgulho nacional que aparece em provas.
+      </div>
+
+      <div class="orange-box">
+        <strong>Desmatamento:</strong> A Amazônia perdeu ~20% de sua cobertura original. O "ponto de não retorno" — nível de desmatamento a partir do qual a floresta não consegue mais se regenerar — é estimado entre 20-25% (estamos próximos). Tema obrigatório em questões de atualidades e meio ambiente.
+      </div>
+    </div>
+  </div>
+
+  <!-- 10: CARTOGRAFIA CRÍTICA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Cartografia Crítica: Projeções e Representações</h2>
+    </div>
+    <div class="section-body">
+      <p>Um mapa nunca é neutro — é uma representação escolhida, com propósito e distorções. Saber analisar criticamente um mapa é habilidade geográfica fundamental.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Projeção</th><th>O que preserva</th><th>O que distorce</th><th>Implicação crítica</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Mercator</b> (1569)</td>
+            <td>Formas e ângulos (conformal)</td>
+            <td>Áreas — países nas extremidades (Europa, América do Norte) parecem muito maiores</td>
+            <td>Distorção favorece a percepção de "grandeza" dos países desenvolvidos. Groenlândia parece maior que a África (mentira).</td>
+          </tr>
+          <tr>
+            <td><b>Peters/Gall-Peters</b> (1974)</td>
+            <td>Áreas (equivalente)</td>
+            <td>Formas — países distorcidos visualmente</td>
+            <td>Mostra o tamanho real da África e da América Latina. Criada como resposta política ao Mercator.</td>
+          </tr>
+          <tr>
+            <td><b>Robinson</b></td>
+            <td>Compromisso — nem área nem forma perfeitos</td>
+            <td>Ambos, moderadamente</td>
+            <td>Mais "equilibrada" visualmente. Usada por National Geographic.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Elementos críticos do mapa:</strong> Por que o norte fica em cima? — É uma convenção europeia. Mapas com o sul acima existem ("Mapa Sul-Americano de Cabeça para Baixo", Joaquín Torres García, 1943). Quem define o "centro" do mapa define quem parece central/importante geopoliticamente.
+      </div>
+
+      <p><b>Coordenadas geográficas:</b> Latitude = distância ao Equador (0° a 90° N/S). Longitude = distância ao Meridiano de Greenwich (0° a 180° L/O). Brasil fica no 3º e 4º quadrantes (sul e oeste do Equador e Greenwich). Fuso horário: cada 15° = 1 hora. Brasil tem 4 fusos (UTC-2 a UTC-5).</p>
+    </div>
+  </div>
+
+  <!-- 11: DICAS UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Dicas Estratégicas UNICAP</h2>
+    </div>
+    <div class="section-body">
+      <div class="dica">
+        <div class="dica-num">1</div>
+        <p><strong>Mata Atlântica vs. Cerrado:</strong> Mata Atlântica é o bioma mais DESTRUÍDO historicamente. Cerrado tem maior TAXA ATUAL de destruição. Diferencie esses dois nas questões.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">2</div>
+        <p><strong>Rio São Francisco ≠ maior do Brasil.</strong> O maior em extensão e volume é o Amazonas. O São Francisco é o mais IMPORTANTE para o Nordeste (perene no semiárido).</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">3</div>
+        <p><strong>MERCOSUL ≠ União Europeia.</strong> Sem moeda única, sem livre circulação plena. Membros fundadores: Brasil, Argentina, Uruguai, Paraguai (1991). Venezuela foi suspensa.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">4</div>
+        <p><strong>Zona Franca de Manaus:</strong> Incentivos fiscais para atrair indústrias à Amazônia. Questão: por que empresas se instalam em Manaus? → ZFM, não é por recursos naturais.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">5</div>
+        <p><strong>COP30 será em Belém (2025-2026):</strong> Atualidade. O Brasil sediará a Conferência do Clima na Amazônia — enorme simbologia. Pode aparecer em questões de atualidades.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">6</div>
+        <p><strong>Brasil = líder em renováveis:</strong> ~80% da eletricidade de fontes renováveis. Questões sobre transição energética podem citar o Brasil como exemplo positivo (diferente dos EUA, China com alto carbono).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12: CHECKLIST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Checklist de Domínio</h2>
+    </div>
+    <div class="section-body">
+      <ul class="checklist">
+        <li><span class="check-box"></span>Sei nomear as 5 regiões do Brasil e suas características</li>
+        <li><span class="check-box"></span>Conheço os 6 biomas brasileiros e seus estados</li>
+        <li><span class="check-box"></span>Sei diferenciar Mata Atlântica (mais destruída) e Cerrado (maior taxa atual)</li>
+        <li><span class="check-box"></span>Sei os 5 tipos de clima e onde ocorrem no Brasil</li>
+        <li><span class="check-box"></span>Conheço as 4 principais bacias hidrográficas</li>
+        <li><span class="check-box"></span>Sei a importância do Rio São Francisco para o Nordeste</li>
+        <li><span class="check-box"></span>Sei o que é a Zona Franca de Manaus e por que existe</li>
+        <li><span class="check-box"></span>Conheço os membros fundadores do MERCOSUL (1991)</li>
+        <li><span class="check-box"></span>Sei o que é o Consenso de Washington e seus efeitos no Brasil</li>
+        <li><span class="check-box"></span>Sei o que o Brasil comprometeu no Acordo de Paris</li>
+        <li><span class="check-box"></span>Sei diferenciar as projeções Mercator e Peters</li>
+        <li><span class="check-box"></span>Conheço os 4 fusos horários do Brasil</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 13: VIDEOAULAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Melhores Videoaulas Recomendadas</h2>
+    </div>
+    <div class="section-body">
+      <div class="videos">
+        <div class="video-card">
+          <div class="title">Ricardo Dreguer (Geografia)</div>
+          <div class="sub">Professor referência em Geografia para ENEM. Aulas sobre biomas, climas e geopolítica com abordagem crítica e focada em questões. YouTube.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Me Salva! — Geo</div>
+          <div class="sub">Resumos didáticos e bem organizados. Buscar: "Biomas Brasileiros Me Salva", "MERCOSUL ENEM", "Hidrografia Brasil". Ótimo para revisão rápida.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Canal do Geo (Geobrasil)</div>
+          <div class="sub">Foco em cartografia e geopolítica. Excelente para temas como projeções cartográficas, multipolaridade e questões ambientais globais. YouTube.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">ENEM em Foco — Humanas</div>
+          <div class="sub">Resolução comentada de questões de Geo do ENEM. Ideal para entender como os temas são cobrados na prática. Buscar: "Biomas ENEM comentado", "Urbanização Brasil".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="mapa3d.html" class="btn btn-blue">Explorar Mapa 3D — Gabinete do Cartógrafo</a>
+  <a href="../../../dashboard.html" class="btn btn-outline">&#8592; Voltar ao Dashboard</a>
+  <p style="margin-top:8px;">UNICAP Nexus · Carlos Régis · Direito 2026.2 · atualizado 2026</p>
+</footer>
+
+</body>
+</html>

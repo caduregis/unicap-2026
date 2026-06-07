@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Absolutismo e Revoluções | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c09030;
+    --gold-dim: rgba(192,144,48,0.12);
+    --gold-border: rgba(192,144,48,0.22);
+    --bg: #040208;
+    --surface: #0d0907;
+    --surface2: #140b06;
+    --text: #d8c8a0;
+    --text-dim: #806840;
+    --red: #cc4020;
+    --blue: #4080cc;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); line-height: 1.7; }
+
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(4,2,8,0.97); border-bottom: 1px solid var(--gold-border);
+    padding: 14px 32px; display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(8px);
+  }
+  .topnav a { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .topnav a:hover { text-decoration: underline; }
+  .nav-links { display: flex; gap: 16px; }
+  .badge { font-size: 12px; font-weight: 600; color: var(--gold); background: var(--gold-dim); border: 1px solid var(--gold-border); padding: 4px 12px; border-radius: 20px; }
+
+  .hero { padding: 60px 32px 48px; background: linear-gradient(180deg, #140800 0%, var(--bg) 100%); text-align: center; border-bottom: 1px solid var(--gold-border); }
+  .hero h1 { font-size: clamp(22px, 4vw, 38px); font-weight: 700; color: #fff; margin-bottom: 12px; }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: var(--text-dim); font-size: 15px; max-width: 600px; margin: 0 auto 24px; }
+  .hero-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn { display: inline-block; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all 0.2s; letter-spacing: 0.04em; }
+  .btn-gold { background: var(--gold); color: #0a0604; }
+  .btn-gold:hover { background: #d4a030; }
+  .btn-outline { border: 1px solid var(--gold-border); color: var(--gold); background: transparent; }
+  .btn-outline:hover { background: var(--gold-dim); }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+  .section { margin: 40px 0; background: var(--surface); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; overflow: hidden; }
+  .section-header { padding: 20px 28px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 12px; }
+  .section-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-dim); border: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--gold); flex-shrink: 0; }
+  .section-header h2 { font-size: 16px; font-weight: 700; color: #fff; }
+  .section-body { padding: 24px 28px; }
+  .section-body p { font-size: 14px; color: var(--text); margin-bottom: 14px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 16px; }
+  th { background: var(--gold-dim); color: var(--gold); padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--gold-border); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); vertical-align: top; font-size: 13px; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+  .highlight { background: rgba(192,144,48,0.06); border-left: 3px solid var(--gold); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: var(--text); }
+  .highlight strong { color: var(--gold); }
+  .danger { background: rgba(204,64,32,0.07); border-left: 3px solid var(--red); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: #d0a090; }
+  .danger strong { color: var(--red); }
+  .info { background: rgba(64,128,204,0.08); border-left: 3px solid var(--blue); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; font-size: 13.5px; color: #a0b8d8; }
+  .info strong { color: var(--blue); }
+
+  .phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; margin: 16px 0; background: rgba(255,255,255,0.05); }
+  .phase { background: var(--surface2); padding: 14px 16px; }
+  .phase-title { font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .phase-date { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; }
+  .phase p { font-size: 12px; color: var(--text); line-height: 1.5; margin: 0; }
+
+  .correntes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  .corrente-card { background: var(--surface2); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 16px; }
+  .corrente-card .name { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .corrente-card .founder { font-size: 11px; color: var(--gold); margin-bottom: 8px; }
+  .corrente-card p { font-size: 12px; color: var(--text); margin: 0; }
+  @media (max-width: 600px) { .correntes { grid-template-columns: 1fr; } }
+
+  .compare-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  .compare-card { background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .compare-header { padding: 10px 14px; font-size: 12px; font-weight: 700; text-align: center; text-transform: uppercase; letter-spacing: 0.05em; }
+  .compare-header.americana { background: rgba(64,128,204,0.2); color: #6090e0; }
+  .compare-header.francesa { background: rgba(204,64,32,0.2); color: #e06040; }
+  .compare-header.industrial { background: rgba(192,144,48,0.2); color: var(--gold); }
+  .compare-body { padding: 12px 14px; }
+  .compare-item { font-size: 12px; color: var(--text); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .compare-item:last-child { border-bottom: none; }
+  .compare-item span { color: var(--text-dim); font-size: 11px; display: block; }
+  @media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+  .checklist { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .checklist li { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); padding: 10px 14px; background: var(--surface2); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
+  .check-box { width: 18px; height: 18px; border: 1.5px solid var(--gold-border); border-radius: 4px; flex-shrink: 0; margin-top: 1px; background: var(--gold-dim); }
+  @media (max-width: 600px) { .checklist { grid-template-columns: 1fr; } }
+
+  .dica { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .dica:last-child { border-bottom: none; }
+  .dica-num { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #0a0604; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dica p { font-size: 13.5px; color: var(--text); margin: 0; }
+  .dica strong { color: var(--gold); }
+
+  .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .video-card { background: var(--surface2); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 16px; }
+  .video-card .title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .video-card .sub { font-size: 12px; color: var(--text-dim); }
+  @media (max-width: 600px) { .videos { grid-template-columns: 1fr; } }
+
+  .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
+  .stat-box { background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 10px; padding: 12px 20px; text-align: center; flex: 1; min-width: 120px; }
+  .stat-box .num { font-size: 20px; font-weight: 700; color: var(--gold); display: block; }
+  .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  footer { text-align: center; padding: 48px 24px; border-top: 1px solid var(--gold-border); color: var(--text-dim); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  b { color: #fff; }
+  ul { padding-left: 20px; }
+  ul li { font-size: 13.5px; color: var(--text); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="../../../index.html">&#8592; Nexus</a>
+  <div class="nav-links">
+    <a href="mapa3d.html" class="btn btn-outline" style="padding:5px 14px;font-size:12px;">Mapa 3D</a>
+    <span class="badge">HIST. MODERNA &amp; REVOLUÇÕES</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Absolutismo e <span>Revoluções</span></h1>
+  <p>Da Reforma Protestante à Revolução Industrial — as forças que moldaram o mundo moderno e o direito contemporâneo</p>
+  <div class="hero-cta">
+    <a href="mapa3d.html" class="btn btn-gold">Ver Mapa 3D Interativo</a>
+    <a href="../../../../dashboard.html" class="btn btn-outline">Dashboard</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 1: CONTEXTO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>A Ruptura da Idade Moderna</h2>
+    </div>
+    <div class="section-body">
+      <p>A Idade Moderna (séc. XV-XVIII) representa uma ruptura com o mundo medieval em todos os níveis: religioso (Reforma), político (absolutismo → parlamentarismo), econômico (mercantilismo → capitalismo), e cultural (Renascimento → Iluminismo). Cada ruptura alimenta a próxima.</p>
+      <div class="stat-row">
+        <div class="stat-box"><span class="num">1517</span><span class="lbl">Reforma Protestante</span></div>
+        <div class="stat-box"><span class="num">1648</span><span class="lbl">Paz de Westfália</span></div>
+        <div class="stat-box"><span class="num">1789</span><span class="lbl">Rev. Francesa</span></div>
+        <div class="stat-box"><span class="num">1776</span><span class="lbl">Rev. Americana</span></div>
+      </div>
+      <div class="highlight" style="margin-top:16px;">
+        <strong>Para o curso de Direito:</strong> O Código Napoleônico (1804) é a ponte direta entre a Revolução Francesa e o direito civil brasileiro — nosso Código Civil de 2002 tem raízes napoleônicas. As Revoluções Inglesas criaram o parlamentarismo e a ideia de direitos individuais (Habeas Corpus, Bill of Rights).
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: REFORMA PROTESTANTE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Reforma Protestante: Causas, Correntes e Consequências</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Contexto:</b> A Igreja Católica havia acumulado enorme poder e riqueza. A venda de indulgências (perdão de pecados por dinheiro) foi a gota d'água que fez Martinho Lutero pregar suas 95 Teses na porta da Igreja de Wittenberg (1517).</p>
+
+      <div class="correntes">
+        <div class="corrente-card">
+          <div class="name">Luteranismo</div>
+          <div class="founder">Martinho Lutero — Alemanha, 1517</div>
+          <p>Salvação pela fé, não obras. Bíblia em língua vernácula. Sacerdócio universal (cada cristão interpreta a Bíblia). Aliança com príncipes alemães — Igreja dependente do Estado.</p>
+        </div>
+        <div class="corrente-card">
+          <div class="name">Calvinismo</div>
+          <div class="founder">João Calvino — Suíça, 1536</div>
+          <p>Predestinação: Deus já escolheu quem será salvo. Ética do trabalho: riqueza como sinal de graça divina. Base teológica para o capitalismo (Max Weber, "A Ética Protestante").</p>
+        </div>
+        <div class="corrente-card">
+          <div class="name">Anglicanismo</div>
+          <div class="founder">Henrique VIII — Inglaterra, 1534</div>
+          <p>Ruptura política, não teológica: Henrique VIII queria divorciar-se, o Papa negou. Criou Igreja Anglicana com o rei como chefe. Doutrinalmente próximo ao catolicismo.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Consequência</th><th>Detalhes</th></tr></thead>
+        <tbody>
+          <tr><td><b>Guerras Religiosas</b></td><td>Séc. XVI-XVII — católicos vs. protestantes. Culmina na Guerra dos 30 Anos (1618-1648)</td></tr>
+          <tr><td><b>Paz de Westfália (1648)</b></td><td>Fim da Guerra dos 30 Anos. Primeiro tratado a reconhecer soberania dos Estados → sistema internacional moderno</td></tr>
+          <tr><td><b>Contrarreforma</b></td><td>Igreja responde com Concílio de Trento, Inquisição renovada, Ordem dos Jesuítas (Inácio de Loyola)</td></tr>
+          <tr><td><b>Expansão da alfabetização</b></td><td>Lutero traduziu a Bíblia para o alemão + Gutenberg = leitura popular generalizada</td></tr>
+          <tr><td><b>Capitalismo</b></td><td>Weber: ética protestante (especialmente calvinista) legitima acumulação e trabalho como vocação divina</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3: ABSOLUTISMO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Absolutismo: Teoria e Exemplos</h2>
+    </div>
+    <div class="section-body">
+      <p>O absolutismo foi o modelo político dominante na Europa entre os séc. XVI e XVIII. O poder do rei era total, justificado pelo Direito Divino — a autoridade do monarca vinha de Deus, não do povo.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Teórico</th><th>Obra</th><th>Argumento central</th></tr></thead>
+        <tbody>
+          <tr><td><b>Maquiavel</b></td><td><i>O Príncipe</i> (1513)</td><td>Política separada da moral. O príncipe deve usar astúcia e força para manter o poder — realismo político.</td></tr>
+          <tr><td><b>Jean Bodin</b></td><td><i>Os Seis Livros da República</i> (1576)</td><td>Soberania = poder absoluto e perpétuo do rei sobre o Estado. Formulação teórica da soberania.</td></tr>
+          <tr><td><b>Bossuet</b></td><td><i>Política extraída da Sagrada Escritura</i></td><td>Teoria do Direito Divino dos reis — a autoridade real vem de Deus, questionar o rei = questionar Deus.</td></tr>
+          <tr><td><b>Thomas Hobbes</b></td><td><i>Leviatã</i> (1651)</td><td>Contrato social: homens abdicam de liberdades a um soberano poderoso para evitar a "guerra de todos contra todos". Não é Direito Divino, mas legitima o poder absoluto.</td></tr>
+        </tbody>
+      </table>
+
+      <table>
+        <thead><tr><th>Monarca</th><th>País</th><th>Característica</th></tr></thead>
+        <tbody>
+          <tr><td><b>Luís XIV</b> (1638-1715)</td><td>França</td><td>O "Rei Sol" — "L'État, c'est moi". Versalhes como símbolo de poder. Mercantilismo de Colbert.</td></tr>
+          <tr><td><b>Felipe II</b> (1527-1598)</td><td>Espanha</td><td>Maior império do mundo + Inquisição. Derrota da Armada Invencível (1588) marca o declínio espanhol.</td></tr>
+          <tr><td><b>Pedro o Grande</b> (1672-1725)</td><td>Rússia</td><td>Ocidentalização forçada da Rússia. Absolutismo esclarecido — moderniza sem democratizar.</td></tr>
+          <tr><td><b>Frederico II</b> (1712-1786)</td><td>Prússia</td><td>"Absolutismo esclarecido" — influenciado pelo Iluminismo mas sem abrir mão do poder. Guerras de expansão.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4: EXPANSÃO MARÍTIMA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Expansão Marítima: Portugal, Espanha e Tordesilhas</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Causas da Expansão (séc. XV):</b> Queda de Constantinopla (1453) bloqueou a rota terrestre para a Ásia. O comércio de especiarias (pimenta, cravo, canela) era extremamente lucrativo. Portugal desenvolveu tecnologia naval (caravela, astrolábio, bússola) com a Escola de Sagres (Infante D. Henrique).</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Explorador</th><th>País</th><th>Feito</th><th>Ano</th></tr></thead>
+        <tbody>
+          <tr><td><b>Bartolomeu Dias</b></td><td>Portugal</td><td>Contornou o Cabo da Boa Esperança (sul da África)</td><td>1488</td></tr>
+          <tr><td><b>Cristóvão Colombo</b></td><td>Espanha</td><td>Chegou às Américas (pensando nas Índias)</td><td>1492</td></tr>
+          <tr><td><b>Vasco da Gama</b></td><td>Portugal</td><td>Chegou à Índia pela rota marítima africana</td><td>1498</td></tr>
+          <tr><td><b>Pedro Álvares Cabral</b></td><td>Portugal</td><td>Chegou ao Brasil</td><td>1500</td></tr>
+          <tr><td><b>Fernão de Magalhães</b></td><td>Espanha</td><td>1ª circunavegação do globo (completada por Elcano)</td><td>1519-22</td></tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Tratado de Tordesilhas (1494):</strong> Dividiu o mundo em duas metades — a leste de uma linha a 370 léguas a oeste de Cabo Verde para Portugal; a oeste para Espanha. O Brasil ficou no lado português (o que explica por que falamos português e não espanhol). Firmado antes da chegada ao Brasil — foi a chegada que revelou que havia terra do lado português.
+      </div>
+
+      <div class="danger">
+        <strong>Impactos negativos:</strong> A conquista resultou no genocídio de populações indígenas (estima-se 50-90 milhões de mortos entre doenças, escravidão e violência) e no tráfico transatlântico de africanos escravizados (12 milhões de pessoas). Esses são os temas que aparecem em questões de perspectiva crítica.
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: MERCANTILISMO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Mercantilismo: Política Econômica do Absolutismo</h2>
+    </div>
+    <div class="section-body">
+      <p>O mercantilismo foi a teoria econômica dominante nos séc. XVI-XVIII — a ideia de que a riqueza de um Estado era medida pela quantidade de metais preciosos (ouro e prata) que possuía.</p>
+      <ul>
+        <li><b>Metalismo:</b> Acumular metais preciosos = acumular riqueza. Estimulou colonização e exploração mineral.</li>
+        <li><b>Balança comercial favorável:</b> Exportar mais do que importar para que o saldo seja em ouro.</li>
+        <li><b>Protecionismo:</b> Tarifas sobre produtos importados para proteger a indústria nacional.</li>
+        <li><b>Pacto colonial:</b> Colônias forneciam matérias-primas à metrópole e compravam manufaturados — comércio exclusivo (monopólio).</li>
+        <li><b>Colbertismo:</b> Na França de Luís XIV, Colbert desenvolveu indústrias estatais e regulamentou o comércio.</li>
+      </ul>
+      <div class="info" style="margin-top:14px;">
+        <strong>Transição para o liberalismo:</strong> Adam Smith (A Riqueza das Nações, 1776) criticou o mercantilismo — defendeu livre comércio e "mão invisível" do mercado. O liberalismo econômico substituiu o mercantilismo com a Revolução Industrial.
+      </div>
+    </div>
+  </div>
+
+  <!-- 6: REVOLUÇÕES INGLESAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>Revoluções Inglesas: Parlamentarismo</h2>
+    </div>
+    <div class="section-body">
+      <p>A Inglaterra foi pioneira na limitação do poder real e na criação do parlamentarismo moderno — modelo que influenciou todas as democracias ocidentais.</p>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-title">Magna Carta</div>
+          <div class="phase-date">1215</div>
+          <p>Primeiro documento a limitar o poder real na Inglaterra. Nobres forçaram o rei João Sem Terra a assinar. Garantiu direitos aos barões e limitou tributação arbitrária.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Rev. Puritana</div>
+          <div class="phase-date">1642-1649</div>
+          <p>Cromwell lidera o Parlamento contra Carlos I. Rei é decapitado (1649). Commonwealth puritana. Restauração Stuart (1660) — mas sem absolutismo total.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Rev. Gloriosa</div>
+          <div class="phase-date">1688</div>
+          <p>Parlamento convida Guilherme de Orange a governar. Sem derramamento de sangue. Bill of Rights (1689) — direitos do parlamento sobre o rei. Monarquia constitucional.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Habeas Corpus</div>
+          <div class="phase-date">1679</div>
+          <p>Lei que impede prisão arbitrária — qualquer preso tem direito a comparecer ao tribunal para contestar a prisão. Raiz do direito processual penal moderno.</p>
+        </div>
+      </div>
+
+      <div class="highlight">
+        <strong>Relevância para o Direito:</strong> O habeas corpus inglês (1679) influenciou diretamente o artigo 5º da Constituição brasileira (LXVIII). O Bill of Rights (1689) é ancestral das declarações de direitos modernas. John Locke (Segundo Tratado do Governo Civil, 1689) teorizou o direito à revolução, propriedade e contrato social — base das Revoluções Americana e Francesa.
+      </div>
+    </div>
+  </div>
+
+  <!-- 7: REVOLUÇÃO AMERICANA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Revolução Americana (1776)</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Contexto:</b> 13 colônias britânicas na América do Norte haviam crescido e desenvolvido economia e identidade próprias. A Inglaterra, endividada após a Guerra dos 7 Anos, passou a taxar pesadamente as colônias — sem dar-lhes representação no Parlamento.</p>
+      <p><b>Estopim:</b> "No taxation without representation" — taxação sem representação. Motim do Chá de Boston (1773): colonos jogaram chá inglês no mar como protesto ao imposto sobre o chá.</p>
+      <ul>
+        <li><b>Influência iluminista:</b> Locke (direito natural à vida, liberdade, propriedade), Montesquieu (separação dos 3 poderes), Rousseau (soberania popular)</li>
+        <li><b>Declaração de Independência</b> (4 de julho de 1776): redigida por Thomas Jefferson. "Todos os homens são criados iguais e dotados pelo Criador de direitos inalienáveis."</li>
+        <li><b>Constituição dos EUA</b> (1787): primeira constituição escrita do mundo moderno. Bill of Rights (1791): 10 primeiras emendas — liberdades fundamentais.</li>
+      </ul>
+      <div class="danger">
+        <strong>Contradição fundamental:</strong> A Declaração proclamava que "todos os homens são iguais" — mas a escravidão foi mantida. Thomas Jefferson, autor da Declaração, era dono de escravizados. Essa contradição só foi resolvida (parcialmente) com a 13ª Emenda (1865) após a Guerra Civil.
+      </div>
+    </div>
+  </div>
+
+  <!-- 8: REVOLUÇÃO FRANCESA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Revolução Francesa (1789): Fases e Legado</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Causas estruturais:</b> Antigo Regime = 3 estados (1º Clero + 2º Nobreza = ~3% da população, isentos de impostos; 3º Estado = 97%, arcava com todos os impostos). Crise fiscal após guerras. Má colheita de 1788 = fome generalizada. Iluminismo forneceu o vocabulário da revolução.</p>
+
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-title">Fase Moderada</div>
+          <div class="phase-date">1789-1792</div>
+          <p>Assembleia Nacional Constituinte. Queda da Bastilha (14/07/1789). Declaração dos Direitos do Homem e do Cidadão. Monarquia constitucional.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">O Terror</div>
+          <div class="phase-date">1792-1795</div>
+          <p>República proclamada. Luís XVI e Maria Antonieta guilhotinados. Robespierre e o Comitê de Salvação Pública: 17.000 execuções. "Revolução devora seus filhos" — Robespierre guilhotinado em 1794.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Diretório</div>
+          <div class="phase-date">1795-1799</div>
+          <p>5 diretores governam. Instabilidade política e económica. Burguesia quer ordem. Caminho aberto para Napoleão.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Napoleão</div>
+          <div class="phase-date">1799-1815</div>
+          <p>Golpe do 18 Brumário. Consulado → Império (1804). Código Napoleônico (1804). Guerras napoleônicas varreram a Europa, exportando ideias revolucionárias.</p>
+        </div>
+      </div>
+
+      <div class="highlight" style="margin-top:4px;">
+        <strong>Código Napoleônico (1804):</strong> Codificou o direito civil francês — propriedade, família, contratos, obrigações. Aboliu privilégios feudais. Chegou ao Brasil via Portugal → Código Civil de 1916 (Clóvis Beviláqua) e o de 2002 seguem essa tradição romano-napoleônica.
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: REVOLUÇÃO INDUSTRIAL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Revolução Industrial: Fases, Condições e Respostas</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Por que a Inglaterra?</b> Enclosures (cercamento de terras comunais) liberaram mão de obra; acumulação de capital colonial; reservas de carvão e ferro; proteção marítima (Marinha Real); mercado colonial enorme.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Fase</th><th>Período</th><th>Tecnologias-chave</th><th>País líder</th></tr></thead>
+        <tbody>
+          <tr><td><b>1ª Revolução</b></td><td>1760-1840</td><td>Máquina a vapor (Watt, 1769), carvão, têxtil, ferrovia</td><td>Inglaterra</td></tr>
+          <tr><td><b>2ª Revolução</b></td><td>1870-1914</td><td>Eletricidade (Edison, Tesla), aço, petróleo, química, automóvel</td><td>EUA, Alemanha</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>Condições sociais:</b> Trabalhadores rurais migraram para cidades superlotadas (favelas industriais). Crianças de 6 anos trabalhando 12-16h/dia nas fábricas e minas. Sem fins de semana, sem férias, sem aposentadoria. Doenças, acidentes de trabalho, mortalidade infantil altíssima.</p>
+
+      <table>
+        <thead><tr><th>Resposta</th><th>Descrição</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td><b>Luddismo</b> (1811-1816)</td><td>Trabalhadores destruíam máquinas que os substituíam</td><td>Reprimido militarmente — mas plantou consciência de classe</td></tr>
+          <tr><td><b>Trade Unions</b> (sindicatos)</td><td>Organização coletiva para negociar salários e condições</td><td>Legalizados na Inglaterra em 1871</td></tr>
+          <tr><td><b>Marxismo</b> (1848)</td><td>Marx e Engels: luta de classes, mais-valia, revolução proletária</td><td><i>Manifesto Comunista</i> (1848) → inspirou movimentos operários globais</td></tr>
+          <tr><td><b>Socialismo Utópico</b></td><td>Owen, Saint-Simon, Fourier: utopias de comunidades ideais</td><td>Experimentos fracassaram mas influenciaram o movimento trabalhista</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 10: TABELA COMPARATIVA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Tabela Comparativa: As Três Grandes Revoluções</h2>
+    </div>
+    <div class="section-body">
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-header americana">Rev. Americana</div>
+          <div class="compare-body">
+            <div class="compare-item"><span>Data</span>1776</div>
+            <div class="compare-item"><span>Motor</span>Burguesia colonial</div>
+            <div class="compare-item"><span>Filosofia</span>Locke, Montesquieu</div>
+            <div class="compare-item"><span>Lema</span>Liberdade e propriedade</div>
+            <div class="compare-item"><span>Resultado</span>Democracia republicana + escravidão</div>
+            <div class="compare-item"><span>Legado jurídico</span>Constituição escrita, separação de poderes, Bill of Rights</div>
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="compare-header francesa">Rev. Francesa</div>
+          <div class="compare-body">
+            <div class="compare-item"><span>Data</span>1789</div>
+            <div class="compare-item"><span>Motor</span>Burguesia + povo (tiers état)</div>
+            <div class="compare-item"><span>Filosofia</span>Rousseau, Voltaire, Iluminismo</div>
+            <div class="compare-item"><span>Lema</span>Liberté, Égalité, Fraternité</div>
+            <div class="compare-item"><span>Resultado</span>República + Terror + Napoleão</div>
+            <div class="compare-item"><span>Legado jurídico</span>Código Napoleônico, direitos do homem, laicidade</div>
+          </div>
+        </div>
+        <div class="compare-card">
+          <div class="compare-header industrial">Rev. Industrial</div>
+          <div class="compare-body">
+            <div class="compare-item"><span>Data</span>1760-1840</div>
+            <div class="compare-item"><span>Motor</span>Burguesia industrial/capitalistas</div>
+            <div class="compare-item"><span>Filosofia</span>Liberalismo econômico (Adam Smith)</div>
+            <div class="compare-item"><span>Lema</span>Progresso e lucro</div>
+            <div class="compare-item"><span>Resultado</span>Urbanização, proletariado, capitalismo</div>
+            <div class="compare-item"><span>Legado jurídico</span>Direito trabalhista, legislação social, marxismo</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11: DICAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Dicas Estratégicas UNICAP</h2>
+    </div>
+    <div class="section-body">
+      <div class="dica">
+        <div class="dica-num">1</div>
+        <p><strong>Paz de Westfália (1648)</strong> é pedra fundamental do direito internacional — aparece em questões de RI, Direito Internacional, História. É o nascimento do sistema de Estados soberanos.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">2</div>
+        <p><strong>Anglicanismo por razões políticas, não teológicas.</strong> Henrique VIII queria divorciar, não era herege. Questões que apresentam o Anglicanismo como reforma doutrinária estão erradas.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">3</div>
+        <p><strong>Código Napoleônico → Direito Civil Brasileiro.</strong> Essa cadeia deve estar memorizada para questões de História do Direito que podem aparecer em Humanas ou em redação.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">4</div>
+        <p><strong>Colombo morreu acreditando ter chegado às Índias.</strong> América foi nomeada por Américo Vespúcio. Questão clássica de distrator.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">5</div>
+        <p><strong>Revolução Francesa tem 4 fases:</strong> Monarquia Constitucional → Terror → Diretório → Napoleão. Robespierre aparece na fase do Terror, não na Monarquia Constitucional.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">6</div>
+        <p><strong>Luddismo não era anti-tecnologia por princípio</strong> — era protesto contra desemprego e condições de trabalho. Esse detalhe diferencia questões de nível médio das de nível alto.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12: CHECKLIST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Checklist de Domínio</h2>
+    </div>
+    <div class="section-body">
+      <ul class="checklist">
+        <li><span class="check-box"></span>Sei as 3 correntes da Reforma Protestante e seus fundadores</li>
+        <li><span class="check-box"></span>Sei o que foi a Paz de Westfália e sua importância</li>
+        <li><span class="check-box"></span>Conheço os 3 teóricos do absolutismo (Maquiavel, Bodin, Bossuet)</li>
+        <li><span class="check-box"></span>Sei o Tratado de Tordesilhas e por que falamos português no Brasil</li>
+        <li><span class="check-box"></span>Distingo Revolução Puritana (1642) da Gloriosa (1688)</li>
+        <li><span class="check-box"></span>Sei as causas da Revolução Americana e a contradição escravidão/liberdade</li>
+        <li><span class="check-box"></span>Conheço as 4 fases da Revolução Francesa</li>
+        <li><span class="check-box"></span>Sei o que foi o Código Napoleônico e sua conexão com o direito brasileiro</li>
+        <li><span class="check-box"></span>Sei a diferença entre 1ª e 2ª Revolução Industrial</li>
+        <li><span class="check-box"></span>Conheço as respostas operárias à Rev. Industrial (luddismo, sindicatos, marxismo)</li>
+        <li><span class="check-box"></span>Sei relacionar Iluminismo → Revoluções Americana e Francesa</li>
+        <li><span class="check-box"></span>Conheço o imperialismo séc. XIX como elo para a 1ª Guerra Mundial</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 13: VIDEOAULAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">13</div>
+      <h2>Melhores Videoaulas Recomendadas</h2>
+    </div>
+    <div class="section-body">
+      <div class="videos">
+        <div class="video-card">
+          <div class="title">Parabólica (Eduardo Galvão)</div>
+          <div class="sub">Buscar: "Revolução Francesa Parabólica" (série completa com fases) e "Revolução Industrial ENEM". Didática clara e focada em questões.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Historia do Mundo (Heitor Campos)</div>
+          <div class="sub">Excelente para absolutismo e revoluções. Narrativa envolvente que facilita memorização das fases e personagens da Rev. Francesa.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Prof. Neto do ENEM</div>
+          <div class="sub">Foco em resolução de questões. Buscar: "Revolução Francesa questão", "Absolutismo vestibular", "Reforma Protestante ENEM".</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Brasil Escola — Mod. e Contemporânea</div>
+          <div class="sub">Resumos textuais completos + vídeos curtos. Ideal para revisão de conceitos como mercantilismo, Paz de Westfália e Tordesilhas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="mapa3d.html" class="btn btn-gold">Explorar Mapa 3D — Salão de Versalhes</a>
+  <a href="../../../../dashboard.html" class="btn btn-outline">&#8592; Voltar ao Dashboard</a>
+  <p style="margin-top:8px;">UNICAP Nexus · Carlos Régis · Direito 2026.2 · atualizado 2026</p>
+</footer>
+
+</body>
+</html>

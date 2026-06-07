@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Simulado Relâmpago — UNICAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#06030e;--bg2:#0e0820;--bg3:#150c2a;
+  --purple:#a855f7;--cyan:#22d3ee;--gold:#f59e0b;--emerald:#10b981;--red:#ef4444;
+  --text:#d8ccf0;--muted:#7060a0;--border:rgba(168,85,247,0.12);
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+body{padding-bottom:40px;}
+.hdr{padding:20px 18px 16px;background:rgba(6,3,14,0.97);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.back-btn{color:var(--purple);text-decoration:none;font-size:12px;font-weight:600;padding:5px 11px;border:1px solid rgba(168,85,247,0.3);border-radius:7px;}
+.title{font-size:16px;font-weight:900;background:linear-gradient(90deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hdr-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.meta-pill{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--muted);}
+.meta-pill span{color:var(--text);}
+.prog-bar{height:4px;background:var(--bg3);border-radius:2px;margin-top:8px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--cyan));border-radius:2px;transition:width 400ms ease;}
+
+.container{max-width:720px;margin:0 auto;padding:20px 16px;}
+
+/* INTRO */
+.intro-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;}
+.intro-card h2{font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.intro-card p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.area-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px;}
+.area-pill{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;font-size:12px;font-weight:600;}
+.area-pill .an{font-size:20px;margin-bottom:3px;}
+.start-btn{width:100%;padding:15px;background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;font-weight:900;font-size:16px;border:none;border-radius:14px;cursor:pointer;box-shadow:0 4px 20px rgba(168,85,247,0.35);transition:transform 150ms;}
+.start-btn:active{transform:scale(0.97);}
+
+/* QUESTION */
+.q-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;display:none;}
+.q-card.active{display:block;}
+.q-area{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:6px;margin-bottom:12px;}
+.q-area.ling{background:rgba(34,211,238,0.1);color:var(--cyan);}
+.q-area.hum{background:rgba(245,158,11,0.1);color:var(--gold);}
+.q-area.mat{background:rgba(16,185,129,0.1);color:var(--emerald);}
+.q-area.nat{background:rgba(168,85,247,0.1);color:var(--purple);}
+.q-num{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;}
+.q-text{font-size:14px;font-weight:600;line-height:1.65;margin-bottom:16px;color:var(--text);}
+.q-context{background:var(--bg3);border-left:3px solid var(--muted);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px;font-style:italic;}
+.opts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg3);border:1px solid rgba(255,255,255,0.06);border-radius:10px;cursor:pointer;transition:all 150ms;user-select:none;}
+.opt:active{transform:scale(0.98);}
+.opt.selected{border-color:var(--purple);background:rgba(168,85,247,0.1);}
+.opt.correct{border-color:var(--emerald);background:rgba(16,185,129,0.1);}
+.opt.wrong{border-color:var(--red);background:rgba(239,68,68,0.07);}
+.opt-letter{width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all 150ms;}
+.opt.selected .opt-letter{background:var(--purple);color:#fff;}
+.opt.correct .opt-letter{background:var(--emerald);color:#fff;}
+.opt.wrong .opt-letter{background:var(--red);color:#fff;}
+.opt-text{font-size:13px;line-height:1.5;flex:1;}
+.gabarito{display:none;background:var(--bg3);border-radius:10px;padding:14px;margin-top:12px;font-size:12px;line-height:1.7;}
+.gabarito.show{display:block;}
+.gab-title{font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;}
+.gab-correct .gab-title{color:var(--emerald);}
+.gab-wrong .gab-title{color:var(--red);}
+.gab-exp{color:var(--muted);}
+.gab-exp b{color:var(--text);}
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px;}
+.q-nav button{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:all 150ms;}
+.q-nav button:active{transform:scale(0.97);}
+.btn-skip{background:var(--bg3);color:var(--muted);}
+.btn-confirm{background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;box-shadow:0 3px 12px rgba(168,85,247,0.3);}
+.btn-confirm:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-next{background:linear-gradient(135deg,var(--cyan),#0891b2);color:#000;font-weight:800;}
+
+/* RESULT */
+.result{display:none;text-align:center;padding:20px;}
+.result.show{display:block;}
+.result-ring{width:120px;height:120px;border-radius:50%;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;border:4px solid;}
+.result-ring.great{border-color:var(--emerald);background:rgba(16,185,129,0.1);color:var(--emerald);}
+.result-ring.ok{border-color:var(--gold);background:rgba(245,158,11,0.1);color:var(--gold);}
+.result-ring.low{border-color:var(--red);background:rgba(239,68,68,0.1);color:var(--red);}
+.result-title{font-size:22px;font-weight:900;margin-bottom:8px;}
+.result-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.area-scores{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:24px;}
+.as-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.as-card .asn{font-size:22px;font-weight:900;}
+.as-card .asl{font-size:11px;color:var(--muted);margin-top:3px;}
+.ling-color{color:var(--cyan);}
+.hum-color{color:var(--gold);}
+.mat-color{color:var(--emerald);}
+.nat-color{color:var(--purple);}
+.btn-retry{width:100%;padding:15px;background:linear-gradient(135deg,var(--purple),#7c3aed);color:#fff;font-weight:900;font-size:16px;border:none;border-radius:14px;cursor:pointer;margin-bottom:10px;}
+.btn-sprint{display:block;text-align:center;padding:14px;background:rgba(245,197,66,0.1);border:1px solid rgba(245,197,66,0.3);color:var(--gold);font-weight:700;font-size:14px;border-radius:14px;text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row">
+    <a href="../mobile-app.html" class="back-btn">← Voltar</a>
+    <div class="title">Simulado Relâmpago</div>
+    <div class="meta-pill" id="q-counter" style="display:none">Q<span id="qn">0</span>/20</div>
+  </div>
+  <div class="hdr-meta" id="hdr-meta">
+    <div class="meta-pill">20 questões</div>
+    <div class="meta-pill">~25 min</div>
+    <div class="meta-pill">Com gabarito</div>
+  </div>
+  <div class="prog-bar" id="prog-bar" style="display:none"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+</header>
+
+<div class="container">
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-card">
+    <h2>⚡ Simulado Relâmpago UNICAP</h2>
+    <p>20 questões cobrindo os temas mais prováveis do vestibular 2026. Cada questão tem gabarito comentado. Faça em ~25 minutos — ideal para os últimos dias antes da prova.</p>
+    <div class="area-grid">
+      <div class="area-pill"><div class="an">📖</div>5 Linguagens</div>
+      <div class="area-pill"><div class="an">🏛️</div>5 Humanas</div>
+      <div class="area-pill"><div class="an">📐</div>5 Matemática</div>
+      <div class="area-pill"><div class="an">🔬</div>5 Natureza</div>
+    </div>
+    <button class="start-btn" onclick="startQuiz()">Começar Agora →</button>
+  </div>
+</div>
+
+<!-- QUESTIONS -->
+<div id="quiz" style="display:none"></div>
+
+<!-- RESULT -->
+<div id="result" class="result">
+  <div class="result-ring" id="r-ring">0%</div>
+  <div class="result-title" id="r-title"></div>
+  <div class="result-sub" id="r-sub"></div>
+  <div class="area-scores">
+    <div class="as-card"><div class="asn ling-color" id="r-ling">0/5</div><div class="asl">Linguagens</div></div>
+    <div class="as-card"><div class="asn hum-color" id="r-hum">0/5</div><div class="asl">Humanas</div></div>
+    <div class="as-card"><div class="asn mat-color" id="r-mat">0/5</div><div class="asl">Matemática</div></div>
+    <div class="as-card"><div class="asn nat-color" id="r-nat">0/5</div><div class="asl">Natureza</div></div>
+  </div>
+  <button class="btn-retry" onclick="startQuiz()">Refazer Simulado</button>
+  <a href="../final-sprint.html" class="btn-sprint">Ver Sprint Final — Revisão Completa →</a>
+</div>
+
+</div><!-- /container -->
+
+<script>
+const QUESTIONS=[
+  // LINGUAGENS (5)
+  {area:'ling',area_label:'Linguagens',num:1,
+   text:'Assinale a alternativa que indica a função de linguagem predominante em uma bula de remédio.',
+   opts:['A) Emotiva — foca nas emoções do emissor','B) Referencial — transmite informações objetivas e impessoais','C) Poética — valoriza a forma e a estética da mensagem','D) Conativa — busca persuadir o receptor a tomar o remédio'],
+   correct:1,
+   exp:'A <b>função referencial</b> (ou denotativa) é predominante em textos informativos como bulas, manuais e notícias — caracterizada pela linguagem objetiva, impessoal e centrada no referente (o conteúdo). A função conativa aparece em propagandas e imperativos; a emotiva, em textos líricos pessoais; a poética, em obras literárias.'},
+  {area:'ling',area_label:'Linguagens',num:2,
+   text:'Sobre o Romantismo brasileiro, é CORRETO afirmar:',
+   opts:['A) Valoriza a objetividade e a crítica racional da sociedade, sem espaço para emoções','B) Tem como marcos a Semana de Arte Moderna de 1922 e o verso livre','C) Idealizou o índio como herói nacional e a natureza como espaço de pureza','D) É representado principalmente por Machado de Assis e Aluísio Azevedo'],
+   correct:2,
+   exp:'O <b>Romantismo brasileiro</b> (1836–1881) caracterizou-se pelo indianismo (idealização do índio como símbolo nacional — José de Alencar, Gonçalves Dias), pelo sentimentalismo e pelo nacionalismo. A Semana de 22 marca o Modernismo; Machado e Aluísio são do Realismo/Naturalismo (1881+).'},
+  {area:'ling',area_label:'Linguagens',num:3,
+   text:'A frase "Os alunos e a professora compraram o livro." apresenta concordância verbal correta porque:',
+   opts:['A) O sujeito composto com núcleos de pessoas diferentes concorda com a pessoa de maior hierarquia gramatical','B) Sujeito composto pré-verbal exige verbo no plural','C) O verbo concorda apenas com o núcleo mais próximo','D) Verbos transitivos diretos não precisam de concordância com o sujeito'],
+   correct:1,
+   exp:'Quando há <b>sujeito composto pré-verbal</b> (antes do verbo), o verbo vai para o plural — regra geral. Neste caso: "Os alunos e a professora" (plural) → "compraram" (plural). A alternativa C (concordância com o mais próximo) é válida quando o sujeito composto é pós-verbal, não pré-verbal.'},
+  {area:'ling',area_label:'Linguagens',num:4,
+   text:'Em inglês, qual alternativa completa corretamente: "She _____ to the store yesterday, but she _____ the keys at home."',
+   opts:['A) goes / leaves','B) went / left','C) has gone / had left','D) was going / is leaving'],
+   correct:1,
+   exp:'O marcador temporal <b>"yesterday"</b> indica passado simples. "Went" é o passado de "go" (verbo irregular: go → went → gone). "Left" é o passado de "leave" (verbo irregular: leave → left → left). O Simple Past é usado para ações completas em momento definido no passado.'},
+  {area:'ling',area_label:'Linguagens',num:5,
+   context:'Considere o trecho: "Capitu olhava para mim, com os olhos de ressaca, aqueles olhos que o defunto Escobar trazia frequentemente... Ah! como são longos certos minutos!" (Machado de Assis, Dom Casmurro)',
+   text:'No trecho acima, a expressão "olhos de ressaca" é uma:',
+   opts:['A) Hipérbole, pois exagera as características físicas de Capitu','B) Metáfora, que compara os olhos ao movimento turbulento do mar','C) Metonímia, pois usa o efeito (ressaca) para referir-se à causa (o olhar)','D) Personificação, que atribui características humanas à ressaca do mar'],
+   correct:1,
+   exp:'<b>Metáfora</b>: comparação implícita sem uso de conectivos comparativos ("como", "tal qual"). "Olhos de ressaca" compara o olhar profundo e perturbador de Capitu ao movimento hipnótico e perigoso das ondas de ressaca. Essa é uma das imagens mais famosas da literatura brasileira — Machado escolheu a metáfora para sugerir o poder de sedução de Capitu, sem precisar dizê-lo diretamente.'},
+
+  // HUMANAS (5)
+  {area:'hum',area_label:'Humanas',num:6,
+   text:'A Alegoria da Caverna, de Platão, é uma metáfora filosófica que representa:',
+   opts:['A) A teoria da maiêutica socrática, em que o conhecimento é extraído por perguntas','B) A distinção entre o mundo sensível (aparências) e o mundo inteligível (verdade)','C) O princípio aristotélico de que o conhecimento vem da experiência empírica','D) A crítica iluminista ao dogmatismo religioso medieval'],
+   correct:1,
+   exp:'Na <b>Alegoria da Caverna</b>, prisioneiros acorrentados veem apenas sombras projetadas na parede, acreditando ser a realidade. Quando um prisioneiro se liberta e vê o sol (símbolo da ideia do Bem), percebe a verdade. Platão usa essa metáfora para distinguir o <b>mundo das sombras/aparências</b> (doxa) do <b>mundo das ideias/verdade</b> (episteme). A maiêutica é socrática; o empirismo é aristotélico.'},
+  {area:'hum',area_label:'Humanas',num:7,
+   text:'Sobre a colonização do Brasil, é CORRETO afirmar:',
+   opts:['A) O sistema de sesmarias distribuía terras igualmente entre colonos e indígenas','B) O pacto colonial impedia que o Brasil comercializasse diretamente com outros países','C) A escravidão africana foi abolida em 1822, junto com a Independência','D) A Inconfidência Mineira foi bem-sucedida em garantir a independência em 1789'],
+   correct:1,
+   exp:'O <b>pacto colonial</b> (ou sistema mercantilista colonial) determinava que o Brasil só podia comercializar com Portugal, e exclusivamente através de navios e comerciantes portugueses — o Brasil existia para enriquecer a metrópole. As sesmarias concentraram terras em latifúndios. A escravidão só foi abolida em 1888 (Lei Áurea). A Inconfidência Mineira (1789) foi descoberta e reprimida — Tiradentes foi executado.'},
+  {area:'hum',area_label:'Humanas',num:8,
+   text:'O conceito de "anomia" em Durkheim refere-se a:',
+   opts:['A) O conflito de classes que surge da exploração do proletariado pela burguesia','B) A ação social orientada por valores e tradições históricas consolidadas','C) A situação de falta de normas sociais claras, que gera desorientação e crise','D) A dominação racional-legal exercida pelo Estado através da burocracia'],
+   correct:2,
+   exp:'Para <b>Durkheim</b>, <b>anomia</b> é o estado de desregulação normativa — quando as normas sociais enfraquecem ou entram em colapso, os indivíduos perdem referências e orientação, o que pode levar ao suicídio (tema de seu estudo clássico de 1897). A luta de classes é conceito de Marx; a ação tradicional e a dominação racional-legal são de Weber.'},
+  {area:'hum',area_label:'Humanas',num:9,
+   text:'O Iluminismo do século XVIII influenciou diretamente:',
+   opts:['A) A Contrarreforma Católica e o fortalecimento do poder da Igreja na Europa','B) As revoluções burguesas (Americana e Francesa) e a ideia de direitos naturais do homem','C) O desenvolvimento do feudalismo e da servidão como sistema econômico medieval','D) O Romantismo como movimento de reação ao racionalismo e valorização da emoção'],
+   correct:1,
+   exp:'O <b>Iluminismo</b> (séc. XVIII) propagou ideias de razão, liberdade, igualdade e soberania popular (Locke, Rousseau, Montesquieu). Essas ideias alimentaram a <b>Revolução Francesa</b> (1789) e a <b>Independência americana</b> (1776). A opção D é parcialmente verdadeira (o Romantismo é em parte reação ao Iluminismo), mas a influência DIRETA e principal foi nas revoluções políticas.'},
+  {area:'hum',area_label:'Humanas',num:10,
+   text:'Sobre as questões de atualidades, qual afirmativa sobre Inteligência Artificial é CORRETA?',
+   opts:['A) O AI Act é uma lei brasileira que regulamenta o uso de inteligência artificial no setor público','B) IA generativa como ChatGPT usa modelos de linguagem treinados em grandes volumes de texto','C) A automação por IA afeta apenas trabalhos manuais físicos, não funções cognitivas','D) O Brasil foi o primeiro país do mundo a aprovar legislação abrangente sobre IA'],
+   correct:1,
+   exp:'<b>Modelos de Linguagem de Grande Escala (LLMs)</b> como ChatGPT (OpenAI), Gemini (Google) e Claude (Anthropic) são treinados em enormes volumes de texto da internet e livros, aprendendo padrões para gerar respostas. O AI Act é europeu (UE, 2024). A IA afeta profundamente trabalhos cognitivos (tradução, redação, análise de dados). O Brasil ainda discute sua legislação sobre IA.'},
+
+  // MATEMÁTICA (5)
+  {area:'mat',area_label:'Matemática',num:11,
+   text:'Um produto custa R$ 250,00. Após um desconto de 20%, qual é o novo preço?',
+   opts:['A) R$ 50,00','B) R$ 200,00','C) R$ 230,00','D) R$ 220,00'],
+   correct:1,
+   exp:'Desconto de 20% = produto × (1 − 0,20) = 250 × 0,80 = <b>R$ 200,00</b>. Ou: calcule 20% de 250 = 250 × 0,20 = 50. Subtraia o desconto: 250 − 50 = 200. Cuidado com encadeamentos: dois descontos de 20% não equivalem a desconto de 40%.'},
+  {area:'mat',area_label:'Matemática',num:12,
+   text:'Se f(x) = 2x² − 4x + 1, qual é o valor do vértice da parábola (ponto de mínimo)?',
+   opts:['A) x = 1, y = −1','B) x = 2, y = 1','C) x = 1, y = 1','D) x = −1, y = 7'],
+   correct:0,
+   exp:'Fórmula do vértice: x<sub>v</sub> = −b/2a = −(−4)/(2×2) = 4/4 = <b>1</b>. y<sub>v</sub> = f(1) = 2(1)² − 4(1) + 1 = 2 − 4 + 1 = <b>−1</b>. Como a = 2 > 0, a parábola abre para cima → vértice é ponto de <em>mínimo</em>.'},
+  {area:'mat',area_label:'Matemática',num:13,
+   text:'Uma sala tem 6 homens e 4 mulheres. Se uma pessoa for sorteada aleatoriamente, qual é a probabilidade de ser mulher?',
+   opts:['A) 1/4','B) 2/5','C) 3/5','D) 4/6'],
+   correct:1,
+   exp:'Total de pessoas: 6 + 4 = 10. Casos favoráveis (mulheres): 4. P(mulher) = 4/10 = <b>2/5 = 0,4 = 40%</b>. A opção D (4/6) seria a razão mulheres:homens, não a probabilidade.'},
+  {area:'mat',area_label:'Matemática',num:14,
+   text:'Um triângulo retângulo tem catetos de 6 cm e 8 cm. Qual é o comprimento da hipotenusa?',
+   opts:['A) 7 cm','B) 10 cm','C) 12 cm','D) 14 cm'],
+   correct:1,
+   exp:'Teorema de Pitágoras: a² = b² + c² → a² = 6² + 8² = 36 + 64 = 100 → a = √100 = <b>10 cm</b>. Este é o triângulo pitagórico clássico 6-8-10 (múltiplo de 3-4-5). Memorize: 3-4-5 e 5-12-13 são os triângulos retângulos mais cobrados.'},
+  {area:'mat',area_label:'Matemática',num:15,
+   text:'Um capital de R$ 2.000 é aplicado por 3 anos a juros simples de 5% ao ano. Qual é o montante final?',
+   opts:['A) R$ 2.100','B) R$ 2.300','C) R$ 2.315,25','D) R$ 3.000'],
+   correct:1,
+   exp:'Juros simples: J = C × i × t = 2.000 × 0,05 × 3 = <b>R$ 300</b>. Montante: M = C + J = 2.000 + 300 = <b>R$ 2.300</b>. A opção C (2.315,25) seria o resultado de juros compostos: M = 2000 × (1,05)³ = 2000 × 1,1576 ≈ 2.315,25. Atenção: juros simples ≠ compostos.'},
+
+  // NATUREZA (5)
+  {area:'nat',area_label:'Natureza',num:16,
+   text:'A organela celular responsável pela produção de energia (ATP) na respiração aeróbica é:',
+   opts:['A) Ribossomo','B) Retículo endoplasmático','C) Mitocôndria','D) Lisossomo'],
+   correct:2,
+   exp:'A <b>mitocôndria</b> é conhecida como "usina de energia" da célula — realiza a respiração celular aeróbica, convertendo glicose + O₂ em ATP (energia), CO₂ e H₂O. O ribossomo sintetiza proteínas; o retículo endoplasmático transporta substâncias; o lisossomo realiza digestão intracelular.'},
+  {area:'nat',area_label:'Natureza',num:17,
+   text:'Sobre os biomas brasileiros, qual afirmativa é CORRETA?',
+   opts:['A) A Mata Atlântica cobre atualmente cerca de 70% de sua extensão original','B) O Cerrado é exclusivo do Brasil, sem equivalentes em outros continentes','C) A Caatinga é o único bioma exclusivamente brasileiro','D) A Amazônia representa apenas 20% do território nacional'],
+   correct:2,
+   exp:'A <b>Caatinga</b> é o único bioma exclusivamente brasileiro — vegetação adaptada a clima semiárido, presente principalmente no Nordeste. A Mata Atlântica restou apenas ~12–15% do original (não 70%). O Cerrado tem equivalentes em outros continentes (savanas africanas). A Amazônia cobre ~50% do território brasileiro.'},
+  {area:'nat',area_label:'Natureza',num:18,
+   text:'Quanto ao tipo de ligação química, o cloreto de sódio (NaCl — sal de cozinha) apresenta:',
+   opts:['A) Ligação covalente polar, pois compartilha elétrons entre átomos diferentes','B) Ligação metálica, pois o sódio é um metal','C) Ligação iônica, formada pela transferência de elétrons entre metal e não-metal','D) Ligação covalente apolar, pois ambos os átomos têm eletronegatividade semelhante'],
+   correct:2,
+   exp:'<b>Ligação iônica</b> ocorre entre metal (Na — sódio) e não-metal (Cl — cloro). O sódio perde 1 elétron (formando Na⁺) e o cloro ganha 1 elétron (formando Cl⁻) — a atração eletrostática entre os íons opostos mantém a ligação. Regra: metal + não-metal = ligação iônica. Não-metal + não-metal = covalente.'},
+  {area:'nat',area_label:'Natureza',num:19,
+   text:'Pela 2ª Lei de Newton, se uma força de 30 N age sobre um objeto de 6 kg, qual é sua aceleração?',
+   opts:['A) 0,2 m/s²','B) 5 m/s²','C) 24 m/s²','D) 180 m/s²'],
+   correct:1,
+   exp:'2ª Lei de Newton: <b>F = m × a</b>, portanto <b>a = F/m = 30/6 = 5 m/s²</b>. A unidade de força é o Newton (N = kg × m/s²). Quanto maior a massa, menor a aceleração para mesma força; quanto maior a força, maior a aceleração.'},
+  {area:'nat',area_label:'Natureza',num:20,
+   context:'A fotossíntese é o processo pelo qual plantas e algas produzem glicose utilizando energia luminosa.',
+   text:'A equação simplificada da fotossíntese é: 6CO₂ + 6H₂O + luz → C₆H₁₂O₆ + 6O₂. Isso significa que:',
+   opts:['A) As plantas absorvem oxigênio e liberam gás carbônico durante a fotossíntese','B) A glicose produzida é imediatamente consumida na respiração celular, sem acúmulo','C) O gás carbônico e a água são convertidos em glicose e oxigênio com o uso de energia luminosa','D) A fotossíntese ocorre nas mitocôndrias, assim como a respiração celular'],
+   correct:2,
+   exp:'Na <b>fotossíntese</b>, cloroplastos capturam energia luminosa para converter CO₂ (do ar) + H₂O (do solo) em <b>glicose</b> (alimento para a planta) + <b>O₂</b> (liberado na atmosfera). O processo ocorre nos <b>cloroplastos</b> (não mitocôndrias). As plantas absorvem CO₂ e LIBERAM O₂ durante a fotossíntese — o oposto da respiração.'},
+];
+
+let current=0;
+let answers=new Array(20).fill(null);
+let confirmed=new Array(20).fill(false);
+
+function startQuiz(){
+  current=0;
+  answers=new Array(20).fill(null);
+  confirmed=new Array(20).fill(false);
+  document.getElementById('intro').style.display='none';
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('q-counter').style.display='block';
+  document.getElementById('prog-bar').style.display='block';
+  document.getElementById('hdr-meta').style.display='none';
+  renderQ(0);
+}
+
+function renderQ(idx){
+  const q=QUESTIONS[idx];
+  const confirmed_this=confirmed[idx];
+  const selected=answers[idx];
+  document.getElementById('qn').textContent=idx+1;
+  document.getElementById('prog-fill').style.width=((idx)/20*100)+'%';
+
+  let html=`<div class="q-card active">
+    <span class="q-area ${q.area}">${q.area_label} • Q${q.num}</span>
+    <div class="q-num">Questão ${idx+1} de 20</div>
+    ${q.context?`<div class="q-context">${q.context}</div>`:''}
+    <div class="q-text">${q.text}</div>
+    <div class="opts">`;
+
+  q.opts.forEach((opt,i)=>{
+    let cls='opt';
+    if(confirmed_this){
+      if(i===q.correct) cls+=' correct';
+      else if(i===selected&&i!==q.correct) cls+=' wrong';
+    } else if(i===selected) cls+=' selected';
+    const letter=['A','B','C','D'][i];
+    html+=`<div class="${cls}" onclick="selectOpt(${idx},${i})">
+      <div class="opt-letter">${letter}</div>
+      <div class="opt-text">${opt.replace(/^[A-D]\) /,'')}</div>
+    </div>`;
+  });
+
+  html+=`</div>`;
+
+  if(confirmed_this){
+    const right=selected===q.correct;
+    html+=`<div class="gabarito show ${right?'gab-correct':'gab-wrong'}">
+      <div class="gab-title">${right?'✓ Correto!':'✗ Incorreto — '+'Gabarito: '+['A','B','C','D'][q.correct]}</div>
+      <div class="gab-exp">${q.exp}</div>
+    </div>`;
+  }
+
+  html+=`<div class="q-nav">`;
+  if(idx>0) html+=`<button class="q-nav btn-skip" onclick="goQ(${idx-1})">← Anterior</button>`;
+  if(!confirmed_this){
+    html+=`<button class="q-nav btn-confirm" id="btn-conf" onclick="confirmAnswer(${idx})" ${selected===null?'disabled':''}>Confirmar</button>`;
+  } else {
+    if(idx<19) html+=`<button class="q-nav btn-next" onclick="goQ(${idx+1})">Próxima →</button>`;
+    else html+=`<button class="q-nav btn-next" onclick="showResult()">Ver Resultado →</button>`;
+  }
+  html+=`</div></div>`;
+
+  document.getElementById('quiz').innerHTML=html;
+}
+
+function selectOpt(qIdx,optIdx){
+  if(confirmed[qIdx]) return;
+  answers[qIdx]=optIdx;
+  renderQ(qIdx);
+}
+
+function confirmAnswer(qIdx){
+  if(answers[qIdx]===null) return;
+  confirmed[qIdx]=true;
+  renderQ(qIdx);
+}
+
+function goQ(idx){
+  current=idx;
+  renderQ(idx);
+  window.scrollTo(0,0);
+}
+
+function showResult(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('q-counter').style.display='none';
+  document.getElementById('prog-bar').style.display='none';
+  document.getElementById('prog-fill').style.width='100%';
+
+  const areas={ling:{correct:0,total:0},hum:{correct:0,total:0},mat:{correct:0,total:0},nat:{correct:0,total:0}};
+  QUESTIONS.forEach((q,i)=>{
+    areas[q.area].total++;
+    if(answers[i]===q.correct) areas[q.area].correct++;
+  });
+  const total=QUESTIONS.reduce((acc,q,i)=>acc+(answers[i]===q.correct?1:0),0);
+  const pct=Math.round(total/20*100);
+
+  const ring=document.getElementById('r-ring');
+  ring.textContent=pct+'%';
+  ring.className='result-ring '+(pct>=70?'great':pct>=50?'ok':'low');
+
+  const msgs={
+    great:{t:'Excelente! 🎉',s:`${total}/20 corretas. Você está no caminho certo para arrasar na UNICAP! Continue revisando os pontos errados.`},
+    ok:{t:'Bom trabalho! 💪',s:`${total}/20 corretas. Há espaço para melhorar — volte nas questões erradas e revise os conceitos.`},
+    low:{t:'Hora de revisar! 📚',s:`${total}/20 corretas. Não desanime — identifique suas áreas fracas e use o Sprint Final para revisar os conceitos.`}
+  };
+  const grade=pct>=70?'great':pct>=50?'ok':'low';
+  document.getElementById('r-title').textContent=msgs[grade].t;
+  document.getElementById('r-sub').textContent=msgs[grade].s;
+  document.getElementById('r-ling').textContent=`${areas.ling.correct}/5`;
+  document.getElementById('r-hum').textContent=`${areas.hum.correct}/5`;
+  document.getElementById('r-mat').textContent=`${areas.mat.correct}/5`;
+  document.getElementById('r-nat').textContent=`${areas.nat.correct}/5`;
+
+  document.getElementById('result').classList.add('show');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

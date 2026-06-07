@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modernismo — Resumo Completo | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030306;
+  --bg2: #08040a;
+  --bg3: #0d0508;
+  --card: #080810;
+  --border: rgba(220,60,40,0.2);
+  --red: #e11d48;
+  --yellow: #fbbf24;
+  --blue: #3b82f6;
+  --white: #e8e8f0;
+  --textsoft: #786068;
+  --text: #c0a898;
+  --green: #34d399;
+  --purple: #a78bfa;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14.5px; line-height: 1.7; min-height: 100vh; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(3,3,6,0.97);
+  border-bottom: 2px solid rgba(220,60,40,0.3);
+  backdrop-filter: blur(12px);
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav .nav-left { display: flex; gap: 16px; align-items: center; }
+nav a { color: var(--textsoft); text-decoration: none; font-size: 12.5px; font-weight: 600; padding: 5px 12px; border: 1px solid var(--border); border-radius: 3px; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.04em; }
+nav a:hover { color: var(--red); border-color: var(--red); background: rgba(220,60,40,0.08); }
+nav .badge { background: linear-gradient(135deg, #1a0404, #0d0204); border: 2px solid var(--red); color: var(--yellow); font-size: 12px; font-weight: 800; padding: 5px 16px; border-radius: 3px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.hero {
+  background: var(--bg);
+  border-bottom: 2px solid rgba(220,60,40,0.25);
+  padding: 60px 32px 48px; text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(220,60,40,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 30%, rgba(251,191,36,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.06) 0%, transparent 50%);
+}
+.hero-icon { font-size: 52px; margin-bottom: 16px; display: block; position: relative; }
+.hero h1 { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; position: relative; margin-bottom: 8px; }
+.hero h1 span.r { color: var(--red); }
+.hero h1 span.y { color: var(--yellow); }
+.hero h1 span.b { color: var(--blue); }
+.hero-sub { color: var(--textsoft); font-size: 15px; position: relative; letter-spacing: 0.03em; }
+.hero-tags { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+.hero-tags .t1 { background: rgba(220,60,40,0.12); border: 1px solid rgba(220,60,40,0.3); color: #f87171; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.hero-tags .t2 { background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.25); color: var(--yellow); font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+.hero-tags .t3 { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; font-size: 11.5px; font-weight: 700; padding: 4px 12px; border-radius: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+section { margin-bottom: 52px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.section-icon { font-size: 22px; }
+.section-title { font-size: 18px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+.section-title.red { color: var(--red); }
+.section-title.yellow { color: var(--yellow); }
+.section-title.blue { color: var(--blue); }
+.section-title.white { color: var(--white); }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 22px; margin-bottom: 16px; transition: border-color 0.2s; }
+.card:hover { border-color: rgba(220,60,40,0.4); }
+.card.yellow-card { border-color: rgba(251,191,36,0.2); }
+.card.yellow-card:hover { border-color: rgba(251,191,36,0.5); }
+.card.blue-card { border-color: rgba(59,130,246,0.2); }
+.card.blue-card:hover { border-color: rgba(59,130,246,0.5); }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.card-title { font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; }
+.card-title.red { color: var(--red); }
+.card-title.yellow { color: var(--yellow); }
+.card-title.blue { color: #60a5fa; }
+.card-title.green { color: var(--green); }
+.card-title.purple { color: var(--purple); }
+.card-tag { font-size: 10.5px; font-weight: 800; padding: 3px 10px; border-radius: 2px; letter-spacing: 0.07em; text-transform: uppercase; }
+.tag-1 { background: rgba(220,60,40,0.15); color: var(--red); border: 1px solid rgba(220,60,40,0.3); }
+.tag-2 { background: rgba(251,191,36,0.12); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+.tag-3 { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+
+.card p { color: var(--textsoft); font-size: 13.5px; line-height: 1.75; margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+
+.works-list { list-style: none; }
+.works-list li { padding: 7px 0; border-bottom: 1px solid rgba(220,60,40,0.07); color: var(--textsoft); font-size: 13.5px; display: flex; align-items: flex-start; gap: 10px; }
+.works-list li:last-child { border-bottom: none; }
+.works-list li::before { content: '▸'; color: var(--red); font-size: 10px; margin-top: 3px; flex-shrink: 0; }
+.works-list li.yellow::before { color: var(--yellow); }
+.works-list li.blue::before { color: var(--blue); }
+.works-list b { color: var(--white); }
+
+.unicap-tip { background: linear-gradient(135deg, rgba(220,60,40,0.1) 0%, rgba(180,30,20,0.07) 100%); border: 1px solid rgba(220,60,40,0.3); border-left: 3px solid var(--red); border-radius: 0 4px 4px 0; padding: 14px 18px; margin: 14px 0; font-size: 13px; color: #f09090; line-height: 1.65; }
+.unicap-tip::before { content: "⚡ DICA UNICAP — "; font-weight: 900; color: var(--red); font-size: 11px; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
+
+.highlight { background: rgba(251,191,36,0.05); border: 1px solid rgba(251,191,36,0.15); border-radius: 4px; padding: 16px 20px; margin: 14px 0; }
+.highlight .poem { font-style: italic; color: var(--yellow); font-size: 14px; line-height: 1.9; border-left: 2px solid rgba(251,191,36,0.3); padding-left: 16px; }
+
+.manifest-box { background: rgba(220,60,40,0.07); border: 1px solid rgba(220,60,40,0.2); border-radius: 4px; padding: 20px; margin: 14px 0; }
+.manifest-quote { color: var(--red); font-size: 18px; font-weight: 900; font-style: italic; margin-bottom: 8px; letter-spacing: 0.02em; }
+.manifest-attr { color: var(--textsoft); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:700px){ .grid-2 { grid-template-columns: 1fr; } }
+
+.phase-bar {
+  display: flex; margin-bottom: 24px; border-radius: 4px; overflow: hidden; height: 6px;
+}
+.phase-1 { flex: 1; background: var(--red); }
+.phase-2 { flex: 1.5; background: var(--yellow); }
+.phase-3 { flex: 1.3; background: var(--blue); }
+
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-table th { padding: 12px 16px; text-align: left; background: rgba(220,60,40,0.1); color: var(--white); font-weight: 800; border: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.04em; font-size: 12px; }
+.compare-table td { padding: 10px 16px; border: 1px solid var(--border); color: var(--textsoft); vertical-align: top; line-height: 1.6; }
+.compare-table tr:nth-child(even) td { background: rgba(220,60,40,0.03); }
+.compare-table td:first-child { color: var(--white); font-weight: 700; white-space: nowrap; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+.checklist { list-style: none; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid rgba(220,60,40,0.07); display: flex; align-items: center; gap: 12px; color: var(--textsoft); font-size: 13.5px; }
+.checklist li:last-child { border-bottom: none; }
+.check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 2px; flex-shrink: 0; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.check-box:hover { border-color: var(--red); }
+.check-box.done { background: var(--red); border-color: var(--red); }
+.check-box.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 800; }
+
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+.video-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 16px; text-decoration: none; transition: all 0.2s; display: block; }
+.video-card:hover { border-color: var(--red); background: rgba(220,60,40,0.07); }
+.video-card .vc-ch { color: var(--red); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.video-card .vc-title { color: var(--white); font-size: 13px; font-weight: 700; line-height: 1.5; margin-bottom: 4px; }
+.video-card .vc-desc { color: var(--textsoft); font-size: 11.5px; line-height: 1.5; }
+.video-card .vc-icon { float: right; font-size: 18px; }
+
+footer { text-align: center; padding: 40px 32px; border-top: 2px solid rgba(220,60,40,0.2); color: var(--textsoft); font-size: 12px; }
+footer a { color: var(--red); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../../index.html">← Linguagens</a>
+    <a href="mapa3d.html">🎨 Mapa 3D</a>
+    <a href="../realismo/resumo.html">← Realismo</a>
+  </div>
+  <div class="badge">🎨 Modernismo — Resumo</div>
+  <a href="../../../index.html">Nexus →</a>
+</nav>
+
+<div class="hero">
+  <span class="hero-icon">🎨</span>
+  <h1><span class="r">Mod</span><span class="y">er</span><span class="b">nis</span><span class="r">mo</span></h1>
+  <p class="hero-sub">1922–presente · Ruptura · Identidade Nacional · Experimentação</p>
+  <div class="hero-tags">
+    <span class="t1">1ª Fase 1922–1930</span>
+    <span class="t2">2ª Fase 1930–1945</span>
+    <span class="t3">3ª Fase Pós-45</span>
+    <span class="t1">Semana de 22</span>
+    <span class="t2">Drummond</span>
+    <span class="t3">Guimarães Rosa</span>
+    <span class="t1">Mário de Andrade</span>
+    <span class="t2">Graciliano Ramos</span>
+    <span class="t3">Clarice Lispector</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- BARRA DE FASES -->
+  <div class="phase-bar">
+    <div class="phase-1"></div>
+    <div class="phase-2"></div>
+    <div class="phase-3"></div>
+  </div>
+
+  <!-- CONTEXTO -->
+  <section id="contexto">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <span class="section-title red">Contexto Histórico</span>
+    </div>
+    <div class="card">
+      <p>O Modernismo brasileiro inicia-se com a <b>Semana de Arte Moderna (13–17 de fevereiro de 1922)</b>, realizada no Teatro Municipal de São Paulo, financiada pela oligarquia cafeeira paulista (Paulo Prado, Olívia Guedes Penteado). Contexto: centenário da Independência, Revolta dos 18 do Forte de Copacabana, crise oligárquica, urbanização, industrialização de São Paulo.</p>
+      <p>O Modernismo é o movimento literário mais longo da história brasileira, dividido em três fases com características distintas. Em sentido amplo, vai de 1922 até hoje, mas as três fases clássicas vão até aproximadamente 1960.</p>
+    </div>
+  </section>
+
+  <!-- SEMANA DE 22 -->
+  <section id="semana22">
+    <div class="section-header">
+      <span class="section-icon">🎭</span>
+      <span class="section-title red">Semana de Arte Moderna — 1922</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title red">A Semana que Escandalizou São Paulo</span>
+        <span class="card-tag tag-1">Marco</span>
+      </div>
+      <p><b>Data:</b> 13 a 17 de fevereiro de 1922, Teatro Municipal de São Paulo.</p>
+      <p><b>Participantes principais:</b></p>
+      <ul class="works-list">
+        <li><b>Literatura:</b> Mário de Andrade, Oswald de Andrade, Menotti del Picchia, Guilherme de Almeida, Ronald de Carvalho.</li>
+        <li><b>Artes plásticas:</b> Anita Malfatti (pintora central — sua exposição de 1917 foi precursora), Tarsila do Amaral (não participou diretamente mas foi central no movimento), Victor Brecheret (escultura).</li>
+        <li><b>Música:</b> Heitor Villa-Lobos (representou a música nacional de vanguarda).</li>
+        <li><b>Arquitetura:</b> Antônio Moya.</li>
+      </ul>
+      <p><b>Recepção:</b> A Semana foi <b>vaiada</b> pela elite paulistana conservadora. Os artistas foram recebidos com hostilidade. O sucesso e o reconhecimento vieram anos depois.</p>
+      <div class="unicap-tip">
+        A Semana de 22 NÃO foi um sucesso imediato — foi vaiada. Isso é frequentemente cobrado como pegadinha. Anita Malfatti estava na Semana (artes plásticas). Villa-Lobos estava na Semana (música). Mário e Oswald (literatura). Questão direta: "Quem participou da Semana de Arte Moderna?" — saiba os nomes.
+      </div>
+    </div>
+  </section>
+
+  <!-- 1ª FASE -->
+  <section id="fase1">
+    <div class="section-header">
+      <span class="section-icon">🔥</span>
+      <span class="section-title red">1ª Fase — Heroica / Ruptura (1922–1930)</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title red">Características da 1ª Fase</span>
+        <span class="card-tag tag-1">1922–1930</span>
+      </div>
+      <ul class="works-list">
+        <li class="yellow"><span>Ruptura radical com Parnasianismo e academicismo</span></li>
+        <li class="yellow"><span>Verso livre — abandono da métrica rígida</span></li>
+        <li class="yellow"><span>Linguagem coloquial, brasileira, sem rebuscamento</span></li>
+        <li class="yellow"><span>Humor e ironia como armas críticas</span></li>
+        <li class="yellow"><span>Busca da identidade nacional: o Brasil como tema e material</span></li>
+        <li class="yellow"><span>Influências: cubismo, futurismo, dadaísmo, expressionismo (europeus reinterpretados)</span></li>
+        <li class="yellow"><span>Manifestos: Pau-Brasil (1924), Antropofágico (1928), Verde-Amarelismo</span></li>
+        <li class="yellow"><span>Simultaneísmo: justaposição de imagens sem nexo lógico</span></li>
+      </ul>
+    </div>
+
+    <!-- MÁRIO DE ANDRADE -->
+    <div class="card yellow-card">
+      <div class="card-header">
+        <span class="card-title yellow">Mário de Andrade (1893–1945)</span>
+        <span class="card-tag tag-1">1ª Fase</span>
+      </div>
+      <p>O "Papa" do Modernismo brasileiro. Teorizou, organizou e viveu o movimento de forma mais comprometida que qualquer outro.</p>
+      <ul class="works-list">
+        <li><b>"Pauliceia Desvairada" (1922)</b> — poesia modernista inaugural. Retrato de São Paulo como metrópole fragmentada. Verso livre, simultaneísmo, linguagem urbana.</li>
+        <li><b>"Macunaíma" (1928)</b> — "herói sem nenhum caráter". Rapsódia, mistura de folclore brasileiro, índio, negro, branco, culturas populares. Crítica à identidade nacional como mescla não pura.</li>
+        <li><b>"A Escrava que não é Isaura" (1925)</b> — ensaio teorizando o Modernismo e a nova poesia.</li>
+        <li><b>"Losango Cáqui" (1926)</b>, <b>"Clã do Jabuti" (1927)</b> — poesia brasileira, linguagem popular.</li>
+      </ul>
+      <div class="manifest-box">
+        <div class="manifest-quote">"Tupi, or not tupi — that is the question"</div>
+        <div class="manifest-attr">— Oswald de Andrade, Manifesto Antropófago (1928)</div>
+      </div>
+      <div class="unicap-tip">
+        "Macunaíma" = "herói sem nenhum caráter" = identidade brasileira como mescla. A frase é a mais cobrada do livro. Mário de Andrade também defendia o uso do "português brasileiro" (falado no Brasil) em vez do português lusitano nas obras literárias — posição nacional e revolucionária.
+      </div>
+    </div>
+
+    <!-- OSWALD DE ANDRADE -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title red">Oswald de Andrade (1890–1954)</span>
+        <span class="card-tag tag-1">1ª Fase</span>
+      </div>
+      <p>O mais polêmico e irreverente dos modernistas. Seu estilo é telegráfico, humorístico, iconoclasta.</p>
+      <ul class="works-list">
+        <li><b>"Manifesto Pau-Brasil" (1924)</b> — a poesia brasileira como produto de exportação. Usar a realidade brasileira bruta como matéria-prima: índio, carnaval, natureza exuberante.</li>
+        <li><b>"Manifesto Antropófago" (1928)</b> — metáfora da antropofagia cultural: devorar criticamente a cultura europeia e transformá-la em algo genuinamente brasileiro. "Tupi, or not tupi — that is the question" (paródia de Shakespeare).</li>
+        <li><b>"Memórias Sentimentais de João Miramar" (1924)</b> — romance telegráfico, linguagem fragmentada.</li>
+        <li><b>"Serafim Ponte Grande" (1933)</b> — romance iconoclasta e irreverente.</li>
+        <li><b>"Pau Brasil" (1925)</b> — poesia concisa, visual, brasileira.</li>
+      </ul>
+      <div class="unicap-tip">
+        O Manifesto Antropófago (1928) é um dos textos mais cobrados do Modernismo. A metáfora da "devoração": assim como os Tupinambás devoravam os inimigos para absorver sua força, o Brasil deve devorar a cultura europeia para transformá-la em algo original. "Tupi or not tupi" é de Oswald, não de Mário.
+      </div>
+    </div>
+
+    <!-- OUTROS 1ª FASE -->
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title red">Manuel Bandeira</span>
+          <span class="card-tag tag-1">Poesia</span>
+        </div>
+        <p>Poesia da leveza, cotidiano, morte (tuberculose que enfrentou), liberdade. "Libertinagem" (1930), "Estrela da Tarde".</p>
+        <ul class="works-list">
+          <li><b>"Pneumotórax"</b>, <b>"O Bicho"</b>, <b>"Vou-me embora pra Pasárgada"</b></li>
+          <li>Poesia do cotidiano, linguagem simples, profundidade filosófica</li>
+        </ul>
+        <div class="unicap-tip">
+          "Vou-me embora pra Pasárgada" = evasão modernista, mas agora cômica e autoirônica, não romântica. Pasárgada = lugar ideal inventado, não real.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title red">Outros Modernistas 1ª Fase</span>
+          <span class="card-tag tag-1">Apoio</span>
+        </div>
+        <ul class="works-list">
+          <li><b>Menotti del Picchia</b> — "Juca Mulato" (1917, pré-Modernismo); Verde-Amarelismo.</li>
+          <li><b>Cassiano Ricardo</b> — Verde-Amarelismo, "Martim Cererê".</li>
+          <li><b>Raul Bopp</b> — "Cobra Norato" (1931): poema longo, Amazônia, linguagem popular.</li>
+          <li><b>Guilherme de Almeida</b> — soneto modernizado, menos radical.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2ª FASE -->
+  <section id="fase2">
+    <div class="section-header">
+      <span class="section-icon">⭐</span>
+      <span class="section-title yellow">2ª Fase — Consolidação / Geração de 30 (1930–1945)</span>
+    </div>
+    <div class="card yellow-card">
+      <div class="card-header">
+        <span class="card-title yellow">Características da 2ª Fase</span>
+        <span class="card-tag tag-2">1930–1945</span>
+      </div>
+      <p>Amadurecimento do Modernismo. Menos experimentação irresponsável, mais aprofundamento poético e narrativo. Contexto: Revolução de 1930 (Getúlio Vargas), Estado Novo (1937–1945), crise econômica mundial, Segunda Guerra Mundial.</p>
+      <ul class="works-list">
+        <li class="yellow"><span>Poesia existencial e social: angústia, identidade, Brasil</span></li>
+        <li class="yellow"><span>Romance social (nordestino, regionalista) com forte crítica política</span></li>
+        <li class="yellow"><span>Prosa de denúncia: seca, sertão, opressão, miséria</span></li>
+        <li class="yellow"><span>Linguagem ainda livre mas mais densa e elaborada</span></li>
+        <li class="yellow"><span>Grande prosa: o "Romance de 30" é um dos momentos mais ricos da literatura brasileira</span></li>
+      </ul>
+    </div>
+
+    <!-- DRUMMOND -->
+    <div class="card yellow-card">
+      <div class="card-header">
+        <span class="card-title yellow">Carlos Drummond de Andrade (1902–1987)</span>
+        <span class="card-tag tag-2">2ª Fase — Poesia</span>
+      </div>
+      <p>Maior poeta brasileiro do século XX. Mineiro de Itabira. Poesia do gauche (o deslocado), angústia existencial, pedra como símbolo, brasilidade.</p>
+      <ul class="works-list">
+        <li><b>"Alguma Poesia" (1930)</b> — estreia. "No meio do caminho tinha uma pedra" — poema mais famoso, versos repetidos como mantra da pedra-obstáculo da vida.</li>
+        <li><b>"Brejo das Almas" (1934)</b> — sombrio, irônico.</li>
+        <li><b>"Sentimento do Mundo" (1940)</b> — poesia social engajada, angústia coletiva da guerra.</li>
+        <li><b>"A Rosa do Povo" (1945)</b> — pico da fase social. "José" (poema existencial célebre: "E agora, José?").</li>
+        <li><b>"Claro Enigma" (1951)</b> — fase mais filosófica e existencial.</li>
+        <li><b>"Lição de Coisas" (1962)</b>, <b>"Boitempo" (1968)</b> — memória e cotidiano.</li>
+      </ul>
+      <div class="highlight">
+        <div class="poem">
+          "No meio do caminho tinha uma pedra<br>
+          tinha uma pedra no meio do caminho<br>
+          tinha uma pedra<br>
+          no meio do caminho tinha uma pedra."<br>
+          <small style="color:var(--textsoft);font-style:normal;">— Carlos Drummond de Andrade, "No Meio do Caminho" (1928/1930)</small>
+        </div>
+      </div>
+      <div class="highlight">
+        <div class="poem">
+          "E agora, José?<br>
+          A festa acabou,<br>
+          a luz apagou,<br>
+          o povo sumiu,<br>
+          a noite esfriou,<br>
+          e agora, José?"<br>
+          <small style="color:var(--textsoft);font-style:normal;">— Carlos Drummond de Andrade, "José" (A Rosa do Povo, 1945)</small>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        "No meio do caminho" = Drummond. A repetição da pedra é intencional: crítica recebida à época ("poema que repete a mesma coisa!") virou símbolo do modernismo. A "pedra" é o obstáculo que a vida sempre coloca. "José" = angústia existencial do homem sem saída, sem perspectiva.
+      </div>
+    </div>
+
+    <!-- CECÍLIA MEIRELES -->
+    <div class="card yellow-card">
+      <div class="card-header">
+        <span class="card-title yellow">Cecília Meireles (1901–1964)</span>
+        <span class="card-tag tag-2">2ª Fase — Poesia</span>
+      </div>
+      <p>Lírica universal, metafísica, tempo e efemeridade como temas centrais. Não se limitou ao Brasil como tema — buscou o universal.</p>
+      <ul class="works-list">
+        <li><b>"Romanceiro da Inconfidência" (1953)</b> — épico sobre Tiradentes e a Inconfidência Mineira. Obra-prima.</li>
+        <li><b>"Mar Absoluto" (1945)</b> — lirismo puro, mar como metáfora do infinito.</li>
+        <li><b>"Vaga Música" (1942)</b>, <b>"Viagem" (1939)</b> — musicalidade, melancolia.</li>
+        <li><b>"Ou Isto ou Aquilo" (1964)</b> — poesia infantil, a mais lida.</li>
+      </ul>
+      <div class="unicap-tip">
+        Cecília Meireles difere dos modernistas "brasileiristas" (Mário, Oswald) por sua busca do universal. "Romanceiro da Inconfidência" é história + lirismo. Se a questão apresenta poesia meditativa sobre tempo, mar, morte, efemeridade com musicalidade → provavelmente Cecília.
+      </div>
+    </div>
+
+    <!-- PROSA 2ª FASE -->
+    <div class="card yellow-card">
+      <div class="card-header">
+        <span class="card-title yellow">Romance de 30 — Prosa Social</span>
+        <span class="card-tag tag-2">2ª Fase — Prosa</span>
+      </div>
+      <p>O "Romance de 30" é considerado um dos maiores momentos da prosa brasileira. Foco no sertão nordestino, na opressão social, na seca, nos trabalhadores.</p>
+      <ul class="works-list">
+        <li><b>Graciliano Ramos</b> — "Vidas Secas" (1938): Fabiano, Sinhá Vitória e os filhos sem nome (Menino Mais Velho, Menino Mais Novo) fogem da seca. Linguagem seca, tensa, behaviorista. "Memórias do Cárcere" (autobiográfico, preso no Estado Novo). "São Bernardo" (Paulo Honório, personagem possessivo). "Angústia" (monólogo interior angustiante).</li>
+        <li><b>Jorge Amado</b> — Literatura engajada da Bahia. "Cacau" (1933), "Suor" (1934) — fase social. "Capitães da Areia" (1937) — meninos de rua Salvador. Fase posterior: "Gabriela, Cravo e Canela" (1958), "Dona Flor e seus Dois Maridos" (1966) — mais lúdicos.</li>
+        <li><b>José Lins do Rego</b> — Ciclo da Cana-de-açúcar: "Menino de Engenho" (1932), "Bangüê", "Fogo Morto" (1943). Nordeste, decadência dos engenhos.</li>
+        <li><b>Érico Veríssimo</b> — Gaúcho. "O Tempo e o Vento" (saga gaúcha em 3 partes). "Incidente em Antares" (realismo mágico político).</li>
+        <li><b>Rachel de Queiroz</b> — "O Quinze" (1930): seca no Ceará. Primeira mulher na ABL. "As Três Marias".</li>
+      </ul>
+      <div class="unicap-tip">
+        "Vidas Secas" de Graciliano Ramos: FABIANO é o protagonista, um vaqueiro analfabeto. Os filhos NÃO TÊM NOME — são "Menino Mais Velho" e "Menino Mais Novo" — símbolo da desumanização pela pobreza. A cadela Baleia é quase um personagem humano. Linguagem seca = linguagem do sertão = forma imita o conteúdo.
+      </div>
+    </div>
+  </section>
+
+  <!-- 3ª FASE -->
+  <section id="fase3">
+    <div class="section-header">
+      <span class="section-icon">🌌</span>
+      <span class="section-title blue">3ª Fase — Pós-45 / Geração de 45</span>
+    </div>
+    <div class="card blue-card">
+      <div class="card-header">
+        <span class="card-title blue">Características da 3ª Fase</span>
+        <span class="card-tag tag-3">Pós-1945</span>
+      </div>
+      <p>Após a Segunda Guerra Mundial e o fim do Estado Novo (1945), a literatura brasileira entra em novas experimentações. Em poesia, reação ao excesso coloquial da 1ª fase — busca de maior rigor formal. Em prosa, experimentação radical de linguagem e psicologia.</p>
+      <ul class="works-list">
+        <li class="blue"><span>Poesia: retorno à forma, mas dentro da liberdade moderna (João Cabral)</span></li>
+        <li class="blue"><span>Prosa: experimentação extrema de linguagem (Guimarães Rosa, Clarice)</span></li>
+        <li class="blue"><span>Fluxo de consciência (stream of consciousness), monólogo interior</span></li>
+        <li class="blue"><span>Linguagem inventada, neologismos (Guimarães Rosa)</span></li>
+        <li class="blue"><span>Existencialismo e fenomenologia (Clarice Lispector)</span></li>
+        <li class="blue"><span>Poesia concreta (movimento de 1956): Augusto de Campos, Haroldo de Campos, Décio Pignatari</span></li>
+      </ul>
+    </div>
+
+    <!-- GUIMARÃES ROSA -->
+    <div class="card blue-card">
+      <div class="card-header">
+        <span class="card-title blue">João Guimarães Rosa (1908–1967)</span>
+        <span class="card-tag tag-3">3ª Fase — Prosa</span>
+      </div>
+      <p>Médico, diplomata e o maior revolucionário da língua portuguesa na prosa. Inventou uma linguagem que mistura arcaísmos, regionalismos sertanejos, neologismos inventados, palavras em outras línguas, tudo a serviço da narração do sertão mineiro como universo metafísico.</p>
+      <ul class="works-list">
+        <li><b>"Sagarana" (1946)</b> — contos do sertão. Estreia. "A Hora e Vez de Augusto Matraga".</li>
+        <li><b>"Grande Sertão: Veredas" (1956)</b> — obra-prima. Narrador Riobaldo conta sua vida de jagunço e o pacto com o diabo. O grande tema: existência de Deus e do Diabo; amor por Diadorim (que se revela mulher no fim); o sertão como espaço de fronteira moral.</li>
+        <li><b>"Corpo de Baile" (1956)</b> — novelas. "A Estória de Lélio e Lina", "O Recado do Morro".</li>
+        <li><b>"Primeiras Estórias" (1962)</b> — contos. "A Terceira Margem do Rio" (pai que vai viver num barco no rio, sem voltar — existencialismo).</li>
+        <li><b>"Tutaméia" (1967)</b> — contos. Publicado no mesmo dia em que morreu de infarto (19 nov. 1967).</li>
+      </ul>
+      <div class="highlight">
+        <div class="poem">
+          <b>"O sertão está em toda parte."</b><br>
+          <b>"O diabo não existe — o que existe é o homem humano."</b><br>
+          <small style="color:var(--textsoft);font-style:normal;">— Riobaldo, personagem de "Grande Sertão: Veredas"</small>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        "Grande Sertão: Veredas": personagens-chave — RIOBALDO (narrador-jagunço) e DIADORIM (companheiro/a que ele ama, revela-se mulher Diadorim ao morrer). O pacto com o Diabo: Riobaldo faz o pacto mas duvida se ele realmente aconteceu. "A Terceira Margem do Rio" (conto): o rio tem duas margens — o pai escolhe uma "terceira" inexistente = transcendência, fuga do mundo humano.
+      </div>
+    </div>
+
+    <!-- CLARICE -->
+    <div class="card blue-card">
+      <div class="card-header">
+        <span class="card-title blue">Clarice Lispector (1920–1977)</span>
+        <span class="card-tag tag-3">3ª Fase — Prosa</span>
+      </div>
+      <p>Nascida na Ucrânia, criada no Recife e no Rio. Mais influente escritora brasileira do século XX depois de Machado. Prosa introspectiva, fluxo de consciência, epifanias (momentos de revelação súbita), questionamento da identidade, linguagem que testa seus próprios limites.</p>
+      <ul class="works-list">
+        <li><b>"Perto do Coração Selvagem" (1944)</b> — estreia. Joana, fluxo de consciência.</li>
+        <li><b>"A Maçã no Escuro" (1961)</b> — Martim foge de suposto crime. Existencialismo.</li>
+        <li><b>"A Paixão Segundo G.H." (1964)</b> — G.H. esmaga uma barata e tem epifania existencial sobre a natureza humana.</li>
+        <li><b>"A Hora da Estrela" (1977)</b> — Macabéa, nordestina pobre no Rio. Narrador Rodrigo S.M. conta a história enquanto questiona o próprio ato de narrar. Mais cobrada.</li>
+        <li><b>Contos:</b> "Laços de Família" (1960), "A Legião Estrangeira" (1964). Contos: "Amor", "A Galinha", "O Búfalo".</li>
+      </ul>
+      <div class="unicap-tip">
+        "A Hora da Estrela" (Macabéa) é a obra mais cobrada de Clarice. Macabéa: nordestina, pobre, ingênua, invisível socialmente — morre atropelada. O narrador Rodrigo questiona se tem o direito de narrar. Estilo: fluxo de consciência, monólogo interior, linguagem fragmentada, epifanias. Se o texto tem uma mulher em estado de revelação interna súbita → possivelmente Clarice.
+      </div>
+    </div>
+
+    <!-- JOÃO CABRAL -->
+    <div class="card blue-card">
+      <div class="card-header">
+        <span class="card-title blue">João Cabral de Melo Neto (1920–1999)</span>
+        <span class="card-tag tag-3">3ª Fase — Poesia</span>
+      </div>
+      <p>Pernambucano, poeta da secura e da contenção. Anti-lírico, anti-sentimental. A poesia como construção racional, como pedra, como arquitetura. Influência do cubismo de Juan Miró.</p>
+      <ul class="works-list">
+        <li><b>"Morte e Vida Severina" (1955)</b> — auto de natal pernambucano. Severino retirante foge da morte seca do sertão e encontra a vida em Recife. A obra mais cobrada: "O que é que a vida me deu?"</li>
+        <li><b>"O Engenheiro" (1945)</b> — poesia como engenharia, construção racional.</li>
+        <li><b>"Psicologia da Composição" (1947)</b> — metalinguagem poética.</li>
+        <li><b>"A Educação pela Pedra" (1966)</b> — pedra como símbolo do Nordeste seco e da poesia árida.</li>
+        <li><b>"Quaderna" (1960)</b>, <b>"Serial" (1961)</b>.</li>
+      </ul>
+      <div class="unicap-tip">
+        "Morte e Vida Severina": nome Severino vem de "severo" = seco, duro. O retirante Severino percorre o Nordeste encontrando apenas morte — até que no Recife testemunha o nascimento de uma criança e reconhece a vida. Paradoxo: vida no meio da morte. Muito cobrado em vestibulares nordestinos.
+      </div>
+    </div>
+  </section>
+
+  <!-- TABELA COMPARATIVA 3 FASES -->
+  <section id="tabela">
+    <div class="section-header">
+      <span class="section-icon">📊</span>
+      <span class="section-title white">As 3 Fases — Tabela Comparativa</span>
+    </div>
+    <div class="card" style="padding:0; overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th style="color:var(--red)">1ª Fase (1922–1930)</th>
+            <th style="color:var(--yellow)">2ª Fase (1930–1945)</th>
+            <th style="color:#60a5fa">3ª Fase (Pós-45)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Tom</td><td>Ruptura, irreverência</td><td>Amadurecimento, angústia</td><td>Experimentação radical</td></tr>
+          <tr><td>Foco</td><td>Identidade nacional, forma</td><td>Social, político, regional</td><td>Linguagem, psicologia, existência</td></tr>
+          <tr><td>Poesia</td><td>Verso livre, coloquial</td><td>Social, existencial (Drummond)</td><td>Concreta, árida (João Cabral)</td></tr>
+          <tr><td>Prosa</td><td>Manifesto, telegráfico</td><td>Romance nordestino, social</td><td>Fluxo de consciência, neologismo</td></tr>
+          <tr><td>Autores</td><td>Mário, Oswald, Bandeira</td><td>Drummond, Cecília, Graciliano</td><td>Guimarães Rosa, Clarice, J. Cabral</td></tr>
+          <tr><td>Obras-chave</td><td>Macunaíma, Pauliceia</td><td>Vidas Secas, A Rosa do Povo</td><td>Grande Sertão, A Hora da Estrela</td></tr>
+          <tr><td>Linguagem</td><td>Coloquial, irônica</td><td>Densa, contida, regional</td><td>Inventada, fragmentada, complexa</td></tr>
+          <tr><td>Contexto</td><td>Crise oligarquia cafeeira</td><td>Vargas, Estado Novo, WWII</td><td>Redemocratização, desenvolvimentismo</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section id="checklist">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <span class="section-title red">Checklist de Revisão</span>
+    </div>
+    <div class="card">
+      <ul class="checklist">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei que a Semana de Arte Moderna foi em 13-17/fev/1922 e foi vaiada</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei quem participou da Semana (Mário, Oswald, Anita Malfatti, Villa-Lobos)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"Tupi or not tupi" = Oswald de Andrade (Manifesto Antropófago, 1928)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei o significado de "Macunaíma" = herói sem nenhum caráter = identidade como mescla</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei distinguir 1ª fase (ruptura/Mário-Oswald) de 2ª fase (consolidação/Drummond-Graciliano)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"No meio do caminho tinha uma pedra" = Drummond</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"Vidas Secas": Fabiano, filhos sem nome, cadela Baleia, seca nordestina</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"Grande Sertão: Veredas": Riobaldo + Diadorim, sertão metafísico, linguagem inventada</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"A Hora da Estrela": Macabéa + narrador Rodrigo, nordestina pobre no Rio</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>"Morte e Vida Severina": retirante Severino, sertão → Recife, paradoxo vida/morte</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei a tabela das 3 fases: tom, foco, autores, obras, linguagem</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VÍDEOS -->
+  <section id="videos">
+    <div class="section-header">
+      <span class="section-icon">▶</span>
+      <span class="section-title red">Vídeos Recomendados</span>
+    </div>
+    <div class="video-grid">
+      <a href="https://www.youtube.com/@deboraaladimliteratura" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Débora Aladim</div>
+        <div class="vc-title">Modernismo Brasileiro — Completo</div>
+        <div class="vc-desc">Excelente para Modernismo. Cobre as 3 fases, Macunaíma, Vidas Secas, Clarice. Linguagem acessível.</div>
+      </a>
+      <a href="https://www.youtube.com/@StefaneMota" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Stéfane Mota</div>
+        <div class="vc-title">Semana de Arte Moderna e 1ª Fase</div>
+        <div class="vc-desc">Direto ao ponto. Ótimo para memorizar autores, fases e as informações mais cobradas.</div>
+      </a>
+      <a href="https://www.youtube.com/@descomplica" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Descomplica</div>
+        <div class="vc-title">Modernismo — 2ª e 3ª Fases</div>
+        <div class="vc-desc">Drummond, Graciliano, Guimarães Rosa e Clarice explicados para vestibular. Inclui questões.</div>
+      </a>
+      <a href="https://www.youtube.com/results?search_query=rodrigo+motta+literatura+modernismo" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Prof. Rodrigo Motta</div>
+        <div class="vc-title">Modernismo para Vestibular</div>
+        <div class="vc-desc">Foco em questões de vestibular. Análise de trechos e identificação das fases modernistas.</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>UNICAP Nexus — Material de estudo para Carlos Régis · UNICAP 2026.2 · Direito Manhã · 14 jun 2026</p>
+  <p style="margin-top:8px;"><a href="mapa3d.html">🎨 Ver Mapa 3D — Semana de 22</a> · <a href="../realismo/resumo.html">← Realismo</a> · <a href="../romantismo/resumo.html">← Romantismo</a></p>
+</footer>
+
+<script>
+function toggleCheck(el){ el.classList.toggle('done'); }
+</script>
+</body>
+</html>

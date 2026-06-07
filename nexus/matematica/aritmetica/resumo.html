@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aritmética — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#030108; color:#c8b8e8; font-family:'Inter',sans-serif; min-height:100vh; padding-bottom:60px; }
+a { color:#8866cc; text-decoration:none; transition:color 0.2s; }
+a:hover { color:#bb99ff; }
+#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(3,1,8,0.95); border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(12px);
+}
+#nav-back, #nav-map {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5); font-size:12px; font-weight:500;
+  padding:7px 14px; border-radius:7px; transition:all 0.2s;
+}
+#nav-back:hover, #nav-map:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#nav-title { font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.hero { padding:60px 24px 40px; text-align:center; max-width:860px; margin:0 auto; }
+.hero-badge {
+  display:inline-block; background:rgba(68,255,136,0.1); border:1px solid rgba(68,255,136,0.2);
+  color:#44cc77; font-size:11px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size:clamp(28px,5vw,44px); font-weight:700; line-height:1.15;
+  background:linear-gradient(135deg,#a8f8c8,#44cc77,#226644);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:16px;
+}
+.hero p { font-size:15px; color:rgba(160,240,180,0.45); max-width:560px; margin:0 auto; line-height:1.7; }
+.content { max-width:860px; margin:0 auto; padding:0 24px; }
+.section { margin-bottom:40px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden; }
+.section-header { padding:20px 24px 16px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; }
+.section-num {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,#115533,#33aa55);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#88ffaa; flex-shrink:0;
+}
+.section-title {
+  font-size:17px; font-weight:700;
+  background:linear-gradient(90deg,#a8f8c8,#44cc77);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.section-body { padding:20px 24px; }
+.card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:8px; }
+.card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; border-left:3px solid; }
+.card.green { border-left-color:#44cc88; }
+.card.gold { border-left-color:#ddaa22; }
+.card.blue { border-left-color:#4488ff; }
+.card.orange { border-left-color:#ff8844; }
+.card.cyan { border-left-color:#44ccff; }
+.card.red { border-left-color:#ff5555; }
+.card.purple { border-left-color:#aa55ff; }
+.card h3 { font-size:13px; font-weight:700; color:#d4c8f0; margin-bottom:8px; }
+.card p { font-size:12px; color:#8878a8; line-height:1.65; }
+.formula-block {
+  background:rgba(68,204,136,0.06); border:1px solid rgba(68,204,136,0.15);
+  border-radius:10px; padding:14px 18px; margin:10px 0;
+  font-family:'Courier New',monospace; font-size:13px; color:#88d4aa; line-height:1.8;
+}
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+th { background:rgba(68,180,100,0.1); color:#88cc99; font-weight:600; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; padding:10px 14px; text-align:left; }
+td { padding:10px 14px; color:#9080b0; border-bottom:1px solid rgba(255,255,255,0.04); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:20px; margin-bottom:16px; }
+.question-card .q-label { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#337744; margin-bottom:10px; }
+.question-card .q-text { font-size:14px; color:#c0b0e0; margin-bottom:14px; font-weight:500; }
+.question-card .q-answer { background:rgba(68,204,136,0.06); border:1px solid rgba(68,204,136,0.15); border-radius:8px; padding:12px 16px; font-size:12px; color:#88c8a0; line-height:1.6; }
+.q-answer strong { color:#66ff99; }
+.tip-box { background:rgba(255,170,0,0.06); border:1px solid rgba(255,170,0,0.15); border-radius:10px; padding:14px 18px; margin-top:12px; font-size:12px; color:#b89944; line-height:1.6; }
+.tip-box strong { color:#ffcc44; }
+.text-body { font-size:14px; color:#9080b0; line-height:1.7; margin-bottom:12px; }
+.vs-table td { vertical-align:top; }
+.vs-table td:first-child { color:#44ccff; font-weight:600; }
+.vs-table td:nth-child(2) { color:#ff8844; font-weight:600; }
+.vs-table td:last-child { color:#8899cc; font-style:italic; }
+.formula-table td:first-child { color:#88ffaa; font-weight:600; font-family:'Courier New',monospace; }
+.formula-table td:nth-child(2) { color:#44cc77; font-family:'Courier New',monospace; }
+.formula-table td:last-child { color:#8899cc; }
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Matemática · Aritmética</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</div>
+<div class="hero">
+  <div class="hero-badge">Matemática</div>
+  <h1>Aritmética</h1>
+  <p>PA, PG, porcentagem, juros simples e compostos, MMC, MDC — tudo para dominar o cálculo financeiro e numérico no UNICAP 2026.</p>
+</div>
+<div class="content">
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">1</div><div class="section-title">Progressão Aritmética (PA)</div></div>
+    <div class="section-body">
+      <p class="text-body">Em uma PA, a diferença r entre termos consecutivos (razão) é constante. PAs aparecem em sequências lineares, escalonamentos de salário e distribuições uniformes.</p>
+      <div class="card-grid">
+        <div class="card green">
+          <h3>Termo Geral</h3>
+          <p>aₙ = a₁ + (n−1)·r. Dado o primeiro termo e a razão, encontre qualquer termo. Ex: a₁=3, r=5 → a₁₀ = 3 + 9×5 = 48.</p>
+        </div>
+        <div class="card blue">
+          <h3>Soma de n Termos</h3>
+          <p>Sₙ = n(a₁+aₙ)/2 ou Sₙ = n(2a₁+(n−1)r)/2. A média aritmética dos termos = (a₁+aₙ)/2 = termo do meio.</p>
+        </div>
+        <div class="card gold">
+          <h3>Propriedade Central</h3>
+          <p>Em uma PA com número ímpar de termos, o termo central aₘ é a média aritmética de todos. Soma de termos equidistantes dos extremos: aₖ + aₙ₋ₖ₊₁ = a₁ + aₙ.</p>
+        </div>
+        <div class="card orange">
+          <h3>Tipos de PA</h3>
+          <p>Crescente: r>0. Decrescente: r&lt;0. Constante: r=0. PA de ordem 2: diferenças das diferenças são constantes (relaciona-se com função quadrática).</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Termo geral:  aₙ = a₁ + (n−1)r
+Soma:         Sₙ = n(a₁ + aₙ)/2
+Razão:        r  = aₙ − aₙ₋₁ = (aₙ − a₁)/(n−1)
+
+Exemplo: a₁=2, r=3 → sequência: 2, 5, 8, 11, 14, ...
+a₁₀ = 2 + 9×3 = 29
+S₁₀ = 10×(2+29)/2 = 10×15,5 = 155
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">2</div><div class="section-title">Progressão Geométrica (PG)</div></div>
+    <div class="section-body">
+      <p class="text-body">Em uma PG, a razão q (quociente entre termos consecutivos) é constante e não nula. PGs modelam crescimento/decaimento exponencial, juros compostos e parcelas.</p>
+      <div class="card-grid">
+        <div class="card gold">
+          <h3>Termo Geral</h3>
+          <p>aₙ = a₁ · q^(n−1). Ex: a₁=2, q=3 → a₅ = 2·3⁴ = 2·81 = 162.</p>
+        </div>
+        <div class="card green">
+          <h3>Soma Finita (q≠1)</h3>
+          <p>Sₙ = a₁·(qⁿ−1)/(q−1). Quando q=1: Sₙ = n·a₁ (todos os termos iguais).</p>
+        </div>
+        <div class="card cyan">
+          <h3>Série Geométrica Infinita</h3>
+          <p>Quando |q|&lt;1: S = a₁/(1−q). Ex: 1 + 1/2 + 1/4 + ... = 1/(1−1/2) = 2. Useful em dívidas, probabilidades.</p>
+        </div>
+        <div class="card purple">
+          <h3>Propriedade Central</h3>
+          <p>Termo central de uma PG com n ímpar: termo do meio ao quadrado = produto dos extremos. aₘ² = a₁·aₙ. Termos equidistantes: aₖ·aₙ₋ₖ₊₁ = a₁·aₙ.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Termo geral:    aₙ = a₁ · q^(n−1)
+Soma finita:    Sₙ = a₁·(qⁿ−1)/(q−1)   [q ≠ 1]
+Série infinita: S  = a₁/(1−q)           [|q| &lt; 1]
+Razão:          q  = aₙ/aₙ₋₁
+
+Exemplo: a₁=100, q=2 → 100, 200, 400, 800, ...
+a₇ = 100·2⁶ = 6.400
+S₅ = 100·(2⁵−1)/(2−1) = 100·31 = 3.100
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">3</div><div class="section-title">Porcentagem</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Cálculo Básico</h3>
+          <p>p% de N = N × p/100. Ex: 15% de 200 = 200 × 0,15 = 30. Para encontrar o todo: N = valor / (p/100).</p>
+        </div>
+        <div class="card green">
+          <h3>Acréscimo e Desconto</h3>
+          <p>Acréscimo de p%: N × (1 + p/100). Desconto de p%: N × (1 − p/100). Ex: 800 com 25% de desconto = 800 × 0,75 = 600.</p>
+        </div>
+        <div class="card orange">
+          <h3>Variação Percentual</h3>
+          <p>Δ% = (Vf − Vi)/Vi × 100. Se subiu de 80 para 100: Δ% = 20/80×100 = 25%. Se baixou de 100 para 80: Δ% = −20%.</p>
+        </div>
+        <div class="card red">
+          <h3>Descontos Encadeados</h3>
+          <p>Dois descontos de 20% e 10% NÃO são 30%. Fator: 0,80 × 0,90 = 0,72. Desconto total: 28%. Regra geral: multiplicam-se os fatores.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+p% de N       = N × p/100
+Após acréscimo: N × (1 + i)   onde i = p/100
+Após desconto:  N × (1 − i)
+
+Encadeamento: fator total = f₁ × f₂ × ... × fₙ
+Ex: +30% depois −20%: 1,30 × 0,80 = 1,04 → acréscimo de 4%
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> "Um produto subiu 20% e depois baixou 20% — voltou ao preço original?" NÃO! Fator: 1,20 × 0,80 = 0,96. O preço ficou 4% menor.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">4</div><div class="section-title">Juros Simples vs Compostos</div></div>
+    <div class="section-body">
+      <p class="text-body">Juros simples crescem linearmente (como PA). Juros compostos crescem exponencialmente (como PG). A diferença é o "juro sobre juro".</p>
+      <table class="vs-table">
+        <thead><tr><th>Aspecto</th><th>Juros Simples</th><th>Juros Compostos</th></tr></thead>
+        <tbody>
+          <tr><td>Crescimento</td><td>Linear (PA)</td><td>Exponencial (PG)</td></tr>
+          <tr><td>Fórmula Juro</td><td>J = C·i·t</td><td>J = M − C</td></tr>
+          <tr><td>Fórmula Montante</td><td>M = C(1 + i·t)</td><td>M = C(1+i)^t</td></tr>
+          <tr><td>Base de cálculo</td><td>Sempre o capital inicial</td><td>Capital + juros acumulados</td></tr>
+          <tr><td>Uso prático</td><td>Empréstimos curtos, duplicatas</td><td>Financiamentos, investimentos</td></tr>
+        </tbody>
+      </table>
+      <div class="formula-block">
+SIMPLES:   M = C(1 + i·t)     J = C·i·t
+COMPOSTOS: M = C(1 + i)^t     J = C[(1+i)^t − 1]
+
+C = capital inicial  |  i = taxa (mesma unidade de t)  |  t = tempo
+M = montante (capital + juros)
+
+Valor presente: C = M/(1+i)^t
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Se i=12% ao ano e t=3 anos: Simples: M = C×(1+0,12×3) = 1,36C. Compostos: M = C×(1,12)³ = 1,405C. Juros compostos sempre rendem mais que simples para t>1.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">5</div><div class="section-title">MMC, MDC e Divisibilidade</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card green">
+          <h3>MMC (Mínimo Múltiplo Comum)</h3>
+          <p>MMC(a,b): menor número divisível por a e por b. Usado em: reencontro de eventos periódicos, frações com denominadores diferentes, problemas de ciclos.</p>
+        </div>
+        <div class="card gold">
+          <h3>MDC (Máximo Divisor Comum)</h3>
+          <p>MDC(a,b): maior número que divide a e b simultaneamente. Usado em: dividir em partes iguais máximas, simplificar frações. MDC × MMC = a × b.</p>
+        </div>
+        <div class="card blue">
+          <h3>Critérios de Divisibilidade</h3>
+          <p>÷2: último dígito par. ÷3: soma dos dígitos divisível por 3. ÷4: últimos dois dígitos. ÷5: termina em 0 ou 5. ÷6: divisível por 2 e 3. ÷9: soma dígitos múltiplo de 9. ÷11: alternado.</p>
+        </div>
+        <div class="card orange">
+          <h3>Decomposição em Primos</h3>
+          <p>Fatore cada número em primos. MMC = produto de todos os primos com maior expoente. MDC = produto dos primos comuns com menor expoente.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Exemplo: MMC e MDC de 12 e 18
+12 = 2² × 3      18 = 2 × 3²
+MMC = 2² × 3² = 4 × 9 = 36
+MDC = 2¹ × 3¹ = 6
+Verificação: MDC × MMC = 6 × 36 = 216 = 12 × 18 ✓
+
+Reencontro: 2 ônibus saem a cada 15 e 20 min → MMC(15,20) = 60 min
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">6</div><div class="section-title">Razão, Proporção e Regra de Três</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card cyan">
+          <h3>Razão e Proporção</h3>
+          <p>Razão: a/b. Proporção: a/b = c/d ⟹ a·d = b·c (produto dos meios = produto dos extremos). Proporção direta: quando um cresce, o outro cresce. Inversa: um cresce, outro decresce.</p>
+        </div>
+        <div class="card blue">
+          <h3>Regra de Três Simples</h3>
+          <p>Proporção direta: montar proporção e resolver. Ex: 5 operários fazem em 8h; 10 operários fazem em ?h → inversa: 5×8 = 10×x → x = 4h.</p>
+        </div>
+        <div class="card green">
+          <h3>Regra de Três Composta</h3>
+          <p>Envolve mais de duas grandezas. Montar na forma de produto: (a₁/a₂) × (b₁/b₂) = x/c. Verificar se cada par é direta ou inversamente proporcional.</p>
+        </div>
+        <div class="card gold">
+          <h3>Grandezas Proporcionais</h3>
+          <p>Diretamente proporcionais: y = k·x (k constante). Inversamente proporcionais: y = k/x, ou seja x·y = k. O gráfico direto é uma reta pela origem; o inverso é uma hipérbole.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">7</div><div class="section-title">Questões-Tipo UNICAP — Resolvidas</div></div>
+    <div class="section-body">
+      <div class="question-card">
+        <div class="q-label">Questão 1 — PA</div>
+        <div class="q-text">Numa PA com primeiro termo 4 e razão 7, determine o 15º termo e a soma dos 15 primeiros termos.</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          a₁₅ = a₁ + (15−1)·r = 4 + 14×7 = 4 + 98 = <strong>102</strong><br>
+          S₁₅ = 15 × (a₁+a₁₅)/2 = 15 × (4+102)/2 = 15 × 53 = <strong>795</strong>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 2 — Juros Compostos</div>
+        <div class="q-text">Um capital de R$ 2.000 é aplicado a juros compostos de 10% ao ano. Qual o montante após 3 anos? (Dados: 1,1³ = 1,331)</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          M = C(1+i)^t = 2000 × (1,10)³ = 2000 × 1,331 = <strong>R$ 2.662,00</strong><br>
+          Juros pagos = 2662 − 2000 = R$ 662,00
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 3 — MMC aplicado</div>
+        <div class="q-text">Dois atletas correm numa pista circular. O primeiro completa uma volta a cada 8 minutos, o segundo a cada 12 minutos. Eles partiram juntos do mesmo ponto. Em quantos minutos estarão juntos novamente?</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          8 = 2³ ; 12 = 2² × 3<br>
+          MMC(8,12) = 2³ × 3 = 24<br>
+          Estarão juntos após <strong>24 minutos</strong>.<br>
+          O primeiro terá dado 3 voltas e o segundo 2 voltas.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">8</div><div class="section-title">Tabela de Fórmulas Essenciais</div></div>
+    <div class="section-body">
+      <table class="formula-table">
+        <thead><tr><th>Conceito</th><th>Fórmula</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>Termo geral PA</td><td>aₙ = a₁ + (n−1)r</td><td>r = razão</td></tr>
+          <tr><td>Soma PA</td><td>Sₙ = n(a₁+aₙ)/2</td><td>ou n[2a₁+(n−1)r]/2</td></tr>
+          <tr><td>Termo geral PG</td><td>aₙ = a₁·q^(n−1)</td><td>q = razão geométrica</td></tr>
+          <tr><td>Soma PG finita</td><td>Sₙ = a₁(qⁿ−1)/(q−1)</td><td>q ≠ 1</td></tr>
+          <tr><td>Série PG infinita</td><td>S = a₁/(1−q)</td><td>|q| &lt; 1</td></tr>
+          <tr><td>Porcentagem</td><td>p% de N = N·p/100</td><td>Fator = 1 ± p/100</td></tr>
+          <tr><td>Juros simples</td><td>J = C·i·t ; M = C(1+i·t)</td><td>mesma unidade de tempo</td></tr>
+          <tr><td>Juros compostos</td><td>M = C·(1+i)^t</td><td>C = M/(1+i)^t</td></tr>
+          <tr><td>Variação %</td><td>Δ% = (Vf−Vi)/Vi × 100</td><td>Negativo = queda</td></tr>
+          <tr><td>MDC × MMC</td><td>MDC(a,b)×MMC(a,b) = a×b</td><td>Válido para 2 números</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

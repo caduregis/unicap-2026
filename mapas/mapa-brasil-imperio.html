@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brasil Império · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#facc15;--pri2:#fde047;--paper:#fef3c7;--ink:#1a1408}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0804;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.55) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#1a1408 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(254,243,199,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(250,204,21,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(26,20,8,.7);backdrop-filter:blur(20px);border:1px solid rgba(250,204,21,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(26,20,8,.78) 0%,rgba(40,32,12,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(250,204,21,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(254,243,199,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(26,20,8,.65);backdrop-filter:blur(20px);border:1px solid rgba(250,204,21,.2);border-radius:10px;font-size:13px;color:rgba(254,243,199,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(26,20,8,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(10,8,4,.96) 0%,rgba(26,20,8,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(250,204,21,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(250,204,21,.1);border:1px solid rgba(250,204,21,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(250,204,21,.15);border:1px solid rgba(250,204,21,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(254,243,199,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(250,204,21,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(254,243,199,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(254,243,199,.78);position:relative;border-bottom:1px solid rgba(250,204,21,.06)}
+.sec li::before{content:'♛';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(250,204,21,.15) 0%,rgba(253,224,71,.08) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">BRASIL IMPÉRIO</div><div class="lt2">1822 - 1889</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">♛</div><div class="bt"><div class="l1">Brasil Império</div><div class="l2">história brasil · 2.3-2.5</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · BRASIL IMP</span><h1>Brasil Império</h1><p>1822-1889. Palácio Imperial com coroa de D. Pedro II flutuante, fazenda de café com pé secular, estátua de Pedro I a cavalo (Independência), forte da Praieira em Recife, Lei Áurea papel flutuante. Clique nos marcos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> marco</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#fde047;padding:24px;font-family:monospace;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'pri',cod:'HB 2.3',nome:'Primeiro Reinado',sub:'Pedro I · Independência · 1822-1831',
+topicos:['A Independência do Brasil (7 de setembro de 1822) — D. Pedro I','Reconhecimento da Independência (Inglaterra 1825, Portugal 1825)','A primeira Constituição (1824) — outorgada por D. Pedro I, Poder Moderador','Confederação do Equador (1824) — revolta em Pernambuco, esmagada','Guerra da Cisplatina (1825-28) — perda do Uruguai','Crise da Noite das Garrafadas (1831)','Abdicação de D. Pedro I (7 de abril de 1831) em favor do filho Pedro II'],
+resumo:'Brasil torna-se Império. Pedro I outorga Constituição (1824) com Poder Moderador. Abdica em 1831.',
+dica:'Constituição de 1824 introduziu o "Poder Moderador" (4º poder do imperador) — inspirado em Benjamin Constant.'},
+{id:'reg',cod:'HB 2.4',nome:'Período Regencial',sub:'1831-1840 · rebeliões',
+topicos:['Grupos políticos nos primeiros anos do Período Regencial: liberais moderados, exaltados, restauradores','Regências una (1831-34) e trina (até 1837)','Ato Adicional (1834) — descentralização','Rebeliões regenciais: Cabanagem (PA), Sabinada (BA), Balaiada (MA), Farroupilha (RS), Revolta dos Malês (BA)','Golpe da Maioridade (1840) — Pedro II declarado maior'],
+resumo:'Período instável: criança no trono, regentes governando, rebeliões em todo o Brasil. Termina com Golpe da Maioridade.',
+dica:'CABANAGEM (PA) foi a maior rebelião popular. FARROUPILHA (RS) a mais longa (10 anos). MALÊS (BA) rebelião de escravos muçulmanos.'},
+{id:'seg',cod:'HB 2.5a',nome:'Segundo Reinado · Pedro II',sub:'Liberais × Conservadores · Praieira PE',
+topicos:['O Segundo Reinado: 1840-1889','A política dos liberais e conservadores','Parlamentarismo "às avessas" — imperador escolhia primeiro-ministro','A Revolução Praieira (1848-49, Pernambuco) — última rebelião imperial regional','Sistema eleitoral censitário','Lei dos Sexagenários (1885)'],
+resumo:'D. Pedro II reinou por 49 anos. Estabilidade política via alternância forçada. Praieira foi a última rebelião imperial.',
+dica:'⚠️ PERNAMBUCO! Revolução Praieira (1848-49) cai com peso na UNICAP. Última rebelião regional do Império.'},
+{id:'cafe',cod:'HB 2.5b',nome:'Ciclo do Café',sub:'Sudeste · imigração · Mauá',
+topicos:['O café e o Segundo Reinado — eixo econômico deslocou-se para o Sudeste','Vale do Paraíba (RJ, SP, MG) — primeiras grandes fazendas','Barão do Mauá — modernização econômica','Imigração europeia: italianos, alemães, japoneses','Industrialização inicial','Lei de Terras (1850) — terra só com compra (excluiu negros libertos)'],
+resumo:'Café virou produto número 1 da economia. Sudeste (RJ, SP, MG) deslocou Nordeste. Imigração europeia trouxe mão de obra livre.',
+dica:'Lei de Terras (1850) é crucial — fechou acesso a negros e indígenas à propriedade rural.'},
+{id:'aurea',cod:'HB 2.5c',nome:'Guerra do Paraguai · Abolição',sub:'Lei Áurea 1888',
+topicos:['A política externa brasileira e a Guerra do Paraguai (1864-1870)','Tríplice Aliança: Brasil + Argentina + Uruguai × Paraguai','Solano López (Paraguai) derrotado, país devastado','O processo de abolição da escravidão: Lei Eusébio de Queirós (1850), Lei do Ventre Livre (1871), Lei dos Sexagenários (1885), Lei Áurea (13 de maio de 1888)','Movimento abolicionista: Joaquim Nabuco, José do Patrocínio, André Rebouças','A imigração no Brasil'],
+resumo:'Guerra do Paraguai (5 anos) fortaleceu o Exército. Abolição gradual culminou em 1888 (último país das Américas a abolir).',
+dica:'Brasil foi o ÚLTIMO país das Américas a abolir a escravidão (13/5/1888 — Lei Áurea, Princesa Isabel).'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x18140a);
+scene.fog=new THREE.Fog(0x18140a,80,260);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(60,48,70);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.95;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=30;controls.maxDistance=170;
+controls.maxPolarAngle=Math.PI*0.48;controls.target.set(0,5,0);
+
+scene.add(new THREE.AmbientLight(0x806a40,0.45));
+const sun=new THREE.DirectionalLight(0xfff0c0,1.4);
+sun.position.set(40,55,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
+sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;
+sun.shadow.bias=-0.0005;scene.add(sun);
+
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,40,40),new THREE.MeshStandardMaterial({color:0x4a5828,roughness:0.95}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// PRIMEIRO REINADO - Estátua de D. Pedro I a cavalo
+{const g=addMarker('pri',-30,0);
+// Pedestal alto
+const ped=new THREE.Mesh(new THREE.BoxGeometry(3,5,4),new THREE.MeshStandardMaterial({color:0x9a8870,roughness:0.85}));
+ped.position.y=2.5;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// Inscrição "1822" placa
+const plaque=new THREE.Mesh(new THREE.BoxGeometry(2,0.8,0.1),new THREE.MeshStandardMaterial({color:0xd4a017,emissive:0x553300,emissiveIntensity:0.3,metalness:0.7,roughness:0.3}));
+plaque.position.set(0,3,2.05);g.add(plaque);
+// Cavalo (corpo)
+const horse=new THREE.Mesh(new THREE.BoxGeometry(2.5,1.5,1),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.7,metalness:0.4}));
+horse.position.set(0,6.5,0);horse.castShadow=true;g.add(horse);
+// Pescoço
+const neck=new THREE.Mesh(new THREE.BoxGeometry(0.6,1.2,0.6),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.7,metalness:0.4}));
+neck.position.set(1.2,7.4,0);neck.rotation.z=-0.4;g.add(neck);
+// Cabeça
+const head=new THREE.Mesh(new THREE.BoxGeometry(1,0.6,0.5),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.7,metalness:0.4}));
+head.position.set(1.8,8.2,0);g.add(head);
+// Pernas (4)
+for(let i=0;i<4;i++){
+  const leg=new THREE.Mesh(new THREE.BoxGeometry(0.3,2.5,0.3),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.7,metalness:0.4}));
+  leg.position.set(-0.8+(i%2)*1.6,5,-0.3+(i>1?0.6:0));leg.castShadow=true;g.add(leg);
+}
+// Cavaleiro (D. Pedro I)
+const rider=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.4,1.6,8),new THREE.MeshStandardMaterial({color:0x4060a0,roughness:0.5,metalness:0.4}));
+rider.position.set(0,8,0);rider.castShadow=true;g.add(rider);
+const rhead=new THREE.Mesh(new THREE.SphereGeometry(0.4,12,10),new THREE.MeshStandardMaterial({color:0xe0b890,roughness:0.5}));
+rhead.position.set(0,9.2,0);g.add(rhead);
+// Espada empunhada apontando para frente (Ipiranga!)
+const sword=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.1,2),new THREE.MeshStandardMaterial({color:0xe0c0a0,metalness:0.8,roughness:0.2,emissive:0x806040,emissiveIntensity:0.3}));
+sword.position.set(0.7,8.5,0.8);sword.rotation.x=0.3;g.add(sword);
+markers.push({id:'pri',center:new THREE.Vector3(-30,5,0),radius:9,group:g});}
+
+// PERÍODO REGENCIAL - Bandeiras das revoltas regionais
+{const g=addMarker('reg',-15,-22);
+// Plataforma
+const base=new THREE.Mesh(new THREE.CylinderGeometry(5,5.5,1,16),new THREE.MeshStandardMaterial({color:0x5a4830,roughness:0.9}));
+base.position.y=0.5;base.castShadow=base.receiveShadow=true;g.add(base);
+// 5 mastros com bandeiras coloridas das rebeliões
+const revolts=[
+  {n:'Cabanagem PA',c:0xc62828},
+  {n:'Farroupilha RS',c:0x10b981},
+  {n:'Balaiada MA',c:0xfbbf24},
+  {n:'Sabinada BA',c:0x4060c0},
+  {n:'Malês BA',c:0x000000}
+];
+revolts.forEach((r,i)=>{
+  const a=i*Math.PI*2/5;
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.12,6,6),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.95}));
+  mast.position.set(Math.cos(a)*3.5,4,Math.sin(a)*3.5);mast.castShadow=true;g.add(mast);
+  const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1),new THREE.MeshStandardMaterial({color:r.c,emissive:r.c,emissiveIntensity:r.c===0?0:0.2,side:THREE.DoubleSide,roughness:0.7}));
+  flag.position.set(Math.cos(a)*3.5+Math.cos(a)*0.75,6,Math.sin(a)*3.5+Math.sin(a)*0.75);flag.lookAt(0,6,0);g.add(flag);
+});
+// Coroa pequena no centro (criança no trono)
+const crown=new THREE.Group();crown.position.set(0,2.5,0);
+const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.8,0.5,12,1,true),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.85,roughness:0.2,emissive:0x553300,emissiveIntensity:0.4,side:THREE.DoubleSide}));
+crown.add(cb);
+for(let i=0;i<6;i++){
+  const sp=new THREE.Mesh(new THREE.ConeGeometry(0.13,0.35,4),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.85,roughness:0.2}));
+  const a=i*Math.PI/3;sp.position.set(Math.cos(a)*0.65,0.3,Math.sin(a)*0.65);crown.add(sp);
+}
+g.add(crown);g.userData.crown=crown;
+markers.push({id:'reg',center:new THREE.Vector3(-15,3,-22),radius:7,group:g});}
+
+// SEGUNDO REINADO - Pedro II + Praieira PE (bandeira pernambucana)
+{const g=addMarker('seg',5,0);
+// Trono
+const throne=new THREE.Mesh(new THREE.BoxGeometry(3,4,2),new THREE.MeshStandardMaterial({color:0xa83828,roughness:0.6}));
+throne.position.y=2;throne.castShadow=throne.receiveShadow=true;g.add(throne);
+// Encosto alto
+const back=new THREE.Mesh(new THREE.BoxGeometry(3.5,5,0.5),new THREE.MeshStandardMaterial({color:0xa83828,roughness:0.6}));
+back.position.set(0,5.5,-1);back.castShadow=true;g.add(back);
+// Cetro de Pedro II
+const scepter=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,3,8),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.8,roughness:0.3,emissive:0x553300,emissiveIntensity:0.3}));
+scepter.position.set(1.2,5,0);scepter.rotation.z=-0.3;g.add(scepter);
+const stop=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,10),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.8,roughness:0.3,emissive:0x664400,emissiveIntensity:0.4}));
+stop.position.set(2,6.3,0);g.add(stop);
+// Coroa imperial flutuante
+const crown=new THREE.Group();crown.position.set(0,9,0);
+const cb=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.3,0.7,16,1,true),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.9,roughness:0.15,emissive:0x553300,emissiveIntensity:0.4,side:THREE.DoubleSide}));
+crown.add(cb);
+// Arcos da coroa imperial
+for(let i=0;i<4;i++){
+  const a=i*Math.PI/2;
+  const arc=new THREE.Mesh(new THREE.TorusGeometry(1.1,0.08,8,12,Math.PI),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.9,roughness:0.15,emissive:0x553300,emissiveIntensity:0.4}));
+  arc.position.set(0,0.5,0);arc.rotation.y=a;arc.rotation.x=Math.PI/2;crown.add(arc);
+}
+// Globo + cruz no topo
+const orb=new THREE.Mesh(new THREE.SphereGeometry(0.35,16,12),new THREE.MeshStandardMaterial({color:0x4060c0,metalness:0.5,roughness:0.4,emissive:0x102060,emissiveIntensity:0.4}));
+orb.position.y=1.4;crown.add(orb);
+const cv=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.5,0.08),new THREE.MeshStandardMaterial({color:0xd4a017,emissive:0x664400,emissiveIntensity:0.4}));
+cv.position.y=2;crown.add(cv);
+const ch=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.08,0.08),new THREE.MeshStandardMaterial({color:0xd4a017,emissive:0x664400,emissiveIntensity:0.4}));
+ch.position.y=2.15;crown.add(ch);
+g.add(crown);g.userData.crown=crown;
+// Bandeira PE (Praieira)
+const flag=new THREE.Mesh(new THREE.PlaneGeometry(2.5,1.5),new THREE.MeshStandardMaterial({color:0xc62828,side:THREE.DoubleSide,emissive:0x500808,emissiveIntensity:0.2}));
+flag.position.set(4,4,2);flag.rotation.y=-0.4;g.add(flag);
+const star=new THREE.Mesh(new THREE.RingGeometry(0.18,0.4,5),new THREE.MeshBasicMaterial({color:0xfaf0d8,side:THREE.DoubleSide}));
+star.position.set(4-0.05,4,2.02);star.rotation.y=-0.4;g.add(star);
+// Texto "PE 1817·1848" (placa)
+const txt=new THREE.Mesh(new THREE.BoxGeometry(2,0.5,0.1),new THREE.MeshStandardMaterial({color:0x4a3020,emissive:0xfaf0d8,emissiveIntensity:0.1}));
+txt.position.set(4,2.5,2);txt.rotation.y=-0.4;g.add(txt);
+markers.push({id:'seg',center:new THREE.Vector3(5,5,0),radius:11,group:g});}
+
+// CICLO DO CAFÉ - Fazenda com pé de café
+{const g=addMarker('cafe',28,8);
+// Casa-grande
+const big=new THREE.Mesh(new THREE.BoxGeometry(6,3.5,4),new THREE.MeshStandardMaterial({color:0xfae5d0,roughness:0.7}));
+big.position.y=1.75;big.castShadow=big.receiveShadow=true;g.add(big);
+const roof=new THREE.Mesh(new THREE.BoxGeometry(6.5,1.2,4.5),new THREE.MeshStandardMaterial({color:0x6a2818,roughness:0.85}));
+roof.position.y=4.1;roof.castShadow=true;g.add(roof);
+// 4 colunas frontais
+for(let i=-1.5;i<=1.5;i+=1){
+  const col=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.22,3,10),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.55}));
+  col.position.set(i,2,2.3);col.castShadow=true;g.add(col);
+}
+// 4 pés de café
+for(let i=0;i<4;i++){
+  const tree=new THREE.Group();
+  tree.position.set(-3+Math.random()*6,0,-4-Math.random()*2);
+  const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,1.8,6),new THREE.MeshStandardMaterial({color:0x5a3a18,roughness:0.95}));
+  tr.position.y=0.9;tr.castShadow=true;tree.add(tr);
+  const fol=new THREE.Mesh(new THREE.SphereGeometry(1.1,12,10),new THREE.MeshStandardMaterial({color:0x4a8030,roughness:0.7}));
+  fol.position.y=2;fol.scale.y=0.85;fol.castShadow=true;tree.add(fol);
+  // Grãos vermelhos
+  for(let j=0;j<6;j++){
+    const bean=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,6),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x500808,emissiveIntensity:0.3,roughness:0.4}));
+    const a=Math.random()*Math.PI*2;const r=0.8+Math.random()*0.3;
+    bean.position.set(Math.cos(a)*r,2+Math.random()*0.5,Math.sin(a)*r);tree.add(bean);
+  }
+  g.add(tree);
+}
+// Saco de café
+const sack=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.6,1.5,8),new THREE.MeshStandardMaterial({color:0x9a8060,roughness:0.95}));
+sack.position.set(3,0.75,1);sack.rotation.z=0.15;sack.castShadow=true;g.add(sack);
+const sack2=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.6,1.5,8),new THREE.MeshStandardMaterial({color:0x9a8060,roughness:0.95}));
+sack2.position.set(4,0.75,2);sack2.castShadow=true;g.add(sack2);
+markers.push({id:'cafe',center:new THREE.Vector3(28,3,8),radius:10,group:g});}
+
+// LEI ÁUREA / ABOLIÇÃO - papel grande flutuante + correntes quebradas
+{const g=addMarker('aurea',0,28);
+// Pedestal
+const ped=new THREE.Mesh(new THREE.CylinderGeometry(3,3.5,1,16),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.6}));
+ped.position.y=0.5;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// Lei Áurea (papel grande)
+const paper=new THREE.Mesh(new THREE.PlaneGeometry(3.5,5),new THREE.MeshStandardMaterial({color:0xfaf0d8,side:THREE.DoubleSide,roughness:0.95,emissive:0xa08850,emissiveIntensity:0.2}));
+paper.position.set(0,5,0);paper.rotation.x=-0.15;g.add(paper);g.userData.paper=paper;
+// Texto "13 de Maio 1888 LEI ÁUREA" (placa dourada)
+const titleP=new THREE.Mesh(new THREE.BoxGeometry(2.5,0.5,0.1),new THREE.MeshStandardMaterial({color:0xd4a017,emissive:0x553300,emissiveIntensity:0.4,metalness:0.7,roughness:0.3}));
+titleP.position.set(0,6.5,0.1);titleP.rotation.x=-0.15;g.add(titleP);
+// Selo / lacre
+const seal=new THREE.Mesh(new THREE.CircleGeometry(0.5,32),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x500808,emissiveIntensity:0.4,side:THREE.DoubleSide}));
+seal.position.set(0,3.8,0.06);seal.rotation.x=-0.15;g.add(seal);
+// Correntes quebradas no chão
+for(let i=0;i<4;i++){
+  const t=new THREE.Mesh(new THREE.TorusGeometry(0.25,0.06,6,10),new THREE.MeshStandardMaterial({color:0x4a4848,metalness:0.85,roughness:0.4}));
+  const a=i*Math.PI/2;t.position.set(Math.cos(a)*3.5,0.3,Math.sin(a)*3.5);t.rotation.x=Math.PI/2+(Math.random()-0.5)*0.5;
+  t.rotation.z=Math.random()*Math.PI;t.castShadow=true;g.add(t);
+}
+// Luz dourada de cima
+const lightUp=new THREE.PointLight(0xffdd80,2,15);lightUp.position.set(0,8,0);g.add(lightUp);
+markers.push({id:'aurea',center:new THREE.Vector3(0,5,28),radius:9,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0xfde047,side:THREE.DoubleSide,transparent:true,opacity:0.35}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.1,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(60,48,70);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,5,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.25+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  if(groups['reg']&&groups['reg'].userData.crown){groups['reg'].userData.crown.rotation.y=t*0.4;groups['reg'].userData.crown.position.y=2.5+Math.sin(t*1.8)*0.15;}
+  if(groups['seg']&&groups['seg'].userData.crown){groups['seg'].userData.crown.rotation.y=t*0.3;groups['seg'].userData.crown.position.y=9+Math.sin(t*1.5)*0.25;}
+  if(groups['aurea']&&groups['aurea'].userData.paper){groups['aurea'].userData.paper.position.y=5+Math.sin(t*1.2)*0.2;}
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

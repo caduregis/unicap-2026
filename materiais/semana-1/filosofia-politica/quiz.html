@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz · Filosofia Política · UNICAP 2026.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  body { background: linear-gradient(135deg, #0a0e1a 0%, #131829 50%, #0a0e1a 100%); min-height: 100vh; color: #e8eaf0; }
+  .glass { background: rgba(19,24,41,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0,212,255,0.1); }
+  .amber { color: #ffb800; } .cyan { color: #00d4ff; }
+  .alt { transition: all 200ms; cursor: pointer; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); }
+  .alt:hover { background: rgba(0,212,255,0.08); border-color: #00d4ff; }
+  .alt.acerto { background: rgba(16,185,129,0.18); border-color: #10b981; }
+  .alt.erro { background: rgba(239,68,68,0.18); border-color: #ef4444; }
+  .alt.disabled { cursor: not-allowed; pointer-events: none; }
+</style>
+</head>
+<body class="p-4 sm:p-8">
+
+<header class="max-w-3xl mx-auto mb-6">
+  <a href="../index.html" class="text-sm cyan hover:underline">← Semana 1</a>
+  <div class="flex items-baseline justify-between mt-3">
+    <h1 class="text-2xl font-bold">❓ Quiz · <span class="amber">Filosofia Política</span></h1>
+    <p class="text-xs text-slate-500" id="timer">15:00</p>
+  </div>
+  <p class="text-xs text-slate-500 mt-1">15 questões · correção comentada · 15 min sugeridos</p>
+</header>
+
+<section id="quizArea" class="max-w-3xl mx-auto"></section>
+
+<section id="resultadoArea" class="max-w-3xl mx-auto hidden glass rounded-2xl p-8 text-center">
+  <p class="text-6xl mb-4">🎯</p>
+  <p class="text-2xl font-bold mb-2">Quiz finalizado!</p>
+  <p class="text-4xl font-bold cyan mb-2"><span id="acertos">0</span>/15</p>
+  <p class="text-slate-400 mb-6" id="diagnostico"></p>
+  <div class="flex gap-3 justify-center">
+    <button onclick="reiniciar()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-6 py-3 rounded-lg">🔄 Refazer</button>
+    <a href="../index.html" class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg">← Voltar</a>
+  </div>
+</section>
+
+<script>
+const QUESTOES = [
+  { e: 'A frase "o homem é o lobo do homem" (homo homini lupus) é atribuída a qual filósofo?', a: ['Aristóteles','Maquiavel','Hobbes','Rousseau','Locke'], c: 2, exp: 'Thomas Hobbes, no Leviatã (1651). Descreve o estado de natureza humano como guerra constante.' },
+  { e: 'Para Aristóteles, "zoon politikon" significa:', a: ['O homem é um animal racional','O homem é por natureza um animal político','O homem nasce livre','O homem é a medida de todas as coisas','O homem deve viver isolado'], c: 1, exp: 'Conceito central da Política aristotélica: o ser humano só se realiza plenamente vivendo na pólis (cidade-Estado).' },
+  { e: 'Em "Do Contrato Social", Rousseau afirma que a soberania pertence a:', a: ['Ao monarca absoluto','Ao governo eleito','Ao povo, via vontade geral','Aos filósofos-reis','A Deus'], c: 2, exp: 'Soberania popular: o povo é o soberano legítimo. A lei é expressão da vontade geral. Base ideológica da Revolução Francesa.' },
+  { e: 'O Mito da Caverna foi escrito por:', a: ['Sócrates','Platão','Aristóteles','Heráclito','Parmênides'], c: 1, exp: 'Platão, em "A República" (livro VII). Alegoria da educação filosófica: passar do mundo das sombras (sensível) ao mundo da luz (Ideias).' },
+  { e: 'A 2ª formulação do imperativo categórico de Kant fundamenta o princípio constitucional brasileiro de:', a: ['Soberania nacional','Pluralismo político','Dignidade da pessoa humana','Valores sociais do trabalho','Cidadania'], c: 2, exp: 'Art. 1º, III, CF/88: dignidade humana. Vem de "trate a humanidade sempre como fim, nunca como meio".' },
+  { e: 'O contratualismo de Locke difere do de Hobbes principalmente porque Locke defende:', a: ['Estado de natureza como guerra de todos','Soberano absoluto e indivisível','Direitos naturais preservados em um Estado limitado','Vontade geral como fonte das leis','Filósofos-reis como governantes'], c: 2, exp: 'Locke vê o estado de natureza como pacífico e racional. O Estado existe para PROTEGER direitos (vida, liberdade, propriedade), não para suprimi-los.' },
+  { e: 'O método maiêutico foi desenvolvido por:', a: ['Platão','Aristóteles','Sócrates','Tales de Mileto','Pitágoras'], c: 2, exp: 'Sócrates: maiêutica (de "parteira") = parir ideias por meio de perguntas. Não dá respostas — provoca o interlocutor a refletir.' },
+  { e: 'Para Maquiavel, em "O Príncipe", a principal qualidade do governante deve ser:', a: ['Virtude moral cristã','Astúcia e capacidade prática (virtù)','Obediência ao papa','Sabedoria filosófica platônica','Misericórdia incondicional'], c: 1, exp: 'Maquiavel rompe com a moral cristã medieval. Virtù = capacidade técnica de manter o poder, mesmo que precise agir de modo "imoral".' },
+  { e: 'Para Hobbes, o que motiva o homem a celebrar o contrato social?', a: ['Amor ao próximo','Busca pela perfeição moral','Medo da morte violenta','Vontade de Deus','Reconhecimento social'], c: 2, exp: 'A racionalidade hobbesiana é INSTRUMENTAL: o homem teme a morte violenta e por isso aceita um Soberano absoluto que garanta segurança.' },
+  { e: 'O "estado de natureza" para Rousseau é caracterizado por:', a: ['Guerra de todos contra todos','Pacto entre cidadãos','Bondade natural do homem (bom selvagem)','Tirania do mais forte','Anarquia desestruturada'], c: 2, exp: 'Rousseau inverte Hobbes: o homem NASCE BOM, é a sociedade (propriedade privada, desigualdade) que o corrompe.' },
+  { e: 'Qual filósofo distinguiu virtude como "meio-termo" entre dois extremos viciosos?', a: ['Platão','Aristóteles','Sócrates','Kant','Marco Aurélio'], c: 1, exp: 'Aristóteles, em "Ética a Nicômaco": coragem = meio entre covardia e temeridade; generosidade = entre avareza e prodigalidade.' },
+  { e: 'A frase "O homem nasce livre, e por toda parte está acorrentado" é a abertura de qual obra?', a: ['Leviatã (Hobbes)','Dois Tratados (Locke)','Do Contrato Social (Rousseau)','O Príncipe (Maquiavel)','Crítica da Razão Pura (Kant)'], c: 2, exp: 'Rousseau, abertura do "Do Contrato Social" (1762). Sintetiza sua crítica à sociedade desigual e propõe a vontade geral como saída.' },
+  { e: 'Qual é a CORRETA distinção entre Hobbes e Locke quanto ao soberano?', a: ['Hobbes defende soberania popular; Locke, absolutismo','Hobbes defende soberano absoluto e irrevogável; Locke, governo limitado e revogável','Os dois defendem a mesma forma de governo','Hobbes admite divisão de poderes; Locke, soberano único','Hobbes é monarquista; Locke é teocrata'], c: 1, exp: 'Hobbes = absolutismo (soberano não pode ser destituído). Locke = liberalismo (governo limitado, povo tem direito de resistência se direitos forem violados).' },
+  { e: 'A noção de "filósofo-rei" como governante ideal é de:', a: ['Aristóteles','Sócrates','Platão','Plotino','Heráclito'], c: 2, exp: 'Platão, em "A República". O filósofo, por conhecer o BEM e a JUSTIÇA, é o mais apto a governar a polis.' },
+  { e: 'A frase "Tudo que conhecemos sobre Sócrates vem através de outros autores" é verdadeira porque:', a: ['Ele nasceu antes da invenção da escrita','Ele não escreveu nada — preferia o diálogo oral','Suas obras foram queimadas em Atenas','Ele só falava em parábolas religiosas','Os romanos destruíram seus manuscritos'], c: 1, exp: 'Sócrates não escreveu. Conhecemo-lo por Platão (principal fonte), Xenofonte e Aristófanes (Sátira "As Nuvens").' },
+];
+
+let respostas = new Array(QUESTOES.length).fill(null);
+let timerSeg = 15 * 60;
+let timerId = null;
+
+function render() {
+  const area = document.getElementById('quizArea');
+  area.innerHTML = QUESTOES.map((q, i) => `
+    <div class="glass rounded-xl p-5 mb-4">
+      <p class="text-xs cyan font-bold mb-2">Questão ${i+1}</p>
+      <p class="mb-4 leading-relaxed">${q.e}</p>
+      <div class="space-y-2">
+        ${q.a.map((alt, j) => {
+          let cls = 'alt';
+          if (respostas[i] !== null) {
+            cls += ' disabled';
+            if (j === q.c) cls += ' acerto';
+            else if (j === respostas[i]) cls += ' erro';
+          }
+          return `<div class="${cls} rounded-lg p-3 flex gap-3" onclick="responder(${i},${j})">
+            <span class="font-bold cyan">${String.fromCharCode(65+j)})</span>
+            <span>${alt}</span>
+          </div>`;
+        }).join('')}
+      </div>
+      ${respostas[i] !== null ? `<p class="text-xs mt-3 ${respostas[i] === q.c ? 'text-emerald-300' : 'text-amber-300'}"><strong>${respostas[i] === q.c ? '✓ Correto.' : '✗ Resposta correta: ' + String.fromCharCode(65+q.c) + '.'}</strong> ${q.exp}</p>` : ''}
+    </div>
+  `).join('') + `
+    <button onclick="finalizar()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3 rounded-lg mt-4">Finalizar Quiz</button>
+  `;
+}
+
+function responder(i, j) {
+  if (respostas[i] !== null) return;
+  respostas[i] = j;
+  render();
+}
+
+function finalizar() {
+  clearInterval(timerId);
+  const acertos = respostas.reduce((acc, r, i) => acc + (r === QUESTOES[i].c ? 1 : 0), 0);
+  document.getElementById('quizArea').classList.add('hidden');
+  document.getElementById('resultadoArea').classList.remove('hidden');
+  document.getElementById('acertos').textContent = acertos;
+  const pct = (acertos/15)*100;
+  let diag = '';
+  if (pct >= 80) diag = '🔥 Domínio sólido. Pode passar para revisão espaçada simples.';
+  else if (pct >= 60) diag = '👍 Base boa. Revise os erros com cuidado.';
+  else if (pct >= 40) diag = '⚠️ Gaps importantes. Releia o resumo e refaça o quiz amanhã.';
+  else diag = '🚨 Muito frágil. Estude o resumo cuidadosamente antes de tentar de novo.';
+  document.getElementById('diagnostico').textContent = diag;
+}
+
+function reiniciar() {
+  respostas = new Array(QUESTOES.length).fill(null);
+  document.getElementById('quizArea').classList.remove('hidden');
+  document.getElementById('resultadoArea').classList.add('hidden');
+  render();
+  timerSeg = 15 * 60;
+  iniciarTimer();
+}
+
+function iniciarTimer() {
+  timerId = setInterval(() => {
+    timerSeg--;
+    const m = Math.floor(timerSeg/60);
+    const s = timerSeg % 60;
+    document.getElementById('timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    if (timerSeg <= 0) { clearInterval(timerId); finalizar(); }
+  }, 1000);
+}
+
+render();
+iniciarTimer();
+</script>
+</body>
+</html>

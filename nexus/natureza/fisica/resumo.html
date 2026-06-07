@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física — Resumo — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #050408;
+  --surface: #090710;
+  --surface2: #0d0a14;
+  --border: rgba(255,255,255,0.07);
+  --accent: #ffcc44;
+  --accent2: #ff9955;
+  --text: #c8c0d8;
+  --muted: #605870;
+  --heading: #f0e8ff;
+}
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+.container { max-width:860px; margin:0 auto; padding:24px 20px 60px; }
+nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:40px; padding:14px 0; border-bottom:1px solid var(--border); }
+nav a { color:var(--muted); text-decoration:none; font-size:12px; font-weight:500; padding:6px 14px; border:1px solid var(--border); border-radius:7px; transition:all 0.2s; }
+nav a:hover { color:var(--heading); background:rgba(255,255,255,0.04); }
+nav .nav-title { color:rgba(255,255,255,0.2); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; }
+h1 { font-size:28px; font-weight:700; color:var(--heading); margin-bottom:6px; }
+.subtitle { font-size:14px; color:var(--muted); margin-bottom:40px; }
+.section { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:28px; margin-bottom:24px; }
+.section-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.section-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+.section h2 { font-size:17px; font-weight:600; color:var(--heading); }
+.section p { font-size:13.5px; color:var(--text); line-height:1.7; margin-bottom:12px; }
+.section p:last-child { margin-bottom:0; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:14px; }
+.card { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.card h4 { font-size:12px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:8px; }
+.card p { font-size:13px; color:var(--muted); line-height:1.6; }
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:14px; }
+th { background:rgba(255,204,68,0.08); color:var(--accent); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+td { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-block { background:var(--surface2); border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:16px 18px; margin-bottom:16px; }
+.question-block .q { font-size:13.5px; color:var(--heading); font-weight:500; margin-bottom:10px; }
+.question-block .resp { font-size:13px; color:var(--accent2); background:rgba(255,153,85,0.06); border:1px solid rgba(255,153,85,0.15); border-radius:7px; padding:10px 14px; }
+.formula { background:rgba(255,204,68,0.07); border:1px solid rgba(255,204,68,0.15); border-radius:8px; padding:10px 16px; font-size:13px; color:#ffdd88; font-family:monospace; margin:10px 0; }
+.formula-block { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.formula-item { background:rgba(255,204,68,0.05); border:1px solid rgba(255,204,68,0.1); border-radius:8px; padding:12px; }
+.formula-item .label { font-size:11px; color:var(--muted); margin-bottom:4px; }
+.formula-item .eq { font-size:13px; color:#ffdd88; font-family:monospace; }
+.highlight { color:var(--accent); font-weight:600; }
+@media(max-width:600px){ .grid-2,.grid-3,.formula-block{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <nav>
+    <a href="../../index.html">← Nexus</a>
+    <span class="nav-title">Física</span>
+    <a href="mapa3d.html">Mapa 3D →</a>
+  </nav>
+
+  <h1>Física</h1>
+  <p class="subtitle">Resumo completo para o vestibular UNICAP 2026 — Carlos Régis / Direito</p>
+
+  <!-- SEÇÃO 1 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,204,68,0.15);">🏃</div>
+      <h2>1. Cinemática: MRU, MRUV, Queda Livre e Lançamento</h2>
+    </div>
+    <p><strong class="highlight">Movimento Retilíneo Uniforme (MRU):</strong> velocidade constante, aceleração = 0. Gráfico v×t: horizontal. Gráfico x×t: linear.</p>
+    <div class="formula">x = x₀ + v · t  |  v = Δx/Δt  (constante)</div>
+    <p><strong class="highlight">Movimento Retilíneo Uniformemente Variado (MRUV):</strong> aceleração constante (≠ 0). Três equações de Torricelli+Houari:</p>
+    <div class="formula">v = v₀ + a·t  |  x = x₀ + v₀t + ½at²  |  v² = v₀² + 2a·Δx</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Queda Livre (Galileu)</h4>
+        <p>Corpo em queda sem resistência do ar. Aceleração = g ≈ 10 m/s² (para baixo). Parte do repouso: v₀ = 0. Aplicar as equações do MRUV com a = g.<br>
+        <strong>h = ½gt²  |  v = gt  |  v² = 2gh</strong></p>
+      </div>
+      <div class="card">
+        <h4>Lançamento Oblíquo</h4>
+        <p>Decompor em componentes:<br>
+        <strong>Horizontal (MRU):</strong> vₓ = v₀cosα; x = vₓt.<br>
+        <strong>Vertical (MRUV):</strong> vy = v₀sinα - gt; y = v₀sinα·t - ½gt².<br>
+        No ponto mais alto: vy = 0. Alcance máximo a 45°.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,100,50,0.15);">⚡</div>
+      <h2>2. Dinâmica: Leis de Newton, Forças e Atrito</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h4>1ª Lei (Inércia)</h4>
+        <p>Todo corpo permanece em repouso ou em MRU se a força resultante for zero. Inércia: resistência à mudança de estado de movimento. Quanto maior a massa, maior a inércia.</p>
+      </div>
+      <div class="card">
+        <h4>2ª Lei (F = ma)</h4>
+        <p>A força resultante é proporcional à massa e à aceleração: <strong>F = m·a</strong>. Unidade: Newton (N = kg·m/s²). Se F e m são conhecidos, a = F/m. A força e a aceleração têm a mesma direção e sentido.</p>
+      </div>
+      <div class="card">
+        <h4>3ª Lei (Ação-Reação)</h4>
+        <p>Para toda ação existe uma reação igual e oposta. Os pares ação-reação atuam em corpos DIFERENTES. Não se cancelam. Ex.: mão empurra mesa (ação), mesa empurra mão (reação).</p>
+      </div>
+    </div>
+    <div class="formula">Peso: P = m·g  |  Normal: N (perpendicular à superfície)  |  Atrito: Fat = μ·N</div>
+    <p><strong class="highlight">Atrito estático (μₑ):</strong> impede o início do movimento. <strong class="highlight">Atrito cinético (μc):</strong> atua durante o movimento (μc &lt; μₑ). Plano inclinado: componente paralela do peso = m·g·senθ; componente normal = m·g·cosθ.</p>
+  </div>
+
+  <!-- SEÇÃO 3 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,255,170,0.12);">⚙️</div>
+      <h2>3. Trabalho, Energia e Potência</h2>
+    </div>
+    <div class="formula">W = F·d·cosθ  (θ = ângulo entre força e deslocamento)</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Formas de Energia Mecânica</h4>
+        <p><strong>Cinética:</strong> Ec = mv²/2 (corpo em movimento).<br>
+        <strong>Potencial gravitacional:</strong> Ep = mgh (altura h acima da referência).<br>
+        <strong>Potencial elástica:</strong> Ee = kx²/2 (mola comprimida/esticada x).<br>
+        <strong>Conservação:</strong> sem atrito, Ec + Ep = constante.</p>
+      </div>
+      <div class="card">
+        <h4>Potência e Rendimento</h4>
+        <p><strong>Potência:</strong> P = W/t = F·v. Unidade: Watt (W = J/s).<br>
+        <strong>Rendimento:</strong> η = Útil/Total × 100%.<br>
+        <strong>Teorema trabalho-energia:</strong> W_resultante = ΔEc = Ecf - Eci.<br>
+        1 CV (cavalo-vapor) = 736 W.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(180,100,255,0.12);">🪐</div>
+      <h2>4. Gravitação: Lei de Newton e Satélites</h2>
+    </div>
+    <p><strong class="highlight">Lei da Gravitação Universal (Newton):</strong> Dois corpos se atraem com força proporcional ao produto das massas e inversamente proporcional ao quadrado da distância.</p>
+    <div class="formula">F = G · M·m / r²  |  G = 6,67×10⁻¹¹ N·m²/kg²</div>
+    <p>Peso é a força gravitacional da Terra sobre o corpo: P = m·g, onde g = G·Mₜ/Rₜ² ≈ 9,8 m/s² (≈10 m/s²). g diminui com a altitude (r aumenta).</p>
+    <p><strong class="highlight">Satélites em órbita circular:</strong> força gravitacional = força centrípeta. Velocidade orbital: v = √(G·M/r). Período: 3ª Lei de Kepler: T² ∝ r³. Satélites geoestacionários: período = 24h, ficam sobre o equador.</p>
+  </div>
+
+  <!-- SEÇÃO 5 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,80,80,0.12);">⚡</div>
+      <h2>5. Eletrostática: Coulomb, Campo e Potencial</h2>
+    </div>
+    <div class="formula">Lei de Coulomb: F = k·|Q₁·Q₂|/r²  |  k = 9×10⁹ N·m²/C²</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Campo Elétrico</h4>
+        <p>Campo criado por uma carga Q no ponto P:<br>
+        <strong>E = k·Q/r²</strong><br>
+        Campo = força por unidade de carga de teste: E = F/q.<br>
+        Sentido: saindo de cargas positivas, entrando em negativas.<br>
+        Unidade: N/C ou V/m.</p>
+      </div>
+      <div class="card">
+        <h4>Potencial Elétrico</h4>
+        <p>Trabalho por unidade de carga para mover de ∞ a P:<br>
+        <strong>V = k·Q/r</strong> (unidade: Volt = J/C).<br>
+        Diferença de potencial (ddp): ΔV = W/q.<br>
+        Superfícies equipotenciais: perpendiculares ao campo.<br>
+        Capacitor armazena energia: U = Q²/2C = CV²/2.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 6 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">💡</div>
+      <h2>6. Eletrodinâmica: Corrente, Resistência, Ohm e Circuitos</h2>
+    </div>
+    <div class="formula">I = ΔQ/Δt (Ampère)  |  V = R·I (Lei de Ohm)  |  R = ρ·L/A</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Circuitos em Série</h4>
+        <p>Mesma corrente em todos os resistores.<br>
+        <strong>R_total = R₁ + R₂ + R₃ + ...</strong><br>
+        Tensão se divide proporcionalmente.<br>
+        Se um resistor queima, o circuito abre (todos apagam).</p>
+      </div>
+      <div class="card">
+        <h4>Circuitos em Paralelo</h4>
+        <p>Mesma tensão em todos os resistores.<br>
+        <strong>1/R_total = 1/R₁ + 1/R₂ + ...</strong><br>
+        Para 2 resistores iguais R: R_total = R/2.<br>
+        Corrente se divide. Se um queima, os outros continuam.</p>
+      </div>
+    </div>
+    <div class="formula">Potência: P = V·I = R·I² = V²/R (Watt)  |  Efeito Joule: Q = R·I²·t</div>
+    <p>Gerador: transforma energia (química, mecânica) em elétrica. Fem (ε): tensão máxima. Tensão terminal: U = ε - r·I (r = resistência interna).</p>
+  </div>
+
+  <!-- SEÇÃO 7 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(100,200,255,0.12);">🌈</div>
+      <h2>7. Óptica Geométrica: Reflexão, Refração, Espelhos e Lentes</h2>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Reflexão e Refração</h4>
+        <p><strong>Reflexão:</strong> ângulo de incidência = ângulo de reflexão (em relação à normal).<br>
+        <strong>Refração (Snell-Descartes):</strong> n₁·senθ₁ = n₂·senθ₂.<br>
+        <strong>Índice de refração:</strong> n = c/v (c = velocidade no vácuo).<br>
+        <strong>Reflexão total interna:</strong> quando θ > θ crítico (fibra óptica).</p>
+      </div>
+      <div class="card">
+        <h4>Espelhos Planos</h4>
+        <p>Imagem: <strong>virtual, direita, mesmo tamanho</strong>, à mesma distância atrás do espelho. Escrita invertida lateralmente. Dois espelhos formam múltiplas imagens. Número de imagens: N = 360°/θ - 1 (para ângulo θ entre espelhos).</p>
+      </div>
+      <div class="card">
+        <h4>Espelhos Esféricos</h4>
+        <p>Equação de Gauss: <strong>1/f = 1/p + 1/p'</strong>.<br>
+        f = R/2 (foco = metade do raio).<br>
+        Côncavo: p > f → imagem real invertida; p &lt; f → virtual direta.<br>
+        Convexo: imagem sempre virtual, direta, menor.</p>
+      </div>
+      <div class="card">
+        <h4>Lentes Esféricas</h4>
+        <p>Equação do fabricante: <strong>1/f = 1/p + 1/p'</strong>.<br>
+        Convergente (borda fina): f > 0. Pode formar real ou virtual.<br>
+        Divergente (borda grossa): f &lt; 0. Imagem sempre virtual, direita, menor.<br>
+        Ampliação: M = p'/p = i/o.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 8 -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,255,200,0.12);">〰️</div>
+      <h2>8. Ondulatória: Ondas, Som e Efeito Doppler</h2>
+    </div>
+    <div class="formula">v = λ·f  |  λ = comprimento de onda  |  f = frequência (Hz)  |  T = 1/f</div>
+    <div class="grid-2">
+      <div class="card">
+        <h4>Classificação das Ondas</h4>
+        <p><strong>Quanto à natureza:</strong> mecânicas (som, sísmica — precisam de meio) e eletromagnéticas (luz, rádio — viajam no vácuo).<br>
+        <strong>Quanto à direção:</strong> transversais (vibração ⊥ propagação) e longitudinais (vibração ∥ propagação, ex.: som).<br>
+        <strong>Quanto à dimensão:</strong> 1D (corda), 2D (superfície), 3D (esférica).</p>
+      </div>
+      <div class="card">
+        <h4>Som e Efeito Doppler</h4>
+        <p><strong>Som:</strong> onda mecânica longitudinal. v ≈ 340 m/s no ar (20°C). Varia com temperatura. Infrassom: f &lt; 20 Hz. Ultrassom: f &gt; 20.000 Hz.<br>
+        <strong>Efeito Doppler:</strong> mudança na frequência percebida quando fonte ou observador se movem. Aproximação: f percebida &gt; f emitida. Afastamento: f percebida &lt; f emitida.</p>
+      </div>
+    </div>
+    <p><strong class="highlight">Espectro eletromagnético</strong> (crescente em frequência): ondas de rádio → micro-ondas → infravermelho → luz visível → ultravioleta → raios X → raios gama. Toda onda eletromagnética viaja a c = 3×10⁸ m/s no vácuo.</p>
+  </div>
+
+  <!-- SEÇÃO 9 — Questões-tipo UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(255,220,0,0.12);">📝</div>
+      <h2>9. Questões-Tipo UNICAP</h2>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q1. Um carro parte do repouso com aceleração constante de 4 m/s². Qual sua velocidade após 5 segundos e qual a distância percorrida nesse intervalo?<br>
+      (A) v=10 m/s; d=25 m (B) v=20 m/s; d=50 m (C) v=20 m/s; d=100 m (D) v=10 m/s; d=100 m (E) v=20 m/s; d=25 m</div>
+      <div class="resp">Resposta: (B) v=20 m/s; d=50 m — v = v₀ + at = 0 + 4×5 = 20 m/s. d = v₀t + ½at² = 0 + ½×4×25 = 50 m.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q2. Dois resistores de 6Ω e 3Ω são ligados em paralelo e conectados a uma bateria de 12V. Qual é a corrente total fornecida pela bateria?<br>
+      (A) 1 A (B) 2 A (C) 4 A (D) 6 A (E) 3 A</div>
+      <div class="resp">Resposta: (D) 6 A — Em paralelo: 1/R = 1/6 + 1/3 = 1/6 + 2/6 = 3/6 → R = 2Ω. Corrente total: I = V/R = 12/2 = 6 A.</div>
+    </div>
+
+    <div class="question-block">
+      <div class="q">Q3. A distância entre duas cargas elétricas é triplicada. O que acontece com a força eletrostática entre elas?<br>
+      (A) Triplica (B) Aumenta 9 vezes (C) Diminui para 1/3 (D) Diminui para 1/9 (E) Não muda</div>
+      <div class="resp">Resposta: (D) Diminui para 1/9 — Lei de Coulomb: F = kQ₁Q₂/r². Se r → 3r, então F_nova = kQ₁Q₂/(3r)² = kQ₁Q₂/9r² = F/9. Relação inversa ao quadrado da distância.</div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 10 — Tabela de Fórmulas -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(68,136,255,0.15);">📐</div>
+      <h2>10. Tabela de Fórmulas Essenciais</h2>
+    </div>
+    <table>
+      <tr><th>Área</th><th>Fórmula</th><th>Variáveis</th></tr>
+      <tr><td>MRU</td><td>x = x₀ + v·t</td><td>x=posição, v=velocidade, t=tempo</td></tr>
+      <tr><td>MRUV — velocidade</td><td>v = v₀ + a·t</td><td>v₀=vel. inicial, a=aceleração</td></tr>
+      <tr><td>MRUV — espaço</td><td>x = x₀ + v₀t + ½at²</td><td>—</td></tr>
+      <tr><td>Torricelli</td><td>v² = v₀² + 2a·Δx</td><td>Δx = deslocamento</td></tr>
+      <tr><td>2ª Lei de Newton</td><td>F = m·a</td><td>F=força (N), m=massa (kg)</td></tr>
+      <tr><td>Peso</td><td>P = m·g</td><td>g ≈ 10 m/s²</td></tr>
+      <tr><td>Atrito</td><td>Fat = μ·N</td><td>μ=coef. atrito, N=normal</td></tr>
+      <tr><td>Trabalho</td><td>W = F·d·cosθ</td><td>θ=ângulo força-deslocamento</td></tr>
+      <tr><td>Energia cinética</td><td>Ec = mv²/2</td><td>—</td></tr>
+      <tr><td>Energia potencial grav.</td><td>Ep = mgh</td><td>h=altura</td></tr>
+      <tr><td>Potência</td><td>P = W/t = F·v</td><td>—</td></tr>
+      <tr><td>Gravitação universal</td><td>F = G·M·m/r²</td><td>G = 6,67×10⁻¹¹ N·m²/kg²</td></tr>
+      <tr><td>Coulomb</td><td>F = k·Q₁·Q₂/r²</td><td>k = 9×10⁹ N·m²/C²</td></tr>
+      <tr><td>Campo elétrico</td><td>E = k·Q/r²</td><td>E em N/C</td></tr>
+      <tr><td>Corrente elétrica</td><td>I = ΔQ/Δt</td><td>I em Ampères</td></tr>
+      <tr><td>Lei de Ohm</td><td>V = R·I</td><td>V em Volts, R em Ohms</td></tr>
+      <tr><td>Potência elétrica</td><td>P = V·I = RI² = V²/R</td><td>P em Watts</td></tr>
+      <tr><td>Série</td><td>R_eq = R₁ + R₂ + ...</td><td>—</td></tr>
+      <tr><td>Paralelo</td><td>1/R_eq = 1/R₁ + 1/R₂ + ...</td><td>—</td></tr>
+      <tr><td>Snell-Descartes</td><td>n₁·senθ₁ = n₂·senθ₂</td><td>n = índice de refração</td></tr>
+      <tr><td>Equação de Gauss</td><td>1/f = 1/p + 1/p'</td><td>f=foco, p=objeto, p'=imagem</td></tr>
+      <tr><td>Ondas</td><td>v = λ·f</td><td>λ=comprimento onda, f=freq.</td></tr>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>

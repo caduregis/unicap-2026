@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 760" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f1428"/>
+      <stop offset="1" stop-color="#1a1f3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="980" height="760" fill="url(#bg)"/>
+  <text x="490" y="44" fill="#ffffff" font-size="26" font-weight="bold" text-anchor="middle">Literatura Brasileira — Mapa das Escolas</text>
+  <text x="490" y="68" fill="#8a93a8" font-size="13" text-anchor="middle">UNICAP 2026.2 · cobra autor + característica num trecho</text>
+
+  <!-- linha do tempo central -->
+  <line x1="70" y1="100" x2="70" y2="710" stroke="#2d6cdf" stroke-width="3"/>
+
+  <!-- Quinhentismo -->
+  <circle cx="70" cy="120" r="8" fill="#36d1dc"/>
+  <rect x="100" y="98" width="840" height="46" rx="8" fill="#16203c" stroke="#36d1dc"/>
+  <text x="118" y="120" fill="#36d1dc" font-size="15" font-weight="bold">QUINHENTISMO (1500)</text>
+  <text x="118" y="137" fill="#cfd4e0" font-size="12">Literatura informativa e de catequese · Carta de Caminha · Pe. Anchieta</text>
+
+  <!-- Barroco -->
+  <circle cx="70" cy="190" r="8" fill="#9b7bff"/>
+  <rect x="100" y="168" width="840" height="46" rx="8" fill="#16203c" stroke="#9b7bff"/>
+  <text x="118" y="190" fill="#9b7bff" font-size="15" font-weight="bold">BARROCO (1601)</text>
+  <text x="118" y="207" fill="#cfd4e0" font-size="12">Dualismo, antíteses, rebuscamento · Gregório de Matos · Pe. Antônio Vieira</text>
+
+  <!-- Arcadismo -->
+  <circle cx="70" cy="260" r="8" fill="#4ade80"/>
+  <rect x="100" y="238" width="840" height="46" rx="8" fill="#16203c" stroke="#4ade80"/>
+  <text x="118" y="260" fill="#4ade80" font-size="15" font-weight="bold">ARCADISMO (1768)</text>
+  <text x="118" y="277" fill="#cfd4e0" font-size="12">Bucolismo, equilíbrio, carpe diem · Tomás A. Gonzaga (Marília de Dirceu)</text>
+
+  <!-- Romantismo -->
+  <circle cx="70" cy="345" r="8" fill="#ff6b5b"/>
+  <rect x="100" y="305" width="840" height="80" rx="8" fill="#16203c" stroke="#ff6b5b"/>
+  <text x="118" y="328" fill="#ff6b5b" font-size="15" font-weight="bold">ROMANTISMO (1836)</text>
+  <text x="118" y="348" fill="#cfd4e0" font-size="12">Emoção, nacionalismo, indianismo. POESIA: 1ª nacionalista (Gonçalves Dias) ·</text>
+  <text x="118" y="364" fill="#cfd4e0" font-size="12">2ª mal do século (Álvares de Azevedo) · 3ª condoreira (Castro Alves).</text>
+  <text x="118" y="380" fill="#cfd4e0" font-size="12">PROSA: José de Alencar (Iracema, Senhora) · Joaquim M. de Macedo</text>
+
+  <!-- Realismo -->
+  <circle cx="70" cy="455" r="8" fill="#ffd24a"/>
+  <rect x="100" y="415" width="840" height="80" rx="8" fill="#16203c" stroke="#ffd24a"/>
+  <text x="118" y="438" fill="#ffd24a" font-size="15" font-weight="bold">REALISMO / NATURALISMO (1881)</text>
+  <text x="118" y="458" fill="#cfd4e0" font-size="12">Crítica social, análise psicológica, ironia, determinismo.</text>
+  <text x="118" y="474" fill="#ffffff" font-size="12" font-weight="bold">★ MACHADO DE ASSIS</text>
+  <text x="250" y="474" fill="#cfd4e0" font-size="12">— ironia, interpela o leitor, ser × parecer (Dom Casmurro)</text>
+  <text x="118" y="490" fill="#cfd4e0" font-size="12">Naturalismo: Aluísio Azevedo (O Cortiço)</text>
+
+  <!-- Pré-Modernismo / Simbolismo -->
+  <circle cx="70" cy="540" r="8" fill="#36d1dc"/>
+  <rect x="100" y="518" width="840" height="46" rx="8" fill="#16203c" stroke="#36d1dc"/>
+  <text x="118" y="540" fill="#36d1dc" font-size="15" font-weight="bold">SIMBOLISMO (1893) + PRÉ-MODERNISMO (1902)</text>
+  <text x="118" y="557" fill="#cfd4e0" font-size="12">Cruz e Sousa · denúncia social: Euclides da Cunha (Os Sertões), Lima Barreto</text>
+
+  <!-- Modernismo -->
+  <circle cx="70" cy="630" r="8" fill="#ff9e3d"/>
+  <rect x="100" y="585" width="840" height="92" rx="8" fill="#16203c" stroke="#ff9e3d"/>
+  <text x="118" y="608" fill="#ff9e3d" font-size="15" font-weight="bold">MODERNISMO (1922)</text>
+  <text x="118" y="628" fill="#cfd4e0" font-size="12">1ª fase: ruptura, Semana de 22 — Mário e Oswald de Andrade, Manuel Bandeira.</text>
+  <text x="118" y="644" fill="#cfd4e0" font-size="12">2ª fase: Drummond (poesia) · Graciliano Ramos, Rachel de Queiroz (romance de 30).</text>
+  <text x="118" y="660" fill="#cfd4e0" font-size="12">3ª fase: Clarice Lispector, Guimarães Rosa, João Cabral, Mário Quintana.</text>
+
+  <!-- Contemporânea -->
+  <circle cx="70" cy="710" r="8" fill="#5b9dff"/>
+  <rect x="100" y="690" width="840" height="42" rx="8" fill="#16203c" stroke="#5b9dff"/>
+  <text x="118" y="711" fill="#5b9dff" font-size="15" font-weight="bold">CONTEMPORÂNEA (1980→)</text>
+  <text x="118" y="727" fill="#cfd4e0" font-size="12">Pluralidade, literatura urbana e periférica · Conceição Evaristo · diálogo com cinema/música</text>
+</svg>

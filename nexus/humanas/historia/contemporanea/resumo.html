@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — História Contemporânea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root { --blue: #3060ff; --blue-light: #60a0ff; --bg: #010308; --bg2: #050a18; --bg3: #0a1028; --text: #90b0d0; --text-bright: #c0d8f0; --green: #60c870; --red: #d06060; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: linear-gradient(160deg, var(--bg) 0%, #020510 100%); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; }
+#navbar { position: sticky; top: 0; background: linear-gradient(90deg, #01030880, #050a1880); border-bottom: 1px solid #3060ff1a; padding: 0 24px; height: 52px; display: flex; align-items: center; gap: 16px; z-index: 50; backdrop-filter: blur(12px); }
+#nav-back { color: var(--blue); text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #3060ff40; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #3060ff20; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-bright); }
+#nav-map { color: #204080; text-decoration: none; font-size: 12px; font-weight: 500; padding: 5px 12px; border: 1px solid #20408040; border-radius: 6px; transition: all .2s; }
+#nav-map:hover { background: #20408020; color: var(--blue-light); }
+main { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; font-weight: 700; color: var(--blue-light); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: #204080; margin-bottom: 32px; }
+.card { background: linear-gradient(135deg, var(--bg2), var(--bg3)); border: 1px solid #3060ff18; border-radius: 12px; padding: 24px 28px; margin-bottom: 20px; }
+.card:hover { border-color: #3060ff30; transition: border-color .3s; }
+.card h2 { font-size: 16px; font-weight: 700; color: var(--blue); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h2 .num { background: #3060ff22; border: 1px solid #3060ff40; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+p { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 10px; }
+strong { color: var(--text-bright); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+th { background: #3060ff22; color: var(--blue); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #3060ff30; }
+td { padding: 9px 12px; border-bottom: 1px solid #0a1028; color: var(--text); }
+tr:hover td { background: #3060ff08; }
+.timeline { position: relative; padding-left: 24px; margin-top: 12px; }
+.tl-item { position: relative; padding: 10px 0 10px 20px; border-left: 2px solid #3060ff40; }
+.tl-item:last-child { border-left-color: transparent; }
+.tl-dot { position: absolute; left: -5px; top: 14px; width: 8px; height: 8px; background: var(--blue); border-radius: 50%; }
+.tl-year { font-size: 11px; font-weight: 700; color: var(--blue); }
+.tl-text { font-size: 13px; color: var(--text); margin-top: 2px; }
+.tip-box { background: #3060ff12; border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: 10px 16px; margin-top: 12px; font-size: 13px; color: #80c0ff; }
+.tip-box::before { content: "UNICAP "; font-weight: 700; color: var(--blue); }
+.checklist { list-style: none; margin-top: 8px; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid #0a1028; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.checklist li input[type=checkbox] { accent-color: var(--blue); width: 15px; height: 15px; cursor: pointer; }
+.checklist li:last-child { border-bottom: none; }
+.total-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+.total-card { background: #04080e; border-radius: 8px; padding: 14px; }
+.total-card h4 { font-size: 13px; font-weight: 700; padding-bottom: 6px; margin-bottom: 8px; }
+.total-card.nazi h4 { color: #d06020; border-bottom: 1px solid #d0602030; }
+.total-card.fas h4 { color: #c04020; border-bottom: 1px solid #c0402030; }
+.total-card.stal h4 { color: #8030c0; border-bottom: 1px solid #8030c030; }
+.total-card p { font-size: 12px; line-height: 1.6; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+.tag-blue { background: #3060ff22; color: var(--blue-light); border: 1px solid #3060ff40; }
+.tag-red { background: #d0606022; color: var(--red); border: 1px solid #d0606040; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.video-card { background: #04080e; border: 1px solid #3060ff30; border-radius: 8px; padding: 14px; text-align: center; }
+.video-card .ch { font-size: 13px; font-weight: 600; color: var(--blue); margin-bottom: 4px; }
+.video-card p { font-size: 11px; color: #304050; }
+.map-link { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #3060ff20, #10208012); border: 1px solid #3060ff50; color: var(--blue-light); text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.map-link:hover { background: linear-gradient(135deg, #3060ff35, #10208025); transform: translateY(-1px); }
+.links-row { display: flex; justify-content: center; gap: 16px; margin: 32px 0; }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="../../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">História Contemporânea — Resumo</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</nav>
+<main>
+  <h1>História Contemporânea</h1>
+  <p class="subtitle">Das guerras mundiais à globalização — guia completo UNICAP 2026</p>
+  <div class="links-row"><a href="mapa3d.html" class="map-link">📡 Explorar Sala de Controle 3D</a></div>
+
+  <!-- 1 -->
+  <div class="card">
+    <h2><span class="num">01</span> Antecedentes: Crises do Séc. XIX e Imperialismo</h2>
+    <p>O século XIX foi marcado pelo <strong>imperialismo europeu</strong>: potências industrializadas (Reino Unido, França, Alemanha, Bélgica, Itália) dividiram a África e Ásia entre si. A <strong>Conferência de Berlim (1884-85)</strong> formalizou a partilha da África sem consultar seus povos.</p>
+    <p><strong>Causas do imperialismo:</strong> mercados para produtos industrializados, fontes de matéria-prima, investimento de capital excedente, rivalidade entre potências, missão "civilizatória" (racismo científico).</p>
+    <p>O sistema de <strong>alianças militares</strong> criado no fim do séc. XIX (Tríplice Entente: RU, França, Rússia vs. Tríplice Aliança: Alemanha, Áustria-Hungria, Itália) tornou qualquer conflito local em guerra geral.</p>
+    <div class="tip-box">O imperialismo é base para entender tanto a WWI quanto o processo de descolonização pós-WWII. Questão clássica: 'A Conferência de Berlim decidiu...' → A partilha da África entre potências europeias, ignorando povos e fronteiras étnicas.</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card">
+    <h2><span class="num">02</span> 1ª Guerra Mundial: Causas, Frentes, Consequências e Brasil</h2>
+    <p><strong>Estopim:</strong> Assassinato do Arquiduque Franz Ferdinand (herdeiro austro-húngaro) em Sarajevo, por um nacionalista sérvio, em 28 de junho de 1914. Mas as causas estruturais já existiam.</p>
+    <p><strong>Causas MAIN:</strong> Militarismo (corrida armamentista), Alianças, Imperialismo (rivalidade colonial), Nacionalismo (especialmente no leste europeu).</p>
+    <p><strong>Características da guerra:</strong> Guerra de trincheiras (estagnação), armas químicas (gás mostarda), tanques, aviões. Durou 4 anos; 10 milhões de soldados mortos.</p>
+    <p><strong>Fim e consequências:</strong> Armistício em novembro de 1918. Tratado de Versalhes (1919): Alemanha perde territórios, paga reparações, tem exército limitado. A humilhação alemã criou ressentimento — terreno para o nazismo.</p>
+    <p><strong>O Brasil na WWI:</strong> Entrou em 1917 após afundamento de navios por submarinos alemães. Enviou missão médica à Europa e a Divisão Naval de Operações de Guerra (DNOG). Participação limitada, mas simbolicamente importante.</p>
+    <div class="tip-box">Questão frequente: 'Por que o Tratado de Versalhes contribuiu para a WWII?' → As punições humilhantes (reparações, perda territorial, "cláusula de culpa") criaram crise econômica e ressentimento na Alemanha — contexto do nazismo. Wilson (EUA) propôs os 14 pontos, mas EUA não ratificou o tratado.</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card">
+    <h2><span class="num">03</span> Período Entreguerras: Revolução Russa e Ascensão dos Totalitarismos</h2>
+    <p><strong>Revolução Russa (1917):</strong> Duas revoluções em 1917: Fevereiro (derruba o czar, governo provisório de Kerensky) e Outubro (Lenin e os bolcheviques tomam o poder). Guerra Civil Russa (1917-22). Em 1922, criação da URSS. A revolução aterrou as elites ocidentais e deu força aos movimentos fascistas.</p>
+    <p><strong>Crise de 1929:</strong> A Grande Depressão americana se espalhou pelo mundo; desemprego em massa, fome, instabilidade política. Terreno para extremismos.</p>
+    <p><strong>Fascismo (Itália):</strong> Mussolini fundou o Partido Nacional Fascista em 1919; "Marcha sobre Roma" em 1922. Estado corporativista, culto ao líder, militarismo, antiliberalismo, anticomunismo.</p>
+    <p><strong>Nazismo (Alemanha):</strong> Hitler lidera o NSDAP. Eleito chanceler em 1933. Usa meios legais para concentrar o poder (Lei de Habilitação). Antisemitismo, raça ariana superior, Lebensraum (espaço vital), revanchismo contra Versalhes.</p>
+    <div class="tip-box">Fascismo e nazismo diferem: o fascismo é primordialmente político (Estado acima de tudo); o nazismo acrescenta uma dimensão racial (raça ariana). A ascensão do nazismo foi pelo voto e meios legais — lição para democracias sobre fragilidades institucionais.</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card">
+    <h2><span class="num">04</span> 2ª Guerra Mundial: Fases, Atores, Holocausto e Brasil (FEB)</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1939</div><div class="tl-text">Hitler invade a Polônia (1/9); UK e França declaram guerra. Pacto Molotov-Ribbentrop (URSS e Alemanha dividem a Europa do Leste)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1940</div><div class="tl-text">Blitzkrieg na Europa Ocidental; queda da França; Batalha da Grã-Bretanha</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1941</div><div class="tl-text">Operação Barbarossa (invasão da URSS); Pearl Harbor → EUA entram na guerra</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1942</div><div class="tl-text">Brasil declara guerra ao Eixo; Conferência de Wannsee (Solução Final); virada em Stalingrado</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1944</div><div class="tl-text">Dia D (6/6): desembarque aliado na Normandia; FEB parte para a Itália</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1945</div><div class="tl-text">Queda de Berlim (maio); bombas atômicas em Hiroshima (6/8) e Nagasaki (9/8); rendição japonesa (2/9)</div></div>
+    </div>
+    <p><strong>Holocausto:</strong> Extermínio sistemático de ~6 milhões de judeus + outros grupos (ciganos, LGBT, deficientes, Testemunhas de Jeová, comunistas). Campos de concentração e extermínio (Auschwitz, Treblinka, Sobibor). A Conferência de Wannsee (1942) coordenou a "Solução Final".</p>
+    <p><strong>FEB (Força Expedicionária Brasileira):</strong> Cerca de 25.000 soldados no front italiano. Principal batalha: Montese (abril de 1945). "A cobra está fumando" = expressão popular de espanto com a participação brasileira.</p>
+    <div class="tip-box">A WWII matou ~70-85 milhões de pessoas (civils e militares). O Holocausto gerou a Convenção sobre Genocídio (1948) e a Declaração Universal dos Direitos Humanos (10/12/1948). Para UNICAP/Direito: a DUDH é o marco fundador do direito internacional dos direitos humanos.</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <h2><span class="num">05</span> Guerra Fria: Bipolaridade, Eventos e América Latina</h2>
+    <table>
+      <tr><th>Evento</th><th>Ano</th><th>Significado</th></tr>
+      <tr><td>Doutrina Truman</td><td>1947</td><td>EUA se comprometem a conter o comunismo globalmente</td></tr>
+      <tr><td>Plano Marshall</td><td>1948</td><td>Reconstrução econômica da Europa Ocidental (impede o comunismo)</td></tr>
+      <tr><td>Criação da OTAN</td><td>1949</td><td>Aliança militar ocidental liderada pelos EUA</td></tr>
+      <tr><td>Guerra da Coreia</td><td>1950-53</td><td>Primeiro conflito direto; termina com divisão no paralelo 38</td></tr>
+      <tr><td>Sputnik</td><td>1957</td><td>URSS lança 1º satélite; início da corrida espacial</td></tr>
+      <tr><td>Revolução Cubana</td><td>1959</td><td>Fidel Castro e Che Guevara derrubam Batista; Cuba socialista</td></tr>
+      <tr><td>Crise dos Mísseis</td><td>1962</td><td>URSS coloca mísseis em Cuba; EUA exige retirada; 13 dias de tensão nuclear</td></tr>
+      <tr><td>Guerra do Vietnã</td><td>1955-75</td><td>EUA derrotados; trauma americano; vitória do Vietnã do Norte</td></tr>
+      <tr><td>Apollo 11</td><td>1969</td><td>EUA chegam à Lua; vitória americana na corrida espacial</td></tr>
+      <tr><td>Muro de Berlim cai</td><td>1989</td><td>Símbolo da queda do comunismo europeu</td></tr>
+      <tr><td>Dissolução da URSS</td><td>1991</td><td>Fim oficial da Guerra Fria; 15 repúblicas independentes</td></tr>
+    </table>
+    <p><strong>América Latina na Guerra Fria:</strong> Os EUA apoiaram ditaduras militares para impedir o avanço do comunismo (Operação Condor). No Brasil, o golpe de 1964 teve apoio da CIA. Em Cuba, o bloqueio americano persiste. A revolução sandinista na Nicarágua (1979) também foi alvo de interferência americana.</p>
+    <div class="tip-box">A Crise dos Mísseis de 1962 = momento mais próximo que o mundo chegou de uma guerra nuclear. Kennedy vs. Khrushchev. Resolvida pela diplomacia secreta (retirada dos mísseis soviéticos de Cuba em troca de retirada de mísseis americanos da Turquia). Questão: 'Detente' = política de distensão da Guerra Fria nos anos 1970.</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <h2><span class="num">06</span> Descolonização e Terceiro Mundo</h2>
+    <p>A WWII enfraqueceu as potências coloniais europeias — moral e materialmente. Os povos colonizados que lutaram ao lado dos Aliados exigiram independência.</p>
+    <p><strong>Ásia:</strong> Índia (1947, liderada por Gandhi e Nehru; divisão India-Paquistão gera violência massiva). China (1949, revolução comunista de Mao Zedong). Indochina francesa (guerra do Vietnã).</p>
+    <p><strong>África:</strong> A maioria das independências ocorreu nos anos 1950-60 (Ghana 1957, Congo 1960, Angola e Moçambique 1975 após guerras de libertação). África do Sul: apartheid (1948-1994) — sistema de segregação racial. Nelson Mandela: preso 27 anos (1964-1990), primeiro presidente negro (1994).</p>
+    <p><strong>Conferência de Bandung (1955):</strong> 29 países afro-asiáticos criaram o Movimento dos Países Não-Alinhados — terceira via entre os dois blocos da Guerra Fria.</p>
+    <div class="tip-box">Mandela é símbolo dos direitos humanos e da resistência pacífica. Questão: o apartheid foi reconhecido pela ONU como crime contra a humanidade. A ANC (African National Congress) liderou a luta. Mandela recebeu o Nobel da Paz em 1993.</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card">
+    <h2><span class="num">07</span> Fim da Guerra Fria e Nova Ordem Mundial</h2>
+    <p><strong>Causas do colapso soviético:</strong> Estagnação econômica, corrida armamentista insustentável, guerra no Afeganistão (1979-89), movimentos de independência nas repúblicas. Gorbachev introduziu <em>glasnost</em> (transparência) e <em>perestroika</em> (reestruturação).</p>
+    <p><strong>1989:</strong> Queda do Muro de Berlim (9 de novembro) — símbolo da reunificação alemã e do fim da divisão europeia. Revoluções em países do Leste europeu (Polônia, Hungria, Tchecoslováquia, Romênia).</p>
+    <p><strong>1991:</strong> Dissolução oficial da URSS em 15 repúblicas independentes. Boris Yeltsin assume a Rússia.</p>
+    <p><strong>Nova ordem:</strong> Unipolaridade dos EUA (hiperpotência); expansão da OTAN para o Leste; criação da União Europeia (Maastricht 1992); Organização Mundial do Comércio (1995).</p>
+    <div class="tip-box">Questão: 'O que a queda do Muro de Berlim simbolizou?' → Fim da divisão bipolar do mundo; vitória do capitalismo liberal sobre o socialismo soviético; início da globalização acelerada. A Alemanha foi reunificada em outubro de 1990.</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card">
+    <h2><span class="num">08</span> Globalização e Desafios do Séc. XXI</h2>
+    <p><strong>Globalização:</strong> Integração econômica, cultural e tecnológica mundial, acelerada após 1991. Benefícios: crescimento, inovação, conexão. Problemas: desigualdade, precarização do trabalho, perda de soberania.</p>
+    <p><strong>11 de Setembro (2001):</strong> Ataques terroristas da Al-Qaeda nos EUA. "Guerra ao terror": invasão do Afeganistão (2001) e Iraque (2003). Impacto geopolítico duradouro.</p>
+    <p><strong>Crise de 2008:</strong> Colapso financeiro originado nos EUA (subprime); recessão global; questionamento do neoliberalismo.</p>
+    <p><strong>Multipolaridade emergente:</strong> China como segunda maior economia; BRICS (Brasil, Rússia, Índia, China, África do Sul); reconfiguração da ordem internacional. <strong>Pandemia COVID-19 (2020):</strong> maior crise sanitária do século; ~7 milhões de mortes registradas.</p>
+    <div class="tip-box">Para UNICAP: o Brasil participa do MERCOSUL (integração sul-americana) e do BRICS (cooperação entre grandes economias emergentes). Globalização não eliminou desigualdades — ao contrário, em muitos casos as aprofundou (concentração de renda nos países e empresas mais ricos).</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card">
+    <h2><span class="num">09</span> Tabela Comparativa: Nazismo, Fascismo e Stalinismo</h2>
+    <div class="total-grid">
+      <div class="total-card nazi">
+        <h4>Nazismo</h4>
+        <p><strong>País:</strong> Alemanha<br><strong>Líder:</strong> Adolf Hitler<br><strong>Período:</strong> 1933-1945<br><strong>Base:</strong> Racismo biológico, antissemitismo, raça ariana<br><strong>Marca:</strong> Holocausto, expansionismo<br><strong>Fim:</strong> Derrota militar (WWII)</p>
+      </div>
+      <div class="total-card fas">
+        <h4>Fascismo</h4>
+        <p><strong>País:</strong> Itália<br><strong>Líder:</strong> Benito Mussolini<br><strong>Período:</strong> 1922-1943<br><strong>Base:</strong> Nação e Estado acima do indivíduo<br><strong>Marca:</strong> Corporativismo, militarismo<br><strong>Fim:</strong> Deposição + execução</p>
+      </div>
+      <div class="total-card stal">
+        <h4>Stalinismo</h4>
+        <p><strong>País:</strong> URSS<br><strong>Líder:</strong> Josef Stalin<br><strong>Período:</strong> 1924-1953<br><strong>Base:</strong> Marxismo-leninismo distorcido<br><strong>Marca:</strong> Gulags, purgas, coletivização<br><strong>Fim:</strong> Morte de Stalin; Khrushchev denuncia</p>
+      </div>
+    </div>
+    <div class="tip-box">Hannah Arendt ('As Origens do Totalitarismo', 1951) analisou nazismo e stalinismo como formas de totalitarismo — não os identifica, mas aponta estruturas comuns: ideologia totalizante, partido único, terror sistemático, controle da vida pública E privada. 'Banalidade do mal' = sua análise do julgamento de Eichmann (Jerusalém, 1961).</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="card">
+    <h2><span class="num">10</span> Dicas UNICAP</h2>
+    <table>
+      <tr><th>Tema</th><th>O que mais cai</th><th>Detalhe importante</th></tr>
+      <tr><td>WWI</td><td>Causas MAIN, Versalhes</td><td>O Tratado de Versalhes conecta WWI e WWII</td></tr>
+      <tr><td>WWII</td><td>Holocausto, FEB, bombas atômicas</td><td>Wannsee 1942 = planejamento da Solução Final</td></tr>
+      <tr><td>Guerra Fria</td><td>Bipolaridade, eventos-chave</td><td>Crise dos Mísseis = momento mais tenso</td></tr>
+      <tr><td>Totalitarismos</td><td>Diferenças entre regimes</td><td>Hannah Arendt é cobrada em questões de Humanas</td></tr>
+      <tr><td>Descolonização</td><td>Gandh, Mandela, apartheid</td><td>Bandung 1955 = Movimento dos Não-Alinhados</td></tr>
+    </table>
+  </div>
+
+  <!-- 11 -->
+  <div class="card">
+    <h2><span class="num">11</span> Checklist de Revisão</h2>
+    <ul class="checklist">
+      <li><input type="checkbox"> Sei as causas MAIN da WWI</li>
+      <li><input type="checkbox"> Sei o que foi o Tratado de Versalhes e seus efeitos</li>
+      <li><input type="checkbox"> Sei o que foi a Revolução Russa (1917, duas revoluções)</li>
+      <li><input type="checkbox"> Sei a diferença entre nazismo e fascismo</li>
+      <li><input type="checkbox"> Sei o que foi o Holocausto e a Solução Final</li>
+      <li><input type="checkbox"> Sei a participação do Brasil na WWII (FEB)</li>
+      <li><input type="checkbox"> Sei o que foi a Guerra Fria e os dois blocos</li>
+      <li><input type="checkbox"> Conheço os eventos-chave da Guerra Fria (Cuba, Sputnik, Vietnã)</li>
+      <li><input type="checkbox"> Sei o que foi a Doutrina Truman e o Plano Marshall</li>
+      <li><input type="checkbox"> Sei o que foi a descolonização (Ásia e África)</li>
+      <li><input type="checkbox"> Conheço Gandhi, Mandela e o apartheid</li>
+      <li><input type="checkbox"> Sei por que a URSS se dissolveu</li>
+      <li><input type="checkbox"> Sei o que foi o 11 de setembro e suas consequências</li>
+      <li><input type="checkbox"> Conheço Hannah Arendt e a 'banalidade do mal'</li>
+      <li><input type="checkbox"> Sei o que são o MERCOSUL e o BRICS</li>
+    </ul>
+  </div>
+
+  <!-- 12 -->
+  <div class="card">
+    <h2><span class="num">12</span> Melhores Videoaulas</h2>
+    <div class="video-grid">
+      <div class="video-card"><div class="ch">Prof. Neto do Enem</div><p>YouTube — Guerras Mundiais completas com mapas e linhas do tempo</p></div>
+      <div class="video-card"><div class="ch">Parabólica</div><p>YouTube — Guerra Fria: ótima explicação da bipolaridade e eventos</p></div>
+      <div class="video-card"><div class="ch">Brasil Escola</div><p>brasilescola.uol.com.br — Totalitarismos, Holocausto e descolonização</p></div>
+      <div class="video-card"><div class="ch">Me Salva História</div><p>YouTube — Revisão rápida WWI e WWII para vestibulares</p></div>
+    </div>
+  </div>
+
+  <div class="links-row"><a href="mapa3d.html" class="map-link">📡 Voltar à Sala de Controle 3D</a></div>
+</main>
+</body>
+</html>

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idade Moderna · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#d97a2a;--pri2:#f0a050;--paper:#f5e8d0;--ink:#1a0e04}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0d0804;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.6) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#1a0e04 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(245,232,208,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(217,122,42,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(26,14,4,.7);backdrop-filter:blur(20px);border:1px solid rgba(217,122,42,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(26,14,4,.78) 0%,rgba(40,22,8,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(217,122,42,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(245,232,208,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(26,14,4,.65);backdrop-filter:blur(20px);border:1px solid rgba(217,122,42,.2);border-radius:10px;font-size:13px;color:rgba(245,232,208,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(217,122,42,.15);border:1px solid rgba(217,122,42,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(26,14,4,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(13,8,4,.96) 0%,rgba(26,14,4,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(217,122,42,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(217,122,42,.1);border:1px solid rgba(217,122,42,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(217,122,42,.15);border:1px solid rgba(217,122,42,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(245,232,208,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(217,122,42,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(245,232,208,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(245,232,208,.78);position:relative;border-bottom:1px solid rgba(217,122,42,.06)}
+.sec li::before{content:'⚜';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(217,122,42,.15) 0%,rgba(240,160,80,.08) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">IDADE MODERNA</div><div class="lt2">caravelas e revoluções</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">⚜</div><div class="bt"><div class="l1">Idade Moderna</div><div class="l2">história geral · 1.5</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · HIST 1.5</span><h1>Idade Moderna</h1><p>1453-1789. Palácio de Versalhes do Rei Sol, caravelas portuguesas no oceano, pirâmide do Renascimento com Vitruvian Man, igreja luterana, máquina a vapor de Watt, Liberty Bell americana. Clique nos elementos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> elemento</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#f0a050;padding:24px;font-family:monospace;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'abs',cod:'HG 1.5a',nome:'Absolutismo',sub:'Versalhes · Luís XIV · Maquiavel',
+topicos:['Origens da Europa Moderna','Absolutismo na Europa: Maquiavel, Hobbes, Bossuet','Luís XIV ("O Estado sou eu") — Versalhes','Henrique VIII (Inglaterra) · Filipe II (Espanha)','Maquiavel — "O Príncipe" (1513), realismo político','Mercantilismo: balança comercial favorável, metalismo, protecionismo'],
+resumo:'Reis centralizam poder, derrotando nobreza feudal. Maquiavel é o filósofo do pragmatismo político. Mercantilismo = teoria econômica do absolutismo.',
+dica:'Maquiavel: "O fim justifica os meios". Luís XIV inventou a etiqueta corte. Mercantilismo: acumular OURO via comércio.'},
+{id:'naveg',cod:'HG 1.5b',nome:'Grandes Navegações',sub:'Cabral · Colombo · Tordesilhas',
+topicos:['Expansão marítima europeia (séc. XV-XVI)','Portugal: Vasco da Gama (Índias 1498), Cabral (Brasil 1500)','Espanha: Colombo (1492), Magalhães (volta ao mundo 1519-22)','Tratado de Tordesilhas (1494) divide o mundo entre Espanha e Portugal','Conquista da América: Cortez (Astecas 1521), Pizarro (Incas 1533)','Povos pré-colombianos: Astecas, Maias, Incas','Catástrofe demográfica: 90% da população indígena morre em 100 anos'],
+resumo:'1492 (Colombo) inicia globalização. Portugal e Espanha lideram. Conquista destrói civilizações pré-colombianas (90% morrem em 100 anos).',
+dica:'Tratado de Tordesilhas (1494) é por que o Brasil fala português. Pré-colombianos: Astecas (México), Maias (Iucatã), Incas (Cusco/Peru).'},
+{id:'renasc',cod:'HG 1.5c',nome:'Renascimento · Iluminismo',sub:'Razão · ciência · arte',
+topicos:['Renascimento (séc. XIV-XVI): retorno ao classicismo greco-romano','Antropocentrismo (homem no centro) × Teocentrismo medieval','Mecenato (Médici em Florença) · humanismo','Artistas: Leonardo, Michelangelo, Rafael, Botticelli','Ciência: Copérnico (heliocentrismo), Galileu, Kepler, Newton','Iluminismo (séc. XVIII): razão, liberdade, separação de poderes','Filósofos: Locke, Montesquieu, Voltaire, Rousseau, Diderot, Kant','Déspotas esclarecidos: Frederico II, Catarina II, Pombal'],
+resumo:'Renascimento valoriza homem/razão. Iluminismo (1700s) é a Era das Luzes — base ideológica das revoluções liberais.',
+dica:'Locke = direitos naturais. Montesquieu = separação dos 3 poderes. Rousseau = vontade geral. Voltaire = tolerância religiosa.'},
+{id:'reforma',cod:'HG 1.5d',nome:'Reforma · Contrarreforma',sub:'Lutero · Calvino · Trento',
+topicos:['Reforma Protestante: Lutero (1517 — 95 Teses) na Alemanha','Luteranismo · Calvinismo (Suíça/França) · Anglicanismo (Inglaterra, Henrique VIII)','Calvino — predestinação, ética do trabalho (Max Weber)','Guerras religiosas (30 Anos 1618-48)','Contrarreforma: Concílio de Trento (1545-63) reforma a Igreja Católica','Companhia de Jesus (Inácio de Loyola, 1540) — jesuítas','Inquisição modernizada','Index Librorum Prohibitorum (lista de livros proibidos)'],
+resumo:'Lutero (1517) divide o cristianismo. Calvinismo influencia espírito do capitalismo (Weber). Jesuítas catequizam o Novo Mundo (Brasil incluso).',
+dica:'Reforma se beneficia da imprensa (Gutenberg ~1450). Anglicanismo nasce porque o Papa não deixou Henrique VIII se divorciar.'},
+{id:'indus',cod:'HG 1.5g',nome:'Revolução Industrial',sub:'Watt · vapor · fábrica',
+topicos:['1ª Revolução Industrial (Inglaterra, ~1760-1850): máquina a vapor, têxtil','Watt aperfeiçoa máquina a vapor (1769)','Mudança rural→urbana, êxodo rural, urbanização','Classe operária (proletariado) × burguesia industrial','2ª Revolução Industrial (1850-1914): eletricidade, aço, química, petróleo','Taylorismo, fordismo (linha de montagem)','3ª Revolução Industrial (1950+): eletrônica, informática','Pioneiros: Inglaterra → Bélgica → França → Alemanha → EUA → Japão'],
+resumo:'Revolução Industrial muda profundamente sociedade: cidade > campo, fábrica > artesanato, capital > trabalho. Engendra capitalismo industrial.',
+dica:'1ª: vapor (têxtil, ferrovia). 2ª: eletricidade, aço, petróleo. 3ª: eletrônica/info. 4ª (em curso): digital/IA.'},
+{id:'eua',cod:'HG 1.5h',nome:'Independência EUA',sub:'1776 · Washington · 13 Colônias',
+topicos:['13 Colônias inglesas: Nova Inglaterra, Atlântico Centro, Sul','Conflitos com a metrópole: Lei do Selo (1765), Lei do Açúcar, Lei do Chá','Boston Tea Party (1773) — protesto contra o Tea Act','Declaração de Independência (4 de julho de 1776) — Thomas Jefferson','Guerra de Independência (1775-1783) — George Washington liderou','Constituição americana (1787) — primeira constituição moderna escrita','Federalismo, separação dos 3 poderes, presidencialismo','Influência: Iluminismo, Locke, Montesquieu'],
+resumo:'1776 é a primeira independência colonial bem-sucedida. Influencia diretamente Revolução Francesa (1789) e independências latino-americanas (1810+).',
+dica:'"Todos os homens são criados iguais" (apesar de escravidão coexistir). EUA = primeira república federativa e presidencialista do mundo moderno.'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x1a0e08);
+scene.fog=new THREE.Fog(0x1a0e08,80,260);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(60,48,70);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.95;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=30;controls.maxDistance=170;
+controls.maxPolarAngle=Math.PI*0.48;controls.target.set(0,5,0);
+
+scene.add(new THREE.AmbientLight(0x8a7050,0.4));
+const sun=new THREE.DirectionalLight(0xffe0b0,1.5);
+sun.position.set(40,55,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
+sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;
+sun.shadow.bias=-0.0005;scene.add(sun);
+
+// Ground - parquet/madeira para indicar refinamento moderno
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260),new THREE.MeshStandardMaterial({color:0x5a4030,roughness:0.85}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// Mar do lado esquerdo (azul escuro)
+const sea=new THREE.Mesh(new THREE.PlaneGeometry(100,200,40,40),new THREE.MeshStandardMaterial({color:0x0c2a4a,roughness:0.2,metalness:0.6,transparent:true,opacity:0.9}));
+sea.rotation.x=-Math.PI/2;sea.position.set(-70,-0.5,0);scene.add(sea);
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// VERSALHES / ABSOLUTISMO (centro)
+{const g=addMarker('abs',0,0);
+// Palácio com 3 corpos
+const main=new THREE.Mesh(new THREE.BoxGeometry(14,5,5),new THREE.MeshStandardMaterial({color:0xeed8a8,roughness:0.65}));
+main.position.y=2.5;main.castShadow=main.receiveShadow=true;g.add(main);
+// 2 alas laterais
+for(let s=-1;s<=1;s+=2){
+  const wing=new THREE.Mesh(new THREE.BoxGeometry(5,4,4),new THREE.MeshStandardMaterial({color:0xeed8a8,roughness:0.65}));
+  wing.position.set(s*9.5,2,0);wing.castShadow=true;g.add(wing);
+}
+// Telhado principal (azulado, ardósia)
+const rmain=new THREE.Mesh(new THREE.BoxGeometry(14,2.2,5.6),new THREE.MeshStandardMaterial({color:0x2a3850,roughness:0.6}));
+rmain.position.y=6.1;rmain.castShadow=true;g.add(rmain);
+// Cúpula central dourada
+const dome=new THREE.Mesh(new THREE.SphereGeometry(2.2,24,16,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.7,roughness:0.25,emissive:0x553300,emissiveIntensity:0.25}));
+dome.position.y=7.3;dome.castShadow=true;g.add(dome);
+// Pináculo
+const pin=new THREE.Mesh(new THREE.ConeGeometry(0.25,1.5,8),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.7,roughness:0.25}));
+pin.position.y=10;g.add(pin);
+// Coluna de fachada (8)
+for(let i=-3;i<=3;i++){
+  if(i===0) continue;
+  const col=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.32,5,12),new THREE.MeshStandardMaterial({color:0xfff5dc,roughness:0.55}));
+  col.position.set(i*1.6,2.5,2.6);col.castShadow=true;g.add(col);
+}
+// Cetro/coroa flutuante (símbolo absolutismo)
+const crown=new THREE.Group();crown.position.set(0,10,0);
+const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.55,0.4,12,1,true),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.85,roughness:0.2,emissive:0x553300,emissiveIntensity:0.4,side:THREE.DoubleSide}));
+crown.add(cb);
+for(let i=0;i<6;i++){
+  const sp=new THREE.Mesh(new THREE.ConeGeometry(0.1,0.28,4),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.85,roughness:0.2}));
+  const a=i*Math.PI/3;sp.position.set(Math.cos(a)*0.45,0.2,Math.sin(a)*0.45);crown.add(sp);
+}
+g.add(crown);g.userData.crown=crown;
+// Lago/espelho d'água em frente (jardins)
+const pond=new THREE.Mesh(new THREE.CircleGeometry(4,32),new THREE.MeshStandardMaterial({color:0x2a4a60,roughness:0.15,metalness:0.6,transparent:true,opacity:0.85}));
+pond.rotation.x=-Math.PI/2;pond.position.set(0,0.02,10);g.add(pond);
+markers.push({id:'abs',center:new THREE.Vector3(0,5,0),radius:13,group:g});}
+
+// CARAVELA (no mar, esquerda)
+{const g=addMarker('naveg',-58,-3);
+// Casco
+const hull=new THREE.Mesh(new THREE.BoxGeometry(9,1.8,2.8),new THREE.MeshStandardMaterial({color:0x4a2810,roughness:0.85}));
+hull.position.y=1;hull.castShadow=true;g.add(hull);
+const popa=new THREE.Mesh(new THREE.BoxGeometry(3,2.2,2.8),new THREE.MeshStandardMaterial({color:0x6b3a18,roughness:0.85}));
+popa.position.set(3.5,2.8,0);popa.castShadow=true;g.add(popa);
+// 3 mastros com velas
+for(let i=-1;i<=1;i++){
+  const mast=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.24,9,8),new THREE.MeshStandardMaterial({color:0x6b4218,roughness:0.85}));
+  mast.position.set(i*3,5.5,0);mast.castShadow=true;g.add(mast);
+  const sail=new THREE.Mesh(new THREE.PlaneGeometry(2.8,3.8),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.95,side:THREE.DoubleSide}));
+  sail.position.set(i*3,5.8,0);sail.castShadow=true;g.add(sail);
+  // Cruz vermelha (Cristo)
+  const cv=new THREE.Mesh(new THREE.PlaneGeometry(0.4,1.2),new THREE.MeshStandardMaterial({color:0xc62828,side:THREE.DoubleSide}));
+  cv.position.set(i*3,5.8,0.01);g.add(cv);
+  const ch=new THREE.Mesh(new THREE.PlaneGeometry(1.2,0.4),new THREE.MeshStandardMaterial({color:0xc62828,side:THREE.DoubleSide}));
+  ch.position.set(i*3,5.8,0.01);g.add(ch);
+}
+// Bandeira no mastro
+const flag=new THREE.Mesh(new THREE.PlaneGeometry(0.7,0.5),new THREE.MeshStandardMaterial({color:0x009933,roughness:0.7,side:THREE.DoubleSide}));
+flag.position.set(3,10.5,0);g.add(flag);
+g.userData.bob=true;
+// Pequena segunda caravela ao longe
+const g2=new THREE.Group();g2.position.set(15,0,8);
+const h2=new THREE.Mesh(new THREE.BoxGeometry(5,1.1,1.6),new THREE.MeshStandardMaterial({color:0x4a2810,roughness:0.85}));
+h2.position.y=0.6;h2.castShadow=true;g2.add(h2);
+const m2=new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.14,5,6),new THREE.MeshStandardMaterial({color:0x6b4218,roughness:0.85}));
+m2.position.y=3;g2.add(m2);
+const s2=new THREE.Mesh(new THREE.PlaneGeometry(1.6,2.2),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.95,side:THREE.DoubleSide}));
+s2.position.y=3.2;g2.add(s2);
+g.add(g2);g.userData.boat2=g2;
+markers.push({id:'naveg',center:new THREE.Vector3(-58,4,-3),radius:12,group:g});}
+
+// RENASCIMENTO / ILUMINISMO (esquerda)
+{const g=addMarker('renasc',-32,18);
+// Pedestal com cúpula renascentista (Brunelleschi)
+const ped=new THREE.Mesh(new THREE.BoxGeometry(6,1,6),new THREE.MeshStandardMaterial({color:0xc8a878,roughness:0.85}));
+ped.position.y=0.5;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// Corpo
+const body=new THREE.Mesh(new THREE.BoxGeometry(5,4,5),new THREE.MeshStandardMaterial({color:0xead8b8,roughness:0.65}));
+body.position.y=3;body.castShadow=true;g.add(body);
+// 4 colunas
+for(let i=0;i<4;i++){
+  const a=i*Math.PI/2+Math.PI/4;
+  const col=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.35,3.5,12),new THREE.MeshStandardMaterial({color:0xfff5dc,roughness:0.55}));
+  col.position.set(Math.cos(a)*2,2.75,Math.sin(a)*2);col.castShadow=true;g.add(col);
+}
+// Cúpula (Florença)
+const cdome=new THREE.Mesh(new THREE.SphereGeometry(2.5,24,16,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xa84a28,roughness:0.6}));
+cdome.position.y=5;cdome.castShadow=true;g.add(cdome);
+// Pináculo
+const cp=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,1,8),new THREE.MeshStandardMaterial({color:0xfff5dc,roughness:0.55}));
+cp.position.y=8;g.add(cp);
+const cpt=new THREE.Mesh(new THREE.ConeGeometry(0.5,1.2,8),new THREE.MeshStandardMaterial({color:0xfff5dc,roughness:0.55}));
+cpt.position.y=9;g.add(cpt);
+// Livro aberto flutuante (símbolo Iluminismo)
+const book=new THREE.Group();book.position.set(0,11,0);
+const bl=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.1,1.6),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.85}));
+bl.rotation.z=0.15;bl.position.x=-0.55;book.add(bl);
+const br=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.1,1.6),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.85}));
+br.rotation.z=-0.15;br.position.x=0.55;book.add(br);
+// Brilho (luz)
+const glow=new THREE.PointLight(0xffe080,1.5,8);
+glow.position.set(0,0.5,0);book.add(glow);
+g.add(book);g.userData.book=book;
+markers.push({id:'renasc',center:new THREE.Vector3(-32,5,18),radius:10,group:g});}
+
+// REFORMA / IGREJA LUTERANA (direita)
+{const g=addMarker('reforma',32,18);
+// Igreja luterana simples (alta, com torre pontiaguda)
+const body=new THREE.Mesh(new THREE.BoxGeometry(4,7,5),new THREE.MeshStandardMaterial({color:0xd0b8a0,roughness:0.7}));
+body.position.y=3.5;body.castShadow=body.receiveShadow=true;g.add(body);
+// Telhado em duas águas
+const roof=new THREE.Mesh(new THREE.ConeGeometry(3.5,2,4),new THREE.MeshStandardMaterial({color:0x6a2818,roughness:0.85}));
+roof.rotation.y=Math.PI/4;roof.position.y=8;roof.scale.set(1,1,1.5);roof.castShadow=true;g.add(roof);
+// Torre principal pontuda (estilo nórdico)
+const tower=new THREE.Mesh(new THREE.BoxGeometry(2,9,2),new THREE.MeshStandardMaterial({color:0xd0b8a0,roughness:0.7}));
+tower.position.set(0,4.5,2.5);tower.castShadow=true;g.add(tower);
+// Pináculo pontiagudo
+const tp=new THREE.Mesh(new THREE.ConeGeometry(1.4,5,8),new THREE.MeshStandardMaterial({color:0x6a2818,roughness:0.85}));
+tp.position.set(0,11.5,2.5);tp.castShadow=true;g.add(tp);
+// Cruz
+const cv=new THREE.Mesh(new THREE.BoxGeometry(0.12,1.2,0.12),new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0x553300,emissiveIntensity:0.3}));
+cv.position.set(0,14.5,2.5);g.add(cv);
+const ch=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.12,0.12),new THREE.MeshStandardMaterial({color:0xf0c040,emissive:0x553300,emissiveIntensity:0.3}));
+ch.position.set(0,14.8,2.5);g.add(ch);
+// Porta com as 95 teses (placa)
+const door=new THREE.Mesh(new THREE.BoxGeometry(1.2,2,0.15),new THREE.MeshStandardMaterial({color:0x4a2810,roughness:0.9}));
+door.position.set(0,1,2.55);g.add(door);
+// Papel (95 teses pregadas)
+const paper=new THREE.Mesh(new THREE.PlaneGeometry(0.5,0.7),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.95,side:THREE.DoubleSide}));
+paper.position.set(0,1.2,2.65);g.add(paper);
+markers.push({id:'reforma',center:new THREE.Vector3(32,5,18),radius:9,group:g});}
+
+// MÁQUINA A VAPOR / REVOLUÇÃO INDUSTRIAL (direita fundo)
+{const g=addMarker('indus',34,-22);
+// Plataforma industrial
+const base=new THREE.Mesh(new THREE.BoxGeometry(7,0.5,5),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.95}));
+base.position.y=0.25;base.castShadow=base.receiveShadow=true;g.add(base);
+// Caldeira (cilindro horizontal)
+const boiler=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,4,16),new THREE.MeshStandardMaterial({color:0x3a3838,metalness:0.7,roughness:0.4}));
+boiler.rotation.z=Math.PI/2;boiler.position.set(0,2,0);boiler.castShadow=true;g.add(boiler);
+// Pistão lateral
+const pist=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,2,8),new THREE.MeshStandardMaterial({color:0x6a6a6a,metalness:0.8,roughness:0.3}));
+pist.rotation.z=Math.PI/2;pist.position.set(2.5,2,0);g.add(pist);g.userData.pist=pist;
+// Volante (roda grande)
+const wheel=new THREE.Mesh(new THREE.TorusGeometry(1.5,0.18,8,24),new THREE.MeshStandardMaterial({color:0x3a3838,metalness:0.7,roughness:0.4}));
+wheel.position.set(-3,2.5,0);wheel.rotation.y=Math.PI/2;wheel.castShadow=true;g.add(wheel);g.userData.wheel=wheel;
+// Raios do volante
+for(let i=0;i<6;i++){
+  const sp=new THREE.Mesh(new THREE.BoxGeometry(0.1,2.6,0.1),new THREE.MeshStandardMaterial({color:0x4a4a4a,metalness:0.7,roughness:0.4}));
+  sp.position.set(-3,2.5,0);sp.rotation.x=i*Math.PI/6;wheel.add(sp);
+}
+// Chaminé alta
+const chim=new THREE.Mesh(new THREE.CylinderGeometry(0.7,0.85,8,12),new THREE.MeshStandardMaterial({color:0x5a4030,roughness:0.85}));
+chim.position.set(0.5,6.5,-1.5);chim.castShadow=true;g.add(chim);
+// Topo de tijolos
+const ctop=new THREE.Mesh(new THREE.CylinderGeometry(0.95,0.95,0.5,12),new THREE.MeshStandardMaterial({color:0x6a2818,roughness:0.85}));
+ctop.position.set(0.5,10.75,-1.5);g.add(ctop);
+// Fumaça da chaminé
+g.userData.smoke=[];
+for(let i=0;i<14;i++){
+  const s=new THREE.Mesh(new THREE.SphereGeometry(0.4+Math.random()*0.3,8,8),new THREE.MeshBasicMaterial({color:0x9a8a78,transparent:true,opacity:0.6}));
+  s.position.set(0.5+(Math.random()-0.5)*0.4,11+Math.random()*5,-1.5+(Math.random()-0.5)*0.4);
+  s.userData.vy=0.02+Math.random()*0.03;s.userData.life=Math.random();
+  g.add(s);g.userData.smoke.push(s);
+}
+markers.push({id:'indus',center:new THREE.Vector3(34,5,-22),radius:10,group:g});}
+
+// EUA / LIBERTY BELL (esquerda fundo)
+{const g=addMarker('eua',-28,-22);
+// Torre do sino (estilo Philadelphia Hall)
+const base=new THREE.Mesh(new THREE.BoxGeometry(5,5,4),new THREE.MeshStandardMaterial({color:0xa83828,roughness:0.85}));
+base.position.y=2.5;base.castShadow=base.receiveShadow=true;g.add(base);
+// Torre
+const tow=new THREE.Mesh(new THREE.BoxGeometry(2.5,5,2.5),new THREE.MeshStandardMaterial({color:0xa83828,roughness:0.85}));
+tow.position.y=7.5;tow.castShadow=true;g.add(tow);
+// Cúpula branca
+const dome=new THREE.Mesh(new THREE.SphereGeometry(1.8,16,12,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.6}));
+dome.position.y=10;dome.castShadow=true;g.add(dome);
+const spire=new THREE.Mesh(new THREE.ConeGeometry(0.4,2.5,8),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.7,roughness:0.3}));
+spire.position.y=12.5;g.add(spire);
+// Liberty Bell (sino)
+const bellGeom=new THREE.CylinderGeometry(0.95,0.6,1.3,16,1,false);
+const bell=new THREE.Mesh(bellGeom,new THREE.MeshStandardMaterial({color:0xc8a040,metalness:0.7,roughness:0.4,emissive:0x553300,emissiveIntensity:0.2}));
+bell.position.set(0,8.5,0);bell.castShadow=true;g.add(bell);
+g.userData.bell=bell;
+// Bandeira americana simplificada (vermelho/branco/azul)
+const fpole=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,6,6),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.95}));
+fpole.position.set(3,3,0);g.add(fpole);
+const flag=new THREE.Group();flag.position.set(3.8,5,0);
+for(let i=0;i<5;i++){
+  const stripe=new THREE.Mesh(new THREE.PlaneGeometry(1.4,0.18),new THREE.MeshStandardMaterial({color:i%2?0xfaf0d8:0xc62828,side:THREE.DoubleSide}));
+  stripe.position.y=-i*0.2;flag.add(stripe);
+}
+const canton=new THREE.Mesh(new THREE.PlaneGeometry(0.6,0.45),new THREE.MeshStandardMaterial({color:0x1a3a80,side:THREE.DoubleSide,emissive:0x0a2050,emissiveIntensity:0.2}));
+canton.position.set(-0.4,0.2,0.01);flag.add(canton);
+g.add(flag);
+// Declaração (papel flutuante)
+const decl=new THREE.Mesh(new THREE.PlaneGeometry(1.2,1.6),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.95,side:THREE.DoubleSide,emissive:0x444433,emissiveIntensity:0.1}));
+decl.position.set(-3,4,0);decl.rotation.y=0.3;g.add(decl);
+markers.push({id:'eua',center:new THREE.Vector3(-28,5,-22),radius:10,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0xf0a050,side:THREE.DoubleSide,transparent:true,opacity:0.35}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.1,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(60,48,70);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,5,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.25+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  if(groups['abs']&&groups['abs'].userData.crown){groups['abs'].userData.crown.rotation.y=t*0.4;groups['abs'].userData.crown.position.y=10+Math.sin(t*1.5)*0.3;}
+  if(groups['renasc']&&groups['renasc'].userData.book){groups['renasc'].userData.book.rotation.y=t*0.3;groups['renasc'].userData.book.position.y=11+Math.sin(t*1.5)*0.25;}
+  if(groups['naveg']){groups['naveg'].position.y=Math.sin(t*0.9)*0.25;groups['naveg'].rotation.z=Math.sin(t*0.7)*0.04;
+    if(groups['naveg'].userData.boat2){groups['naveg'].userData.boat2.position.y=Math.sin(t*1.1+1)*0.2;}}
+  if(groups['indus']){
+    if(groups['indus'].userData.wheel){groups['indus'].userData.wheel.rotation.x=t*2;}
+    if(groups['indus'].userData.pist){groups['indus'].userData.pist.position.x=2.5+Math.sin(t*4)*0.3;}
+    if(groups['indus'].userData.smoke){
+      groups['indus'].userData.smoke.forEach(s=>{
+        s.position.y+=s.userData.vy;s.userData.life+=0.008;
+        s.material.opacity=Math.max(0,0.55-s.userData.life*0.5);
+        s.scale.setScalar(1+s.userData.life*1.5);
+        if(s.userData.life>1.1){s.position.y=11;s.userData.life=0;s.scale.setScalar(1);s.material.opacity=0.55;}
+      });
+    }
+  }
+  if(groups['eua']&&groups['eua'].userData.bell){groups['eua'].userData.bell.rotation.z=Math.sin(t*1.4)*0.05;}
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNICAP Nexus — Central de Mapas Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030108;
+  --bg2: #08060f;
+  --bg3: #0e0c18;
+  --border: rgba(255,255,255,0.07);
+  --text: #b0a8c8;
+  --text-bright: #e0d8f0;
+  --accent: #7c60e8;
+  --accent-glow: rgba(124,96,232,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+/* HEADER */
+#header {
+  position:relative; text-align:center; padding: 60px 24px 40px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(124,96,232,0.12) 0%, transparent 70%);
+  border-bottom: 1px solid var(--border);
+}
+#header::before {
+  content:''; position:absolute; inset:0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237c60e8' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.nexus-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background: rgba(124,96,232,0.1); border: 1px solid rgba(124,96,232,0.3);
+  border-radius: 20px; padding: 6px 18px; font-size:12px; font-weight:600;
+  color: #a090d8; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:20px;
+}
+h1 {
+  font-size: clamp(28px, 5vw, 46px); font-weight:800; letter-spacing:-0.02em;
+  background: linear-gradient(135deg, #e0d8f8 0%, #a090d8 50%, #7060c0 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  margin-bottom:12px;
+}
+.subtitle { font-size:15px; color:#706890; font-weight:400; margin-bottom:30px; }
+.back-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+  color:#8070a8; text-decoration:none; font-size:13px; font-weight:500;
+  padding:8px 18px; border-radius:8px; transition:all 0.2s;
+}
+.back-btn:hover { background:rgba(124,96,232,0.1); color:#b0a0d8; border-color:rgba(124,96,232,0.3); }
+
+/* PROGRESS BAR */
+#progress-section { padding: 24px; max-width:900px; margin:0 auto; }
+.progress-bar-container { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:12px; padding:18px 22px; }
+.pb-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.pb-label { font-size:13px; font-weight:600; color:#9080c0; }
+.pb-count { font-size:13px; color:#7060a0; }
+.pb-track { height:6px; background:rgba(255,255,255,0.06); border-radius:3px; }
+.pb-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#5040c0,#9060e0); transition:width 0.6s; }
+
+/* GRID */
+#grid { max-width:1200px; margin:0 auto; padding:16px 24px 60px; display:grid; gap:16px; }
+
+/* SECTION HEADINGS */
+.section-head {
+  grid-column: 1 / -1;
+  display:flex; align-items:center; gap:12px; margin-top:16px; margin-bottom:4px;
+  padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+.section-icon { font-size:18px; }
+.section-name { font-size:18px; font-weight:700; color:var(--text-bright); }
+.section-count { font-size:12px; color:#504870; font-weight:500; margin-left:auto;
+  background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:12px; padding:3px 10px; }
+
+/* SUBJECT CARDS */
+.cards { grid-column: 1 / -1; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+.card {
+  background: var(--bg2); border:1px solid var(--border); border-radius:12px;
+  padding:18px 20px; text-decoration:none; color:inherit;
+  transition:all 0.2s; position:relative; overflow:hidden;
+}
+.card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:var(--card-color, #7c60e8); opacity:0.6;
+  transition:opacity 0.2s;
+}
+.card:hover { background:var(--bg3); border-color:rgba(255,255,255,0.12); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,0.4); }
+.card:hover::before { opacity:1; }
+.card-icon { font-size:22px; margin-bottom:10px; }
+.card-title { font-size:14px; font-weight:700; color:var(--text-bright); margin-bottom:6px; }
+.card-desc { font-size:12px; color:#60586a; line-height:1.5; margin-bottom:14px; }
+.card-links { display:flex; gap:8px; }
+.card-link {
+  flex:1; text-align:center; font-size:11px; font-weight:600; letter-spacing:0.04em;
+  padding:6px 10px; border-radius:6px; text-decoration:none;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  color:#706080; transition:all 0.2s;
+}
+.card-link:hover { background:rgba(255,255,255,0.08); color:#a090c0; }
+.card-link.primary { background:rgba(124,96,232,0.1); border-color:rgba(124,96,232,0.25); color:#9080c8; }
+.card-link.primary:hover { background:rgba(124,96,232,0.2); color:#c0b0e8; }
+
+/* COMING SOON */
+.card.soon { opacity:0.45; pointer-events:none; }
+.card.soon .card-title::after { content:" — em breve"; font-size:10px; color:#403858; font-weight:400; }
+
+/* FOOTER */
+#footer { text-align:center; padding:30px; border-top:1px solid var(--border); color:#302840; font-size:12px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div class="nexus-badge">✦ UNICAP NEXUS</div>
+  <h1>Central de Mapas Premium</h1>
+  <p class="subtitle">Experiências imersivas · conteúdo profundo · estratégias para a prova</p>
+  <a href="../dashboard.html" class="back-btn">← Voltar ao Dashboard</a>
+</div>
+
+<div id="progress-section">
+  <div class="progress-bar-container">
+    <div class="pb-header">
+      <span class="pb-label">Progresso do Nexus</span>
+      <span class="pb-count" id="pc">14 mapas criados</span>
+    </div>
+    <div class="pb-track"><div class="pb-fill" style="width:60%"></div></div>
+  </div>
+</div>
+
+<div id="grid">
+
+  <!-- REDAÇÃO -->
+  <div class="section-head">
+    <span class="section-icon">✍️</span>
+    <span class="section-name">Redação</span>
+    <span class="section-count">1 mapa</span>
+  </div>
+  <div class="cards">
+    <a href="redacao/mapa3d.html" class="card" style="--card-color:#e84040">
+      <div class="card-icon">📝</div>
+      <div class="card-title">Estrutura da Redação UNICAP</div>
+      <div class="card-desc">Arquitetura argumentativa, repertório, conectivos, correção e estratégia nota 1000.</div>
+      <div class="card-links">
+        <a href="redacao/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="redacao/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- LINGUAGENS -->
+  <div class="section-head">
+    <span class="section-icon">📖</span>
+    <span class="section-name">Linguagens</span>
+    <span class="section-count">5 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="linguagens/portugues/mapa3d.html" class="card" style="--card-color:#60a8e8">
+      <div class="card-icon">🔤</div>
+      <div class="card-title">Língua Portuguesa</div>
+      <div class="card-desc">Gramática, interpretação, variação linguística, figuras de linguagem e análise textual.</div>
+      <div class="card-links">
+        <a href="linguagens/portugues/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="linguagens/portugues/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="linguagens/ingles/mapa3d.html" class="card" style="--card-color:#4088d0">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Inglês</div>
+      <div class="card-desc">Leitura e interpretação de textos em inglês, vocabulário estratégico e estruturas essenciais.</div>
+      <div class="card-links">
+        <a href="linguagens/ingles/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="linguagens/ingles/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="linguagens/literatura/romantismo/mapa3d.html" class="card" style="--card-color:#b080c8">
+      <div class="card-icon">🌹</div>
+      <div class="card-title">Romantismo</div>
+      <div class="card-desc">Ruínas ao luar: subjetivismo, idealizações, indianismo. Gonçalves Dias, Álvares de Azevedo, Alencar.</div>
+      <div class="card-links">
+        <a href="linguagens/literatura/romantismo/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="linguagens/literatura/romantismo/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="linguagens/literatura/realismo/mapa3d.html" class="card" style="--card-color:#a0c060">
+      <div class="card-icon">🔬</div>
+      <div class="card-title">Realismo / Naturalismo</div>
+      <div class="card-desc">O consultório do Dr. Machado: objetividade, crítica social, determinismo. Machado de Assis, Eça de Queirós.</div>
+      <div class="card-links">
+        <a href="linguagens/literatura/realismo/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="linguagens/literatura/realismo/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="linguagens/literatura/modernismo/mapa3d.html" class="card" style="--card-color:#e84040">
+      <div class="card-icon">🎭</div>
+      <div class="card-title">Modernismo</div>
+      <div class="card-desc">Semana de 22 — Formas partidas: ruptura com o passado, experimentação, identidade nacional.</div>
+      <div class="card-links">
+        <a href="linguagens/literatura/modernismo/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="linguagens/literatura/modernismo/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- HUMANAS – FILOSOFIA -->
+  <div class="section-head">
+    <span class="section-icon">🏛️</span>
+    <span class="section-name">Humanas — Filosofia</span>
+    <span class="section-count">4 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="humanas/filosofia/socrates/mapa3d.html" class="card" style="--card-color:#e8c860">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Sócrates</div>
+      <div class="card-desc">A Ágora de Atenas: método socrático, maiêutica, ironia, virtude como conhecimento, julgamento e morte.</div>
+      <div class="card-links">
+        <a href="humanas/filosofia/socrates/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/filosofia/socrates/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/filosofia/platao/mapa3d.html" class="card" style="--card-color:#6080e0">
+      <div class="card-icon">🕯️</div>
+      <div class="card-title">Platão</div>
+      <div class="card-desc">A Alegoria da Caverna: mundo das Ideias, reminiscência, República, filósofo-rei, Demiurgo.</div>
+      <div class="card-links">
+        <a href="humanas/filosofia/platao/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/filosofia/platao/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/filosofia/aristoteles/mapa3d.html" class="card" style="--card-color:#60c870">
+      <div class="card-icon">🌿</div>
+      <div class="card-title">Aristóteles</div>
+      <div class="card-desc">O Jardim do Liceu: lógica, metafísica (hylomorfismo), ética (eudaimonia), política (zoon politikon).</div>
+      <div class="card-links">
+        <a href="humanas/filosofia/aristoteles/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/filosofia/aristoteles/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/filosofia/iluminismo/mapa3d.html" class="card" style="--card-color:#d4a030">
+      <div class="card-icon">📚</div>
+      <div class="card-title">Iluminismo</div>
+      <div class="card-desc">O Salão des Lumières: Voltaire, Rousseau, Montesquieu, Locke, Kant, Encyclopédie, Revolução Francesa.</div>
+      <div class="card-links">
+        <a href="humanas/filosofia/iluminismo/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/filosofia/iluminismo/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- HUMANAS – HISTÓRIA -->
+  <div class="section-head">
+    <span class="section-icon">📜</span>
+    <span class="section-name">Humanas — História</span>
+    <span class="section-count">5 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="humanas/historia/brasil-colonial-imperial/mapa3d.html" class="card" style="--card-color:#d4840a">
+      <div class="card-icon">🌿</div>
+      <div class="card-title">Brasil Colonial e Imperial</div>
+      <div class="card-desc">O Engenho ao Entardecer: pacto colonial, ciclos econômicos, escravidão, Família Real, Independência, Império.</div>
+      <div class="card-links">
+        <a href="humanas/historia/brasil-colonial-imperial/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/historia/brasil-colonial-imperial/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/historia/brasil-republica/mapa3d.html" class="card" style="--card-color:#d4a030">
+      <div class="card-icon">🏛️</div>
+      <div class="card-title">Brasil República</div>
+      <div class="card-desc">Palácio do Catete: República Velha, Era Vargas, Estado Novo, CLT, Ditadura 1964, Constituição 1988.</div>
+      <div class="card-links">
+        <a href="humanas/historia/brasil-republica/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/historia/brasil-republica/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/historia/contemporanea/mapa3d.html" class="card" style="--card-color:#3060e0">
+      <div class="card-icon">📡</div>
+      <div class="card-title">História Contemporânea</div>
+      <div class="card-desc">Sala de Controle: WWI, WWII, Holocausto, Guerra Fria, Descolonização, Globalização, séc. XXI.</div>
+      <div class="card-links">
+        <a href="humanas/historia/contemporanea/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/historia/contemporanea/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/historia/geral-antiga-medieval/mapa3d.html" class="card" style="--card-color:#d4a840">
+      <div class="card-icon">🏛️</div>
+      <div class="card-title">História Geral: Antiguidade e Idade Média</div>
+      <div class="card-desc">Fórum Romano: Grécia, Roma, Feudalismo, Cruzadas, Antiguidade Oriental, transição medieval.</div>
+      <div class="card-links">
+        <a href="humanas/historia/geral-antiga-medieval/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/historia/geral-antiga-medieval/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="humanas/historia/geral-moderna-revolucoes/mapa3d.html" class="card" style="--card-color:#c09030">
+      <div class="card-icon">👑</div>
+      <div class="card-title">História Geral: Moderna e Revoluções</div>
+      <div class="card-desc">Versalhes: Reforma Protestante, Absolutismo, Expansão Marítima, Revoluções Francesa, Americana e Industrial.</div>
+      <div class="card-links">
+        <a href="humanas/historia/geral-moderna-revolucoes/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/historia/geral-moderna-revolucoes/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- HUMANAS – SOCIOLOGIA -->
+  <div class="section-head">
+    <span class="section-icon">⚙️</span>
+    <span class="section-name">Humanas — Sociologia, Geografia e Atualidades</span>
+    <span class="section-count">3 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="humanas/sociologia/mapa3d.html" class="card" style="--card-color:#a060e8">
+      <div class="card-icon">⚙️</div>
+      <div class="card-title">Sociologia — Os Fundadores</div>
+      <div class="card-desc">O Ateliê dos Três: Marx (luta de classes, mais-valia), Durkheim (fato social, anomia), Weber (burocracia, ação social).</div>
+      <div class="card-links">
+        <a href="humanas/sociologia/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/sociologia/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+
+    <a href="humanas/geografia/mapa3d.html" class="card" style="--card-color:#3080d0">
+      <div class="card-icon">🌍</div>
+      <div class="card-title">Geografia — Brasil e Geopolítica</div>
+      <div class="card-desc">Gabinete do Cartógrafo: biomas, regiões, clima, hidrografia, urbanização, MERCOSUL, globalização.</div>
+      <div class="card-links">
+        <a href="humanas/geografia/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/geografia/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+
+    <a href="humanas/atualidades/mapa3d.html" class="card" style="--card-color:#00c8ff">
+      <div class="card-icon">🌐</div>
+      <div class="card-title">Atualidades 2025–2026</div>
+      <div class="card-desc">A Rede Global: IA, crise climática, conflitos, desigualdade, saúde mental, democracia digital, direitos humanos. Conexões com Filosofia e Sociologia.</div>
+      <div class="card-links">
+        <a href="humanas/atualidades/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="humanas/atualidades/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- MATEMÁTICA -->
+  <div class="section-head">
+    <span class="section-icon">∑</span>
+    <span class="section-name">Matemática</span>
+    <span class="section-count">4 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="matematica/funcoes/mapa3d.html" class="card" style="--card-color:#40c0e0">
+      <div class="card-icon">📐</div>
+      <div class="card-title">Funções e Gráficos</div>
+      <div class="card-desc">O Observatório das Curvas: 1º e 2º grau, exponencial, logarítmica, composição, domínio e imagem.</div>
+      <div class="card-links">
+        <a href="matematica/funcoes/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="matematica/funcoes/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="matematica/geometria/mapa3d.html" class="card" style="--card-color:#40a0c0">
+      <div class="card-icon">📏</div>
+      <div class="card-title">Geometria Plana e Espacial</div>
+      <div class="card-desc">O Ateliê de Euclides: triângulos, quadriláteros, círculo, prismas, pirâmides, cilindro, cone, esfera.</div>
+      <div class="card-links">
+        <a href="matematica/geometria/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="matematica/geometria/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="matematica/aritmetica/mapa3d.html" class="card" style="--card-color:#3880b0">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Aritmética, PA e PG</div>
+      <div class="card-desc">O Contador do Tempo: progressões, porcentagem, juros simples e compostos, MMC e MDC.</div>
+      <div class="card-links">
+        <a href="matematica/aritmetica/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="matematica/aritmetica/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="matematica/trigonometria/mapa3d.html" class="card" style="--card-color:#3060a0">
+      <div class="card-icon">📉</div>
+      <div class="card-title">Trigonometria</div>
+      <div class="card-desc">O Círculo Sagrado: seno, cosseno, tangente, valores notáveis, Lei dos Senos e Cossenos, identidades.</div>
+      <div class="card-links">
+        <a href="matematica/trigonometria/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="matematica/trigonometria/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+  <!-- NATUREZA -->
+  <div class="section-head">
+    <span class="section-icon">🔬</span>
+    <span class="section-name">Ciências da Natureza</span>
+    <span class="section-count">4 mapas</span>
+  </div>
+  <div class="cards">
+    <a href="natureza/biologia-celular/mapa3d.html" class="card" style="--card-color:#40c878">
+      <div class="card-icon">🧬</div>
+      <div class="card-title">Biologia Celular e Genética</div>
+      <div class="card-desc">O Laboratório da Célula Viva: DNA, organelas, mitose, meiose, Mendel, síntese de proteínas, biotecnologia.</div>
+      <div class="card-links">
+        <a href="natureza/biologia-celular/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="natureza/biologia-celular/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="natureza/ecologia-evolucao/mapa3d.html" class="card" style="--card-color:#30a860">
+      <div class="card-icon">🌱</div>
+      <div class="card-title">Ecologia e Evolução</div>
+      <div class="card-desc">A Teia da Vida: cadeias alimentares, relações ecológicas, biomas, ciclos biogeoquímicos, Darwin.</div>
+      <div class="card-links">
+        <a href="natureza/ecologia-evolucao/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="natureza/ecologia-evolucao/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="natureza/quimica/mapa3d.html" class="card" style="--card-color:#a060c0">
+      <div class="card-icon">⚗️</div>
+      <div class="card-title">Química Geral e Orgânica</div>
+      <div class="card-desc">O Laboratório do Alquimista: tabela periódica, ligações, funções inorgânicas/orgânicas, estequiometria.</div>
+      <div class="card-links">
+        <a href="natureza/quimica/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="natureza/quimica/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+    <a href="natureza/fisica/mapa3d.html" class="card" style="--card-color:#6040c0">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Física — Mecânica e Eletromagnetismo</div>
+      <div class="card-desc">A Arena das Forças: cinemática, Newton, energia, eletrostática, circuitos, óptica, ondulatória.</div>
+      <div class="card-links">
+        <a href="natureza/fisica/mapa3d.html" class="card-link primary">Mapa 3D</a>
+        <a href="natureza/fisica/resumo.html" class="card-link">Resumo</a>
+      </div>
+    </a>
+  </div>
+
+</div>
+
+<div id="footer">
+  UNICAP Nexus · Vestibular 14/06/2026 · Carlos Régis · Direito Manhã
+</div>
+
+<script>
+// Count active cards
+const active = document.querySelectorAll('.card:not(.soon)').length;
+document.getElementById('pc').textContent = active + ' mapas criados';
+const total = document.querySelectorAll('.card').length;
+document.querySelector('.pb-fill').style.width = (active/total*100).toFixed(0) + '%';
+</script>
+</body>
+</html>

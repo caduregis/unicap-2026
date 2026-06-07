@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Guerra · UNICAP 2026.2 Direito</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', system-ui, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .cinzel { font-family: 'Cinzel', serif; }
+  body {
+    background: linear-gradient(135deg, #050810 0%, #0a0e1a 30%, #131829 70%, #0a0e1a 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #e8eaf0;
+  }
+
+  /* Particles bg sutis */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(2px 2px at 20px 30px, rgba(0,212,255,0.15), transparent),
+      radial-gradient(1px 1px at 60px 70px, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 90px 10px, rgba(255,184,0,0.15), transparent),
+      radial-gradient(2px 2px at 130px 60px, rgba(0,212,255,0.1), transparent),
+      radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.18), transparent);
+    background-size: 200px 100px;
+    opacity: 0.6;
+  }
+
+  .glass {
+    background: rgba(19, 24, 41, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 212, 255, 0.10);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    transition: all 320ms ease-out;
+  }
+  .glass-strong {
+    background: rgba(19, 24, 41, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 212, 255, 0.18);
+  }
+  .glass-amber {
+    border-color: rgba(255, 184, 0, 0.25);
+  }
+  .glass-emerald {
+    border-color: rgba(16, 185, 129, 0.25);
+  }
+  .glass-red {
+    border-color: rgba(239, 68, 68, 0.25);
+  }
+
+  .cyan { color: #00d4ff; } .amber { color: #ffb800; }
+
+  .grad-text-prima {
+    background: linear-gradient(135deg, #00d4ff 0%, #00a8ff 50%, #ffb800 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .grad-cyan { background: linear-gradient(90deg, #00d4ff 0%, #0099cc 100%); }
+  .grad-amber { background: linear-gradient(90deg, #ffb800 0%, #ff8c00 100%); }
+  .grad-emerald { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+  .grad-red { background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%); }
+  .grad-purple { background: linear-gradient(90deg, #a78bfa 0%, #8b5cf6 100%); }
+  .grad-pink { background: linear-gradient(90deg, #f472b6 0%, #ec4899 100%); }
+
+  .glow-cyan { box-shadow: 0 0 40px rgba(0, 212, 255, 0.4); }
+  .glow-amber { box-shadow: 0 0 40px rgba(255, 184, 0, 0.35); }
+
+  /* Animações */
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade { animation: fade-in-up 480ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .d1 { animation-delay: 60ms; }
+  .d2 { animation-delay: 120ms; }
+  .d3 { animation-delay: 180ms; }
+  .d4 { animation-delay: 240ms; }
+  .d5 { animation-delay: 300ms; }
+  .d6 { animation-delay: 360ms; }
+  .d7 { animation-delay: 420ms; }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 50px rgba(0, 212, 255, 0.55); }
+  }
+  .pulse-glow { animation: pulse-glow 2.8s ease-in-out infinite; }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(0,212,255,0.1) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  /* Barras de progresso animadas */
+  .bar-track {
+    height: 14px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1200ms cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s infinite;
+  }
+
+  /* Timeline */
+  .timeline-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #00d4ff 0%, #ffb800 50%, #ef4444 100%);
+    opacity: 0.4;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 3px solid #0a0e1a;
+    z-index: 2;
+  }
+
+  /* Tabela hora-por-hora */
+  .cronograma-cell {
+    transition: all 240ms ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .cronograma-cell:hover {
+    background: rgba(0, 212, 255, 0.08) !important;
+    transform: scale(1.03);
+    border-color: rgba(0, 212, 255, 0.4);
+  }
+
+  /* Chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border: 1px solid;
+  }
+
+  /* Heatmap revisão espaçada */
+  .rev-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 200ms;
+    position: relative;
+  }
+  .rev-cell:hover { transform: scale(1.2); z-index: 10; }
+  .rev-d1 { background: rgba(0,212,255,0.7); box-shadow: 0 0 8px rgba(0,212,255,0.5); }
+  .rev-d3 { background: rgba(0,212,255,0.5); }
+  .rev-d7 { background: rgba(255,184,0,0.55); }
+  .rev-d14 { background: rgba(255,184,0,0.35); }
+  .rev-d30 { background: rgba(239,68,68,0.5); box-shadow: 0 0 8px rgba(239,68,68,0.3); }
+
+  /* CTA pulsante */
+  .btn-cta {
+    background: linear-gradient(135deg, #00d4ff 0%, #ffb800 100%);
+    color: #0a0e1a;
+    font-weight: 800;
+    transition: all 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 600ms ease-out;
+  }
+  .btn-cta:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 16px 48px rgba(0, 212, 255, 0.45);
+  }
+  .btn-cta:hover::before { left: 100%; }
+
+  /* Numbers gigantes */
+  .num-hero {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+</style>
+</head>
+<body class="relative">
+
+<div class="stars"></div>
+
+<div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+
+<!-- ============ HEADER ============ -->
+<header class="mb-12 fade">
+  <a href="dashboard.html" class="text-sm cyan hover:underline">← Dashboard</a>
+  <div class="mt-4 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <p class="cinzel text-amber tracking-[0.3em] text-xs sm:text-sm mb-2">PLANO DE GUERRA</p>
+      <h1 class="text-5xl sm:text-7xl font-black grad-text-prima leading-none">
+        UNICAP 2026.2
+      </h1>
+      <p class="text-2xl sm:text-3xl font-light text-slate-300 mt-2" id="subtituloDias">Direito · calculando...</p>
+    </div>
+    <div class="text-right">
+      <p class="text-xs uppercase tracking-widest text-slate-500">Candidato</p>
+      <p class="text-lg font-bold">Carlos Régis</p>
+      <p class="text-xs text-slate-400 mono" id="candidatoDias">Recife/PE · D-…</p>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO STATS ============ -->
+<section class="mb-12 fade d1">
+  <div class="glass-strong rounded-3xl p-8 sm:p-12 pulse-glow">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-12">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Dias restantes</p>
+        <p class="num-hero text-6xl sm:text-7xl cyan" id="diasFaltam">32</p>
+        <p class="text-xs text-slate-500 mt-1 mono" id="hoje"></p>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Horas totais</p>
+        <p class="num-hero text-6xl sm:text-7xl amber">160</p>
+        <p class="text-xs text-slate-500 mt-1">4h × dias úteis + 8h × FDS</p>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Vagas Direito</p>
+        <p class="num-hero text-6xl sm:text-7xl text-emerald-400">388</p>
+        <p class="text-xs text-slate-500 mt-1">337 Manhã + 51 Noite · +43 CC Manhã (2ª opção)</p>
+      </div>
+      <div>
+        <p class="text-xs uppercase tracking-widest text-slate-400 mb-2">Score-alvo prova</p>
+        <p class="num-hero text-6xl sm:text-7xl text-purple-400">60<span class="text-3xl">%</span></p>
+        <p class="text-xs text-slate-500 mt-1">~38 / 64 + Redação ≥ 700</p>
+      </div>
+    </div>
+    <div class="mt-8 pt-6 border-t border-slate-700/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <p class="text-sm text-slate-300">📅 Prova: <span class="font-bold amber">14 de junho de 2026</span> · domingo · <span class="font-bold cyan">5h</span> · 8h15-13h15 · papel · presencial Recife</p>
+        <p class="text-xs text-slate-500 mt-1">⏰ Inscrições até 09/06 · taxa <span class="amber">R$150</span> (prova) ou <span class="amber">R$75</span> (ENEM 2016-2025)</p>
+      </div>
+      <a href="simulados/simulado-diagnostico.html" class="btn-cta px-6 py-3 rounded-xl text-sm whitespace-nowrap inline-block text-center">⚡ Diagnóstico</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DIAGNÓSTICO CRU ============ -->
+<section class="mb-12 fade d2">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-red flex items-center justify-center text-2xl">🩺</div>
+    <div>
+      <h2 class="text-3xl font-black">Diagnóstico cru</h2>
+      <p class="text-sm text-slate-400">Auto-avaliação informada · escala 0-10</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-bold mb-4">📊 Nível por disciplina</h3>
+      <div class="space-y-3" id="niveisDisciplinas"></div>
+    </div>
+
+    <div class="glass rounded-2xl p-6">
+      <h3 class="font-bold mb-4">🎯 Média por área UNICAP</h3>
+      <div class="relative h-64 sm:h-72">
+        <canvas id="radarChart"></canvas>
+      </div>
+      <p class="text-xs text-slate-500 mt-3 text-center">Nível real (ciano) vs Meta sprint (âmbar)</p>
+    </div>
+  </div>
+
+  <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="glass glass-red rounded-xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase">Maior risco</p>
+      <p class="font-bold text-red-400 mt-1">Zerar Natureza</p>
+      <p class="text-xs mono text-slate-500 mt-1">Bio+Quí+Fís média 3,3</p>
+    </div>
+    <div class="glass glass-amber rounded-xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase">Maior alavanca</p>
+      <p class="font-bold amber mt-1">Redação</p>
+      <p class="text-xs mono text-slate-500 mt-1">1º critério desempate</p>
+    </div>
+    <div class="glass rounded-xl p-4 text-center" style="border-color: rgba(0,212,255,0.25)">
+      <p class="text-xs text-slate-400 uppercase">Ponto forte</p>
+      <p class="font-bold cyan mt-1">Geografia 7</p>
+      <p class="text-xs mono text-slate-500 mt-1">Reserva tática</p>
+    </div>
+    <div class="glass glass-emerald rounded-xl p-4 text-center">
+      <p class="text-xs text-slate-400 uppercase">Histórico</p>
+      <p class="font-bold text-emerald-400 mt-1">ENEM treineiro</p>
+      <p class="text-xs mono text-slate-500 mt-1">2024 · sem nota declarada</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRIORIZAÇÃO ============ -->
+<section class="mb-12 fade d3">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-amber flex items-center justify-center text-2xl">⚖️</div>
+    <div>
+      <h2 class="text-3xl font-black">Priorização <span class="amber">Peso × Gap × ROI</span></h2>
+      <p class="text-sm text-slate-400">Alocação de 160h baseada em peso oficial × distância do nível atual × posição no desempate</p>
+    </div>
+  </div>
+
+  <div class="glass rounded-2xl p-6 overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-xs uppercase tracking-wider text-slate-400 border-b border-slate-700/50">
+          <th class="text-left pb-3 font-semibold">Área</th>
+          <th class="text-center pb-3 font-semibold">Peso</th>
+          <th class="text-center pb-3 font-semibold">Nível</th>
+          <th class="text-center pb-3 font-semibold">Gap</th>
+          <th class="text-center pb-3 font-semibold">Desempate</th>
+          <th class="text-right pb-3 font-semibold">Tempo alocado</th>
+        </tr>
+      </thead>
+      <tbody id="priorizacaoTabela"></tbody>
+    </table>
+  </div>
+
+  <div class="mt-4 glass glass-red rounded-xl p-4 flex items-start gap-3">
+    <span class="text-2xl">⚠️</span>
+    <div>
+      <p class="font-bold text-red-300 text-sm">Mudança crítica vs plano original</p>
+      <p class="text-xs text-slate-300 mt-1">Natureza subiu de 13h → <span class="amber font-bold">30h</span>. Razão: nível 3,3 + risco de zerar (eliminatório) torna defesa prioritária. Sem reforço em Bio/Quí/Fís básicos, o risco é alto demais.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TIMELINE 5 SEMANAS ============ -->
+<section class="mb-12 fade d4">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-cyan flex items-center justify-center text-2xl">🗓️</div>
+    <div>
+      <h2 class="text-3xl font-black">Cronograma macro · <span class="cyan">5 semanas</span></h2>
+      <p class="text-sm text-slate-400">Da diagnóstico ao descanso pré-prova</p>
+    </div>
+  </div>
+
+  <div class="relative">
+    <div class="timeline-line hidden md:block"></div>
+    <div id="semanas" class="space-y-6"></div>
+  </div>
+</section>
+
+<!-- ============ CRONOGRAMA MICRO SEMANA 1 ============ -->
+<section class="mb-12 fade d5">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-purple flex items-center justify-center text-2xl">⏱️</div>
+    <div>
+      <h2 class="text-3xl font-black">Cronograma micro · <span class="text-purple-400">Semana 1</span></h2>
+      <p class="text-sm text-slate-400">Hora por hora · 13-19 de maio</p>
+    </div>
+  </div>
+
+  <div class="glass rounded-2xl p-2 sm:p-4 overflow-x-auto">
+    <table class="w-full text-xs sm:text-sm" id="microCronograma">
+      <thead>
+        <tr class="text-xs uppercase tracking-wider text-slate-400">
+          <th class="text-left p-3 font-semibold">Dia</th>
+          <th class="text-left p-3 font-semibold">Bloco 1</th>
+          <th class="text-left p-3 font-semibold">Bloco 2</th>
+          <th class="text-left p-3 font-semibold">Bloco 3</th>
+          <th class="text-left p-3 font-semibold">Bloco 4</th>
+        </tr>
+      </thead>
+      <tbody id="microTbody"></tbody>
+    </table>
+  </div>
+  <p class="text-xs text-slate-500 mt-3 text-center">💡 Cada bloco = 1 hora · dias úteis 4 blocos = 4h · sáb/dom dois turnos = 8h · ☀️=manhã ✦=tarde</p>
+</section>
+
+<!-- ============ REVISÃO ESPAÇADA ============ -->
+<section class="mb-12 fade d6">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-emerald flex items-center justify-center text-2xl">🔁</div>
+    <div>
+      <h2 class="text-3xl font-black">Revisão <span class="text-emerald-400">espaçada</span></h2>
+      <p class="text-sm text-slate-400">SM-2 simplificado · D+1 · D+3 · D+7 · D+14 · D+30</p>
+    </div>
+  </div>
+
+  <div class="glass rounded-2xl p-6">
+    <div class="grid grid-cols-5 sm:grid-cols-10 md:grid-cols-15 lg:grid-cols-30 gap-1.5 mb-6" id="revHeatmap"></div>
+
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+      <div class="flex items-center gap-2"><div class="w-4 h-4 rev-cell rev-d1"></div><span>D+1 · flashcard</span></div>
+      <div class="flex items-center gap-2"><div class="w-4 h-4 rev-cell rev-d3"></div><span>D+3 · quiz curto</span></div>
+      <div class="flex items-center gap-2"><div class="w-4 h-4 rev-cell rev-d7"></div><span>D+7 · mapa mental</span></div>
+      <div class="flex items-center gap-2"><div class="w-4 h-4 rev-cell rev-d14"></div><span>D+14 · simulado</span></div>
+      <div class="flex items-center gap-2"><div class="w-4 h-4 rev-cell rev-d30"></div><span>D+30 · revisão final</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ METAS POR SEMANA ============ -->
+<section class="mb-12 fade d7">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-pink flex items-center justify-center text-2xl">🎯</div>
+    <div>
+      <h2 class="text-3xl font-black">Metas <span class="text-pink-400">mensuráveis</span></h2>
+      <p class="text-sm text-slate-400">Score-alvo nos simulados internos · evolução semana a semana</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div class="glass rounded-xl p-5 text-center">
+      <p class="text-xs text-slate-500 mono">SEM 1</p>
+      <p class="num-hero text-4xl text-slate-300 mt-1">—</p>
+      <p class="text-xs text-slate-400 mt-2">Diagnóstico</p>
+      <p class="text-[10px] text-slate-600 mt-1">14/05</p>
+    </div>
+    <div class="glass glass-amber rounded-xl p-5 text-center">
+      <p class="text-xs amber mono">SEM 2</p>
+      <p class="num-hero text-4xl amber mt-1">40<span class="text-xl">%</span></p>
+      <p class="text-xs text-slate-400 mt-2">Simulado interno</p>
+      <p class="text-[10px] text-slate-600 mt-1">~26/05</p>
+    </div>
+    <div class="glass rounded-xl p-5 text-center" style="border-color:rgba(245,158,11,0.4)">
+      <p class="text-xs text-yellow-400 mono">SEM 3</p>
+      <p class="num-hero text-4xl text-yellow-400 mt-1">50<span class="text-xl">%</span></p>
+      <p class="text-xs text-slate-400 mt-2">Simulado interno</p>
+      <p class="text-[10px] text-slate-600 mt-1">~02/06</p>
+    </div>
+    <div class="glass glass-emerald rounded-xl p-5 text-center">
+      <p class="text-xs text-emerald-400 mono">SEM 4</p>
+      <p class="num-hero text-4xl text-emerald-400 mt-1">55<span class="text-xl">%</span></p>
+      <p class="text-xs text-slate-400 mt-2">3 simulados completos</p>
+      <p class="text-[10px] text-slate-600 mt-1">03-09/06</p>
+    </div>
+    <div class="glass rounded-xl p-5 text-center pulse-glow" style="border-color:rgba(0,212,255,0.5)">
+      <p class="text-xs cyan mono">SEM 5 · META</p>
+      <p class="num-hero text-4xl cyan mt-1">60<span class="text-xl">%</span></p>
+      <p class="text-xs text-slate-400 mt-2">Simulado final + redação ≥ 700</p>
+      <p class="text-[10px] text-slate-600 mt-1">10-13/06</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REGRAS DE OURO ============ -->
+<section class="mb-12 fade d7">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full grad-amber flex items-center justify-center text-2xl">📜</div>
+    <div>
+      <h2 class="text-3xl font-black">7 Regras de <span class="amber">ouro</span></h2>
+      <p class="text-sm text-slate-400">Não negociáveis durante a sprint</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">I</span>
+      <div>
+        <p class="font-bold mb-1">Honestidade brutal com tempo</p>
+        <p class="text-xs text-slate-400">4h reais com pomodoro 25/5 > 6h olhando o livro. Mede pelo cronômetro, não pelo relógio de parede.</p>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">II</span>
+      <div>
+        <p class="font-bold mb-1">Nunca pule revisão espaçada</p>
+        <p class="text-xs text-slate-400">O sistema é o que torna o estudo eficaz. Sem D+1, D+3, D+7, o conteúdo evapora.</p>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">III</span>
+      <div>
+        <p class="font-bold mb-1">Redação 1× por semana, mínimo</p>
+        <p class="text-xs text-slate-400">Sem treino = sem nota. Use o redação trainer cronometrado em 90 min.</p>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">IV</span>
+      <div>
+        <p class="font-bold mb-1">1 prova anterior INTEIRA por semana</p>
+        <p class="text-xs text-slate-400">Não fragmentada — completa, cronometrada, 4h, como se fosse a prova real.</p>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">V</span>
+      <div>
+        <p class="font-bold mb-1">No dia anterior à prova: zero conteúdo novo</p>
+        <p class="text-xs text-slate-400">13/06 é só revisão leve + sono + alimentação + conferir documentos. Adrenalina ≠ aprendizado.</p>
+      </div>
+    </div>
+    <div class="glass rounded-xl p-5 flex gap-4">
+      <span class="cinzel text-3xl amber font-bold shrink-0">VI</span>
+      <div>
+        <p class="font-bold mb-1">Documente no progresso.json</p>
+        <p class="text-xs text-slate-400">O dashboard mostra evolução. Sem registro, não há feedback sobre o que está funcionando.</p>
+      </div>
+    </div>
+    <div class="glass glass-red rounded-xl p-5 flex gap-4 md:col-span-2">
+      <span class="cinzel text-3xl text-red-400 font-bold shrink-0">VII</span>
+      <div>
+        <p class="font-bold mb-1 text-red-300">Se faltar tempo, corta NATUREZA/HUMANAS — nunca Redação, Linguagens (incl. Inglês) ou Matemática</p>
+        <p class="text-xs text-slate-300">Redação (1º) + Linguagens com Inglês (2º) + Matemática 16q (3º) são os 3 critérios de desempate. Ceder = entregar a aprovação ao concorrente. <span class="amber font-bold">Norma padrão vale 300pts</span> da redação — é o maior critério isolado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA FINAL ============ -->
+<section class="mb-12 fade d7">
+  <div class="glass-strong rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10" style="background: radial-gradient(circle at 50% 50%, #ffb800 0%, transparent 60%)"></div>
+    <div class="relative">
+      <p class="cinzel text-amber tracking-[0.3em] text-xs mb-4">SÊNECA</p>
+      <p class="text-2xl sm:text-3xl font-light italic text-slate-200 leading-relaxed mb-2">
+        "Não é porque algo é difícil que não ousamos;<br>é porque não ousamos que se torna difícil."
+      </p>
+      <p class="text-sm text-slate-500 mb-8 mono">— Epistulae Morales</p>
+      <a href="simulados/simulado-diagnostico.html" class="btn-cta inline-block px-10 py-4 rounded-2xl text-lg">
+        ⚡ Começar pelo Diagnóstico
+      </a>
+      <p class="text-xs text-slate-500 mt-6" id="ctaDias">… dias dá. <span class="cyan">Sistema montado.</span> <span class="amber">Falta só sentar.</span></p>
+    </div>
+  </div>
+</section>
+
+<footer class="text-center text-xs text-slate-600 pb-6">
+  Plano de Guerra · UNICAP 2026.2 Direito · <span id="footerDias">…</span> dias restantes · atualizado automaticamente
+</footer>
+
+</div>
+
+<script>
+// ============ DADOS ============
+const NIVEIS = [
+  { nome: 'Geografia', nivel: 7, cor: '#10b981', area: 'Humanas' },
+  { nome: 'Português', nivel: 6, cor: '#00d4ff', area: 'Linguagens' },
+  { nome: 'Inglês ⭐ novo', nivel: 6, cor: '#06b6d4', area: 'Linguagens (descoberta!)' },
+  { nome: 'Matemática', nivel: 5, cor: '#a78bfa', area: 'Matemática (16q)' },
+  { nome: 'História', nivel: 5, cor: '#ffb800', area: 'Humanas' },
+  { nome: 'Atualidades', nivel: 5, cor: '#f472b6', area: 'Redação · repertório' },
+  { nome: 'Filosofia', nivel: 4, cor: '#ffb800', area: 'Humanas (embutida) / Repertório' },
+  { nome: 'Sociologia', nivel: 4, cor: '#ffb800', area: 'Humanas (embutida) / Repertório' },
+  { nome: 'Literatura BR', nivel: 4, cor: '#00d4ff', area: 'Linguagens' },
+  { nome: 'Biologia', nivel: 4, cor: '#ef4444', area: 'Natureza' },
+  { nome: 'Química', nivel: 3, cor: '#ef4444', area: 'Natureza' },
+  { nome: 'Física', nivel: 3, cor: '#ef4444', area: 'Natureza' }
+];
+
+const PRIORIZACAO = [
+  { area: 'Redação (TÍTULO + 300pts norma)', peso: 1000, nivel: 5, gap: 500, desempate: '1º', horas: 35, pct: 22, cor: '#10b981', destaque: true },
+  { area: 'Linguagens (Port+Lit+ING)', peso: 1000, nivel: 5.3, gap: 470, desempate: '2º', horas: 35, pct: 22, cor: '#00d4ff', destaque: true },
+  { area: 'Matemática (16q!)', peso: 1000, nivel: 5, gap: 500, desempate: '3º', horas: 28, pct: 18, cor: '#a78bfa', destaque: true },
+  { area: 'Natureza', peso: 1000, nivel: 3.3, gap: 670, desempate: '4º', horas: 28, pct: 18, cor: '#ef4444', destaque: false },
+  { area: 'Humanas', peso: 1000, nivel: 5, gap: 500, desempate: '5º', horas: 26, pct: 16, cor: '#ffb800', destaque: false },
+  { area: 'Buffer + simulados', peso: 0, nivel: 0, gap: 0, desempate: '—', horas: 8, pct: 5, cor: '#6b7280', destaque: false }
+];
+
+const SEMANAS = [
+  {
+    n: 1, titulo: 'Diagnóstico + Fundação', datas: '13-19 mai',
+    cor: '#00d4ff', icone: '🔥',
+    foco: 'Português (norma 300pts) + Redação c/ TÍTULO + Inglês refresh + Matemática (16q!)',
+    horas: 36,
+    marcos: ['Simulado diagnóstico (14/05)', 'Regência + Concordância + Crase', 'Inglês: tenses, pronouns, prepositions', 'Matemática: funções, PA/PG, combinatória']
+  },
+  {
+    n: 2, titulo: 'Humanas + Matemática + Inglês', datas: '20-26 mai',
+    cor: '#ffb800', icone: '⚔️',
+    foco: 'Hist BR (incl. Revoluções Pernambucanas) + Geografia + Mat trigonometria + Inglês reading',
+    horas: 36,
+    marcos: ['História BR: Vargas → CF/88 + revoltas PE', 'Geografia BR: relevo, clima, geopolítica', 'Matemática: trigonometria, probabilidade, estatística', 'Inglês: reading + gramática aplicada']
+  },
+  {
+    n: 3, titulo: 'Natureza + Literatura BR + Inglês final', datas: '27/mai - 02/jun',
+    cor: '#10b981', icone: '🛡️',
+    foco: 'Defesa Natureza (não zerar) + Literatura Brasileira moderna + 1ª prova antiga 5h',
+    horas: 36,
+    marcos: ['Bio + Quí + Fís fundamentos', 'Literatura: Romantismo → Modernismo BR', 'Inglês: provas anteriores', '⏰ 1ª PROVA ANTIGA INTEIRA 5h']
+  },
+  {
+    n: 4, titulo: 'Simulados completos + correção cirúrgica', datas: '03-09 jun',
+    cor: '#a78bfa', icone: '🎯',
+    foco: '3 simulados de 5h (como será na prova) · 2 redações treinadas',
+    horas: 36,
+    marcos: ['Simulado 1 — qua 03/06 (5h)', 'Simulado 2 — sáb 06/06 (5h)', 'Simulado 3 — ter 09/06 (5h)', '2 redações com TÍTULO + análise IA']
+  },
+  {
+    n: 5, titulo: 'Revisão final + descanso', datas: '10-13 jun',
+    cor: '#ef4444', icone: '⭐',
+    foco: 'Memória ativa · zero conteúdo novo · descanso · conferir caneta azul/preta',
+    horas: 16,
+    marcos: ['Qua 10/06: revisão espaçada fórmulas/datas', 'Qui 11/06: Simulado 4 final (5h)', 'Sex 12/06: erros do Sim 4 + redação modelo', 'Sáb 13/06: descanso · documentos + caneta']
+  }
+];
+
+const MICRO = [
+  { dia: 'Qua 13/05', cor: '#00d4ff', b: ['✅ Setup + edital OFICIAL', 'Ler PLANO atualizado', 'Explorar dashboard', 'Preparar Sem 1'] },
+  { dia: 'Qui 14/05', cor: '#ffb800', b: ['🎯 Simulado diag. (1h)', '🎯 Simulado diag. (1h)', 'Correção + análise', 'Quiz Port. regência'] },
+  { dia: 'Sex 15/05', cor: '#00d4ff', b: ['Port: regência+concord', 'Flashcards Port', '🇬🇧 Inglês: tenses', '📝 Redação c/ TÍTULO'] },
+  { dia: 'Sáb 16/05 ☀️', cor: '#ffb800', b: ['🏛️ Filosofia 3D', 'Contratualismo', '∑ Mat: funções', 'Quiz filosofia'] },
+  { dia: 'Sáb 16/05 ✦', cor: '#10b981', b: ['🇬🇧 Inglês: reading', 'Literatura: Quinhentismo', '∑ Mat: PA/PG', '📝 REDAÇÃO 90 min'] },
+  { dia: 'Dom 17/05 ☀️', cor: '#a78bfa', b: ['Vídeos Português', 'Literatura: Barroco', '∑ Mat: PA/PG aplicada', '🏛️ Hist BR: Rev. PE'] },
+  { dia: 'Dom 17/05 ✦', cor: '#f472b6', b: ['Revisão flashcards filo', '🇬🇧 Inglês: prepositions', 'Geografia: relevo BR', 'Revisão da semana'] },
+  { dia: 'Seg 18/05', cor: '#00d4ff', b: ['Literatura: Arcadismo', 'Flashcards literatura', '∑ Mat: combinatória', 'Port: análise sintática'] },
+  { dia: 'Ter 19/05', cor: '#10b981', b: ['Revisão D+1', 'Quiz geral semana', 'Redação: corrigir + 2ª', 'Atualizar progresso.json'] }
+];
+
+// ============ RENDER ============
+const PROVA = new Date('2026-06-14T08:00:00');
+const dias = Math.floor((PROVA - new Date()) / 86400000);
+const diasRestantes = dias > 0 ? dias : 0;
+document.getElementById('diasFaltam').textContent = diasRestantes;
+document.getElementById('hoje').textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: '2-digit' });
+document.getElementById('subtituloDias').textContent = 'Direito · ' + diasRestantes + ' dias';
+document.getElementById('candidatoDias').textContent = 'Recife/PE · D-' + diasRestantes;
+document.getElementById('ctaDias').innerHTML = diasRestantes + ' dias dá. <span class="cyan">Sistema montado.</span> <span class="amber">Falta só sentar.</span>';
+document.getElementById('footerDias').textContent = diasRestantes;
+
+// Níveis
+const nd = document.getElementById('niveisDisciplinas');
+NIVEIS.forEach((n, i) => {
+  setTimeout(() => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div class="flex justify-between text-xs mb-1.5">
+        <span class="font-medium">${n.nome} <span class="text-slate-500 text-[10px]">· ${n.area}</span></span>
+        <span class="mono font-bold" style="color:${n.cor}">${n.nivel}/10</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${n.nivel*10}%; background:${n.cor}"></div>
+      </div>`;
+    nd.appendChild(div);
+  }, i * 80);
+});
+
+// Radar Chart
+const ctx = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: ['Linguagens', 'Humanas', 'Natureza', 'Matemática', 'Redação'],
+    datasets: [
+      { label: 'Nível atual', data: [5, 5, 3.3, 5, 5], backgroundColor: 'rgba(0,212,255,0.15)', borderColor: '#00d4ff', borderWidth: 2, pointBackgroundColor: '#00d4ff', pointRadius: 5 },
+      { label: 'Meta sprint', data: [7, 6.5, 5, 7, 7], backgroundColor: 'rgba(255,184,0,0.10)', borderColor: '#ffb800', borderWidth: 2, borderDash: [5,5], pointBackgroundColor: '#ffb800', pointRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'Inter', size: 11 } } } },
+    scales: {
+      r: {
+        beginAtZero: true, max: 10,
+        ticks: { color: '#64748b', backdropColor: 'transparent', stepSize: 2, font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,0.08)' },
+        angleLines: { color: 'rgba(255,255,255,0.12)' },
+        pointLabels: { color: '#e8eaf0', font: { family: 'Inter', size: 12, weight: '600' } }
+      }
+    }
+  }
+});
+
+// Priorização
+const pt = document.getElementById('priorizacaoTabela');
+PRIORIZACAO.forEach((p, i) => {
+  const tr = document.createElement('tr');
+  tr.className = 'border-b border-slate-800/50 last:border-0';
+  tr.innerHTML = `
+    <td class="py-3 ${p.destaque ? 'font-bold' : ''}">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full" style="background:${p.cor}"></span>
+        <span style="${p.destaque ? `color:${p.cor}` : ''}">${p.area}</span>
+        ${p.destaque ? '<span class="chip" style="border-color:'+p.cor+'; color:'+p.cor+'">desempate</span>' : ''}
+      </div>
+    </td>
+    <td class="text-center mono text-slate-400">${p.peso || '—'}</td>
+    <td class="text-center mono font-bold" style="color:${p.cor}">${p.nivel || '—'}</td>
+    <td class="text-center mono">${p.gap || '—'}</td>
+    <td class="text-center">${p.desempate}</td>
+    <td class="text-right">
+      <div class="flex items-center gap-2 justify-end">
+        <span class="mono text-xs font-bold">${p.horas}h <span class="text-slate-500 font-normal">(${p.pct}%)</span></span>
+        <div class="bar-track" style="width:80px">
+          <div class="bar-fill" style="width:${p.pct*4}%; background:${p.cor}"></div>
+        </div>
+      </div>
+    </td>`;
+  pt.appendChild(tr);
+});
+
+// Semanas timeline
+const sc = document.getElementById('semanas');
+SEMANAS.forEach((s, i) => {
+  const ladoEsq = i % 2 === 0;
+  const div = document.createElement('div');
+  div.className = 'relative md:grid md:grid-cols-2 md:gap-8 items-center';
+  div.innerHTML = `
+    <div class="hidden md:block timeline-dot" style="background:${s.cor}; box-shadow: 0 0 20px ${s.cor}80; top: 32px;"></div>
+    ${ladoEsq ? '' : '<div></div>'}
+    <div class="glass rounded-2xl p-6 ${ladoEsq ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}" style="border-color:${s.cor}40">
+      <div class="flex items-center gap-3 mb-3 ${ladoEsq ? 'md:flex-row-reverse' : ''}">
+        <span class="text-3xl">${s.icone}</span>
+        <div class="${ladoEsq ? 'md:text-right' : ''}">
+          <p class="text-xs uppercase tracking-widest mono" style="color:${s.cor}">SEMANA ${s.n}</p>
+          <p class="text-xs text-slate-500">${s.datas} · ${s.horas}h</p>
+        </div>
+      </div>
+      <h3 class="text-xl font-bold mb-2" style="color:${s.cor}">${s.titulo}</h3>
+      <p class="text-sm text-slate-300 mb-4">${s.foco}</p>
+      <ul class="text-xs text-slate-400 space-y-1.5 ${ladoEsq ? 'md:list-none' : ''}">
+        ${s.marcos.map(m => `<li class="flex gap-2 ${ladoEsq ? 'md:flex-row-reverse md:text-right' : ''}"><span style="color:${s.cor}">▸</span><span>${m}</span></li>`).join('')}
+      </ul>
+    </div>
+    ${ladoEsq ? '<div></div>' : ''}`;
+  sc.appendChild(div);
+});
+
+// Micro cronograma
+const mt = document.getElementById('microTbody');
+MICRO.forEach(m => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="cronograma-cell p-3 font-bold whitespace-nowrap" style="border-left: 3px solid ${m.cor}; color:${m.cor}">${m.dia}</td>
+    ${m.b.map(t => `<td class="cronograma-cell p-3 text-slate-300">${t}</td>`).join('')}`;
+  mt.appendChild(tr);
+});
+
+// Heatmap revisão espaçada (30 dias)
+const hm = document.getElementById('revHeatmap');
+const padroes = [null, 'rev-d1', null, 'rev-d3', null, null, null, 'rev-d7', null, null, null, null, null, null, 'rev-d14', null, null, null, null, null, null, null, null, null, null, null, null, null, null, 'rev-d30'];
+const dataInicio = new Date('2026-05-13');
+for (let i = 0; i < 30; i++) {
+  const d = new Date(dataInicio);
+  d.setDate(d.getDate() + i);
+  const cls = padroes[i] || '';
+  const div = document.createElement('div');
+  div.className = `rev-cell ${cls}`;
+  div.title = `${d.toLocaleDateString('pt-BR')}${cls ? ' · ' + cls.replace('rev-', 'D+').replace('d','') : ''}`;
+  hm.appendChild(div);
+}
+</script>
+</body>
+</html>

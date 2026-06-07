@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Realismo — Resumo Completo | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07050a;
+  --bg2: #0d0908;
+  --bg3: #120c06;
+  --card: #0f0b08;
+  --border: rgba(180,120,40,0.2);
+  --accent: #c08030;
+  --accent2: #e0a850;
+  --gold: #d4a040;
+  --text: #d0b890;
+  --textsoft: #906850;
+  --green: #70c080;
+  --blue: #80a8e0;
+  --purple: #b090e0;
+  --red: #e07060;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14.5px; line-height: 1.7; min-height: 100vh; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(7,5,10,0.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav .nav-left { display: flex; gap: 16px; align-items: center; }
+nav a { color: var(--textsoft); text-decoration: none; font-size: 12.5px; font-weight: 500; padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px; transition: all 0.2s; }
+nav a:hover { color: var(--accent2); border-color: var(--accent); background: rgba(180,120,40,0.1); }
+nav .badge { background: linear-gradient(135deg, #1a0f04, #0f0804); border: 1px solid var(--accent); color: var(--accent2); font-size: 12px; font-weight: 700; padding: 5px 16px; border-radius: 20px; letter-spacing: 0.05em; }
+
+.hero { background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, var(--bg3) 100%); border-bottom: 1px solid var(--border); padding: 60px 32px 48px; text-align: center; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 50%, rgba(160,90,20,0.1) 0%, transparent 60%), radial-gradient(ellipse at 70% 30%, rgba(120,60,10,0.07) 0%, transparent 50%); }
+.hero-icon { font-size: 52px; margin-bottom: 16px; display: block; position: relative; }
+.hero h1 { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; background: linear-gradient(135deg, #f0d090 0%, #c08030 50%, #804010 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; position: relative; }
+.hero-sub { color: var(--textsoft); font-size: 15px; position: relative; }
+.hero-tags { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; position: relative; }
+.hero-tags span { background: rgba(180,120,40,0.1); border: 1px solid rgba(180,120,40,0.25); color: var(--accent2); font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 12px; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+section { margin-bottom: 48px; }
+.section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.section-icon { font-size: 22px; }
+.section-title { font-size: 18px; font-weight: 700; color: var(--accent2); letter-spacing: 0.02em; }
+
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px; margin-bottom: 16px; transition: border-color 0.2s; }
+.card:hover { border-color: rgba(180,120,40,0.4); }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--gold); }
+.card-tag { font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.05em; text-transform: uppercase; }
+.tag-r { background: rgba(180,120,40,0.15); color: var(--gold); border: 1px solid rgba(180,120,40,0.3); }
+.tag-n { background: rgba(80,180,100,0.12); color: var(--green); border: 1px solid rgba(80,180,100,0.25); }
+.tag-p { background: rgba(180,140,220,0.12); color: var(--purple); border: 1px solid rgba(180,140,220,0.25); }
+.tag-s { background: rgba(80,140,220,0.12); color: var(--blue); border: 1px solid rgba(80,140,220,0.25); }
+
+.card p { color: var(--textsoft); font-size: 13.5px; line-height: 1.75; margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+
+.works-list { list-style: none; }
+.works-list li { padding: 7px 0; border-bottom: 1px solid rgba(180,120,40,0.08); color: var(--textsoft); font-size: 13.5px; display: flex; align-items: flex-start; gap: 10px; }
+.works-list li:last-child { border-bottom: none; }
+.works-list li::before { content: '▸'; color: var(--accent); font-size: 10px; margin-top: 3px; flex-shrink: 0; }
+.works-list b { color: var(--text); }
+
+.unicap-tip { background: linear-gradient(135deg, rgba(160,100,30,0.12) 0%, rgba(120,70,20,0.08) 100%); border: 1px solid rgba(180,120,40,0.35); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 14px 0; font-size: 13px; color: var(--accent2); line-height: 1.65; }
+.unicap-tip::before { content: "⚡ DICA UNICAP — "; font-weight: 800; color: #e0a020; font-size: 11px; letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+
+.highlight { background: rgba(180,130,50,0.07); border: 1px solid rgba(180,130,50,0.2); border-radius: 8px; padding: 16px 20px; margin: 14px 0; }
+.highlight .poem { font-style: italic; color: #d0a050; font-size: 14px; line-height: 1.9; border-left: 2px solid rgba(180,130,50,0.4); padding-left: 16px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:700px){ .grid-2 { grid-template-columns: 1fr; } }
+
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-table th { padding: 12px 16px; text-align: left; background: rgba(180,120,40,0.12); color: var(--accent2); font-weight: 700; border: 1px solid var(--border); }
+.compare-table td { padding: 10px 16px; border: 1px solid var(--border); color: var(--textsoft); vertical-align: top; line-height: 1.6; }
+.compare-table tr:nth-child(even) td { background: rgba(180,120,40,0.04); }
+.compare-table td:first-child { color: var(--gold); font-weight: 600; white-space: nowrap; }
+
+.checklist { list-style: none; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid rgba(180,120,40,0.08); display: flex; align-items: center; gap: 12px; color: var(--textsoft); font-size: 13.5px; }
+.checklist li:last-child { border-bottom: none; }
+.check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+.check-box:hover { border-color: var(--accent); }
+.check-box.done { background: var(--accent); border-color: var(--accent); }
+.check-box.done::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+.video-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-decoration: none; transition: all 0.2s; display: block; }
+.video-card:hover { border-color: var(--accent); background: rgba(180,120,40,0.08); }
+.video-card .vc-ch { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+.video-card .vc-title { color: var(--text); font-size: 13px; font-weight: 600; line-height: 1.5; margin-bottom: 4px; }
+.video-card .vc-desc { color: var(--textsoft); font-size: 11.5px; line-height: 1.5; }
+.video-card .vc-icon { float: right; font-size: 18px; }
+
+footer { text-align: center; padding: 40px 32px; border-top: 1px solid var(--border); color: var(--textsoft); font-size: 12px; }
+footer a { color: var(--accent2); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../../index.html">← Linguagens</a>
+    <a href="mapa3d.html">🕯️ Mapa 3D</a>
+    <a href="../romantismo/resumo.html">← Romantismo</a>
+  </div>
+  <div class="badge">🕯️ Realismo — Resumo Completo</div>
+  <a href="../modernismo/resumo.html">Modernismo →</a>
+</nav>
+
+<div class="hero">
+  <span class="hero-icon">🏛️</span>
+  <h1>Realismo, Naturalismo, Parnasianismo &amp; Simbolismo</h1>
+  <p class="hero-sub">1881–1902 · Objetividade · Crítica Social · Análise Psicológica</p>
+  <div class="hero-tags">
+    <span>Machado de Assis</span>
+    <span>Aluísio Azevedo</span>
+    <span>Eça de Queirós</span>
+    <span>Olavo Bilac</span>
+    <span>Cruz e Sousa</span>
+    <span>Narrador Não Confiável</span>
+    <span>O Cortiço</span>
+    <span>Parnasianismo</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- CONTEXTO -->
+  <section id="contexto">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <span class="section-title">Contexto Histórico</span>
+    </div>
+    <div class="card">
+      <p>O Realismo surge no Brasil em <b>1881</b>, com a publicação simultânea de "Memórias Póstumas de Brás Cubas" (Machado de Assis) e "O Mulato" (Aluísio Azevedo) — dois romances radicalmente diferentes que inauguram o período.</p>
+      <p><b>Contexto:</b> Crise do Segundo Reinado (1840–1889), abolição da escravidão (1888), Proclamação da República (1889), positivismo como ideologia dominante, industrialização incipiente, crescimento das cidades. O pensamento científico europeu — Darwin (evolução), Marx (classes sociais), Comte (positivismo), Taine (determinismo) — influencia profundamente os escritores.</p>
+      <p>O Realismo termina por volta de 1902, com a publicação de "Os Sertões" (Euclides da Cunha) e "Canaã" (Graça Aranha), que abrem caminho para o Pré-Modernismo.</p>
+    </div>
+    <div class="unicap-tip">
+      1881 = início do Realismo no Brasil. Dois marcos simultâneos: "Memórias Póstumas de Brás Cubas" (Machado) e "O Mulato" (Aluísio). Saber ambas as obras e autores para questão direta.
+    </div>
+  </section>
+
+  <!-- REALISMO -->
+  <section id="realismo">
+    <div class="section-header">
+      <span class="section-icon">🔍</span>
+      <span class="section-title">Realismo — Características e Autores</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Características do Realismo</span>
+        <span class="card-tag tag-r">Realismo</span>
+      </div>
+      <ul class="works-list">
+        <li><span>Objetividade: observação detalhada da realidade social</span></li>
+        <li><span>Análise psicológica aprofundada dos personagens</span></li>
+        <li><span>Determinismo: indivíduo moldado pelo meio, raça, momento (Taine)</span></li>
+        <li><span>Crítica da burguesia e suas contradições morais</span></li>
+        <li><span>Narrador onisciente em 3ª pessoa ou narrador-personagem irônico</span></li>
+        <li><span>Anti-romantismo: sem idealização, sem evasão, sem heroísmo vazio</span></li>
+        <li><span>Temas: casamento por interesse, adultério, hipocrisia, dinheiro, poder</span></li>
+        <li><span>Linguagem precisa, contida, sem excessos retóricos</span></li>
+      </ul>
+    </div>
+
+    <!-- MACHADO DE ASSIS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Machado de Assis — O Maior Escritor Brasileiro</span>
+        <span class="card-tag tag-r">Realismo</span>
+      </div>
+      <p>Joaquim Maria Machado de Assis (1839–1908). Filho de um pintor negro e uma lavadeira, tornou-se o maior escritor do Brasil. Fundador e presidente da Academia Brasileira de Letras (1897).</p>
+      <p><b>Duas fases:</b></p>
+      <ul class="works-list">
+        <li><b>1ª fase (romântica):</b> "Ressurreição" (1872), "A Mão e a Luva" (1874), "Helena" (1876), "Iaiá Garcia" (1878). Menos estudadas em vestibulares.</li>
+        <li><b>2ª fase (realista):</b> "Memórias Póstumas de Brás Cubas" (1881), "Quincas Borba" (1891), "Dom Casmurro" (1899), "Esaú e Jacó" (1904), "Memorial de Aires" (1908).</li>
+      </ul>
+      <p><b>Contos fundamentais:</b> "O Alienista" (crítica ao positivismo e à razão científica), "A Cartomante", "Missa do Galo", "O Espelho".</p>
+      <div class="highlight">
+        <div class="poem">
+          <b>Memórias Póstumas de Brás Cubas (1881):</b><br>
+          Narrado por um defunto-autor (Brás Cubas escreve após a morte). Ironia fina, pessimismo, crítica feroz à sociedade carioca do Segundo Reinado. A pena da galhofa e a tinta da melancolia. Brás Cubas é um burguês sem princípios — a narrativa zomba dele e do leitor.
+        </div>
+      </div>
+      <div class="highlight">
+        <div class="poem">
+          <b>Dom Casmurro (1899):</b><br>
+          Bentinho/Dom Casmurro narra sua história de amor com Capitu. A grande questão: <b>Capitu traiu ou não traiu?</b> Machado deliberadamente deixa ambíguo. Capitu de "olhos de ressaca" é o personagem mais discutido da literatura brasileira. O narrador não é confiável.
+        </div>
+      </div>
+      <div class="unicap-tip">
+        Dom Casmurro: o narrador é Bentinho, que está convicto de ter sido traído — mas não há prova definitiva no texto. Machado construiu essa ambiguidade intencionalmente. Em questões: qualquer interpretação bem fundamentada pode ser válida. A UNICAP tende a cobrar: análise do narrador não confiável, a ambiguidade de Capitu, e o ciúme como tema central.
+      </div>
+      <div class="unicap-tip">
+        "O Alienista" (conto): Dr. Simão Bacamarte cria um hospício em Itaguaí e vai internando progressivamente toda a cidade. É uma crítica à arrogância da razão científica e ao poder. Muito cobrado quando a questão envolve Machado + crítica ao positivismo.
+      </div>
+    </div>
+  </section>
+
+  <!-- NATURALISMO -->
+  <section id="naturalismo">
+    <div class="section-header">
+      <span class="section-icon">🔬</span>
+      <span class="section-title">Naturalismo</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Naturalismo — Radicalização Científica</span>
+        <span class="card-tag tag-n">Naturalismo</span>
+      </div>
+      <p>O Naturalismo é uma radicalização do Realismo, fortemente influenciado por Émile Zola (França). Enquanto o Realismo analisa a psicologia da burguesia, o Naturalismo investiga o <b>determinismo biológico</b>: herança genética, instintos animais, meio físico como condicionantes do comportamento humano.</p>
+      <p><b>Características específicas:</b> descrição minuciosa e clínica do ambiente degradado, sexualidade explícita para a época, violência, vícios, classes populares como protagonistas, patologia social, linguagem mais crua.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Aluísio Azevedo</span>
+          <span class="card-tag tag-n">Principal</span>
+        </div>
+        <ul class="works-list">
+          <li><b>"O Mulato" (1881)</b> — crítica ao racismo e à hipocrisia maranhense. Marco inicial do Naturalismo.</li>
+          <li><b>"O Cortiço" (1890)</b> — obra-prima. Retrato do cortiço carioca como organismo vivo. João Romão como personagem central. Determinismo, ascensão social, degradação, sexualidade.</li>
+          <li><b>"Casa de Pensão" (1884)</b> — baseado em caso real, escândalo social do Segundo Reinado.</li>
+        </ul>
+        <div class="highlight">
+          <div class="poem">
+            <b>O Cortiço:</b> o cortiço é quase um personagem — cresce, pulsa, devora seus habitantes. Jerônimo, operário português, é "abrasileirado" pelo cortiço, abandonando sua mulher Piedade pela mestiça Rita Baiana. O meio determina o comportamento.
+          </div>
+        </div>
+        <div class="unicap-tip">
+          "O Cortiço": diferença do Realismo — aqui os personagens são das classes baixas (imigrantes, mestiços, negros), e o determinismo é ambiental e biológico, não apenas psicológico.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Outros Naturalistas</span>
+          <span class="card-tag tag-n">Apoio</span>
+        </div>
+        <ul class="works-list">
+          <li><b>Adolfo Caminha</b> — "Bom-Crioulo" (1895): primeiro romance brasileiro a retratar uma relação homoafetiva. Marinheiro negro Amaro e o grumete Aleixo. Determinismo racial e sexual.</li>
+          <li><b>Júlio Ribeiro</b> — "A Carne" (1888): erotismo explícito, determinismo biológico.</li>
+          <li><b>Inglês de Sousa</b> — "O Missionário": Naturalismo amazônico.</li>
+        </ul>
+        <div class="unicap-tip">
+          "Bom-Crioulo" pode aparecer em questões sobre diversidade na literatura ou sobre Naturalismo. É uma obra importante por sua pioneira abordagem da homossexualidade no século XIX.
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Realismo vs. Naturalismo — Diferenças Essenciais</span>
+        <span class="card-tag tag-r">Contraste</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Aspecto</th>
+              <th style="color:#d4a040">Realismo</th>
+              <th style="color:#70c080">Naturalismo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Foco social</td><td>Burguesia e suas contradições</td><td>Classes baixas, cortiços, pobres</td></tr>
+            <tr><td>Determinismo</td><td>Psicológico e social</td><td>Biológico, genético, ambiental</td></tr>
+            <tr><td>Sexualidade</td><td>Presente mas velada</td><td>Explícita, instintiva</td></tr>
+            <tr><td>Tom</td><td>Irônico, analítico, psicológico</td><td>Clínico, biológico, pessimista</td></tr>
+            <tr><td>Representante</td><td>Machado de Assis</td><td>Aluísio Azevedo</td></tr>
+            <tr><td>Obra-símbolo</td><td>Dom Casmurro</td><td>O Cortiço</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- EÇA DE QUEIRÓS -->
+  <section id="eca">
+    <div class="section-header">
+      <span class="section-icon">🇵🇹</span>
+      <span class="section-title">Eça de Queirós — Realismo Português</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Eça de Queirós (1845–1900)</span>
+        <span class="card-tag tag-r">Portugal</span>
+      </div>
+      <p>Maior romancista realista de Portugal. Escreveu romances de crítica social refinada com ironia elegante.</p>
+      <ul class="works-list">
+        <li><b>"O Crime do Padre Amaro" (1875)</b> — padre Amaro seduz jovem Amélia em Leiria. Crítica devastadora à Igreja Católica e à hipocrisia moral do clero e da burguesia provinciana portuguesa. Considerado o 1º romance realista de língua portuguesa.</li>
+        <li><b>"O Primo Basílio" (1878)</b> — Luísa, casada, tem caso com o primo Basílio enquanto o marido viaja. Comparado a "Madame Bovary" de Flaubert e "Anna Karenina" de Tolstói. Critica o romantismo barato que leva ao adultério.</li>
+        <li><b>"Os Maias" (1888)</b> — a decadência da aristocracia portuguesa. Incesto não intencional. Obra-prima da maturidade.</li>
+        <li><b>"A Cidade e as Serras" (1901)</b> — crítica irônica à vida moderna urbana vs. vida rural simples.</li>
+      </ul>
+      <div class="unicap-tip">
+        "O Crime do Padre Amaro" = Portugal + Realismo + crítica à Igreja. "O Primo Basílio" = adultério na burguesia. Se a questão menciona Realismo em Portugal → Eça de Queirós imediatamente.
+      </div>
+    </div>
+  </section>
+
+  <!-- PARNASIANISMO -->
+  <section id="parnasianismo">
+    <div class="section-header">
+      <span class="section-icon">🏺</span>
+      <span class="section-title">Parnasianismo — Poesia da Perfeição Formal</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Características do Parnasianismo</span>
+        <span class="card-tag tag-p">Poesia</span>
+      </div>
+      <p>Movimento poético paralelo ao Realismo em prosa (final do século XIX). Influenciado pela escola francesa "Le Parnasse" (Leconte de Lisle, Théophile Gautier).</p>
+      <ul class="works-list">
+        <li><span><b>L'art pour l'art</b> — a arte pela arte: poesia não serve a fins sociais ou emocionais, serve à beleza em si</span></li>
+        <li><span>Culto da <b>forma perfeita</b>: soneto de 14 versos, métrica rigorosa, rimas ricas e raras</span></li>
+        <li><span>Linguagem <b>erudita</b>: vocabulário greco-latino, neologismos cultos</span></li>
+        <li><span>Temas <b>plásticos</b>: esculturas, vasos, objetos de arte, mitologia greco-romana</span></li>
+        <li><span>Descrições <b>sensoriais</b> detalhadas, objetividade fria</span></li>
+        <li><span><b>Anti-romantismo</b>: sem emoção pessoal, sem subjetivismo</span></li>
+      </ul>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Olavo Bilac — O Príncipe dos Poetas</span>
+          <span class="card-tag tag-p">Principal</span>
+        </div>
+        <p>Maior parnasiano brasileiro. Eleito "Príncipe dos Poetas Brasileiros" em 1907.</p>
+        <ul class="works-list">
+          <li><b>"Profissão de Fé"</b> — manifesto parnasiano: "Não quero o Zeus Capitolino, / Esculpido em mármore divino..."</li>
+          <li><b>"Ouvir estrelas"</b> — amor e soneto de perfeição formal. "Ora (direis) ouvir estrelas! certo / Perdeste o senso!"</li>
+          <li><b>"Via Láctea"</b> — sonetos de amor. "Musa! Um gesto sequer de terna compaixão..."</li>
+          <li><b>"O Caçador de Esmeraldas"</b> — poema épico sobre os bandeirantes.</li>
+        </ul>
+        <div class="unicap-tip">
+          "Ouvir estrelas" é o poema mais cobrado de Bilac. Identifique o Parnasianismo pela: métrica perfeita, linguagem erudita, tema amoroso tratado plasticamente, sem emoção direta. Se o poema parece uma escultura de palavras → parnasiano.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Alberto de Oliveira e Raimundo Correia</span>
+          <span class="card-tag tag-p">Tríade</span>
+        </div>
+        <p>Com Olavo Bilac, formam a <b>Tríade Parnasiana</b> — os três maiores parnasianos brasileiros.</p>
+        <ul class="works-list">
+          <li><b>Alberto de Oliveira</b> — "Sonetos e Poemas" (1885). Poesia descritiva de natureza com rigor formal. "Vaso Grego" é o poema-símbolo do Parnasianismo.</li>
+          <li><b>Raimundo Correia</b> — "Sinfonias" (1883), "Aleluias". Temas: angústia, pessimismo velado (mais próximo do Simbolismo em alguns aspectos).</li>
+        </ul>
+        <div class="unicap-tip">
+          "Vaso Grego" de Alberto de Oliveira é o exemplo-padrão do Parnasianismo: descrição plástica de um objeto de arte clássico, vocabulário greco-latino, métrica perfeita. Reconheça o movimento pela forma e pelo tema.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIMBOLISMO -->
+  <section id="simbolismo">
+    <div class="section-header">
+      <span class="section-icon">🌫️</span>
+      <span class="section-title">Simbolismo — Sugestão e Mistério</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Características do Simbolismo</span>
+        <span class="card-tag tag-s">Poesia</span>
+      </div>
+      <p>Reação ao Parnasianismo: enquanto o Parnasianismo é claro, formal e objetivo, o Simbolismo é sugestivo, musical e subjetivo. Influenciado pelos poetas franceses Baudelaire ("As Flores do Mal"), Verlaine, Mallarmé, Rimbaud.</p>
+      <ul class="works-list">
+        <li><span><b>Sugestão</b>: não nomeia diretamente — sugere, insinua, evoca</span></li>
+        <li><span><b>Musicalidade</b>: o som das palavras importa tanto quanto o sentido</span></li>
+        <li><span><b>Sinestesia</b>: mistura de sentidos (sons coloridos, cheiros audíveis)</span></li>
+        <li><span><b>Subconsciente e espiritualidade</b>: misticismo, transcendência, morte</span></li>
+        <li><span><b>Imagens nebulosas</b>, névoa, sonho, melancolia, noite</span></li>
+        <li><span>Aliterações, assonâncias — a forma fonética é essencial</span></li>
+      </ul>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Cruz e Sousa — "O Dante Negro"</span>
+          <span class="card-tag tag-s">Principal</span>
+        </div>
+        <p>João da Cruz e Sousa (1861–1898), filho de escravizados emancipados de Santa Catarina. Maior simbolista brasileiro, também chamado de "Dante Negro" e "Cisne Negro".</p>
+        <ul class="works-list">
+          <li><b>"Broquéis" (1893)</b> — poesia simbolista, primeiro livro simbolista do Brasil. Poemas: "Antífona", "Braços".</li>
+          <li><b>"Faróis" (1900)</b> — publicado postumamente.</li>
+          <li><b>"Evocações" (1898)</b> — prosa poética.</li>
+          <li><b>"Missal" (1893)</b> — prosa poética simbolista.</li>
+        </ul>
+        <div class="highlight">
+          <div class="poem">
+            "Ó Formas alvas, brancas, Formas claras<br>
+            de luares, de neves, de neblinas!..."<br>
+            <small style="color:var(--textsoft);font-style:normal;">— Cruz e Sousa, "Antífona" (Broquéis, 1893)</small>
+          </div>
+        </div>
+        <div class="unicap-tip">
+          Cruz e Sousa: identificar pela musicalidade extrema, imagens sinestésicas, uso de negro/branco como contraste simbólico (sua identidade racial ressurge poeticamente). Contexto biográfico — filho de escravizados que foi impedido de se casar com quem amava por preconceito racial — aparece em questões.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Alphonsus de Guimaraens</span>
+          <span class="card-tag tag-s">Religiosidade</span>
+        </div>
+        <p>Alphonsus Egídio de Guimaraens (1870–1921). Simbolismo religioso, marianismo, morte da amada. Viveu em Mariana (MG) como juiz municipal — cidade que se reflete em sua poesia.</p>
+        <ul class="works-list">
+          <li><b>"Câmara Ardente" (1899)</b> — morte, luto, religiosidade.</li>
+          <li><b>"Kiriale" (1902)</b> — ritmos litúrgicos, tons de missa e orações.</li>
+          <li><b>"Dona Mística" (1899)</b> — a amada como figura mística e santa.</li>
+        </ul>
+        <div class="unicap-tip">
+          Alphonsus de Guimaraens = Simbolismo + religiosidade + morte da mulher amada. Se o poema tem tom de oração, morte e amor espiritual → provavelmente Alphonsus. Contrasta com Cruz e Sousa (mais abstrato e musical).
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Parnasianismo vs. Simbolismo — Contraste Rápido</span>
+        <span class="card-tag tag-s">Comparação</span>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Aspecto</th>
+              <th style="color:#b090e0">Parnasianismo</th>
+              <th style="color:#80a8e0">Simbolismo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Clareza</td><td>Claro, objetivo, plástico</td><td>Nebuloso, sugestivo, evocativo</td></tr>
+            <tr><td>Forma</td><td>Rigorosa: soneto, métrica perfeita</td><td>Flexível, musicalidade acima da métrica</td></tr>
+            <tr><td>Tom</td><td>Frio, distante, descritivo</td><td>Emotivo, espiritual, onírico</td></tr>
+            <tr><td>Linguagem</td><td>Erudita greco-latina</td><td>Musical, sinestésica, simbólica</td></tr>
+            <tr><td>Temas</td><td>Esculturas, mitologia, beleza formal</td><td>Morte, mistério, espiritualidade, subconsciente</td></tr>
+            <tr><td>Autor-símbolo</td><td>Olavo Bilac</td><td>Cruz e Sousa</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARAÇÃO GERAL -->
+  <section id="comparacao">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <span class="section-title">Romantismo vs. Realismo — Tabela Mestra</span>
+    </div>
+    <div class="card" style="padding:0; overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th style="color:#c0a8e8">Romantismo</th>
+            <th style="color:#d4a040">Realismo / Naturalismo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Visão</td><td>Idealista, subjetiva, emotiva</td><td>Objetiva, crítica, científica</td></tr>
+          <tr><td>Mulher</td><td>Anjo, pura, inacessível</td><td>Real, ambígua, falha (Capitu)</td></tr>
+          <tr><td>Narrador</td><td>Emocionado, 1ª pessoa lírica</td><td>Irônico, distante, não confiável</td></tr>
+          <tr><td>Amor</td><td>Espiritual, sofrido, impossível</td><td>Mercantil, social, adultério</td></tr>
+          <tr><td>Natureza</td><td>Refúgio emocional</td><td>Determinismo ambiental (Nat.)</td></tr>
+          <tr><td>Linguagem</td><td>Rebuscada, retórica</td><td>Precisa, irônica, clínica</td></tr>
+          <tr><td>Filosofia</td><td>Rousseau, individualismo</td><td>Positivismo, Darwinismo, Taine</td></tr>
+          <tr><td>Marco inicial</td><td>1836 — Gonçalves de Magalhães</td><td>1881 — Machado e Aluísio</td></tr>
+          <tr><td>Marco final</td><td>1881 — Memórias Póstumas</td><td>1902 — Os Sertões</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section id="checklist">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <span class="section-title">Checklist de Revisão</span>
+    </div>
+    <div class="card">
+      <ul class="checklist">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei que 1881 marca o início do Realismo (Machado + Aluísio)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Conheço as duas fases de Machado de Assis e as obras de cada uma</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Entendo o narrador não confiável de Dom Casmurro e a ambiguidade de Capitu</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei distinguir Realismo (Machado) de Naturalismo (Aluísio) pelo foco</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Associo "O Cortiço" ao Naturalismo e sei seu tema central</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei que Eça de Queirós = Portugal e conheço "O Crime do Padre Amaro"</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei distinguir Parnasianismo (forma, claro) de Simbolismo (sugestão, musical)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Associo Olavo Bilac ao Parnasianismo e Cruz e Sousa ao Simbolismo</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei usar a tabela Romantismo vs. Realismo para questões de contraste</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Conheço "O Alienista" e a crítica ao positivismo</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VÍDEOS -->
+  <section id="videos">
+    <div class="section-header">
+      <span class="section-icon">▶</span>
+      <span class="section-title">Vídeos Recomendados</span>
+    </div>
+    <div class="video-grid">
+      <a href="https://www.youtube.com/@deboraaladimliteratura" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Débora Aladim</div>
+        <div class="vc-title">Machado de Assis — Dom Casmurro</div>
+        <div class="vc-desc">Análise profunda do narrador não confiável e da ambiguidade de Capitu. Indispensável.</div>
+      </a>
+      <a href="https://www.youtube.com/@StefaneMota" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Stéfane Mota</div>
+        <div class="vc-title">Realismo e Naturalismo para Vestibular</div>
+        <div class="vc-desc">Didático e direto. Foca nas diferenças entre os dois movimentos e nos autores principais.</div>
+      </a>
+      <a href="https://www.youtube.com/@descomplica" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Descomplica</div>
+        <div class="vc-title">Parnasianismo e Simbolismo</div>
+        <div class="vc-desc">Cruz e Sousa e Olavo Bilac comparados. Ótimo para memorizar as diferenças visuais dos movimentos.</div>
+      </a>
+      <a href="https://brasilescola.uol.com.br/literatura/realismo.htm" target="_blank" class="video-card">
+        <span class="vc-icon">📖</span>
+        <div class="vc-ch">Brasil Escola</div>
+        <div class="vc-title">Realismo — Artigos de Referência</div>
+        <div class="vc-desc">Textos completos sobre Realismo, Naturalismo, Parnasianismo e Simbolismo com exemplos de prova.</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>UNICAP Nexus — Material de estudo para Carlos Régis · UNICAP 2026.2 · Direito Manhã</p>
+  <p style="margin-top:8px;"><a href="mapa3d.html">🕯️ Ver Mapa 3D — A Rua dos Lampiões</a> · <a href="../modernismo/resumo.html">Próximo: Modernismo →</a></p>
+</footer>
+
+<script>
+function toggleCheck(el){ el.classList.toggle('done'); }
+</script>
+</body>
+</html>

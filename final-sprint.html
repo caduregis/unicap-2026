@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#060010">
+<title>Sprint Final — Carlos UNICAP 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#060010;--bg2:#0d0020;--bg3:#140030;
+  --gold:#f5c542;--cyan:#00d4ff;--emerald:#10b981;--red:#ef4444;--purple:#a855f7;--amber:#f59e0b;
+  --text:#e0d8f8;--muted:#8070a8;
+  --border:rgba(168,85,247,0.15);
+  --nav:64px;--safe:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+body{display:flex;flex-direction:column;position:relative;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(168,85,247,0.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* HEADER */
+.hdr{flex-shrink:0;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;background:rgba(6,0,16,0.97);border-bottom:1px solid var(--border);position:relative;z-index:20;}
+.hdr-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.hdr-title{font-size:15px;font-weight:900;letter-spacing:1px;text-transform:uppercase;background:linear-gradient(90deg,var(--gold),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.dias-left{background:linear-gradient(135deg,var(--red),#b91c1c);color:#fff;font-size:11px;font-weight:900;padding:5px 11px;border-radius:16px;box-shadow:0 2px 12px rgba(239,68,68,0.4);white-space:nowrap;}
+.dias-left.ok{background:linear-gradient(135deg,var(--amber),#d97706);}
+.dias-left.safe{background:linear-gradient(135deg,var(--emerald),#059669);}
+.countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.cblock{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:6px 4px;text-align:center;}
+.cnum{font-size:22px;font-weight:900;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums;}
+.clbl{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+
+/* CONTENT */
+.content{flex:1;overflow:hidden;position:relative;z-index:1;}
+.tab{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding:14px 14px calc(var(--nav) + var(--safe) + 12px);-webkit-overflow-scrolling:touch;opacity:0;pointer-events:none;transition:opacity 180ms;}
+.tab.active{opacity:1;pointer-events:auto;}
+
+/* NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav) + var(--safe));padding-bottom:var(--safe);background:rgba(6,0,16,0.97);border-top:1px solid var(--border);backdrop-filter:blur(20px);display:grid;grid-template-columns:repeat(4,1fr);z-index:100;}
+.nbtn{border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);cursor:pointer;padding:8px 4px;transition:color 180ms;font-size:10px;font-weight:600;}
+.nbtn .ni{font-size:19px;line-height:1;transition:transform 150ms;}
+.nbtn.active{color:var(--gold);}
+.nbtn.active .ni{transform:scale(1.15);}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.stitle{font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;display:flex;align-items:center;gap:8px;}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* DAY CARDS */
+.dcard{display:grid;grid-template-columns:48px 1fr;gap:10px;align-items:center;padding:12px;border-radius:12px;margin-bottom:8px;border:1px solid var(--border);background:var(--bg2);position:relative;overflow:hidden;}
+.dcard.today{border-color:var(--gold);background:rgba(245,197,66,0.04);}
+.dcard.today::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);}
+.dcard.past{opacity:0.45;}
+.dcard.exam{border-color:var(--red);background:rgba(239,68,68,0.05);}
+.dcard.exam::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--red);}
+.dnum{font-size:24px;font-weight:900;text-align:center;line-height:1;}
+.dnum.gold{color:var(--gold);}
+.dnum.red{color:var(--red);}
+.dname{font-size:8px;font-weight:700;letter-spacing:0.5px;color:var(--muted);text-align:center;margin-top:1px;}
+.dtitle{font-size:13px;font-weight:700;margin-bottom:2px;}
+.dsubs{font-size:11px;color:var(--muted);}
+.dbadge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-top:3px;}
+.dbadge.hoje{background:rgba(245,197,66,0.15);color:var(--gold);}
+.dbadge.prova{background:rgba(239,68,68,0.15);color:var(--red);}
+.dbadge.sim{background:rgba(168,85,247,0.15);color:var(--purple);}
+.dbadge.ev{background:rgba(245,158,11,0.15);color:var(--amber);}
+
+/* SUBJECT CARDS (accordion) */
+.subj{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;}
+.subj-hdr{display:flex;align-items:center;gap:10px;padding:14px;cursor:pointer;user-select:none;}
+.subj-hdr:active{background:rgba(255,255,255,0.03);}
+.subj-ico{font-size:20px;flex-shrink:0;}
+.subj-info{flex:1;}
+.subj-name{font-size:14px;font-weight:700;}
+.subj-meta{font-size:10px;color:var(--muted);margin-top:2px;}
+.subj-score{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;flex-shrink:0;}
+.score-low{background:rgba(239,68,68,0.12);color:var(--red);}
+.score-mid{background:rgba(245,158,11,0.12);color:var(--amber);}
+.score-ok{background:rgba(16,185,129,0.12);color:var(--emerald);}
+.score-high{background:rgba(0,212,255,0.12);color:var(--cyan);}
+.subj-chevron{font-size:12px;color:var(--muted);transition:transform 200ms;flex-shrink:0;}
+.subj.open .subj-chevron{transform:rotate(180deg);}
+.subj-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border);}
+.subj.open .subj-body{display:block;}
+.kv{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 6px;}
+.kpill{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;font-weight:600;color:var(--text);}
+.tip{background:rgba(168,85,247,0.07);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:9px 12px;font-size:12px;color:#c0a8e8;line-height:1.6;margin-top:8px;}
+.tip b{color:var(--gold);}
+.tip-red{background:rgba(239,68,68,0.07);border-left-color:var(--red);color:#f0a0a0;}
+.tip-green{background:rgba(16,185,129,0.07);border-left-color:var(--emerald);color:#80e0b0;}
+.fact-list{list-style:none;margin-top:10px;}
+.fact-list li{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;line-height:1.6;display:flex;gap:8px;align-items:flex-start;color:var(--text);}
+.fact-list li::before{content:'▸';color:var(--purple);font-size:10px;margin-top:2px;flex-shrink:0;}
+.fact-list li:last-child{border-bottom:none;}
+.mini-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;}
+.mini-table th{background:rgba(168,85,247,0.1);color:var(--purple);font-weight:700;padding:7px 9px;text-align:left;border-bottom:1px solid var(--border);}
+.mini-table td{padding:7px 9px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text);}
+.mini-table tr:last-child td{border-bottom:none;}
+.mini-table tr:hover td{background:rgba(168,85,247,0.04);}
+
+/* REDAÇÃO */
+.red-score{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+.rs-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.rs-card .rsn{font-size:22px;font-weight:900;color:var(--gold);}
+.rs-card .rsl{font-size:10px;font-weight:600;color:var(--muted);margin-top:2px;}
+.comp{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px;margin-bottom:8px;}
+.comp-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.comp-num{width:24px;height:24px;border-radius:6px;background:rgba(168,85,247,0.15);color:var(--purple);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.comp-name{font-size:13px;font-weight:700;}
+.comp-pts{font-size:11px;color:var(--gold);font-weight:700;margin-left:auto;}
+.comp-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+.tema-card{background:var(--bg2);border:1px solid rgba(245,197,66,0.2);border-radius:12px;padding:13px;margin-bottom:8px;}
+.tema-tag{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.tema-title{font-size:14px;font-weight:700;margin-bottom:6px;}
+.tema-args{font-size:11px;color:var(--muted);line-height:1.7;}
+.arg-line{display:flex;gap:6px;margin-bottom:3px;}
+.arg-line::before{content:'→';color:var(--gold);flex-shrink:0;}
+.estrutura-steps{counter-reset:step;list-style:none;margin-top:8px;}
+.estrutura-steps li{counter-increment:step;display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;line-height:1.6;}
+.estrutura-steps li::before{content:counter(step);background:linear-gradient(135deg,var(--gold),var(--amber));color:#000;font-size:11px;font-weight:900;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.estrutura-steps li:last-child{border-bottom:none;}
+
+/* PROVA DAY */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer;}
+.check-item:last-child{border-bottom:none;}
+.chk{width:20px;height:20px;border:2px solid rgba(255,255,255,0.2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all 200ms;}
+.check-item.done .chk{background:var(--emerald);border-color:var(--emerald);}
+.check-item.done .chk::after{content:'✓';color:#fff;font-size:10px;font-weight:900;}
+.check-item.done .ci-text{opacity:0.45;text-decoration:line-through;}
+.ci-text{flex:1;}
+.ci-title{font-size:13px;font-weight:600;margin-bottom:2px;}
+.ci-sub{font-size:11px;color:var(--muted);line-height:1.5;}
+.timeline{position:relative;padding-left:22px;margin-top:10px;}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--gold),var(--purple));}
+.tl-item{position:relative;padding-bottom:14px;}
+.tl-item::before{content:'';position:absolute;left:-18px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--gold);border:2px solid var(--bg);}
+.tl-time{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:2px;}
+.tl-desc{font-size:12px;color:var(--text);line-height:1.5;}
+.alert-box{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;margin-bottom:10px;}
+.alert-box.red{background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.25);}
+.alert-box.gold{background:rgba(245,197,66,0.07);border:1px solid rgba(245,197,66,0.25);}
+.alert-box.green{background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.25);}
+.alert-icon{font-size:20px;flex-shrink:0;}
+.alert-txt{font-size:12px;line-height:1.5;}
+.alert-box.red .alert-txt{color:#f0a0a0;}
+.alert-box.gold .alert-txt{color:#f8d880;}
+.alert-box.green .alert-txt{color:#80e0b0;}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-top">
+    <div class="hdr-title">⚡ Sprint Final — UNICAP</div>
+    <div class="dias-left" id="dias-badge">7 dias</div>
+  </div>
+  <div class="countdown">
+    <div class="cblock"><div class="cnum" id="cd-d">--</div><div class="clbl">dias</div></div>
+    <div class="cblock"><div class="cnum" id="cd-h">--</div><div class="clbl">horas</div></div>
+    <div class="cblock"><div class="cnum" id="cd-m">--</div><div class="clbl">min</div></div>
+    <div class="cblock"><div class="cnum" id="cd-s">--</div><div class="clbl">seg</div></div>
+  </div>
+</header>
+
+<main class="content">
+
+<!-- TAB PLANO -->
+<div id="tab-plano" class="tab active">
+  <div class="stitle">Os 7 dias restantes</div>
+  <div id="cal"></div>
+  <div class="stitle">Acesso rápido</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+    <a href="mobile-app.html" style="text-decoration:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">📱</span><span style="font-size:12px;font-weight:700;color:var(--text);">App Mobile</span><span style="font-size:10px;color:var(--muted);">Cronograma</span>
+    </a>
+    <a href="dopamina.html" style="text-decoration:none;background:var(--bg2);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">⚡</span><span style="font-size:12px;font-weight:700;color:var(--text);">Modo Boss</span><span style="font-size:10px;color:var(--muted);">Anti-procrastinação</span>
+    </a>
+    <a href="materiais/quiz.html" style="text-decoration:none;background:var(--bg2);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">🧩</span><span style="font-size:12px;font-weight:700;color:var(--text);">Quiz</span><span style="font-size:10px;color:var(--muted);">20 questões</span>
+    </a>
+    <a href="redacao/trainer.html" style="text-decoration:none;background:var(--bg2);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">✍️</span><span style="font-size:12px;font-weight:700;color:var(--text);">Redação</span><span style="font-size:10px;color:var(--muted);">Trainer</span>
+    </a>
+    <a href="materiais/simulado-relampago.html" style="text-decoration:none;background:var(--bg2);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">⚡</span><span style="font-size:12px;font-weight:700;color:var(--amber);">Relâmpago</span><span style="font-size:10px;color:var(--muted);">20q com gabarito</span>
+    </a>
+    <a href="materiais/calculadora-nota.html" style="text-decoration:none;background:var(--bg2);border:1px solid rgba(34,211,238,0.2);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px;">
+      <span style="font-size:20px;">🎯</span><span style="font-size:12px;font-weight:700;color:var(--cyan);">Calculadora</span><span style="font-size:10px;color:var(--muted);">Simule sua nota</span>
+    </a>
+  </div>
+</div>
+
+<!-- TAB REVISAR -->
+<div id="tab-revisar" class="tab">
+  <div class="alert-box gold"><span class="alert-icon">💡</span><span class="alert-txt"><b>Foque no que mais cai.</b> Linguagens (16q) + Humanas (16q) = 32 das 64 questões. Redação = 50% da nota total.</span></div>
+
+  <!-- PORTUGUÊS -->
+  <div class="subj" id="s-port">
+    <div class="subj-hdr" onclick="toggleSubj('s-port')">
+      <span class="subj-ico">📝</span>
+      <div class="subj-info"><div class="subj-name">Português</div><div class="subj-meta">Tipologia · Sintaxe · Figuras · Concordância</div></div>
+      <span class="subj-score score-ok">6/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <div class="kv">
+        <span class="kpill">Tipologia textual</span><span class="kpill">Coesão e coerência</span><span class="kpill">Análise sintática</span><span class="kpill">Concordância</span><span class="kpill">Figuras de linguagem</span>
+      </div>
+      <ul class="fact-list">
+        <li><b>Tipologia:</b> Narrativo (história/ficção) · Descritivo (características) · Dissertativo (tese + argumento + conclusão) · Injuntivo (instruções) · Expositivo (informação)</li>
+        <li><b>Funções de linguagem:</b> Referencial (informar) · Emotiva (eu/sentimentos) · Apelativa (você/imperativos) · Fática (contato) · Metalinguística (fala sobre a língua) · Poética (estética)</li>
+        <li><b>Concordância nominal:</b> Adjetivo concorda com substantivo em gênero e número. "Mãos sujas" (não "mãos sujo").</li>
+        <li><b>Concordância verbal:</b> Sujeito composto pré-verbal → verbo no plural. "João e Maria <em>foram</em>".</li>
+        <li><b>Figuras:</b> Metáfora (comparação implícita) · Metonímia (substituição por contiguidade) · Hipérbole (exagero) · Eufemismo (suavização) · Ironia (dizer o contrário)</li>
+        <li><b>Regência:</b> "Aspirar a" (algo) · "Assistir a" (show) · "Visar a" (objetivo) · "Obedecer a"</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Questões de interpretação de texto são maioria. Leia o enunciado inteiro antes de escolher a resposta. Cuidado com "distratores" que usam palavras do texto mas alteram o sentido.</div>
+    </div>
+  </div>
+
+  <!-- LITERATURA -->
+  <div class="subj" id="s-lit">
+    <div class="subj-hdr" onclick="toggleSubj('s-lit')">
+      <span class="subj-ico">📚</span>
+      <div class="subj-info"><div class="subj-name">Literatura</div><div class="subj-meta">Romantismo · Realismo · Modernismo</div></div>
+      <span class="subj-score score-mid">4/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <table class="mini-table">
+        <tr><th>Escola</th><th>Período</th><th>Características</th><th>Autores UNICAP</th></tr>
+        <tr><td>Romantismo</td><td>1836–1881</td><td>Emoção, idealização, nacionalismo, natureza</td><td>José de Alencar, Gonçalves Dias, Álvares de Azevedo</td></tr>
+        <tr><td>Realismo</td><td>1881–1902</td><td>Objetividade, crítica social, análise psicológica</td><td>Machado de Assis, Eça de Queirós</td></tr>
+        <tr><td>Naturalismo</td><td>1881–1902</td><td>Determinismo, instintos, ambiente social</td><td>Aluísio Azevedo (O Cortiço)</td></tr>
+        <tr><td>Modernismo 1ª</td><td>1922–1930</td><td>Ruptura, verso livre, nacionalismo crítico</td><td>Oswald, Mário de Andrade, Manuel Bandeira</td></tr>
+        <tr><td>Modernismo 2ª</td><td>1930–1945</td><td>Prosa regionalista, angústia, introspecção</td><td>Graciliano Ramos, Rachel de Queirós, Drummond</td></tr>
+      </table>
+      <div class="tip"><b>UNICAP:</b> Machado de Assis é o autor mais cobrado. Saiba: Dom Casmurro (capitu traiu?), Memórias Póstumas (narrador morto), linguagem irônica. Semana de 22 = revolução modernista.</div>
+    </div>
+  </div>
+
+  <!-- INGLÊS -->
+  <div class="subj" id="s-ing">
+    <div class="subj-hdr" onclick="toggleSubj('s-ing')">
+      <span class="subj-ico">🇺🇸</span>
+      <div class="subj-info"><div class="subj-name">Inglês</div><div class="subj-meta">Leitura · Verb tenses · Pronomes</div></div>
+      <span class="subj-score score-ok">6/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Estratégia principal:</b> vestibular usa textos autênticos (artigos, tirinhas). Foque em vocabulário cognato (similar ao português) e estrutura do parágrafo.</li>
+        <li><b>Simple Past:</b> verb+ed / formas irregulares (went, saw, had, made, took). Marcadores: yesterday, ago, last year.</li>
+        <li><b>Present Perfect:</b> have/has + past participle. Liga passado ao presente. Marcadores: already, yet, ever, just, since, for.</li>
+        <li><b>Modal verbs:</b> can (habilidade) · must/have to (obrigação) · should (conselho) · may/might (possibilidade)</li>
+        <li><b>Pronomes relativos:</b> who (pessoas) · which (coisas) · that (ambos) · whose (posse)</li>
+        <li><b>Prefixos úteis:</b> un- (não), re- (de novo), mis- (errado), dis- (oposição), pre- (antes), over- (demais)</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Questões focam em compreensão global, não tradução palavra por palavra. Se não sabe uma palavra, infira pelo contexto.</div>
+    </div>
+  </div>
+
+  <!-- HISTÓRIA -->
+  <div class="subj" id="s-hist">
+    <div class="subj-hdr" onclick="toggleSubj('s-hist')">
+      <span class="subj-ico">🏛️</span>
+      <div class="subj-info"><div class="subj-name">História</div><div class="subj-meta">Grécia/Roma · Brasil Colonial · República</div></div>
+      <span class="subj-score score-mid">5/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Democracia ateniense:</b> Surgiu com Clístenes (508 a.C.). Só homens livres atenienses. Ágora = espaço público de debate. Pericles = auge.</li>
+        <li><b>Roma:</b> República (509–27 a.C.) → Império. Julio César assassinado 44 a.C. Augusto = 1º imperador. Queda 476 d.C. (ocidente).</li>
+        <li><b>Brasil Colonial:</b> 1500–1822. Pacto colonial (monopólio). Ciclos: Pau-brasil → Açúcar → Ouro. Inconfidência Mineira (1789) → Tiradentes.</li>
+        <li><b>Independência 1822:</b> D. Pedro I. "Fico" (1822). Constituição outorgada 1824. Independência economicamente dependente da Inglaterra.</li>
+        <li><b>República Velha (1889–1930):</b> Café com leite (SP+MG). Coronelismo. Revolta da Vacina (1904). Tenentismo → Coluna Prestes.</li>
+        <li><b>Era Vargas (1930–1945, 1950–1954):</b> Estado Novo (1937). CLT 1943. Suicídio 1954. "Pai dos pobres".</li>
+        <li><b>Ditadura Militar (1964–1985):</b> AI-5 (1968) = ato mais repressivo. Milagre econômico (70s). Diretas Já (1983–84). Abertura lenta e gradual.</li>
+        <li><b>República Nova:</b> Constituição 1988 "Cidadã". Plano Real (1994, Itamar/FHC). Lula (2003–2010). PT, PSDB, movimentos sociais.</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Questões conectam história ao presente (democracia, direitos civis). Conhecer causas e consequências vale mais que datas exatas.</div>
+    </div>
+  </div>
+
+  <!-- FILOSOFIA -->
+  <div class="subj" id="s-fil">
+    <div class="subj-hdr" onclick="toggleSubj('s-fil')">
+      <span class="subj-ico">🦉</span>
+      <div class="subj-info"><div class="subj-name">Filosofia</div><div class="subj-meta">Sócrates · Platão · Aristóteles · Iluminismo</div></div>
+      <span class="subj-score score-mid">4/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <table class="mini-table">
+        <tr><th>Filósofo</th><th>Conceito central</th><th>Frase/ideia UNICAP</th></tr>
+        <tr><td>Sócrates</td><td>Maiêutica / "Só sei que nada sei"</td><td>Método da ironia → perguntas levam ao conhecimento. Condenado à morte por "corromper" jovens.</td></tr>
+        <tr><td>Platão</td><td>Mundo das Ideias / Alegoria da Caverna</td><td>Realidade sensível é sombra da realidade inteligível. A caverna = ignorância; o sol = verdade.</td></tr>
+        <tr><td>Aristóteles</td><td>Lógica / Ética / Política</td><td>"O homem é um animal político." Virtude = meio-termo (mesotes). Silogismo = raciocínio dedutivo.</td></tr>
+        <tr><td>Iluminismo</td><td>Razão / Progresso / Liberdade</td><td>Século XVIII. Descartes (Cogito), Locke (contrato), Rousseau (vontade geral), Voltaire (tolerância), Montesquieu (3 poderes).</td></tr>
+        <tr><td>Kant</td><td>Imperativo categórico</td><td>"Age de modo que a máxima de tua ação possa ser lei universal." Iluminismo tardio.</td></tr>
+      </table>
+      <div class="tip"><b>UNICAP:</b> Iluminismo alimenta a Revolução Francesa e a Constituição Brasileira. Ligar filosofia a eventos históricos é questão clássica.</div>
+    </div>
+  </div>
+
+  <!-- SOCIOLOGIA -->
+  <div class="subj" id="s-soc">
+    <div class="subj-hdr" onclick="toggleSubj('s-soc')">
+      <span class="subj-ico">👥</span>
+      <div class="subj-info"><div class="subj-name">Sociologia</div><div class="subj-meta">Marx · Durkheim · Weber · Contemporânea</div></div>
+      <span class="subj-score score-mid">4/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <table class="mini-table">
+        <tr><th>Autor</th><th>Conceito central</th><th>Palavras-chave</th></tr>
+        <tr><td>Marx</td><td>Materialismo histórico; luta de classes</td><td>Mais-valia, alienação, capitalismo, proletariado, burguesia, infraestrutura/superestrutura</td></tr>
+        <tr><td>Durkheim</td><td>Fato social; solidariedade orgânica/mecânica</td><td>Anomia, coesão social, divisão do trabalho, consciência coletiva, suicídio (tipos)</td></tr>
+        <tr><td>Weber</td><td>Ação social; ética protestante</td><td>Burocracia, dominação (racional/carismática/tradicional), racionalização, "desencantamento do mundo"</td></tr>
+      </table>
+      <ul class="fact-list">
+        <li><b>Ideologia (Marx):</b> Conjunto de ideias que legitimam a dominação de classe. A classe dominante impõe sua visão de mundo.</li>
+        <li><b>Globalização:</b> Integração econômica, cultural e política. Homogeneização × fragmentação cultural. FMI, OMC, multinacionais.</li>
+        <li><b>Movimentos sociais:</b> MST (terra), MBL, Movimento Feminista, LGBTQIA+, movimento negro. Formas de pressão social.</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Weber e burocracia aparecem muito em questões sobre Estado e organizações. Marx aparece em questões de desigualdade social.</div>
+    </div>
+  </div>
+
+  <!-- ATUALIDADES -->
+  <div class="subj" id="s-atu">
+    <div class="subj-hdr" onclick="toggleSubj('s-atu')">
+      <span class="subj-ico">🌐</span>
+      <div class="subj-info"><div class="subj-name">Atualidades 2025–2026</div><div class="subj-meta">IA · Meio Ambiente · Conflitos · Saúde · Social</div></div>
+      <span class="subj-score score-ok">5/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Inteligência Artificial:</b> ChatGPT, Gemini, Claude — ferramentas de IA generativa transformam mercado de trabalho. Debate sobre regulamentação, viés algorítmico e direitos autorais. UE aprovou AI Act 2024.</li>
+        <li><b>Meio Ambiente:</b> COP29 (2024, Azerbaijão) — financiamento climático para países em desenvolvimento. Amazônia: desmatamento diminui mas queimadas batem recordes. Mudanças climáticas = emergência global.</li>
+        <li><b>Conflitos internacionais:</b> Guerra Rússia-Ucrânia (desde fev/2022) — impacto em energia e alimentos globais. Oriente Médio: conflito Gaza — crise humanitária, pressão diplomática internacional.</li>
+        <li><b>Saúde Pública:</b> Dengue no Brasil: surtos históricos 2024. SUS sob pressão. Saúde mental como pauta política — ansiedade/depressão entre jovens, lei de saúde mental aprovada.</li>
+        <li><b>Desigualdade Social:</b> Brasil tem 10% mais ricos com 58% da renda. Bolsa Família reformulado. Reforma trabalhista e uberização do trabalho. Racismo estrutural: cotas, CONAPIR.</li>
+        <li><b>Democracia digital:</b> Fake news, desinformação, regulação das redes sociais. TSE vs. Big Techs. Marco Civil da Internet. Lei Geral de Proteção de Dados (LGPD).</li>
+        <li><b>Direito e Constituição:</b> CF/88 — 37 anos. STF e democracia. Reforma do judiciário. Direitos fundamentais: saúde, educação, moradia.</li>
+        <li><b>Educação:</b> Piso salarial dos professores. ENEM como política de acesso. ProUni, FIES, cotas raciais — constitucionalidade reafirmada pelo STF.</li>
+        <li><b>Eleições 2026:</b> Presidenciais em outubro. Lula (PT) × possíveis candidaturas de direita. Polarização política. Papel das redes sociais nas campanhas.</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Questões de atualidades pedem contextualização — liga o fato a conceitos de história, sociologia ou filosofia. Ex: IA + desemprego = Marx; fake news + democracia = Iluminismo.</div>
+      <a href="nexus/humanas/atualidades/resumo.html" style="display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--cyan);background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);padding:6px 12px;border-radius:8px;text-decoration:none;">Ver mapa completo de Atualidades →</a>
+    </div>
+  </div>
+
+  <!-- MATEMÁTICA -->
+  <div class="subj" id="s-mat">
+    <div class="subj-hdr" onclick="toggleSubj('s-mat')">
+      <span class="subj-ico">📐</span>
+      <div class="subj-info"><div class="subj-name">Matemática</div><div class="subj-meta">Aritmética · Funções · Geometria · %</div></div>
+      <span class="subj-score score-mid">5/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Porcentagem:</b> x% de N = N × x/100. Aumento de p%: × (1+p/100). Desconto de p%: × (1−p/100). Encadeado: 20% + 30% ≠ 50%.</li>
+        <li><b>Regra de 3 simples:</b> A/B = C/D → D = B×C/A. Proporção direta: mais ↔ mais. Inversa: mais ↔ menos.</li>
+        <li><b>Juros simples:</b> M = C(1 + i×t). Juros compostos: M = C(1+i)^t.</li>
+        <li><b>Função 1º grau:</b> f(x) = ax + b. a = coeficiente angular (inclinação). b = coeficiente linear (ponto y=0 no eixo). Zero: x = −b/a.</li>
+        <li><b>Função 2º grau:</b> f(x) = ax²+bx+c. Vértice: x = −b/2a. Δ = b²−4ac. Raízes: x = (−b ± √Δ)/2a.</li>
+        <li><b>Geometria plana:</b> Quadrado: A=L². Retângulo: A=b×h. Triângulo: A=b×h/2. Círculo: A=πr², C=2πr. Trapézio: A=(B+b)×h/2.</li>
+        <li><b>Pitágoras:</b> a²=b²+c² (a=hipotenusa). Triângulo retângulo especial: 30°-60°-90° → lados 1 : √3 : 2.</li>
+        <li><b>Probabilidade:</b> P(A) = casos favoráveis / casos possíveis. P(A∪B) = P(A)+P(B)−P(A∩B). Eventos independentes: P(A∩B) = P(A)×P(B).</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Meta: 8/16 questões. Foque em porcentagem, regra de 3 e funções — os 3 assuntos que mais caem. Descarte os problemas muito complexos e marque uma alternativa.</div>
+    </div>
+  </div>
+
+  <!-- BIOLOGIA -->
+  <div class="subj" id="s-bio">
+    <div class="subj-hdr" onclick="toggleSubj('s-bio')">
+      <span class="subj-ico">🧬</span>
+      <div class="subj-info"><div class="subj-name">Biologia</div><div class="subj-meta">Célula · Ecologia · Evolução</div></div>
+      <span class="subj-score score-mid">4/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Célula procariótica vs. eucariótica:</b> Procariótica (bactérias) = sem núcleo definido, sem organelas membranosas. Eucariótica (animais, plantas, fungos) = núcleo com membrana nuclear.</li>
+        <li><b>Organelas:</b> Mitocôndria (respiração celular, ATP). Cloroplasto (fotossíntese, plantas). Ribossomo (síntese de proteínas). Retículo endoplasmático (transporte). Lisossomo (digestão celular).</li>
+        <li><b>Fotossíntese:</b> 6CO₂ + 6H₂O + luz → C₆H₁₂O₆ + 6O₂. Cloroplasto. Reações da luz (grana) + ciclo de Calvin (estroma).</li>
+        <li><b>Respiração celular:</b> Glicose + O₂ → CO₂ + H₂O + ATP. Aeróbica (mitocôndria) → mais eficiente. Anaeróbica (fermentação) → menos ATP.</li>
+        <li><b>Ecologia:</b> Cadeia alimentar: produtor → consumidor primário → secundário → terciário. Pirâmide de energia perde ~90% a cada nível. Nicho ecológico ≠ habitat.</li>
+        <li><b>Biomas brasileiros:</b> Amazônia (maior floresta tropical). Cerrado (savana, maior biodiversidade relativa). Mata Atlântica (mais ameaçada, 12% restante). Caatinga (exclusiva do Brasil).</li>
+        <li><b>Darwin:</b> Evolução por seleção natural. "Survival of the fittest" = melhor adaptado, não mais forte. Variação + herança + seleção = evolução.</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Meta: 6/16 em Natureza. Bioma brasileiro e ecologia têm alta probabilidade de cair — relacionados a Meio Ambiente (atualidade).</div>
+    </div>
+  </div>
+
+  <!-- QUÍMICA -->
+  <div class="subj" id="s-qui">
+    <div class="subj-hdr" onclick="toggleSubj('s-qui')">
+      <span class="subj-ico">⚗️</span>
+      <div class="subj-info"><div class="subj-name">Química</div><div class="subj-meta">Tabela Periódica · Ligações · Reações</div></div>
+      <span class="subj-score score-low">3/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>Tabela periódica:</b> Períodos (linhas) = número de camadas eletrônicas. Grupos/famílias (colunas). Metais (esquerda) × não-metais (direita) × semimetais (diagonal).</li>
+        <li><b>Ligações químicas:</b> Iônica = metal + não-metal (NaCl). Covalente = não-metal + não-metal (H₂O). Metálica = metal + metal. Força: iônica > covalente (polar) > apolar.</li>
+        <li><b>Reações:</b> Síntese: A+B→AB. Análise: AB→A+B. Deslocamento: A+BC→AC+B. Dupla troca: AB+CD→AD+CB.</li>
+        <li><b>Ácidos e bases:</b> Ácido: libera H⁺ (pH&lt;7). Base: libera OH⁻ (pH>7). Neutro: pH=7. Indicadores: fenolftaleína (rosa em base), tornassol (azul em base, vermelho em ácido).</li>
+        <li><b>Mol e molaridade:</b> 1 mol = 6,02×10²³ entidades (Avogadro). M = n/V (mol/L). Massa molar = massa atômica em g/mol.</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Com nota 3/10, foque só no básico: tabela periódica (períodos/grupos), tipos de ligação e pH. Não tente decorar tudo — pegue os 2-3 conceitos que mais caem.</div>
+    </div>
+  </div>
+
+  <!-- FÍSICA -->
+  <div class="subj" id="s-fis">
+    <div class="subj-hdr" onclick="toggleSubj('s-fis')">
+      <span class="subj-ico">⚡</span>
+      <div class="subj-info"><div class="subj-name">Física</div><div class="subj-meta">Mecânica · Leis de Newton · Energia</div></div>
+      <span class="subj-score score-low">3/10</span>
+      <span class="subj-chevron">▼</span>
+    </div>
+    <div class="subj-body">
+      <ul class="fact-list">
+        <li><b>1ª Lei de Newton (Inércia):</b> Um corpo em repouso tende a permanecer em repouso; em movimento, em movimento retilíneo uniforme, a menos que uma força atue.</li>
+        <li><b>2ª Lei (F=ma):</b> Força = massa × aceleração. Unidade: Newton (N) = kg·m/s². Quanto maior a massa, maior a força para mesma aceleração.</li>
+        <li><b>3ª Lei (Ação-Reação):</b> Para toda ação há reação igual e oposta. Par ação-reação age em corpos DIFERENTES.</li>
+        <li><b>Cinemática:</b> MRU: v = Δs/Δt (velocidade constante). MRUV: a = Δv/Δt. v = v₀ + at. s = s₀ + v₀t + at²/2.</li>
+        <li><b>Energia:</b> Cinética: Ec = mv²/2. Potencial gravitacional: Ep = mgh. Conservação: Ec + Ep = constante (sem atrito). Trabalho: W = F·d·cos(θ).</li>
+        <li><b>Gravitação:</b> g ≈ 10 m/s² na Terra. Queda livre: v = gt, h = gt²/2 (em queda, sem resistência do ar).</li>
+      </ul>
+      <div class="tip"><b>UNICAP:</b> Com nota 3/10, foque em Leis de Newton e conceitos de energia. São os mais cobrados e os mais "descritivos" (menos cálculo). Evite cinemática complexa na prova — é armadilha de tempo.</div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB REDAÇÃO -->
+<div id="tab-redacao" class="tab">
+  <div class="alert-box red"><span class="alert-icon">🎯</span><span class="alert-txt"><b>Redação = 50% da nota total.</b> 1000 pontos. Cada 70 pontos a mais aqui equivale a acertar ~3 questões extras. Invista tempo.</span></div>
+
+  <div class="stitle">Score máximo por competência</div>
+  <div class="red-score">
+    <div class="rs-card"><div class="rsn">200</div><div class="rsl">Estrutura / Forma</div></div>
+    <div class="rs-card"><div class="rsn">200</div><div class="rsl">Domínio do Tema</div></div>
+    <div class="rs-card"><div class="rsn">200</div><div class="rsl">Desenvolvimento</div></div>
+    <div class="rs-card"><div class="rsn">200</div><div class="rsl">Relevância Social</div></div>
+    <div class="rs-card"><div class="rsn">200</div><div class="rsl">Norma Culta</div></div>
+  </div>
+
+  <div class="stitle">Estrutura da redação UNICAP</div>
+  <div class="card">
+    <ol class="estrutura-steps">
+      <li><strong>Introdução (5–8 linhas):</strong> Contextualize o tema com um dado, citação ou situação. Apresente a tese (sua posição). Não use "Desde os primórdios" — seja direto e original.</li>
+      <li><strong>Desenvolvimento 1 (8–12 linhas):</strong> 1º argumento que sustenta a tese. Use evidência (dado estatístico, exemplo histórico, referência cultural). Conecte com o tema proposto.</li>
+      <li><strong>Desenvolvimento 2 (8–12 linhas):</strong> 2º argumento — perspectiva diferente ou aprofundamento. Seja concreto. Evite generalizar ("a sociedade não se importa").</li>
+      <li><strong>Conclusão (5–8 linhas):</strong> Retome a tese sem repetir palavras. Apresente PROPOSTA DE INTERVENÇÃO com: <em>agente responsável</em> + <em>ação específica</em> + <em>finalidade</em>. Exemplo: "O governo federal, mediante políticas públicas de saúde mental nas escolas, deve capacitar professores para identificar e encaminhar casos de ansiedade, visando reduzir o índice de evasão escolar."</li>
+    </ol>
+  </div>
+
+  <div class="stitle">Temas mais prováveis — Junho 2026</div>
+
+  <div class="tema-card">
+    <div class="tema-tag">ALTA PROBABILIDADE</div>
+    <div class="tema-title">Saúde Mental na Era Digital</div>
+    <div class="tema-args">
+      <div class="arg-line">Redes sociais e ansiedade: comparação social, FOMO, cyberbullying</div>
+      <div class="arg-line">Solidão da geração Z apesar da hiperconexão</div>
+      <div class="arg-line">Acesso ao tratamento: desigualdade, SUS e saúde mental</div>
+      <div class="arg-line">Lei de Saúde Mental nas escolas (2024)</div>
+    </div>
+  </div>
+
+  <div class="tema-card">
+    <div class="tema-tag">ALTA PROBABILIDADE</div>
+    <div class="tema-title">Inteligência Artificial e Trabalho</div>
+    <div class="tema-args">
+      <div class="arg-line">Automação × empregos: quais profissões estão em risco</div>
+      <div class="arg-line">Desigualdade digital: quem tem acesso às novas tecnologias</div>
+      <div class="arg-line">Regulamentação necessária: AI Act europeu, debate no Brasil</div>
+      <div class="arg-line">IA na educação: personalização × dependência</div>
+    </div>
+  </div>
+
+  <div class="tema-card">
+    <div class="tema-tag">MÉDIA PROBABILIDADE</div>
+    <div class="tema-title">Desigualdade Social no Brasil</div>
+    <div class="tema-args">
+      <div class="arg-line">Concentração de renda: Gini, os 10% mais ricos × os 40% mais pobres</div>
+      <div class="arg-line">Racismo estrutural como fator de desigualdade</div>
+      <div class="arg-line">Programas sociais: Bolsa Família, cotas, mínimo existencial</div>
+      <div class="arg-line">Mobilidade social e acesso à educação</div>
+    </div>
+  </div>
+
+  <div class="tema-card">
+    <div class="tema-tag">MÉDIA PROBABILIDADE</div>
+    <div class="tema-title">Meio Ambiente e Crise Climática</div>
+    <div class="tema-args">
+      <div class="arg-line">Queimadas e desmatamento: Amazônia, Cerrado, Pantanal</div>
+      <div class="arg-line">Acordos climáticos (COP): o que o Brasil comprometeu</div>
+      <div class="arg-line">Economia verde × desenvolvimento sustentável</div>
+      <div class="arg-line">Eventos climáticos extremos: inundações, secas, mudança do padrão</div>
+    </div>
+  </div>
+
+  <div class="stitle">Checklist de qualidade</div>
+  <div class="card" id="red-check">
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Introdução apresenta tese clara</div><div class="ci-sub">Não começa com "Desde os primórdios"</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Cada parágrafo tem 1 ideia central</div><div class="ci-sub">Argumento + evidência + análise</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Conectivos de coesão usados</div><div class="ci-sub">Entretanto, portanto, além disso, nesse contexto...</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Proposta de intervenção completa</div><div class="ci-sub">Agente + ação específica + finalidade</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Sem erros graves de ortografia</div><div class="ci-sub">Reler antes de entregar</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Entre 20–30 linhas no total</div><div class="ci-sub">Nem curto demais, nem excede o limite</div></div></div>
+  </div>
+
+  <div class="stitle">Conectivos essenciais</div>
+  <div class="card">
+    <div class="kv">
+      <span class="kpill">Adição: além disso, ademais, outrossim</span>
+      <span class="kpill">Oposição: entretanto, todavia, no entanto, contudo</span>
+      <span class="kpill">Causa: pois, porque, já que, visto que</span>
+      <span class="kpill">Consequência: portanto, logo, assim, dessa forma, desse modo</span>
+      <span class="kpill">Concessão: embora, apesar de, ainda que</span>
+      <span class="kpill">Conclusão: em suma, em síntese, por fim, conclui-se que</span>
+    </div>
+  </div>
+</div>
+
+<!-- TAB PROVA -->
+<div id="tab-prova" class="tab">
+  <div class="alert-box red"><span class="alert-icon">📅</span><span class="alert-txt"><b>14 de junho de 2026 — Domingo.</b> Abertura dos portões: 7h15. Início da prova: 8h15. Duração: 5 horas. Local: UNICAP Recife.</span></div>
+
+  <div class="stitle">Cronograma do dia D</div>
+  <div class="card">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-time">06:00 — Acordar</div><div class="tl-desc">Café da manhã leve (pão, ovo, fruta). Sem celular até chegar ao local. Respiração profunda.</div></div>
+      <div class="tl-item"><div class="tl-time">06:30 — Sair de casa</div><div class="tl-desc">Calcule o percurso com folga. Atraso = estresse. Saia 30 min antes do necessário.</div></div>
+      <div class="tl-item"><div class="tl-time">07:00 — Chegar ao local</div><div class="tl-desc">Localize sua sala. Vá ao banheiro. Relaxe. Não revise matéria — é tarde demais, só gera ansiedade.</div></div>
+      <div class="tl-item"><div class="tl-time">07:15 — Portões abrem</div><div class="tl-desc">Entre cedo. Organize mesa: canetas, documento, lápis (se necessário).</div></div>
+      <div class="tl-item"><div class="tl-time">08:15 — PROVA COMEÇA</div><div class="tl-desc">Leia o caderno inteiro rapidamente (5 min). Comece pelas questões que você sabe. Deixe as difíceis para depois.</div></div>
+      <div class="tl-item"><div class="tl-time">~10:00 — Redação</div><div class="tl-desc">Reserve ~60–70 min para a redação. Rascunho rápido → estrutura → texto final → revisão.</div></div>
+      <div class="tl-item"><div class="tl-time">12:45 — Conferir gabarito</div><div class="tl-desc">Verifique se marcou TODAS as questões. Não deixe nenhuma em branco (não há desconto).</div></div>
+      <div class="tl-item"><div class="tl-time">13:15 — Entregar</div><div class="tl-desc">Respire fundo. Você deu o seu melhor.</div></div>
+    </div>
+  </div>
+
+  <div class="stitle">O que levar</div>
+  <div class="card" id="levar-check">
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">RG ou CNH original</div><div class="ci-sub">Sem documento, sem prova</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Caneta esferográfica azul ou preta</div><div class="ci-sub">Leve 2–3 canetas reserva</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Comprovante de inscrição (impresso ou digital)</div><div class="ci-sub">Número de inscrição ou CPF</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Água e lanche leve</div><div class="ci-sub">Barra de cereal, fruta, biscoito — sem odor forte</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Relógio de pulso analógico</div><div class="ci-sub">Para controlar o tempo. Celular fica fora do alcance.</div></div></div>
+    <div class="check-item" onclick="chk(this)"><div class="chk"></div><div class="ci-text"><div class="ci-title">Agasalho</div><div class="ci-sub">Salas climatizadas são frias. Não passe frio.</div></div></div>
+  </div>
+
+  <div class="stitle">Estratégia de prova</div>
+  <div class="card">
+    <ul class="fact-list">
+      <li><b>Distribuição de tempo (5h):</b> Linguagens 50 min · Humanas 50 min · Natureza 40 min · Matemática 50 min · Redação 70 min · Revisão 30 min.</li>
+      <li><b>Ordem sugerida:</b> Comece por Linguagens (domínio maior, ganha confiança). Depois Humanas. Natureza e Matemática por último.</li>
+      <li><b>Questão difícil:</b> Pule, marque com X no caderno, volte depois. Nunca fique mais de 3 min numa questão sem resposta.</li>
+      <li><b>Chute inteligente:</b> Elimine 2 alternativas claramente erradas → 50% de chance entre as 2 restantes. Nunca deixe em branco.</li>
+      <li><b>Redação:</b> 5–10 min de rascunho. Escreva a proposta de intervenção no rascunho antes de começar — é o que diferencia notas altas.</li>
+      <li><b>Revisão:</b> Reserve 20–30 min no final. Releia as respostas assinaladas. Cuidado com "pegadinhas" de concordância nas alternativas.</li>
+    </ul>
+  </div>
+
+  <div class="alert-box green"><span class="alert-icon">💚</span><span class="alert-txt"><b>Você se preparou.</b> Estudou sozinho, sem cursinho, com disciplina. Na hora da prova, confie no que estudou. Ansiedade é energia — transforme em foco.</span></div>
+
+  <div class="stitle">Na noite anterior (13/jun)</div>
+  <div class="card">
+    <ul class="fact-list">
+      <li>Dormir às 22h–23h. Sono de qualidade vale mais que estudar de madrugada.</li>
+      <li>Revisar APENAS flashcards leves — sem conteúdo novo.</li>
+      <li>Preparar a mochila a noite, para não esquecer nada pela manhã.</li>
+      <li>Comer normalmente — evite alimentos pesados ou novos.</li>
+      <li>Desligar redes sociais às 21h. Nada de "estudar" no TikTok.</li>
+    </ul>
+  </div>
+</div>
+
+</main>
+
+<nav class="bnav">
+  <button class="nbtn active" id="nav-plano" onclick="goTab('plano')"><span class="ni">📅</span>Plano</button>
+  <button class="nbtn" id="nav-revisar" onclick="goTab('revisar')"><span class="ni">📚</span>Revisar</button>
+  <button class="nbtn" id="nav-redacao" onclick="goTab('redacao')"><span class="ni">✍️</span>Redação</button>
+  <button class="nbtn" id="nav-prova" onclick="goTab('prova')"><span class="ni">🏁</span>Prova</button>
+</nav>
+
+<script>
+const PROVA = new Date('2026-06-14T08:15:00-03:00');
+
+const DIAS=[
+  {d:'2026-06-07',n:'Dom',t:'História Completo',s:'Grécia/Roma · Brasil Colonial · República',type:'normal'},
+  {d:'2026-06-08',n:'Dom',t:'Filosofia + Sociologia + Atualidades',s:'Sócrates/Platão/Aristóteles · Marx/Weber/Durkheim',type:'normal'},
+  {d:'2026-06-09',n:'Seg',t:'OBMEP + Revisão Leve',s:'Olimpíada de Matemática · Flashcards',type:'ev'},
+  {d:'2026-06-10',n:'Ter',t:'Matemática — Aritmética e Funções',s:'Razão/Proporção · % · Funções 1º e 2º grau',type:'normal'},
+  {d:'2026-06-11',n:'Qua',t:'Matemática + Biologia',s:'Geometria · Probabilidade · Célula · Ecologia',type:'normal'},
+  {d:'2026-06-12',n:'Qui',t:'Química + Física + Revisão Geral',s:'Tabela Periódica · Mecânica · Quiz completo',type:'normal'},
+  {d:'2026-06-13',n:'Sex',t:'VÉSPERA — Revisão Final',s:'Redação · Flashcards críticos · Descanso',type:'sim'},
+  {d:'2026-06-14',n:'Sáb',t:'🏆 DIA DA PROVA UNICAP',s:'8h15 — Boa sorte, Carlos!',type:'exam'},
+];
+
+function todayStr(){
+  const n=new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+
+function buildCal(){
+  const today=todayStr();
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const c=document.getElementById('cal');
+  c.innerHTML=DIAS.map(day=>{
+    const d=new Date(day.d+'T12:00:00');
+    const isToday=day.d===today;
+    const isPast=day.d<today;
+    let cls='dcard';
+    if(isToday)cls+=' today';
+    else if(isPast)cls+=' past';
+    else if(day.type==='exam')cls+=' exam';
+    let badge='';
+    if(isToday)badge='<span class="dbadge hoje">HOJE</span>';
+    else if(day.type==='exam')badge='<span class="dbadge prova">🏆 PROVA</span>';
+    else if(day.type==='sim')badge='<span class="dbadge sim">Véspera</span>';
+    else if(day.type==='ev')badge='<span class="dbadge ev">Evento</span>';
+    return`<div class="${cls}">
+      <div>
+        <div class="dnum${isToday?' gold':day.type==='exam'?' red':''}">${d.getDate()}</div>
+        <div class="dname">${dias[d.getDay()]} jun</div>
+      </div>
+      <div>
+        <div class="dtitle">${day.t}</div>
+        <div class="dsubs">${day.s}</div>
+        ${badge}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateCountdown(){
+  const now=new Date();
+  const diff=PROVA-now;
+  if(diff<=0){
+    document.getElementById('cd-d').textContent='0';
+    document.getElementById('cd-h').textContent='0';
+    document.getElementById('cd-m').textContent='0';
+    document.getElementById('cd-s').textContent='0';
+    return;
+  }
+  const d=Math.floor(diff/86400000);
+  const h=Math.floor((diff%86400000)/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  document.getElementById('cd-d').textContent=String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent=String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent=String(m).padStart(2,'0');
+  document.getElementById('cd-s').textContent=String(s).padStart(2,'0');
+  const b=document.getElementById('dias-badge');
+  if(b){
+    b.textContent=d+' dias';
+    b.className='dias-left';
+    if(d>5)b.classList.add('ok');
+    else if(d>2)b.classList.add('');
+  }
+}
+
+function goTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+}
+
+function toggleSubj(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function chk(el){
+  el.classList.toggle('done');
+}
+
+buildCal();
+updateCountdown();
+setInterval(updateCountdown,1000);
+</script>
+</body>
+</html>

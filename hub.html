@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub Central · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:  #04060f; --bg2: #080c18; --bg3: #0d1120;
+  --border: rgba(255,255,255,0.07);
+  --text: #c8d0e0; --dim: rgba(200,208,224,0.45);
+  --cyan: #00d4ff; --amber: #ffb800;
+  --em: #10b981; --pur: #a78bfa; --red: #ef4444;
+  --nex: #7c60e8;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+/* ── TOPBAR ── */
+#topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(4,6,15,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:11px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.brand{font-weight:800;font-size:14px;color:#fff;white-space:nowrap;}
+.brand em{color:var(--cyan);font-style:normal;}
+.dcount{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);
+  background:rgba(255,184,0,.09);border:1px solid rgba(255,184,0,.25);
+  padding:3px 9px;border-radius:99px;white-space:nowrap;
+}
+.sw{position:relative;flex:1;min-width:140px;max-width:300px;}
+.sw::before{content:'🔍';position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;}
+#sb{
+  width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:7px;color:var(--text);padding:6px 12px 6px 28px;
+  font-family:'Inter',sans-serif;font-size:12px;outline:none;
+}
+#sb:focus{border-color:rgba(0,212,255,.4);}
+.back-link{font-size:12px;color:var(--cyan);text-decoration:none;white-space:nowrap;margin-left:auto;}
+.back-link:hover{text-decoration:underline;}
+
+/* ── AREA NAV ── */
+#nav{
+  position:sticky;top:44px;z-index:199;
+  background:rgba(4,6,15,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  display:flex;gap:0;padding:0 14px;overflow-x:auto;
+}
+#nav::-webkit-scrollbar{height:0;}
+.ntab{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:9px 13px;font-size:11px;font-weight:700;
+  letter-spacing:.03em;text-transform:uppercase;
+  color:var(--dim);border-bottom:2px solid transparent;
+  cursor:pointer;white-space:nowrap;text-decoration:none;
+  transition:color .15s,border-color .15s;
+}
+.ntab:hover{color:#fff;}
+.ntab.t { border-color:rgba(255,255,255,.25);color:#b0b8c8;}
+.ntab.r { border-color:var(--em); color:var(--em);}
+.ntab.l { border-color:var(--cyan); color:var(--cyan);}
+.ntab.m { border-color:var(--pur); color:var(--pur);}
+.ntab.n { border-color:var(--red); color:var(--red);}
+.ntab.h { border-color:var(--amber);color:var(--amber);}
+
+/* ── MAIN ── */
+#main{max-width:1080px;margin:0 auto;padding:20px 16px 80px;}
+
+/* ── SECTION HEAD ── */
+.sh{
+  display:flex;align-items:center;gap:10px;
+  padding:18px 0 10px;border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
+.sh-icon{font-size:18px;}
+.sh-name{font-size:18px;font-weight:800;}
+.sh-badge{
+  font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;
+}
+.sh-meta{margin-left:auto;font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace;}
+
+/* ── TOOLS GRID ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:8px;margin-bottom:4px;}
+.tc{
+  background:var(--bg2);border:1px solid var(--border);border-radius:9px;
+  padding:13px 15px;text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;gap:5px;transition:all .15s;
+}
+.tc:hover{background:var(--bg3);border-color:rgba(255,255,255,.14);transform:translateY(-2px);}
+.tc-i{font-size:17px;}
+.tc-n{font-size:12px;font-weight:700;color:#fff;}
+.tc-d{font-size:11px;color:var(--dim);line-height:1.4;}
+
+/* ── ROWS ── */
+.row{
+  display:flex;align-items:flex-start;flex-wrap:wrap;gap:8px;
+  padding:9px 10px;border-radius:7px;margin-bottom:3px;
+  background:rgba(255,255,255,.015);border:1px solid transparent;
+  transition:all .15s;
+}
+.row:hover{background:rgba(255,255,255,.035);border-color:var(--border);}
+.row.hid{display:none!important;}
+.rn{min-width:210px;flex:1;font-size:12px;font-weight:600;color:#dde6f0;line-height:1.3;}
+.rs{font-size:10px;color:var(--dim);font-weight:400;display:block;margin-top:2px;}
+.lg{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+
+/* ── CHIPS ── */
+a.chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:4px 9px;border-radius:5px;border:1px solid;
+  font-size:10px;font-weight:700;text-decoration:none;white-space:nowrap;
+  transition:filter .12s,transform .12s;
+}
+a.chip:hover{filter:brightness(1.25);transform:translateY(-1px);}
+.cn{background:rgba(124,96,232,.12);border-color:rgba(124,96,232,.38);color:#b0a0e0;}
+.cr{background:rgba(124,96,232,.06);border-color:rgba(124,96,232,.2);color:#8878b8;}
+.cl{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.1);color:#6878a0;}
+.ct{background:rgba(0,212,255,.07);border-color:rgba(0,212,255,.25);color:#60b8cc;}
+.cs{background:rgba(16,185,129,.07);border-color:rgba(16,185,129,.25);color:#60b890;}
+
+/* ── SUB-DIVIDER ── */
+.sub{
+  font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--dim);padding:12px 10px 5px;
+  font-family:'JetBrains Mono',monospace;
+}
+
+/* ── NO RESULTS ── */
+#nr{display:none;text-align:center;padding:50px 20px;color:var(--dim);font-size:13px;}
+
+@media(max-width:600px){
+  .tgrid{grid-template-columns:repeat(2,1fr);}
+  .rn{min-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="brand">Hub <em>UNICAP</em> 2026.2</span>
+  <span class="dcount" id="dc">D-…</span>
+  <div class="sw"><input id="sb" type="text" placeholder="Buscar tópico…" oninput="f(this.value)"></div>
+  <a class="back-link" href="dashboard.html">← Dashboard</a>
+</div>
+
+<!-- AREA TABS -->
+<nav id="nav">
+  <a class="ntab t" href="#ferramentas">⚙ Ferramentas</a>
+  <a class="ntab r" href="#redacao">✍ Redação</a>
+  <a class="ntab l" href="#linguagens">📖 Linguagens</a>
+  <a class="ntab m" href="#matematica">∑ Matemática</a>
+  <a class="ntab n" href="#natureza">🔬 Natureza</a>
+  <a class="ntab h" href="#humanas">🏛 Humanas</a>
+</nav>
+
+<div id="main">
+
+<!-- ═══════════════ FERRAMENTAS ═══════════════ -->
+<section id="ferramentas">
+<div class="sh">
+  <span class="sh-icon">⚙️</span>
+  <span class="sh-name">Ferramentas</span>
+  <span class="sh-meta">12 recursos</span>
+</div>
+<div class="tgrid">
+  <a class="tc" href="dashboard.html" style="border-color:rgba(0,212,255,.2)">
+    <div class="tc-i">📅</div><div class="tc-n">Dashboard</div>
+    <div class="tc-d">Plano diário · cronograma · links por sessão</div>
+  </a>
+  <a class="tc" href="plano.html" style="border-color:rgba(255,184,0,.2)">
+    <div class="tc-i">⚔️</div><div class="tc-n">Plano de Guerra</div>
+    <div class="tc-d">Estratégia 5 semanas · priorização ROI</div>
+  </a>
+  <a class="tc" href="cronograma.html" style="border-color:rgba(0,212,255,.15)">
+    <div class="tc-i">🗓️</div><div class="tc-n">Cronograma</div>
+    <div class="tc-d">Visão dos 26 dias da sprint completa</div>
+  </a>
+  <a class="tc" href="materiais/flashcards.html" style="border-color:rgba(124,96,232,.3)">
+    <div class="tc-i">🃏</div><div class="tc-n">Flashcards SM-2</div>
+    <div class="tc-d">32 cards · revisão espaçada · 5 áreas</div>
+  </a>
+  <a class="tc" href="materiais/quiz.html" style="border-color:rgba(16,185,129,.2)">
+    <div class="tc-i">❓</div><div class="tc-n">Quiz Diagnóstico</div>
+    <div class="tc-d">20 questões comentadas · por área</div>
+  </a>
+  <a class="tc" href="simulados/simulado-diagnostico.html" style="border-color:rgba(255,184,0,.2)">
+    <div class="tc-i">🎯</div><div class="tc-n">Simulado Diagnóstico</div>
+    <div class="tc-d">20 questões · 2h · calibra o plano</div>
+  </a>
+  <a class="tc" href="simulados/simulado-cronometrado.html" style="border-color:rgba(239,68,68,.25)">
+    <div class="tc-i">⏱️</div><div class="tc-n">Simulado UNICAP 5h</div>
+    <div class="tc-d">64 questões + redação · gabarito 2026.1</div>
+  </a>
+  <a class="tc" href="redacao/trainer.html" style="border-color:rgba(16,185,129,.25)">
+    <div class="tc-i">✍️</div><div class="tc-n">Redação Trainer</div>
+    <div class="tc-d">90 min cronometrado · IA corrige · 10 temas</div>
+  </a>
+  <a class="tc" href="mapas/mapa-unicap-mestre.html" style="border-color:rgba(0,212,255,.2)">
+    <div class="tc-i">🌌</div><div class="tc-n">Cosmic Atlas</div>
+    <div class="tc-d">11 áreas 3D orbitando · visão geral do programa</div>
+  </a>
+  <a class="tc" href="nexus/index.html" style="border-color:rgba(124,96,232,.35)">
+    <div class="tc-i">✦</div><div class="tc-n">Nexus Premium Hub</div>
+    <div class="tc-d">Central dos 25 mapas imersivos 3D</div>
+  </a>
+  <a class="tc" href="galeria-mapas.html" style="border-color:rgba(255,255,255,.1)">
+    <div class="tc-i">🗺️</div><div class="tc-n">Galeria de Mapas</div>
+    <div class="tc-d">30 mapas legados interativos · todas as áreas</div>
+  </a>
+  <a class="tc" href="materiais/semana-1/index.html" style="border-color:rgba(255,184,0,.15)">
+    <div class="tc-i">📦</div><div class="tc-n">Materiais Semana 1</div>
+    <div class="tc-d">Flashcards + quizzes por tópico · semana 1</div>
+  </a>
+</div>
+</section>
+
+<!-- ═══════════════ REDAÇÃO ═══════════════ -->
+<section id="redacao">
+<div class="sh">
+  <span class="sh-icon">✍️</span>
+  <span class="sh-name" style="color:var(--em)">Redação</span>
+  <span class="sh-badge" style="background:rgba(16,185,129,.1);color:var(--em);border:1px solid rgba(16,185,129,.3)">1º desempate · 1000 pts</span>
+  <span class="sh-meta">norma padrão = 300 pts</span>
+</div>
+<div class="row" data-s="redacao estrutura dissertativo argumentativo titulo nexus">
+  <div class="rn">Estrutura da Redação UNICAP<span class="rs">Dissertativo-argumentativo · título · norma padrão · 8–30 linhas</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/redacao/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/redacao/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-redacao.html">🗺️ Legado</a>
+    <a class="chip ct" href="redacao/trainer.html">✍️ Trainer IA</a>
+    <a class="chip cs" href="materiais/redacao/01-meio-ambiente-correcao.html">📝 RED#1 Corrigida</a>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ LINGUAGENS ═══════════════ -->
+<section id="linguagens">
+<div class="sh">
+  <span class="sh-icon">📖</span>
+  <span class="sh-name" style="color:var(--cyan)">Linguagens</span>
+  <span class="sh-badge" style="background:rgba(0,212,255,.08);color:var(--cyan);border:1px solid rgba(0,212,255,.25)">2º desempate · 16 questões</span>
+  <span class="sh-meta">meta: 13/16</span>
+</div>
+
+<div class="row" data-s="portugues gramatica tipologia sintaxe concordancia regencia crase figuras linguagem interpretacao nexus">
+  <div class="rn">Língua Portuguesa<span class="rs">Tipologia · análise sintática · concordância · regência · crase · figuras de linguagem</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/linguagens/portugues/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/linguagens/portugues/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-portugues.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="ingles english verb tenses modals prepositions pronouns reading leitura nexus">
+  <div class="rn">Inglês<span class="rs">Reading comprehension · verb tenses · modals · prepositions · relative pronouns</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/linguagens/ingles/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/linguagens/ingles/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-ingles.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="romantismo goncalves dias alvares azevedo alencar indianismo nexus literatura">
+  <div class="rn">Literatura · Romantismo<span class="rs">Gonçalves Dias · Álvares de Azevedo · Alencar · 3 gerações · indianismo</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/linguagens/literatura/romantismo/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/linguagens/literatura/romantismo/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="realismo naturalismo machado assis eca queiros determinismo critica social nexus literatura">
+  <div class="rn">Literatura · Realismo / Naturalismo<span class="rs">Machado de Assis · Eça de Queirós · determinismo · crítica social · objetividade</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/linguagens/literatura/realismo/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/linguagens/literatura/realismo/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="modernismo semana 22 mario oswald andrade drummond guimaraes rosa nexus literatura">
+  <div class="rn">Literatura · Modernismo<span class="rs">Semana de 22 · Mário de Andrade · Oswald · Drummond · Guimarães Rosa</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/linguagens/literatura/modernismo/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/linguagens/literatura/modernismo/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="literatura brasileira geral quinhentismo barroco arcadismo camoes gregorio matos">
+  <div class="rn">Literatura Brasileira · Geral (legado)<span class="rs">Quinhentismo · Barroco · Arcadismo · visão panorâmica · Camões · Gregório</span></div>
+  <div class="lg">
+    <a class="chip cl" href="mapas/mapa-literatura-brasileira.html">🗺️ Mapa Legado</a>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ MATEMÁTICA ═══════════════ -->
+<section id="matematica">
+<div class="sh">
+  <span class="sh-icon">∑</span>
+  <span class="sh-name" style="color:var(--pur)">Matemática</span>
+  <span class="sh-badge" style="background:rgba(167,139,250,.08);color:var(--pur);border:1px solid rgba(167,139,250,.25)">3º desempate · 16 questões</span>
+  <span class="sh-meta">meta: 8/16</span>
+</div>
+
+<div class="row" data-s="funcoes graficos 1 2 grau exponencial logaritmica dominio imagem composicao nexus">
+  <div class="rn">Funções e Gráficos<span class="rs">1º e 2º grau · exponencial · logarítmica · composição · domínio · imagem</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/matematica/funcoes/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/matematica/funcoes/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-matematica-funcoes.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="geometria plana espacial triangulos pitagoras areas volumes prismas cilindro nexus">
+  <div class="rn">Geometria Plana e Espacial<span class="rs">Triângulos · Pitágoras · áreas · prismas · cilindro · cone · esfera · Tales</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/matematica/geometria/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/matematica/geometria/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-matematica-geometria.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="aritmetica pa pg progressao porcentagem juros simples composto mmc mdc nexus">
+  <div class="rn">Aritmética, PA e PG<span class="rs">Progressões · porcentagem · juros simples/compostos · MMC · MDC · razão</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/matematica/aritmetica/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/matematica/aritmetica/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-matematica-aritmetica.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="trigonometria seno cosseno tangente valores notaveis circulo lei nexus">
+  <div class="rn">Trigonometria<span class="rs">Seno · cosseno · tangente · valores notáveis · Lei dos Senos e Cossenos</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/matematica/trigonometria/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/matematica/trigonometria/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-matematica-trigonometria.html">🗺️ Legado</a>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ NATUREZA ═══════════════ -->
+<section id="natureza">
+<div class="sh">
+  <span class="sh-icon">🔬</span>
+  <span class="sh-name" style="color:var(--red)">Ciências da Natureza</span>
+  <span class="sh-badge" style="background:rgba(239,68,68,.08);color:var(--red);border:1px solid rgba(239,68,68,.25)">4º desempate · 16 questões</span>
+  <span class="sh-meta">meta: 6/16 · não zerar</span>
+</div>
+
+<div class="row" data-s="biologia celular genetica dna organelas mitose meiose mendel sintese proteinas nexus">
+  <div class="rn">Biologia · Celular e Genética<span class="rs">Organelas · DNA · respiração celular · mitose/meiose · Mendel · biotecnologia</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/natureza/biologia-celular/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/natureza/biologia-celular/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-biologia-celular.html">🗺️ Celular</a>
+    <a class="chip cl" href="mapas/mapa-biologia-genetica.html">🗺️ Genética</a>
+    <a class="chip cs" href="materiais/natureza/modelo-3d-celula.html">🧬 Célula 3D</a>
+  </div>
+</div>
+
+<div class="row" data-s="ecologia evolucao biomas darwin cadeia alimentar ciclos biogeoquimicos nexus">
+  <div class="rn">Biologia · Ecologia e Evolução<span class="rs">Cadeias alimentares · biomas brasileiros · ciclos biogeoquímicos · Darwin</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/natureza/ecologia-evolucao/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/natureza/ecologia-evolucao/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-biologia-ecologia.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="quimica tabela periodica ligacoes estequiometria acidos bases organica funcoes nexus">
+  <div class="rn">Química<span class="rs">Tabela periódica · ligações · funções inorgânicas · estequiometria · orgânica básica</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/natureza/quimica/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/natureza/quimica/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-quimica-geral.html">🗺️ Geral</a>
+    <a class="chip cl" href="mapas/mapa-quimica-organica.html">🗺️ Orgânica</a>
+  </div>
+</div>
+
+<div class="row" data-s="fisica mecanica cinematica dinamica newton energia eletromagnetismo ondas optica nexus">
+  <div class="rn">Física<span class="rs">Cinemática · dinâmica · energia · eletrostática · circuitos · óptica · ondulatória</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/natureza/fisica/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/natureza/fisica/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-fisica-mecanica.html">🗺️ Mecânica</a>
+    <a class="chip cl" href="mapas/mapa-fisica-ondas-optica.html">🗺️ Ondas/Óptica</a>
+    <a class="chip cl" href="mapas/mapa-fisica-eletromagnetismo.html">🗺️ Eletromag</a>
+  </div>
+</div>
+</section>
+
+<!-- ═══════════════ HUMANAS ═══════════════ -->
+<section id="humanas">
+<div class="sh">
+  <span class="sh-icon">🏛️</span>
+  <span class="sh-name" style="color:var(--amber)">Ciências Humanas</span>
+  <span class="sh-badge" style="background:rgba(255,184,0,.08);color:var(--amber);border:1px solid rgba(255,184,0,.25)">5º desempate · 16 questões</span>
+  <span class="sh-meta">meta: 12/16</span>
+</div>
+
+<div class="sub">— Filosofia —</div>
+
+<div class="row" data-s="socrates maieutica ironia virtude metodo sokratico conhecimento nexus filosofia">
+  <div class="rn">Filosofia · Sócrates<span class="rs">Método socrático · maiêutica · ironia · virtude como conhecimento · julgamento</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/filosofia/socrates/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/filosofia/socrates/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="platao alegoria caverna ideias republica filosofo rei demiurgo nexus filosofia">
+  <div class="rn">Filosofia · Platão<span class="rs">Alegoria da Caverna · mundo das Ideias · República · filósofo-rei · Demiurgo</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/filosofia/platao/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/filosofia/platao/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="aristoteles logica metafisica etica eudaimonia politica zoon politikon nexus filosofia">
+  <div class="rn">Filosofia · Aristóteles<span class="rs">Lógica · metafísica (hylomorfismo) · ética (eudaimonia) · política (zoon politikon)</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/filosofia/aristoteles/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/filosofia/aristoteles/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="iluminismo voltaire rousseau montesquieu kant locke enciclopedia contratualismo nexus filosofia">
+  <div class="rn">Filosofia · Iluminismo e Contratualistas<span class="rs">Voltaire · Rousseau · Montesquieu · Locke · Kant · Encyclopédie · Rev. Francesa</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/filosofia/iluminismo/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/filosofia/iluminismo/resumo.html">📋 Resumo</a>
+  </div>
+</div>
+
+<div class="row" data-s="filosofia geral hobbes nietzsche sartre foucault hegel marx adorno kant imperativo">
+  <div class="rn">Filosofia Geral · Contemporânea (legado)<span class="rs">Hobbes · Nietzsche · Sartre · Foucault · Adorno · imperativo categórico · dialética</span></div>
+  <div class="lg">
+    <a class="chip cl" href="mapas/mapa-filosofia.html">🗺️ Mapa Legado</a>
+  </div>
+</div>
+
+<div class="sub">— Sociologia —</div>
+
+<div class="row" data-s="sociologia marx weber durkheim fato social alienacao mais valia burocracia nexus">
+  <div class="rn">Sociologia · Os Fundadores<span class="rs">Marx (alienação, mais-valia) · Durkheim (fato social, anomia) · Weber (ação social)</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/sociologia/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/sociologia/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-sociologia.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="atualidades contemporaneo bauman modernidade liquida bourdieu globalizacao desigualdade">
+  <div class="rn">Sociologia · Contemporânea e Atualidades<span class="rs">Bauman (modernidade líquida) · Bourdieu · temas atuais · desigualdade social</span></div>
+  <div class="lg">
+    <a class="chip cl" href="mapas/mapa-atualidades.html">🗺️ Mapa Legado</a>
+  </div>
+</div>
+
+<div class="sub">— História —</div>
+
+<div class="row" data-s="historia antiga grecia roma polis republica grega mesopotamia egipto medieval feudalismo nexus">
+  <div class="rn">História Geral · Antiguidade e Medievo<span class="rs">Grécia · Roma · polis · Feudalismo · Cruzadas · Renascimento Urbano</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/historia/geral-antiga-medieval/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/historia/geral-antiga-medieval/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-historia-antiga.html">🗺️ Antiga</a>
+    <a class="chip cl" href="mapas/mapa-historia-medieval.html">🗺️ Medieval</a>
+  </div>
+</div>
+
+<div class="row" data-s="historia moderna absolutismo reforma protestante expansao maritima revolucao francesa americana industrial nexus">
+  <div class="rn">História Geral · Moderna e Revoluções<span class="rs">Absolutismo · Reforma · Expansão Marítima · Rev. Francesa · Rev. Industrial</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/historia/geral-moderna-revolucoes/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/historia/geral-moderna-revolucoes/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-historia-moderna.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="historia contemporanea primeira segunda guerra mundial fria descolonizacao globalizacao nexus">
+  <div class="rn">História Geral · Contemporânea<span class="rs">WWI · WWII · Holocausto · Guerra Fria · Descolonização · Globalização · séc. XXI</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/historia/contemporanea/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/historia/contemporanea/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-historia-contemporanea.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="row" data-s="brasil colonial imperial capitanias escravidao familia real independencia primeiro segundo reinado nexus">
+  <div class="rn">Brasil · Colonial e Imperial<span class="rs">Capitanias · ciclos econômicos · escravidão · Família Real · Independência · Império</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/historia/brasil-colonial-imperial/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/historia/brasil-colonial-imperial/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-brasil-colonial.html">🗺️ Colonial</a>
+    <a class="chip cl" href="mapas/mapa-brasil-imperio.html">🗺️ Império</a>
+  </div>
+</div>
+
+<div class="row" data-s="brasil republica velha vargas estado novo clt ditadura militar cf88 sarney nexus">
+  <div class="rn">Brasil · República<span class="rs">Rep. Velha · Era Vargas · Estado Novo · CLT · Ditadura 1964 · CF/88 · redemocratização</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/historia/brasil-republica/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/historia/brasil-republica/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-brasil-republica.html">🗺️ Legado</a>
+  </div>
+</div>
+
+<div class="sub">— Geografia —</div>
+
+<div class="row" data-s="geografia brasil geopolitica biomas regioes clima hidrografia urbanizacao mercosul globalizacao nexus">
+  <div class="rn">Geografia · Brasil e Geopolítica<span class="rs">Biomas · regiões · clima · hidrografia · urbanização · MERCOSUL · globalização</span></div>
+  <div class="lg">
+    <a class="chip cn" href="nexus/humanas/geografia/mapa3d.html">✦ Mapa 3D</a>
+    <a class="chip cr" href="nexus/humanas/geografia/resumo.html">📋 Resumo</a>
+    <a class="chip cl" href="mapas/mapa-geografia-humana.html">🗺️ Humana</a>
+    <a class="chip cl" href="mapas/mapa-geografia-economica.html">🗺️ Econômica</a>
+    <a class="chip cl" href="mapas/mapa-geografia-fisica.html">🗺️ Física</a>
+  </div>
+</div>
+
+</section>
+
+<!-- NO RESULTS -->
+<div id="nr">Nenhum resultado para "<span id="nrt"></span>"</div>
+
+</div><!-- /main -->
+
+<script>
+// Countdown
+(function(){
+  const d = Math.max(0, Math.floor((new Date('2026-06-14T08:00:00') - new Date()) / 86400000));
+  document.getElementById('dc').textContent = 'D-' + d + ' · 14/jun';
+})();
+
+// Normalize text (remove accents for search)
+function norm(s){ return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+
+// Search filter
+function f(q){
+  q = norm(q.trim());
+  const rows = document.querySelectorAll('.row');
+  let vis = 0;
+  rows.forEach(r => {
+    const hay = norm((r.dataset.s||'') + ' ' + r.textContent);
+    const show = !q || hay.includes(q);
+    r.classList.toggle('hid', !show);
+    if(show) vis++;
+  });
+  // Hide empty sections
+  document.querySelectorAll('section').forEach(sec => {
+    if(sec.id === 'ferramentas') return;
+    const visible = [...sec.querySelectorAll('.row')].some(r => !r.classList.contains('hid'));
+    sec.style.display = (q && !visible) ? 'none' : '';
+  });
+  const nr = document.getElementById('nr');
+  document.getElementById('nrt').textContent = document.getElementById('sb').value;
+  nr.style.display = (q && vis === 0) ? 'block' : 'none';
+}
+
+// Highlight active tab on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      const id = e.target.id;
+      document.querySelectorAll('.ntab').forEach(t => {
+        t.style.opacity = t.getAttribute('href') === '#'+id ? '1' : '.55';
+      });
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('section[id]').forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

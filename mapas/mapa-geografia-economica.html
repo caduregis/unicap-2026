@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia Econômica · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">GEO ECONÔMICA</div><div class="lt2">indústria · agro · energia · geopolítica</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">⚙</div><div class="bt"><div class="l1">Geografia Econômica</div><div class="l2">Geografia · Bloco 3</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · GEO ECON</span><h1>Geografia Econômica</h1><p>Indústria, agropecuária, energia, transporte, geopolítica, blocos econômicos. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em marco</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#fbbf24', corHex2:'#f59e0b', bg:'#1a1004', hubForma:'octa' };
+window.MARCOS = [
+{cod:'GEO E1',nome:'Indústria · Brasil e Mundo',sub:'Tipos, distribuição, polos',forma:'tetra',cor:0xfbbf24,
+topicos:['Industrialização: 3 revoluções industriais','Tipos de indústria: extrativa, de transformação (bens de capital, intermediários, consumo)','Fatores locacionais: matéria-prima, mão de obra, transporte, mercado, energia','Indústria no Brasil: começa nos anos 1930 (Vargas), explosão JK (1956-61)','Tripé do desenvolvimentismo: estatal + privado nacional + multinacional','ISI (Industrialização por Substituição de Importações)','Período "milagre econômico" (1968-73)','Polos industriais do Brasil: SP (ABC paulista, automobilístico), RJ, MG, RS, Manaus (ZFM)','Zona Franca de Manaus (incentivos fiscais)','Indústria petroquímica: Camaçari (BA), Suape (PE)','Indústria mundial: 4 tigres asiáticos, China, Índia','Tecnopolos, indústria 4.0, Internet das Coisas (IoT)','Desindustrialização precoce do Brasil (perde participação na manufatura desde 1985)'],
+resumo:'Brasil industrializou-se entre 1930-80 mas vem desindustrializando desde 1990. China é a fábrica do mundo desde 2010. Brasil = primário-exportador.',
+dica:'⚠️ SUAPE (PE) é o complexo petroquímico de Pernambuco — local de Suape é base do desenvolvimento NE. Indústria 4.0 = automação + IA + IoT.'},
+{cod:'GEO E2',nome:'Agropecuária · Estrutura Fundiária',sub:'Latifúndio, agronegócio, reforma agrária',forma:'dodeca',cor:0x84cc16,
+topicos:['Agropecuária: agricultura + pecuária','Estrutura fundiária brasileira: concentrada (Índice de Gini ~0,87)','Latifúndio × minifúndio (pequenos produtores familiares)','Agricultura familiar produz ~70% da comida (alimentos básicos)','Agronegócio (commodities): soja, milho, algodão, cana, café, laranja, carne','Brasil = maior exportador de soja, carne bovina, suco de laranja, café','Pecuária: bovina (BR maior rebanho do mundo), suína, avícola, ovina','Modernização do campo (Revolução Verde): mecanização, agrotóxicos, transgênicos','Embrapa (Empresa Brasileira de Pesquisa Agropecuária)','Conflitos no campo: MST (Movimento dos Trabalhadores Rurais Sem Terra)','Reforma agrária: pendente desde 1964','Pronaf (Programa Nacional de Fortalecimento da Agricultura Familiar)','Pernambuco: cana-de-açúcar (Zona da Mata), fruticultura irrigada (Vale do São Francisco), pecuária no Sertão'],
+resumo:'Brasil é potência agropecuária mas tem estrutura fundiária EXTREMAMENTE concentrada. Agronegócio gera muitas divisas mas pouco emprego comparativo.',
+dica:'⚠️ PERNAMBUCO: cana-de-açúcar (Zona da Mata), fruticultura (Petrolina = manga, uva), pecuária (Sertão). Petrolina-Juazeiro = polo de irrigação do São Francisco.'},
+{cod:'GEO E3',nome:'Energia · Recursos Naturais',sub:'Matriz brasileira × mundial',forma:'icosa',cor:0xef4444,
+topicos:['Matriz energética: % de cada fonte','Matriz brasileira: ~45% renovável (hidrelétrica + eólica + solar + biomassa)','Matriz mundial: ~80% fóssil (petróleo, gás, carvão)','Hidrelétricas brasileiras: Itaipu, Belo Monte, Tucuruí, Sobradinho, Furnas','Termelétricas: gás natural, carvão, biomassa','Eólica: Nordeste brasileiro (RN, CE, BA, PE) é polo mundial','Solar: crescente, especialmente no NE (Pernambuco em alta)','Nuclear: Angra 1, 2, 3 (RJ) — fonte de 2% no Brasil','Petróleo: pré-sal (RJ, ES, SP) — desafio tecnológico','Etanol: Brasil é pioneiro mundial (cana-de-açúcar)','Crise energética: apagão de 2001 (Cardoso), racionamento','Mudanças climáticas, transição energética, "Green Deal"'],
+resumo:'Brasil tem matriz energética relativamente limpa (45% renovável), graças a hidrelétricas. Mundo ainda depende muito de fósseis (~80%).',
+dica:'⚠️ NORDESTE BRASILEIRO é POLO MUNDIAL de energia EÓLICA. RN, CE, BA, PE liderem. Bagaço da cana (PE) também gera energia (biomassa).'},
+{cod:'GEO E4',nome:'Geopolítica · Blocos',sub:'Ordem internacional · Brasil no mundo',forma:'torus',cor:0x06b6d4,
+topicos:['Geopolítica: relações poder × espaço','Ordem mundial pós-1945: bipolar (EUA × URSS) → 1991 unipolar (EUA) → atual multipolar','BRICS (Brasil, Rússia, Índia, China, África do Sul, + Egito, Etiópia, Irã, EAU desde 2024)','G7 (potências ocidentais): EUA, Japão, Alemanha, UK, França, Itália, Canadá','G20: maiores economias','Blocos econômicos: UE (União Europeia), USMCA (ex-NAFTA), Mercosul (BR/AR/UY/PY/BO), Aliança do Pacífico, ASEAN, União Africana','Mercosul (1991, Tratado de Assunção): mercado comum (parcial), tarifa externa comum','OMC, FMI, Banco Mundial — instituições de Bretton Woods (1944)','ONU, Conselho de Segurança (P5: EUA, China, Rússia, França, UK)','Brasil pleiteia assento permanente no Conselho de Segurança','Conflitos geopolíticos: Rússia × Ucrânia (2022+), Israel × Hamas (2023+), China × Taiwan (latente)','Globalização × desglobalização (pós-2008, pós-pandemia)','China × EUA: nova guerra fria (econômica e tecnológica)'],
+resumo:'Mundo é multipolar hoje. BRICS ganhou força. China desafia EUA. Brasil tenta papel intermediário ("autonomia pela diversificação"). Globalização em refluxo.',
+dica:'⚠️ BRICS expandido em 2024 (Egito, Etiópia, Irã, EAU). Brasil sediará BRICS 2025 e COP30 (Belém). G20 foi no RJ em 2024 (presidência brasileira).'},
+{cod:'GEO E5',nome:'Pernambuco · Regional',sub:'Geografia local específica',forma:'octa',cor:0xa855f7,
+topicos:['Pernambuco: 8º maior PIB do Brasil, ~9,5 milhões de habitantes','Mesorregiões: Litoral/Zona da Mata, Agreste, Sertão, São Francisco','Polo de Suape (Cabo de Santo Agostinho): estaleiro, refinaria, petroquímica','Polo médico do Recife (4ª capital em saúde)','Porto Digital (Recife) — polo de tecnologia','Petrolina-Juazeiro (PE/BA): fruticultura irrigada, polo agrícola','Litoral: turismo (Porto de Galinhas, Tamandaré, Fernando de Noronha)','Agreste: confecções (Caruaru, Toritama, Santa Cruz do Capibaribe — Polo de Confecções)','Sertão: pecuária, semiárido, convivência','Recife: enchentes, mobilidade, conflito do Pina e Brasília Teimosa','São Francisco: Transposição (eixos Norte e Leste em PE)','Olinda: patrimônio cultural mundial UNESCO (1982)'],
+resumo:'Pernambuco tem economia diversificada: Suape (indústria), Porto Digital (tech), Petrolina (agro), Caruaru (confecções), turismo (Porto de Galinhas, Noronha).',
+dica:'⚠️⚠️ UNICAP! PE é foco. Suape, Porto Digital, Polo de Confecções do Agreste (Caruaru), Polo de Petrolina (fruticultura). Olinda Patrimônio Mundial (1982).'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

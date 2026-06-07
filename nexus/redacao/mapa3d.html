@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Scriptorium — Redação UNICAP</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #050302; overflow: hidden; font-family: 'Georgia', serif; }
+
+  #canvas-container { width: 100vw; height: 100vh; display: block; }
+
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(5,3,2,0.95) 0%, rgba(5,3,2,0) 100%);
+  }
+  #navbar a {
+    color: #c8a96e; text-decoration: none; font-size: 13px; letter-spacing: 0.05em;
+    padding: 6px 14px; border: 1px solid rgba(200,169,110,0.3);
+    border-radius: 6px; transition: all 0.2s;
+    font-family: 'Georgia', serif;
+  }
+  #navbar a:hover { background: rgba(200,169,110,0.1); border-color: rgba(200,169,110,0.6); }
+  #navbar .badge {
+    color: #e8c87a; font-size: 14px; letter-spacing: 0.08em;
+    text-shadow: 0 0 12px rgba(255,176,48,0.5);
+  }
+
+  #hint {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    color: rgba(200,169,110,0.6); font-size: 13px; letter-spacing: 0.1em;
+    pointer-events: none;
+    animation: fadeHint 3s ease-in-out infinite;
+  }
+  @keyframes fadeHint {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.9; }
+  }
+
+  #popup {
+    display: none; position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(8,5,3,0.97);
+    border: 1px solid rgba(200,169,110,0.4);
+    border-radius: 20px; padding: 40px; max-width: 540px; width: 90%;
+    z-index: 200; box-shadow: 0 0 60px rgba(255,160,48,0.15);
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: translate(-50%,-50%) scale(0.85); }
+    to { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  }
+  #popup .pop-title {
+    font-size: 22px; color: #e8c87a; margin-bottom: 4px;
+    text-shadow: 0 0 20px rgba(255,176,48,0.4);
+    letter-spacing: 0.04em;
+  }
+  #popup .pop-subtitle {
+    font-size: 13px; color: rgba(200,169,110,0.6);
+    margin-bottom: 20px; letter-spacing: 0.08em;
+  }
+  #popup .pop-divider {
+    border: none; border-top: 1px solid rgba(200,169,110,0.2);
+    margin: 16px 0;
+  }
+  #popup .pop-desc {
+    font-size: 14px; color: #c8c0b0; line-height: 1.75;
+    margin-bottom: 20px; font-family: 'Georgia', serif;
+  }
+  #popup .pop-tip {
+    background: rgba(200,169,110,0.06);
+    border-left: 3px solid #e8c87a;
+    border-radius: 0 10px 10px 0;
+    padding: 16px 20px;
+    margin-top: 8px;
+  }
+  #popup .pop-tip .tip-label {
+    font-size: 10px; letter-spacing: 0.15em; color: #e8c87a;
+    font-weight: bold; margin-bottom: 8px; font-family: 'Georgia', serif;
+  }
+  #popup .pop-tip p {
+    font-size: 13px; color: #b8b0a0; line-height: 1.7; font-family: 'Georgia', serif;
+  }
+  #popup-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; color: rgba(200,169,110,0.5);
+    font-size: 22px; cursor: pointer; transition: color 0.2s;
+    font-family: 'Georgia', serif;
+  }
+  #popup-close:hover { color: #e8c87a; }
+  #popup-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); z-index: 199;
+  }
+</style>
+</head>
+<body>
+<div id="navbar">
+  <a href="../index.html">← Nexus</a>
+  <span class="badge">✍ O Scriptorium — Redação UNICAP</span>
+  <a href="resumo.html">Resumo →</a>
+</div>
+
+<div id="canvas-container"></div>
+
+<div id="hint">Clique nos pergaminhos para abrir cada critério</div>
+
+<div id="popup-overlay" onclick="closePopup()"></div>
+<div id="popup">
+  <button id="popup-close" onclick="closePopup()">✕</button>
+  <div class="pop-title" id="pop-title"></div>
+  <div class="pop-subtitle" id="pop-subtitle"></div>
+  <hr class="pop-divider">
+  <div class="pop-desc" id="pop-desc"></div>
+  <div class="pop-tip">
+    <div class="tip-label">DICA UNICAP</div>
+    <p id="pop-tip"></p>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const scrollData = [
+  {
+    name: "ESTRUTURA",
+    points: "100 pts",
+    title: "Estrutura do Texto",
+    subtitle: "100 pontos",
+    desc: "Título obrigatório — sem título perde pontos imediatamente. 8 linhas mínimo, 30 linhas máximo. Introdução + 2 a 3 parágrafos de desenvolvimento + conclusão com proposta de intervenção. Parágrafos claramente demarcados com recuo ou espaçamento. Texto coeso e coerente do início ao fim.",
+    tip: "UNICAP sempre exige título. Candidatos que não colocam título já começam perdendo. Treine sempre escrever um título inteligente que antecipe sua tese sem ser óbvio demais."
+  },
+  {
+    name: "TEMA",
+    points: "200 pts",
+    title: "Apropriação Temática",
+    subtitle: "200 pontos",
+    desc: "Gênero dissertativo-argumentativo obrigatório. Texto deve responder diretamente ao tema proposto. Fuga ao tema = ZERO em toda a redação. A banca usa 1 a 2 textos motivadores (geralmente 1 literário + 1 jornalístico). Você deve dialogar com esses textos sem copiá-los. Tese clara na introdução, desenvolvida nos parágrafos, retomada na conclusão.",
+    tip: "Leia os textos motivadores inteiros antes de começar. A UNICAP 2026.1 usou Ricardo Azevedo + Millôr Fernandes sobre meio ambiente. Integre os textos motivadores à sua argumentação — mostra maturidade leitora."
+  },
+  {
+    name: "ARGUMENTOS",
+    points: "200 pts",
+    title: "Construção dos Argumentos",
+    subtitle: "200 pontos",
+    desc: "Cada parágrafo de desenvolvimento = 1 argumento principal + 1 evidência concreta (dados estatísticos, fatos históricos, obras literárias, exemplos do Brasil ou do mundo) + análise da relação entre argumento e evidência. Argumentos devem ser progressivos: do mais geral ao mais específico. Evitar argumentos de senso comum.",
+    tip: "Argumentos sem evidência são opiniões — valem menos. Use repertório culto: filosofia (Rousseau, Kant), história (exemplos concretos com datas), literatura (obras citadas corretamente), dados de institutos reconhecidos (IBGE, ONU, IPEA)."
+  },
+  {
+    name: "RELEVÂNCIA",
+    points: "200 pts",
+    title: "Relevância da Argumentação",
+    subtitle: "200 pontos",
+    desc: "Atualidade e impacto social da argumentação. Conexão com o contexto brasileiro e global. Proposta de intervenção detalhada na conclusão: AGENTE específico + AÇÃO concreta + FINALIDADE social. A proposta deve ser viável, específica e conectada com o tema.",
+    tip: "A proposta de intervenção vaga ('as pessoas devem se conscientizar') vale pouco. Seja específico: 'O Ministério da Educação, por meio de campanhas nas redes sociais e currículos escolares, deve...'. Isso demonstra domínio do tema e pensamento crítico."
+  },
+  {
+    name: "NORMA — 300 pts ★",
+    points: "300 pts",
+    title: "Domínio da Norma Padrão",
+    subtitle: "300 pontos — MAIOR PESO",
+    desc: "O critério de MAIOR pontuação. Abrange: ortografia (incluindo acentuação), concordância verbal e nominal, regência verbal e nominal, pontuação (vírgula, ponto e vírgula, dois-pontos), coesão textual (uso correto de conectivos), coerência argumentativa, adequação ao registro formal escrito. Evitar: uso de gírias, linguagem informal, abreviações, repetição excessiva de palavras.",
+    tip: "Norma é o mais fácil de melhorar com prática. Uma vírgula mal posta entre sujeito e predicado, ou um acento errado custam pontos. Revise SEMPRE antes de entregar. Priorize: não errar o que você já sabe — ortografia de palavras comuns, concordância sujeito-verbo."
+  }
+];
+
+// Scene setup
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x050302);
+scene.fog = new THREE.Fog(0x080503, 15, 45);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 12, 16);
+camera.lookAt(0, 0, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x050302);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.target.set(0, 0, 0);
+controls.maxPolarAngle = Math.PI * 0.52;
+controls.minDistance = 6;
+controls.maxDistance = 28;
+
+// Ambient light
+scene.add(new THREE.AmbientLight(0x200e05, 0.6));
+
+// Floor
+const floorGeo = new THREE.PlaneGeometry(30, 30);
+const floorMat = new THREE.MeshLambertMaterial({ color: 0x1a1208 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Back wall
+const backWallGeo = new THREE.PlaneGeometry(30, 12);
+const wallMat = new THREE.MeshLambertMaterial({ color: 0x1a1510 });
+const backWall = new THREE.Mesh(backWallGeo, wallMat);
+backWall.position.set(0, 4, -8);
+scene.add(backWall);
+
+// Side walls
+const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 12), wallMat.clone());
+leftWall.position.set(-12, 4, 0);
+leftWall.rotation.y = Math.PI / 2;
+scene.add(leftWall);
+
+const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 12), wallMat.clone());
+rightWall.position.set(12, 4, 0);
+rightWall.rotation.y = -Math.PI / 2;
+scene.add(rightWall);
+
+// Desk surface
+const deskGeo = new THREE.BoxGeometry(9, 0.25, 5.5);
+const deskMat = new THREE.MeshLambertMaterial({ color: 0x3d1f08 });
+const desk = new THREE.Mesh(deskGeo, deskMat);
+desk.position.set(0, -0.13, 0);
+desk.receiveShadow = true;
+desk.castShadow = true;
+scene.add(desk);
+
+// Desk legs
+const legMat = new THREE.MeshLambertMaterial({ color: 0x2a1505 });
+const legPositions = [[-3.9, -0.88, -2.4], [3.9, -0.88, -2.4], [-3.9, -0.88, 2.4], [3.9, -0.88, 2.4]];
+legPositions.forEach(pos => {
+  const leg = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 0.3), legMat);
+  leg.position.set(...pos);
+  leg.castShadow = true;
+  scene.add(leg);
+});
+
+// ── PARCHMENT SCROLL TEXTURES ─────────────────────────────────────────────
+function makeScrollTexture(label, pts, isLarge) {
+  const W = 256, H = isLarge ? 320 : 290;
+  const cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+
+  // Parchment gradient
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, '#d4b47a');
+  grad.addColorStop(0.4, '#c8a96e');
+  grad.addColorStop(1, '#b89455');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Aged texture noise
+  for (let i = 0; i < 400; i++) {
+    const x = Math.random() * W, y = Math.random() * H;
+    ctx.fillStyle = `rgba(80,40,0,${Math.random() * 0.06})`;
+    ctx.fillRect(x, y, Math.random() * 4 + 1, Math.random() * 2 + 1);
+  }
+
+  // Decorative border (double line)
+  ctx.strokeStyle = 'rgba(80,40,8,0.55)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(8, 8, W - 16, H - 16);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(12, 12, W - 24, H - 24);
+
+  // Corner ornaments
+  const corners = [[14,14],[W-14,14],[14,H-14],[W-14,H-14]];
+  corners.forEach(([cx,cy]) => {
+    ctx.fillStyle = 'rgba(80,40,8,0.55)';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Title text
+  ctx.fillStyle = '#3a1a04';
+  ctx.font = `bold ${isLarge ? 18 : 17}px Georgia, serif`;
+  ctx.textAlign = 'center';
+  const words = label.split(' ');
+  let y0 = 52;
+  // If too long, wrap
+  if (label.length > 10) {
+    words.forEach((w, i) => {
+      ctx.fillText(w, W/2, y0 + i * 22);
+    });
+    y0 += words.length * 22 - 22;
+  } else {
+    ctx.fillText(label, W/2, y0);
+  }
+
+  // Horizontal rule
+  ctx.strokeStyle = 'rgba(80,40,8,0.4)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(30, y0 + 14);
+  ctx.lineTo(W - 30, y0 + 14);
+  ctx.stroke();
+
+  // Points
+  ctx.fillStyle = '#5a2e08';
+  ctx.font = `${isLarge ? 15 : 13}px Georgia, serif`;
+  ctx.fillText(pts, W/2, y0 + 34);
+
+  // Decorative lines (ruled paper effect)
+  ctx.strokeStyle = 'rgba(100,60,10,0.18)';
+  ctx.lineWidth = 0.8;
+  for (let ly = y0 + 55; ly < H - 25; ly += 16) {
+    ctx.beginPath();
+    ctx.moveTo(28, ly);
+    ctx.lineTo(W - 28, ly);
+    ctx.stroke();
+  }
+
+  // Small ink mark
+  ctx.fillStyle = 'rgba(20,10,2,0.5)';
+  ctx.beginPath();
+  ctx.arc(W/2 + 30, H - 35, 3, 0, Math.PI*2);
+  ctx.fill();
+
+  const tex = new THREE.CanvasTexture(cv);
+  return tex;
+}
+
+// Scroll positions & rotations on the desk
+const scrollDefs = [
+  { x: -3.5, z: 0.5,  ry: 0.18,  w: 1.6, h: 2.2 },
+  { x: -1.8, z: 0.3,  ry: 0.09,  w: 1.6, h: 2.2 },
+  { x:  0,   z: 0.0,  ry: 0,     w: 1.6, h: 2.2 },
+  { x:  1.8, z: 0.3,  ry: -0.09, w: 1.6, h: 2.2 },
+  { x:  3.5, z: 0.5,  ry: -0.18, w: 1.8, h: 2.4 }
+];
+
+const scrollMeshes = [];
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+scrollDefs.forEach((def, i) => {
+  const isLarge = i === 4;
+  const tex = makeScrollTexture(scrollData[i].name, scrollData[i].points, isLarge);
+  const geo = new THREE.PlaneGeometry(def.w, def.h);
+  const mat = new THREE.MeshLambertMaterial({
+    map: tex, side: THREE.DoubleSide,
+    emissive: new THREE.Color(0x000000),
+    emissiveIntensity: 0
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(def.x, 0.16, def.z);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.rotation.z = def.ry;
+  mesh.userData = { data: scrollData[i], index: i, baseY: 0.16, hovered: false, selected: false };
+  scrollMeshes.push(mesh);
+  scene.add(mesh);
+});
+
+// Quill pen
+const quillMat = new THREE.MeshLambertMaterial({ color: 0x2a1004 });
+const quill = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.04, 2.5, 8), quillMat);
+quill.position.set(0.6, 0.15, -0.8);
+quill.rotation.z = 0.4;
+quill.rotation.y = 0.3;
+scene.add(quill);
+
+// Quill feather (flattened sphere)
+const featherGeo = new THREE.SphereGeometry(0.15, 8, 6);
+featherGeo.scale(1, 0.3, 0.6);
+const featherMat = new THREE.MeshLambertMaterial({ color: 0xe8dfc0 });
+const feather = new THREE.Mesh(featherGeo, featherMat);
+feather.position.set(0.6 - Math.sin(0.4)*1.1, 0.22, -0.8 + Math.cos(0.3)*1.1);
+scene.add(feather);
+
+// Inkwell
+const inkwellMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
+const inkwell = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.25, 0.3, 12), inkwellMat);
+inkwell.position.set(3.8, 0.12, -1.8);
+scene.add(inkwell);
+// Inkwell body
+const inkBodyMat = new THREE.MeshLambertMaterial({ color: 0x1a0e06 });
+const inkBody = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.27, 0.35, 12), inkBodyMat);
+inkBody.position.set(3.8, 0.0, -1.8);
+scene.add(inkBody);
+
+// ── CANDLES ───────────────────────────────────────────────────────────────
+const candlePositions = [[-3.6, -1.9], [3.6, -1.9], [-3.6, 1.9], [3.6, 1.9]];
+const pointLights = [];
+
+candlePositions.forEach(([cx, cz], i) => {
+  // Candle stick
+  const stickMat = new THREE.MeshLambertMaterial({ color: 0xf5f0e0 });
+  const stick = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 0.45, 10), stickMat);
+  stick.position.set(cx, 0.11, cz);
+  scene.add(stick);
+
+  // Flame sphere
+  const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa20 });
+  const flame = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), flameMat);
+  flame.position.set(cx, 0.42, cz);
+  scene.add(flame);
+
+  // Point light at candle
+  const pl = new THREE.PointLight(0xffa030, 1.8, 7);
+  pl.position.set(cx, 0.7, cz);
+  scene.add(pl);
+  pointLights.push({ light: pl, cx, cz, base: 1.8, offset: i * 1.3 });
+});
+
+// Central desk light (softer, broader)
+const deskLight = new THREE.PointLight(0xffb850, 1.2, 14);
+deskLight.position.set(0, 5, 0);
+scene.add(deskLight);
+pointLights.push({ light: deskLight, base: 1.2, offset: 2.7, isDeskLight: true });
+
+// ── DUST PARTICLES ────────────────────────────────────────────────────────
+const DUST_COUNT = 300;
+const dustPositions = new Float32Array(DUST_COUNT * 3);
+const dustVelocities = new Float32Array(DUST_COUNT);
+
+for (let i = 0; i < DUST_COUNT; i++) {
+  dustPositions[i * 3]     = (Math.random() - 0.5) * 8;
+  dustPositions[i * 3 + 1] = Math.random() * 6;
+  dustPositions[i * 3 + 2] = (Math.random() - 0.5) * 6;
+  dustVelocities[i] = 0.002 + Math.random() * 0.003;
+}
+
+const dustGeo = new THREE.BufferGeometry();
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+const dustMat = new THREE.PointsMaterial({ color: 0xffd080, size: 0.04, transparent: true, opacity: 0.5 });
+const dust = new THREE.Points(dustGeo, dustMat);
+scene.add(dust);
+
+// ── HOVER / CLICK ─────────────────────────────────────────────────────────
+let hoveredScroll = null;
+let tweenActive = false;
+
+renderer.domElement.addEventListener('mousemove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(scrollMeshes);
+
+  scrollMeshes.forEach(m => {
+    if (!m.userData.selected) {
+      m.material.emissiveIntensity = 0;
+      m.userData.hovered = false;
+    }
+  });
+
+  if (hits.length > 0) {
+    const h = hits[0].object;
+    if (!h.userData.selected) {
+      h.material.emissiveIntensity = 0.35;
+      h.userData.hovered = true;
+    }
+    document.body.style.cursor = 'pointer';
+    hoveredScroll = h;
+  } else {
+    document.body.style.cursor = 'default';
+    hoveredScroll = null;
+  }
+});
+
+renderer.domElement.addEventListener('click', (e) => {
+  if (!hoveredScroll) return;
+  const d = hoveredScroll.userData.data;
+  document.getElementById('pop-title').textContent = d.title;
+  document.getElementById('pop-subtitle').textContent = d.subtitle;
+  document.getElementById('pop-desc').textContent = d.desc;
+  document.getElementById('pop-tip').textContent = d.tip;
+  document.getElementById('popup').style.display = 'block';
+  document.getElementById('popup-overlay').style.display = 'block';
+});
+
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+  document.getElementById('popup-overlay').style.display = 'none';
+}
+
+// ── ANIMATION LOOP ────────────────────────────────────────────────────────
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+
+  // Candle flicker
+  pointLights.forEach((pl, i) => {
+    if (!pl.isDeskLight) {
+      pl.light.intensity = pl.base + Math.sin(t * 3.7 + pl.offset) * 0.25 + Math.random() * 0.08;
+    } else {
+      pl.light.intensity = pl.base + Math.sin(t * 1.2) * 0.08;
+    }
+  });
+
+  // Dust drift
+  const pos = dustGeo.attributes.position.array;
+  for (let i = 0; i < DUST_COUNT; i++) {
+    pos[i * 3 + 1] += dustVelocities[i];
+    pos[i * 3] += Math.sin(t + i * 0.5) * 0.001;
+    if (pos[i * 3 + 1] > 6) {
+      pos[i * 3 + 1] = 0;
+      pos[i * 3]     = (Math.random() - 0.5) * 8;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 6;
+    }
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+
+  // Quill subtle oscillation
+  quill.rotation.y = 0.3 + Math.sin(t * 0.8) * 0.03;
+  feather.rotation.z = Math.sin(t * 0.8) * 0.02;
+
+  // Scroll hover lift
+  scrollMeshes.forEach(m => {
+    if (m.userData.hovered && !m.userData.selected) {
+      m.position.y += (0.28 - m.position.y) * 0.1;
+    } else if (!m.userData.selected) {
+      m.position.y += (0.16 - m.position.y) * 0.1;
+    }
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab de Línguas — Inglês | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #020610; overflow: hidden; font-family: 'Inter', sans-serif; color: #fff; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 24px;
+    background: linear-gradient(180deg, rgba(2,6,16,0.95) 0%, rgba(2,6,16,0) 100%);
+  }
+  #nav a {
+    color: #22d3ee; text-decoration: none; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.05em; transition: color 0.2s;
+  }
+  #nav a:hover { color: #67e8f9; }
+  #nav-badge {
+    font-family: 'Orbitron', monospace; font-size: 11px; color: #06b6d4;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  #hint {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.25);
+    color: #67e8f9; font-size: 12px; padding: 8px 20px; border-radius: 24px;
+    letter-spacing: 0.05em; pointer-events: none;
+    animation: pulse-hint 3s ease-in-out infinite;
+  }
+  @keyframes pulse-hint {
+    0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+  }
+
+  #popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92);
+    width: 500px; max-width: 90vw; max-height: 80vh; overflow-y: auto;
+    background: linear-gradient(135deg, rgba(2,8,24,0.98) 0%, rgba(4,12,32,0.98) 100%);
+    border: 1px solid rgba(0,212,255,0.35);
+    border-radius: 16px; padding: 32px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.85), 0 0 60px rgba(0,212,255,0.07);
+    z-index: 200; display: none; transition: transform 0.2s, opacity 0.2s;
+    scrollbar-width: thin; scrollbar-color: rgba(0,212,255,0.2) transparent;
+  }
+  #popup.visible { display: block; transform: translate(-50%, -50%) scale(1); }
+  #popup-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; color: rgba(255,255,255,0.35); font-size: 22px;
+    cursor: pointer; transition: color 0.2s; line-height: 1;
+  }
+  #popup-close:hover { color: #22d3ee; }
+  #popup-title {
+    font-family: 'Orbitron', monospace; font-size: 15px; color: #22d3ee;
+    margin-bottom: 4px; letter-spacing: 0.08em;
+  }
+  #popup-subtitle { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; margin-bottom: 20px; }
+  #popup-desc { font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.85); margin-bottom: 20px; }
+  #popup-tip {
+    background: rgba(0,212,255,0.06); border-left: 3px solid #22d3ee;
+    padding: 14px 16px; border-radius: 0 8px 8px 0; font-size: 13px;
+    color: rgba(255,255,255,0.8); line-height: 1.7;
+  }
+  #popup-tip strong { color: #22d3ee; }
+
+  canvas { display: block; }
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="../../index.html">← Nexus</a>
+  <span id="nav-badge">🔬 Lab de Línguas — Inglês</span>
+  <a href="resumo.html">Resumo</a>
+  <a href="../portugues/mapa3d.html">Português →</a>
+</nav>
+
+<div id="hint">Clique nos painéis para explorar os temas</div>
+
+<div id="popup">
+  <button id="popup-close">×</button>
+  <div id="popup-title"></div>
+  <div id="popup-subtitle">UNICAP 2026.2 — English</div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"><strong>UNICAP Tip:</strong> <span id="popup-tip-text"></span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ─── SCENE ─────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x020610, 0.02);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setClearColor(0x020610);
+document.body.appendChild(renderer.domElement);
+
+const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 8, 14);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 0, 0);
+controls.maxDistance = 25;
+controls.minDistance = 3;
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.maxPolarAngle = Math.PI * 0.7;
+
+// ─── LIGHTING ──────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x020814, 0.8);
+scene.add(ambient);
+
+const centerLight = new THREE.PointLight(0x00d4ff, 2, 15);
+centerLight.position.set(0, 0, 0);
+scene.add(centerLight);
+
+const topSpot = new THREE.SpotLight(0x0044aa, 1.5, 40, Math.PI / 4, 0.5);
+topSpot.position.set(0, 20, 0);
+topSpot.target.position.set(0, 0, 0);
+scene.add(topSpot);
+scene.add(topSpot.target);
+
+// ─── FLOOR ─────────────────────────────────────────────────────
+const floorMat = new THREE.MeshPhongMaterial({
+  color: 0x050814, shininess: 80, specular: 0x002244
+});
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(30, 30), floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -3;
+scene.add(floor);
+
+// Grid overlay on floor
+{
+  const gridGeo = new THREE.BufferGeometry();
+  const gridVerts = [];
+  const gridSize = 30; const gridDiv = 20;
+  const step = gridSize / gridDiv;
+  for (let i = 0; i <= gridDiv; i++) {
+    const p = -gridSize / 2 + i * step;
+    gridVerts.push(-gridSize/2, -2.99, p,  gridSize/2, -2.99, p);
+    gridVerts.push(p, -2.99, -gridSize/2,  p, -2.99, gridSize/2);
+  }
+  gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(gridVerts, 3));
+  const gridMat = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.08 });
+  scene.add(new THREE.LineSegments(gridGeo, gridMat));
+}
+
+// ─── CENTRAL HOLOGRAM ──────────────────────────────────────────
+const particleCount = 500;
+const pPositions = new Float32Array(particleCount * 3);
+const pOrigPositions = new Float32Array(particleCount * 3);
+const pOffsets = new Float32Array(particleCount);
+
+for (let i = 0; i < particleCount; i++) {
+  // Distribute on a sphere surface
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.acos(2 * Math.random() - 1);
+  const r = 1.2 + Math.random() * 0.4;
+  const x = r * Math.sin(phi) * Math.cos(theta);
+  const y = r * Math.sin(phi) * Math.sin(theta);
+  const z = r * Math.cos(phi);
+  pPositions[i * 3] = x;
+  pPositions[i * 3 + 1] = y;
+  pPositions[i * 3 + 2] = z;
+  pOrigPositions[i * 3] = x;
+  pOrigPositions[i * 3 + 1] = y;
+  pOrigPositions[i * 3 + 2] = z;
+  pOffsets[i] = Math.random() * Math.PI * 2;
+}
+
+const holoGeo = new THREE.BufferGeometry();
+holoGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+const holoMat = new THREE.PointsMaterial({ color: 0x00d4ff, size: 0.05, transparent: true, opacity: 0.85 });
+const holoPoints = new THREE.Points(holoGeo, holoMat);
+scene.add(holoPoints);
+
+// Inner glow sphere
+const innerGlow = new THREE.Mesh(
+  new THREE.SphereGeometry(0.8, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.12, wireframe: true })
+);
+scene.add(innerGlow);
+
+const outerGlow = new THREE.Mesh(
+  new THREE.SphereGeometry(1.5, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0x002244, transparent: true, opacity: 0.06, wireframe: false })
+);
+scene.add(outerGlow);
+
+// ─── TABLET DATA ────────────────────────────────────────────────
+const tablets = [
+  {
+    name: 'VERB TENSES',
+    subtitle: 'Tempos Verbais',
+    desc: 'Present Simple (habits, facts), Present Continuous (now/future plans), Past Simple (completed), Past Continuous (interrupted past), Present Perfect (past→present relevance), Past Perfect (before another past event), Future will/going to. UNICAP: o inglês na prova é interpretação — identificar o tempo verbal ajuda a entender se a ação é habitual, passada, futura ou em progresso.',
+    tip: 'Present Perfect é o mais cobrado: "have/has + past participle" indica ação com relevância no presente. Ex: "Scientists have discovered..." → descoberta recente, ainda relevante.'
+  },
+  {
+    name: 'MODAL VERBS',
+    subtitle: 'Verbos Modais',
+    desc: 'can/could (ability, possibility), may/might (possibility/permission), must (obligation or deduction), have to (external obligation), should/ought to (advice), will/would (future/conditional), need/dare. "must have done" = deduction about past. "should have done" = criticism about past. These are common in formal texts.',
+    tip: 'Must vs. Have to: "must" vem de dentro (obrigação interna/moral), "have to" vem de fora (regra externa). Na leitura, isso afeta o tom do autor — obrigação moral vs. regra imposta.'
+  },
+  {
+    name: 'READING STRATEGIES',
+    subtitle: 'Estratégias de Leitura',
+    desc: 'Skimming (scan for main idea, read title + first sentence of each paragraph), Scanning (search for specific info/data), Inference (deduce meaning from context without knowing every word), Word families (recognize verb/noun/adj forms of same root). UNICAP: never translate word by word — use context clues and cognates.',
+    tip: 'Cognatos (palavras parecidas com português) são seus aliados: democracy, economy, education, communication. False friends são armadilhas: "actually" = na verdade (NÃO atualmente), "sensible" = sensato (NÃO sensível).'
+  },
+  {
+    name: 'COHESION',
+    subtitle: 'Conectivos e Coesão',
+    desc: 'Addition: moreover, furthermore, in addition, besides. Contrast: however, nevertheless, although, despite, on the other hand. Cause: because, since, due to, as a result of. Result: therefore, thus, consequently, hence. Example: for instance, such as, for example. Emphasis: in fact, indeed, above all.',
+    tip: 'Conectivos são a chave para perguntas de "como as ideias se relacionam" na UNICAP. "However" e "nevertheless" introduzem contradições à tese. "Therefore" e "thus" introduzem conclusões. Identificar isso resolve 30% das questões.'
+  },
+  {
+    name: 'PRONOUNS',
+    subtitle: 'Pronomes e Referência',
+    desc: 'Subject: I, you, he, she, it, we, they. Object: me, him, her, us, them. Possessive adj: my, your, his, her, its, our, their. Possessive pron: mine, yours, his, hers, ours, theirs. Relative: who (persons), which (things), that (both), whose (possession), where (place). Reflexive: myself, himself, themselves.',
+    tip: 'Questão clássica UNICAP: "What does IT/THEY refer to in line X?" — leia a frase anterior. Pronomes sempre retomam o substantivo mais próximo compatível em número e gênero. "Whose" indica posse e é diferente de "who\'s" (who is).'
+  },
+  {
+    name: 'TEXT GENRE',
+    subtitle: 'Gênero e Propósito',
+    desc: 'Article (inform + analyze — newspaper/magazine), Advertisement (persuade, buy — imperative verbs, you), Editorial (opinion — first person or institutional we), Letter/Email (communicate — salutation + body + closing), Report (describe + analyze — passive voice, formal), Interview (Q&A format). Each genre has a typical structure and tone.',
+    tip: 'Identificar o gênero ajuda a entender o propósito: artigo jornalístico → informar/analisar. Propaganda → persuadir. Relatório → descrever objetivamente. A UNICAP cobra "qual é o objetivo do autor" — isso é identificar gênero + propósito.'
+  },
+  {
+    name: 'QUANTIFIERS',
+    subtitle: 'Artigos e Quantificadores',
+    desc: 'a/an (indefinite, first mention, general), the (definite, specific, unique things, previously mentioned), no article (general concepts, proper nouns, uncountable in general). Quantifiers: many/few (countable), much/little (uncountable), a lot of/lots of (both), some/any (positive/negative/questions), each/every (singular), both/all/most.',
+    tip: '"a book" vs "the book": "a" = qualquer livro. "the" = um livro específico que já foi mencionado ou é conhecido por ambos. Artigos mudam o escopo da afirmação — uma alternativa errada na UNICAP frequentemente troca "a" por "the" para mudar o sentido.'
+  }
+];
+
+// ─── BUILD TABLETS ──────────────────────────────────────────────
+const tabletMeshes = [];
+const tabletAngles = [];
+const tabletOrbitRadius = 5;
+const tabletOrbitSpeed = 0.003;
+
+function makeTabletCanvas(t) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 320;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = 'rgba(2,10,30,0.92)';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 512, 320, 16);
+  ctx.fill();
+
+  // Border
+  ctx.strokeStyle = '#00d4ff';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.roundRect(1, 1, 510, 318, 15);
+  ctx.stroke();
+
+  // Top accent line
+  ctx.strokeStyle = 'rgba(0,212,255,0.5)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(40, 60); ctx.lineTo(472, 60);
+  ctx.stroke();
+
+  // Title
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 32px Orbitron, Inter, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(t.name, 256, 38);
+
+  // Subtitle
+  ctx.fillStyle = '#00d4ff';
+  ctx.font = '18px Inter, sans-serif';
+  ctx.fillText(t.subtitle, 256, 72);
+
+  // Corner dots
+  [[24,24],[488,24],[24,296],[488,296]].forEach(([cx,cy]) => {
+    ctx.fillStyle = '#00d4ff';
+    ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI*2); ctx.fill();
+  });
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+tablets.forEach((tab, i) => {
+  const angle = i * (2 * Math.PI / 7);
+  tabletAngles.push(angle);
+
+  const tex = makeTabletCanvas(tab);
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 1.5), mat);
+
+  const x = Math.cos(angle) * tabletOrbitRadius;
+  const z = Math.sin(angle) * tabletOrbitRadius;
+  mesh.position.set(x, 0, z);
+  mesh.lookAt(0, 0, 0);
+
+  mesh.userData = { type: 'tablet', data: tab, index: i, baseScale: 1.0 };
+  scene.add(mesh);
+  tabletMeshes.push(mesh);
+
+  // Glow light per tablet
+  const tLight = new THREE.PointLight(0x00d4ff, 0.3, 3);
+  tLight.position.set(x, 0, z);
+  mesh.userData.light = tLight;
+  scene.add(tLight);
+});
+
+// ─── BACKGROUND FLOATING LETTERS ──────────────────────────────
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const bgLetterMeshes = [];
+
+for (let i = 0; i < 30; i++) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 64; canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgba(0,180,220,0.25)';
+  ctx.font = 'bold 52px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(letters[Math.floor(Math.random() * letters.length)], 32, 32);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, opacity: 0.07, side: THREE.DoubleSide });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+  mesh.position.set(
+    (Math.random() - 0.5) * 40,
+    (Math.random() - 0.5) * 20,
+    -(Math.random() * 20 + 12)
+  );
+  mesh.rotation.y = Math.random() * Math.PI * 2;
+  mesh.userData = { rotSpeedY: (Math.random() - 0.5) * 0.002 };
+  scene.add(mesh);
+  bgLetterMeshes.push(mesh);
+}
+
+// ─── DATA FLOW LINES (horizontal) ─────────────────────────────
+const flowLines = [];
+for (let i = 0; i < 8; i++) {
+  const len = 2 + Math.random() * 4;
+  const startX = -20 + Math.random() * 40;
+  const y = -2.5 - Math.random() * 0.3;
+  const z = -8 + Math.random() * 16;
+  const geo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(startX, y, z),
+    new THREE.Vector3(startX + len, y, z)
+  ]);
+  const mat = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.3 });
+  const line = new THREE.Line(geo, mat);
+  line.userData = { speed: 0.02 + Math.random() * 0.04, maxX: 20, len };
+  scene.add(line);
+  flowLines.push(line);
+}
+
+// ─── RAYCASTER ──────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredTablet = null;
+
+function onMouseMove(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(tabletMeshes);
+  if (hoveredTablet && (!hits.length || hits[0].object !== hoveredTablet)) {
+    hoveredTablet.scale.set(1, 1, 1);
+    renderer.domElement.style.cursor = 'default';
+    hoveredTablet = null;
+  }
+  if (hits.length) {
+    hoveredTablet = hits[0].object;
+    hoveredTablet.scale.set(1.08, 1.08, 1.08);
+    renderer.domElement.style.cursor = 'pointer';
+  }
+}
+
+function onClick(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(tabletMeshes);
+  if (hits.length) {
+    const d = hits[0].object.userData.data;
+    document.getElementById('popup-title').textContent = d.name;
+    document.getElementById('popup-desc').textContent = d.desc;
+    document.getElementById('popup-tip-text').textContent = d.tip;
+    const popup = document.getElementById('popup');
+    popup.style.display = 'block';
+    setTimeout(() => popup.classList.add('visible'), 10);
+  }
+}
+
+document.addEventListener('mousemove', onMouseMove);
+document.addEventListener('click', onClick);
+document.getElementById('popup-close').addEventListener('click', () => {
+  document.getElementById('popup').classList.remove('visible');
+  setTimeout(() => { document.getElementById('popup').style.display = 'none'; }, 200);
+});
+
+// ─── ANIMATE ────────────────────────────────────────────────────
+let t = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.01;
+
+  // Hologram particles oscillate
+  const pos = holoGeo.attributes.position.array;
+  for (let i = 0; i < particleCount; i++) {
+    const ox = pOrigPositions[i * 3];
+    const oy = pOrigPositions[i * 3 + 1];
+    const oz = pOrigPositions[i * 3 + 2];
+    const off = pOffsets[i];
+    pos[i * 3] = ox + Math.sin(t + off) * 0.18;
+    pos[i * 3 + 1] = oy + Math.sin(t * 0.7 + off + 1) * 0.18;
+    pos[i * 3 + 2] = oz + Math.sin(t * 1.3 + off + 2) * 0.18;
+  }
+  holoGeo.attributes.position.needsUpdate = true;
+
+  // Inner glow pulse
+  const pulse = 0.12 + Math.sin(t * 1.5) * 0.04;
+  innerGlow.material.opacity = pulse;
+
+  // Orbit tablets
+  tabletMeshes.forEach((mesh, i) => {
+    tabletAngles[i] += tabletOrbitSpeed;
+    const angle = tabletAngles[i];
+    const x = Math.cos(angle) * tabletOrbitRadius;
+    const z = Math.sin(angle) * tabletOrbitRadius;
+    const y = Math.sin(t * 0.5 + i * 0.9) * 0.3;
+    mesh.position.set(x, y, z);
+    mesh.lookAt(0, 0, 0);
+    if (mesh.userData.light) {
+      mesh.userData.light.position.set(x, y, z);
+    }
+  });
+
+  // Background letters slowly rotate
+  bgLetterMeshes.forEach(m => {
+    m.rotation.y += m.userData.rotSpeedY;
+  });
+
+  // Flow lines move
+  flowLines.forEach(line => {
+    const posArr = line.geometry.attributes.position.array;
+    posArr[0] += line.userData.speed;
+    posArr[3] += line.userData.speed;
+    if (posArr[0] > line.userData.maxX) {
+      posArr[0] = -line.userData.maxX - line.userData.len;
+      posArr[3] = posArr[0] + line.userData.len;
+    }
+    line.geometry.attributes.position.needsUpdate = true;
+  });
+
+  // Center light pulse
+  centerLight.intensity = 1.8 + Math.sin(t * 0.8) * 0.4;
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

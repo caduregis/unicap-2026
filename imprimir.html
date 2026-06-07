@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Imprimir — UNICAP 2026 · Carlos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#fff;color:#111;font-size:12px;}
+
+/* ── BOTÃO IMPRIMIR (só na tela) ── */
+.print-btn{
+  position:fixed;top:16px;right:16px;z-index:999;
+  background:#0a0e1a;color:#00d4ff;border:none;
+  padding:10px 20px;border-radius:10px;font-size:14px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.3);
+}
+@media print{.print-btn,.screen-only{display:none!important;}}
+
+/* ── PÁGINA ── */
+.page{
+  width:210mm;min-height:297mm;
+  margin:0 auto;padding:10mm;
+}
+
+/* ── CARTÃO DE BOLSO (cortar e dobrar) ── */
+.pocket-card{
+  border:2px dashed #ccc;border-radius:8px;
+  padding:10px 12px;margin-bottom:12px;
+  break-inside:avoid;
+}
+.pocket-card-inner{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+.pc-title{
+  font-size:11px;font-weight:900;text-transform:uppercase;
+  letter-spacing:1px;color:#ef4444;margin-bottom:6px;
+  border-bottom:2px solid #ef4444;padding-bottom:3px;
+}
+.pc-cut{font-size:9px;color:#999;text-align:center;margin-bottom:6px;}
+
+/* ── CRONOGRAMA ── */
+.cron-title{
+  font-size:16px;font-weight:900;margin-bottom:2px;color:#0a0e1a;
+  border-bottom:3px solid #00d4ff;padding-bottom:4px;margin-bottom:8px;
+}
+.cron-sub{font-size:10px;color:#666;margin-bottom:12px;}
+.cron-table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+.cron-table th{
+  background:#0a0e1a;color:#fff;font-size:10px;font-weight:700;
+  padding:5px 6px;text-align:left;
+}
+.cron-table td{
+  padding:4px 6px;border-bottom:1px solid #eee;font-size:10px;vertical-align:top;
+}
+.cron-table tr.hoje{background:#e0f7ff;}
+.cron-table tr.ev{background:#fff8e1;}
+.cron-table tr.sim{background:#f3e8ff;}
+.cron-table tr.prova{background:#fee2e2;font-weight:700;}
+.check-box{
+  display:inline-block;width:12px;height:12px;
+  border:1.5px solid #999;border-radius:2px;margin-right:4px;
+  vertical-align:middle;flex-shrink:0;
+}
+.tag{
+  display:inline-block;font-size:9px;font-weight:700;
+  padding:1px 5px;border-radius:3px;
+  background:#e0f7ff;color:#0077aa;margin-left:3px;
+}
+.tag.red{background:#fee2e2;color:#b91c1c;}
+.tag.green{background:#d1fae5;color:#065f46;}
+.tag.purple{background:#ede9fe;color:#5b21b6;}
+.tag.amber{background:#fef3c7;color:#92400e;}
+
+/* ── TRACKER MANUAL ── */
+.tracker-title{font-size:13px;font-weight:900;margin-bottom:8px;border-bottom:2px solid #10b981;padding-bottom:3px;}
+.tracker-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px;}
+.tracker-day{
+  border:1.5px solid #ccc;border-radius:6px;padding:6px 4px;text-align:center;
+}
+.tracker-day .td-num{font-size:14px;font-weight:900;}
+.tracker-day .td-name{font-size:8px;color:#666;margin-top:1px;}
+.tracker-day .td-box{
+  width:20px;height:20px;border:1.5px solid #999;border-radius:4px;
+  margin:4px auto 0;
+}
+.tracker-day.hoje-day{border-color:#00d4ff;background:#e0f7ff;}
+.tracker-day.ev-day{border-color:#f59e0b;}
+.tracker-day.sim-day{border-color:#8b5cf6;}
+.tracker-day.prova-day{border-color:#ef4444;background:#fee2e2;}
+
+/* ── PONTOS MANUAL ── */
+.pontos-title{font-size:13px;font-weight:900;margin-bottom:8px;border-bottom:2px solid #f59e0b;padding-bottom:3px;}
+.pontos-tabela{width:100%;border-collapse:collapse;margin-bottom:12px;}
+.pontos-tabela th{font-size:10px;font-weight:700;padding:4px 6px;background:#fef3c7;border:1px solid #fde68a;}
+.pontos-tabela td{font-size:10px;padding:5px 6px;border:1px solid #eee;text-align:center;}
+.pontos-tabela td:first-child{text-align:left;font-weight:600;}
+.pontos-total{
+  background:#fef3c7;border:2px solid #f59e0b;border-radius:8px;
+  padding:8px 12px;font-size:11px;font-weight:700;margin-bottom:12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+
+/* ── CONCEITOS-CHAVE (revisão rápida) ── */
+.conc-title{font-size:13px;font-weight:900;margin-bottom:8px;border-bottom:2px solid #8b5cf6;padding-bottom:3px;}
+.conc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.conc-card{
+  border:1px solid #e5e7eb;border-radius:6px;padding:8px;
+  break-inside:avoid;
+}
+.conc-card h4{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;color:#374151;}
+.conc-card p{font-size:10px;color:#374151;line-height:1.5;}
+.conc-card ul{font-size:10px;color:#374151;line-height:1.6;padding-left:12px;}
+
+/* ── DIVIDER ── */
+.divider{border:none;border-top:1px dashed #ccc;margin:14px 0;}
+
+/* ── DICA ── */
+.dica{
+  background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #00d4ff;
+  border-radius:0 8px 8px 0;padding:8px 10px;font-size:10px;color:#374151;
+  margin-bottom:12px;
+}
+.dica strong{color:#0077aa;}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Imprimir</button>
+
+<div class="page">
+
+  <!-- ════════════════════════════════════════
+       BLOCO 1: CRONOGRAMA 14 DIAS
+  ═══════════════════════════════════════════ -->
+  <div class="cron-title">UNICAP 2026.2 · Cronograma Final — Carlos Régis</div>
+  <div class="cron-sub">Vestibular: 14 de junho de 2026 · Direito Manhã (1ª opção) · CC Manhã (2ª opção)</div>
+
+  <table class="cron-table">
+    <tr><th>Data</th><th>Dia</th><th>Foco do dia</th><th>Especial</th><th>Feito?</th></tr>
+    <tr class="hoje">
+      <td><strong>31/05</strong></td><td>Dom</td>
+      <td>RED #2 Desigualdade Social <span class="tag red">HOJE</span><br>Tipologia + Interpretação + Análise Sintática</td>
+      <td><span class="tag red">RED vence hoje</span></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr class="ev">
+      <td>01/06</td><td>Seg</td>
+      <td>Regência e Concordância · Figuras de Linguagem</td>
+      <td><span class="tag amber">PM2 escola</span></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>02/06</td><td>Ter</td>
+      <td>Literatura: Romantismo + Realismo/Naturalismo</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>03/06</td><td>Qua</td>
+      <td>RED #3 Saúde Mental · Modernismo 1ª + 2ª fase</td>
+      <td><span class="tag red">RED #3</span></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>04/06</td><td>Qui</td>
+      <td>Inglês: Verb Tenses · Leitura e Gramática</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>05/06</td><td>Sex</td>
+      <td>Geografia: Cartografia · Clima · Globalização · Urbanização</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr class="sim">
+      <td>06/06</td><td>Sáb</td>
+      <td>SIMULADO UNICAP INTERNO (8h15 – 13h15)</td>
+      <td><span class="tag purple">Simulado 5h</span></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>07/06</td><td>Dom</td>
+      <td>História: Grécia/Roma · Brasil Colonial/Imperial/República</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>08/06</td><td>Seg</td>
+      <td>Filosofia (Sócrates→Iluminismo) · Sociologia · Atualidades</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr class="ev">
+      <td>09/06</td><td>Ter</td>
+      <td>OBMEP + Revisão leve Humanas</td>
+      <td><span class="tag amber">OBMEP</span></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>10/06</td><td>Qua</td>
+      <td>Matemática: Razão/Proporção · Porcentagem · Funções</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>11/06</td><td>Qui</td>
+      <td>Geometria · Probabilidade · Biologia (Célula + Ecologia)</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>12/06</td><td>Sex</td>
+      <td>Química (Tabela + Ligações) · Física (Mecânica) · Revisão Geral</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr>
+      <td>13/06</td><td>Sáb</td>
+      <td>VÉSPERA: Revisão Redação + Flashcards críticos + DORMIR CEDO</td>
+      <td></td>
+      <td><span class="check-box"></span></td>
+    </tr>
+    <tr class="prova">
+      <td>14/06</td><td>Dom</td>
+      <td colspan="2">🏆 DIA DA PROVA UNICAP — 8h15 · Boa sorte, Carlos!</td>
+      <td></td>
+    </tr>
+  </table>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       BLOCO 2: TRACKER DE HORAS MANUAL
+  ═══════════════════════════════════════════ -->
+  <div class="tracker-title">Tracker de Estudo — marque cada dia estudado</div>
+  <div class="tracker-grid">
+    <div class="tracker-day hoje-day"><div class="td-num">31</div><div class="td-name">Dom</div><div class="td-box"></div></div>
+    <div class="tracker-day ev-day"><div class="td-num">01</div><div class="td-name">Seg</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">02</div><div class="td-name">Ter</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">03</div><div class="td-name">Qua</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">04</div><div class="td-name">Qui</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">05</div><div class="td-name">Sex</div><div class="td-box"></div></div>
+    <div class="tracker-day sim-day"><div class="td-num">06</div><div class="td-name">Sáb</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">07</div><div class="td-name">Dom</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">08</div><div class="td-name">Seg</div><div class="td-box"></div></div>
+    <div class="tracker-day ev-day"><div class="td-num">09</div><div class="td-name">Ter</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">10</div><div class="td-name">Qua</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">11</div><div class="td-name">Qui</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">12</div><div class="td-name">Sex</div><div class="td-box"></div></div>
+    <div class="tracker-day"><div class="td-num">13</div><div class="td-name">Sáb</div><div class="td-box"></div></div>
+    <div class="tracker-day prova-day"><div class="td-num">14</div><div class="td-name">PROVA</div><div class="td-box"></div></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       BLOCO 3: SISTEMA DE PONTOS MANUAL (escola)
+  ═══════════════════════════════════════════ -->
+  <div class="pontos-title">Sistema de Pontos — use na escola (anote no caderno)</div>
+
+  <table class="pontos-tabela">
+    <tr>
+      <th>Ação</th><th>Pontos</th><th>Seg 01</th><th>Ter 02</th><th>Qua 03</th><th>Qui 04</th><th>Sex 05</th>
+    </tr>
+    <tr><td>📖 Ler 1 página de resumo no recreio</td><td>+10</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>🃏 Revisar 5 flashcards mentalmente</td><td>+20</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>✍️ Escrever 1 parágrafo de redação</td><td>+30</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>🧠 Lembrar 3 conceitos de cabeça</td><td>+15</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>📝 Fazer 5 questões de cabeça</td><td>+25</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>🔥 Estudar 30 min no intervalo</td><td>+50</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr style="font-weight:700;background:#fef9c3"><td>TOTAL DO DIA</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+
+  <div class="dica">
+    <strong>Como usar na escola:</strong> No recreio ou intervalo, abre o resumo.html de qualquer matéria no celular e lê por 10 min. Anota os pontos na tabela acima. Ao chegar em casa, lança os pontos no <strong>dopamina.html</strong> (Modo Boss) no PC.
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       BLOCO 4: CONCEITOS-CHAVE (revisão rápida)
+  ═══════════════════════════════════════════ -->
+  <div class="conc-title">Cola Rápida — revisar no recreio (não é cola de prova!)</div>
+  <div class="conc-grid">
+    <div class="conc-card">
+      <h4>📝 Redação UNICAP — Estrutura</h4>
+      <ul>
+        <li><strong>Intro:</strong> contexto + tese (3–4 linhas)</li>
+        <li><strong>Des. 1:</strong> argumento + dado/exemplo</li>
+        <li><strong>Des. 2:</strong> argumento + agente social</li>
+        <li><strong>Conclusão:</strong> retomada + proposta com agente, ação e finalidade</li>
+        <li>⚠️ Nota RED #1: 640 · melhorar paragrafação e proposta</li>
+      </ul>
+    </div>
+    <div class="conc-card">
+      <h4>🏺 História — Marcos Essenciais</h4>
+      <ul>
+        <li>1500 — Chegada dos portugueses</li>
+        <li>1822 — Independência do Brasil</li>
+        <li>1889 — Proclamação da República</li>
+        <li>1930 — Era Vargas</li>
+        <li>1964–85 — Ditadura Militar</li>
+        <li>1988 — Constituição Federal</li>
+      </ul>
+    </div>
+    <div class="conc-card">
+      <h4>🦉 Filosofia — Filósofos e Ideias</h4>
+      <ul>
+        <li><strong>Sócrates:</strong> "Conhece-te a ti mesmo" · maiêutica</li>
+        <li><strong>Platão:</strong> mundo das ideias · República</li>
+        <li><strong>Aristóteles:</strong> lógica · ética · política</li>
+        <li><strong>Iluminismo:</strong> razão · liberdade · Locke, Rousseau, Voltaire</li>
+        <li><strong>Marx:</strong> luta de classes · materialismo histórico</li>
+      </ul>
+    </div>
+    <div class="conc-card">
+      <h4>📚 Literatura — Períodos</h4>
+      <ul>
+        <li><strong>Romantismo:</strong> séc. XIX · emoção · Alencar, Álvares de Azevedo</li>
+        <li><strong>Realismo:</strong> crítica social · Machado de Assis, Eça</li>
+        <li><strong>Modernismo 1ª:</strong> 1922 · vanguardas · Oswald, Mário de Andrade</li>
+        <li><strong>Modernismo 2ª:</strong> 1930+ · regionalismo · Graciliano, Rachel</li>
+      </ul>
+    </div>
+    <div class="conc-card">
+      <h4>📊 Matemática — Fórmulas Rápidas</h4>
+      <ul>
+        <li><strong>% simples:</strong> V = P × (1 + i)</li>
+        <li><strong>Bhaskara:</strong> x = (–b ± √Δ) / 2a · Δ = b²–4ac</li>
+        <li><strong>Área círculo:</strong> π·r²</li>
+        <li><strong>Pitágoras:</strong> a² = b² + c²</li>
+        <li><strong>Probabilidade:</strong> P = casos favoráveis / total</li>
+      </ul>
+    </div>
+    <div class="conc-card">
+      <h4>🌍 Geografia — Biomas do Brasil</h4>
+      <ul>
+        <li><strong>Amazônia:</strong> maior do mundo · clima equatorial</li>
+        <li><strong>Cerrado:</strong> savana · coração do Brasil</li>
+        <li><strong>Caatinga:</strong> semiárido · NE brasileiro</li>
+        <li><strong>Mata Atlântica:</strong> costeira · muito degradada</li>
+        <li><strong>Pampa:</strong> RS · campos sulinos</li>
+        <li><strong>Pantanal:</strong> maior área úmida do mundo</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ════════════════════════════════════════
+       BLOCO 5: CARTÃO DE BOLSO (cortar e dobrar)
+  ═══════════════════════════════════════════ -->
+  <div class="pc-cut">✂️ — corte aqui e dobre ao meio — leva no bolso — ✂️</div>
+  <div class="pocket-card">
+    <div class="pocket-card-inner">
+      <!-- Frente -->
+      <div>
+        <div class="pc-title">UNICAP 14/06 · Carlos</div>
+        <table style="width:100%;font-size:9px;border-collapse:collapse;">
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>31/05</strong> RED #2 ⚠️</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>01/06</strong> Português</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>02/06</strong> Literatura I</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>03/06</strong> RED #3 + Lit II</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>04/06</strong> Inglês</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>05/06</strong> Geografia</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr style="background:#f3e8ff"><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>06/06</strong> SIMULADO 8h15</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+        </table>
+      </div>
+      <!-- Verso -->
+      <div style="border-left:1px dashed #ccc;padding-left:8px">
+        <div class="pc-title">Semana 2</div>
+        <table style="width:100%;font-size:9px;border-collapse:collapse;">
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>07/06</strong> História</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>08/06</strong> Fil+Soc+Atu</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr style="background:#fff8e1"><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>09/06</strong> OBMEP</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>10/06</strong> Matemática I</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>11/06</strong> Mat II + Bio</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>12/06</strong> Quím+Fís+Rev</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr><td style="padding:2px 0;border-bottom:1px solid #eee"><strong>13/06</strong> Véspera</td><td style="text-align:right"><span class="check-box"></span></td></tr>
+          <tr style="background:#fee2e2;font-weight:700"><td style="padding:2px 0"><strong>14/06</strong> 🏆 PROVA 8h15</td><td></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

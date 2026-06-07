@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Fórum Romano — Antiguidade e Idade Média</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #1a0e06; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(10,6,2,0.95) 0%, rgba(10,6,2,0) 100%);
+    pointer-events: none;
+  }
+  #nav a {
+    pointer-events: all;
+    color: #d4a840; text-decoration: none; font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border: 1px solid rgba(212,168,64,0.3);
+    border-radius: 20px; background: rgba(26,14,6,0.8);
+    transition: all 0.2s;
+  }
+  #nav a:hover { background: rgba(212,168,64,0.15); border-color: rgba(212,168,64,0.6); }
+  #nav-badge {
+    font-size: 13px; font-weight: 600; color: #ece4d4;
+    background: rgba(26,14,6,0.85); border: 1px solid rgba(212,168,64,0.25);
+    padding: 6px 16px; border-radius: 20px;
+    letter-spacing: 0.02em;
+  }
+
+  #tooltip {
+    position: fixed; pointer-events: none; z-index: 200;
+    background: rgba(26,14,6,0.92); border: 1px solid rgba(212,168,64,0.5);
+    color: #ece4d4; font-size: 12px; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px;
+    display: none; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  }
+
+  #popup-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #popup-overlay.active { display: flex; }
+  #popup {
+    background: linear-gradient(145deg, #1a1008, #120c04);
+    border: 1px solid rgba(212,168,64,0.35);
+    border-radius: 16px; max-width: 640px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(212,168,64,0.05);
+    padding: 28px;
+  }
+  #popup-title {
+    font-size: 18px; font-weight: 700; color: #d4a840;
+    margin-bottom: 16px; line-height: 1.3;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(212,168,64,0.2);
+  }
+  #popup-desc {
+    font-size: 14px; line-height: 1.75; color: #d4c8a8;
+    margin-bottom: 16px;
+  }
+  #popup-tip {
+    background: rgba(212,168,64,0.07);
+    border-left: 3px solid #d4a840;
+    padding: 14px 16px; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #c8b890;
+  }
+  #popup-tip strong { color: #d4a840; font-weight: 700; }
+  #popup-close {
+    display: block; width: 100%; margin-top: 20px;
+    padding: 10px; background: rgba(212,168,64,0.12);
+    border: 1px solid rgba(212,168,64,0.3); border-radius: 8px;
+    color: #d4a840; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+  }
+  #popup-close:hover { background: rgba(212,168,64,0.22); }
+
+  #hint {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(10,6,2,0.85); border: 1px solid rgba(212,168,64,0.2);
+    color: rgba(212,168,64,0.7); font-size: 12px; padding: 8px 18px;
+    border-radius: 20px; pointer-events: none; z-index: 50;
+    transition: opacity 1s;
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<nav id="nav">
+  <a href="../../../index.html">&#8592; Nexus</a>
+  <div id="nav-badge">&#127963; Fórum Romano — Antiguidade e Idade Média</div>
+  <a href="resumo.html">Resumo &#8594;</a>
+</nav>
+
+<div id="tooltip"></div>
+
+<div id="popup-overlay">
+  <div id="popup">
+    <div id="popup-title"></div>
+    <div id="popup-desc"></div>
+    <div id="popup-tip"></div>
+    <button id="popup-close">FECHAR</button>
+  </div>
+</div>
+
+<div id="hint">Clique nos pergaminhos para estudar · Arraste para orbitar · Scroll para zoom</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ── SCENE SETUP ──────────────────────────────────────────────
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x1a0e06);
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a0e06, 20, 70);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 8, 20);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 2, -8);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.55;
+controls.minDistance = 5;
+controls.maxDistance = 45;
+controls.update();
+
+// ── LIGHTING ─────────────────────────────────────────────────
+const sun = new THREE.DirectionalLight(0xff9040, 3);
+sun.position.set(30, 20, -30);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 100;
+sun.shadow.camera.left = -30;
+sun.shadow.camera.right = 30;
+sun.shadow.camera.top = 30;
+sun.shadow.camera.bottom = -30;
+scene.add(sun);
+
+const ambient = new THREE.AmbientLight(0x3a2010, 1.2);
+scene.add(ambient);
+
+const warmFill = new THREE.HemisphereLight(0x4a2808, 0x100804, 0.5);
+scene.add(warmFill);
+
+// ── SUN SPHERE ───────────────────────────────────────────────
+const sunSphere = new THREE.Mesh(
+  new THREE.SphereGeometry(2, 16, 16),
+  new THREE.MeshBasicMaterial({ color: 0xfff4c0 })
+);
+sunSphere.position.set(30, 20, -30);
+scene.add(sunSphere);
+
+// ── MARBLE FLOOR ─────────────────────────────────────────────
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#d8c8a8';
+  ctx.fillRect(0, 0, 512, 512);
+  ctx.strokeStyle = 'rgba(160,140,110,0.35)';
+  ctx.lineWidth = 1.5;
+  const tileSize = 64;
+  for (let x = 0; x <= 512; x += tileSize) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,512); ctx.stroke(); }
+  for (let y = 0; y <= 512; y += tileSize) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(512,y); ctx.stroke(); }
+  // add subtle noise
+  for (let i = 0; i < 800; i++) {
+    ctx.fillStyle = `rgba(${Math.random()>0.5?180:130},${Math.random()>0.5?160:120},${Math.random()>0.5?100:80},0.04)`;
+    ctx.fillRect(Math.random()*512, Math.random()*512, 3, 3);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(8, 8);
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(50, 50),
+    new THREE.MeshLambertMaterial({ map: tex })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+})();
+
+// ── HELPER: COLUMN ───────────────────────────────────────────
+function makeColumn(x, z, broken) {
+  const group = new THREE.Group();
+  const h = broken ? (3 + Math.random() * 3) : 10;
+  const mat = new THREE.MeshLambertMaterial({ color: 0xece4d4 });
+
+  // Base
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.75, 0.5, 12), mat);
+  base.position.y = 0.25;
+  group.add(base);
+
+  // Shaft
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.55, h, 12), mat);
+  shaft.position.y = 0.5 + h / 2;
+  shaft.castShadow = true;
+  group.add(shaft);
+
+  if (!broken) {
+    // Capital
+    const capBase = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.5, 0.6, 12), mat);
+    capBase.position.y = 0.5 + h + 0.3;
+    group.add(capBase);
+    const capTop = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 0.3, 1.6),
+      new THREE.MeshLambertMaterial({ color: 0xe0d4b8 })
+    );
+    capTop.position.y = 0.5 + h + 0.75;
+    group.add(capTop);
+  }
+
+  group.position.set(x, 0, z);
+  scene.add(group);
+}
+
+// Left colonnade
+[-15, -10, -5, 0, 5].forEach((z, i) => makeColumn(-10, z, i === 2));
+// Right colonnade
+[-15, -10, -5, 0, 5].forEach((z, i) => makeColumn(10, z, i === 4));
+
+// ── SENATE BUILDING ──────────────────────────────────────────
+(function() {
+  const mat = new THREE.MeshLambertMaterial({ color: 0xd8ceb8 });
+  const matLight = new THREE.MeshLambertMaterial({ color: 0xeee8d8 });
+
+  // Main hall
+  const hall = new THREE.Mesh(new THREE.BoxGeometry(18, 8, 4), mat);
+  hall.position.set(0, 4, -25);
+  hall.castShadow = true;
+  scene.add(hall);
+
+  // Steps
+  [[20, 0.6, 6, 0.3], [19, 1.0, 5.5, 0.8], [18, 1.4, 5.0, 1.3]].forEach(([w, h, d, y]) => {
+    const step = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), matLight);
+    step.position.set(0, y, -22.5);
+    scene.add(step);
+  });
+
+  // Columns on facade
+  [-6, -3, 0, 3, 6].forEach(x => {
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.45, 7, 10), matLight);
+    col.position.set(x, 3.5, -23.2);
+    col.castShadow = true;
+    scene.add(col);
+  });
+
+  // Pediment (triangular roof suggestion)
+  const pediment = new THREE.Mesh(new THREE.BoxGeometry(18, 1, 0.5), mat);
+  pediment.position.set(0, 8, -23.2);
+  scene.add(pediment);
+})();
+
+// ── TRIUMPHAL ARCH ───────────────────────────────────────────
+(function() {
+  const stone = new THREE.MeshLambertMaterial({ color: 0xc8b898 });
+
+  // Two pillars
+  [-1.5, 1.5].forEach(ox => {
+    const pillar = new THREE.Mesh(new THREE.BoxGeometry(2, 8, 2), stone);
+    pillar.position.set(15 + ox, 4, -5);
+    pillar.castShadow = true;
+    scene.add(pillar);
+  });
+
+  // Crossbeam
+  const beam = new THREE.Mesh(new THREE.BoxGeometry(5, 1.5, 2), stone);
+  beam.position.set(15, 8.25, -5);
+  scene.add(beam);
+
+  // Arch suggestion (torus half)
+  const archGeo = new THREE.TorusGeometry(1.5, 0.35, 8, 16, Math.PI);
+  const arch = new THREE.Mesh(archGeo, stone);
+  arch.rotation.z = Math.PI;
+  arch.position.set(15, 7.5, -5);
+  scene.add(arch);
+
+  // Top decoration
+  const attic = new THREE.Mesh(new THREE.BoxGeometry(5, 2, 2), stone);
+  attic.position.set(15, 10.5, -5);
+  scene.add(attic);
+})();
+
+// ── FALLEN COLUMN DRUMS ──────────────────────────────────────
+const drumPositions = [
+  [-7, -3], [-3, 8], [7, 2], [3, -10], [-8, 6],
+  [5, -6], [-5, -12], [8, -8]
+];
+drumPositions.forEach(([x, z]) => {
+  const drum = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.55, 0.55, 0.8, 12),
+    new THREE.MeshLambertMaterial({ color: 0xddd0b8 })
+  );
+  drum.rotation.z = Math.PI / 2;
+  drum.position.set(x, 0.4, z);
+  drum.castShadow = true;
+  scene.add(drum);
+});
+
+// ── TOPPLED COLUMN ───────────────────────────────────────────
+(function() {
+  const col = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.48, 0.52, 9, 12),
+    new THREE.MeshLambertMaterial({ color: 0xe0d4c0 })
+  );
+  col.rotation.z = Math.PI / 2;
+  col.rotation.y = 0.4;
+  col.position.set(-4, 0.48, -18);
+  col.castShadow = true;
+  scene.add(col);
+})();
+
+// ── STONE BLOCKS (rubble) ─────────────────────────────────────
+[[8,5], [-9,-7], [4,-14], [-6,10], [11,-10], [0,-16], [-11,-3], [-2,10]].forEach(([x,z]) => {
+  const block = new THREE.Mesh(
+    new THREE.BoxGeometry(1.5, 0.8, 1),
+    new THREE.MeshLambertMaterial({ color: 0xbcae98 })
+  );
+  block.position.set(x, 0.4, z);
+  block.rotation.y = Math.random() * Math.PI;
+  block.castShadow = true;
+  scene.add(block);
+});
+
+// ── DUST PARTICLES ───────────────────────────────────────────
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 100;
+const dustPos = new Float32Array(dustCount * 3);
+const dustSpeeds = [];
+for (let i = 0; i < dustCount; i++) {
+  dustPos[i*3]   = (Math.random() - 0.5) * 40;
+  dustPos[i*3+1] = Math.random() * 10;
+  dustPos[i*3+2] = (Math.random() - 0.5) * 40 - 10;
+  dustSpeeds.push({ x: (Math.random()-0.5)*0.008, y: (Math.random()-0.5)*0.003, z: (Math.random()-0.5)*0.008 });
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dust = new THREE.Points(dustGeo, new THREE.PointsMaterial({
+  color: 0xc0a870, size: 0.08, transparent: true, opacity: 0.18,
+  sizeAttenuation: true
+}));
+scene.add(dust);
+
+// ── CONCEPT SCROLLS ───────────────────────────────────────────
+const scrollData = [
+  {
+    pos: [0, 1.3, -5],
+    label: "Grécia Antiga: Democracia e Cultura",
+    desc: "Atenas (séc. V a.C.): berço da democracia. Péricles: 'O nosso regime chama-se democracia porque não está nas mãos de poucos, mas da maioria.' Limitações: só homens livres e atenienses votavam (~10% da população). Esparta: militarismo, oligarquia, helotismo. Guerras Médicas (490-479 a.C.) — Atenas vs. Pérsia — Batalha de Maratona, Termópilas, Salamina. Cultura: filosofia (Sócrates, Platão, Aristóteles), teatro (Sófocles, Ésquilo), Olímpiadas, arquitetura (Partenon).",
+    tip: "Questão clássica: 'A democracia ateniense era universal?' → NÃO. Era excludente (mulheres, estrangeiros, escravizados ficavam fora). Isso contrasta com a democracia moderna. Termópilas (300 espartanos de Leônidas) = resistência histórica mais famosa da Grécia."
+  },
+  {
+    pos: [-6, 1.3, -3],
+    label: "Roma: República e Império",
+    desc: "República Romana (509-27 a.C.): Senado (oligarquia de patrícios), cônsules (2 magistrados), Assembleia Popular, veto do tribuno da plebe. Expansão mediterrânea. Guerras Púnicas (Roma vs. Cartago — Aníbal). Crise republicana: Graco, Mário, Sila, Júlio César → Augusto (27 a.C.) inicia o IMPÉRIO. Pax Romana (27 a.C.-180 d.C.): prosperidade, engenharia (estradas, aquedutos, Coliseu). Crise do séc. III, Teodósio divide o Império (395 d.C.), queda do Ocidente (476 d.C.).",
+    tip: "Júlio César ≠ imperador. Foi ditador. Augusto (Otávio) foi o PRIMEIRO imperador (princeps). A frase 'Vim, vi e venci' (Veni, vidi, vici) é de César — mas sobre a Gália, não Roma. Para UNICAP: o legado romano mais cobrado = DIREITO Romano (base do Direito brasileiro)."
+  },
+  {
+    pos: [6, 1.3, -3],
+    label: "Feudalismo e Igreja Medieval",
+    desc: "Séc. V-XV: Europa fragmentada em feudos após queda de Roma. Estrutura: Rei → Grandes Senhores (vassalos) → Cavaleiros (servos) → Servos (mais de 90% da população). Trilogia medieval: oratores (rezam: clero), bellatores (guerreiam: nobreza), laboratores (trabalham: servos). A Igreja Católica era o centro do poder espiritual e político: cruzadas, inquisição, scholasticismo (Tomás de Aquino). Comércio renasceu nas cidades (burgos → burguesia).",
+    tip: "O feudalismo NÃO era um sistema organizado de cima para baixo — era descentralizado. Questão: 'O que caracterizava o poder feudal?' → Fragmentação e descentralização (o oposto do absolutismo). A Igreja medieval integrou o poder temporal e espiritual (teocracia) — o papa podia excomungar reis."
+  },
+  {
+    pos: [-4, 1.3, 3],
+    label: "Cruzadas (1096-1291)",
+    desc: "8 cruzadas: expedições militares cristãs para 'reconquistar' Jerusalém dos muçulmanos. Causas profundas: expansão comercial europeia para Oriente, crise feudal, autoridade papal. Resultados militares: fracasso (muçulmanos mantiveram Jerusalém). Resultados culturais: ENORME. Europa recontactou ciência greco-árabe (matemática, medicina, filosofia) → preparou o caminho para o Renascimento. Ordens militares: Templários, Hospitalários.",
+    tip: "As cruzadas são mais importantes pelos EFEITOS CULTURAIS que pela conquista militar. Questão: 'Qual o principal legado das Cruzadas?' → Reaproximação da Europa com a cultura clássica via intermediários muçulmanos — base do Renascimento."
+  },
+  {
+    pos: [4, 1.3, 3],
+    label: "Antiguidade Oriental",
+    desc: "Mesopotâmia: Sumérios (escrita cuneiforme), Babilônia (Código de Hamurabi — 'olho por olho'), Assírios. Egito: civilização nilótica, faraós (deus-rei), hierarquia social rígida, sistema de escrita hieroglífica, monumentos (Pirâmides de Gizé, Esfinge). Hebreus: monoteísmo (impacto na civilização ocidental — judaísmo, cristianismo, islamismo). China: Confúcio, Grande Muralha. O que une essas civilizações? O surgimento da escrita, do Estado e das cidades.",
+    tip: "Código de Hamurabi é o conjunto de leis escritas mais famoso e completo da Antiguidade. A lei do talião ('olho por olho') É do Código de Hamurabi mas também aparece na Bíblia. Confusão frequente em provas."
+  },
+  {
+    pos: [0, 1.3, 6],
+    label: "Fim da Idade Média: Crise e Transição",
+    desc: "Séc. XIV: crise do feudalismo. Peste Negra (1347-51): matou 1/3 da Europa — crise de mão de obra → servos exigem melhores condições. Guerras (100 Anos: França vs. Inglaterra, Joana d'Arc). Grandes Navegações (Portugal e Espanha, séc. XV): novas rotas comerciais, contornar o Mediterrâneo dominado por Veneza. Renascimento (séc. XIV-XVI na Itália): humanismo, perspectiva na pintura, Leonardo da Vinci, Michelangelo. Gutenberg (prensa móvel, 1450): revolução da informação.",
+    tip: "A Peste Negra teve um efeito paradoxal: ao matar muitos trabalhadores, valorizou a mão de obra restante — contribuindo para o fim do feudalismo. Gutenberg e a imprensa são cruciais para a Reforma Protestante (Lutero pôde divulgar suas teses rapidamente). Esse encadeamento causal é frequente em questões."
+  }
+];
+
+const scrollMeshes = [];
+const scrollNormalMat = new THREE.MeshLambertMaterial({ color: 0xd4b878 });
+const scrollHoverMat  = new THREE.MeshLambertMaterial({ color: 0xffd040, emissive: 0xc06000, emissiveIntensity: 0.4 });
+
+scrollData.forEach((data, i) => {
+  const group = new THREE.Group();
+
+  // Scroll body
+  const body = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.3, 0.35, 2.5, 16),
+    scrollNormalMat.clone()
+  );
+  body.castShadow = true;
+  group.add(body);
+
+  // End caps
+  [-1.25, 1.25].forEach(y => {
+    const cap = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.42, 0.42, 0.18, 16),
+      new THREE.MeshLambertMaterial({ color: 0xb89040 })
+    );
+    cap.position.y = y;
+    group.add(cap);
+  });
+
+  group.position.set(...data.pos);
+  group.userData = { isScroll: true, index: i, data };
+  scene.add(group);
+  scrollMeshes.push(group);
+});
+
+// ── RAYCASTER ────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredScroll = null;
+let selectedScroll = null;
+const tooltip = document.getElementById('tooltip');
+const popupOverlay = document.getElementById('popup-overlay');
+const popupTitle = document.getElementById('popup-title');
+const popupDesc = document.getElementById('popup-desc');
+const popupTip = document.getElementById('popup-tip');
+
+function getScrollObjects() {
+  const objs = [];
+  scrollMeshes.forEach(g => g.children.forEach(c => { c.userData.parentGroup = g; objs.push(c); }));
+  return objs;
+}
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(getScrollObjects());
+
+  if (intersects.length > 0) {
+    const group = intersects[0].object.userData.parentGroup;
+    if (group && group !== hoveredScroll) {
+      if (hoveredScroll) resetScrollMat(hoveredScroll);
+      hoveredScroll = group;
+      setScrollMat(hoveredScroll, true);
+    }
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top  = (e.clientY - 10) + 'px';
+    tooltip.textContent = group.userData.data.label;
+    document.body.style.cursor = 'pointer';
+  } else {
+    if (hoveredScroll) { resetScrollMat(hoveredScroll); hoveredScroll = null; }
+    tooltip.style.display = 'none';
+    document.body.style.cursor = 'default';
+  }
+});
+
+function setScrollMat(group, hover) {
+  group.children.forEach(c => {
+    if (c.geometry.type === 'CylinderGeometry' || c.geometry.type !== 'CylinderGeometry') {
+      if (c.material && c.material.color) {
+        if (hover) {
+          c.material.color.setHex(0xffd040);
+          if (c.material.emissive) { c.material.emissive.setHex(0xc06000); c.material.emissiveIntensity = 0.5; }
+        }
+      }
+    }
+  });
+}
+function resetScrollMat(group) {
+  group.children.forEach((c, ci) => {
+    if (c.material && c.material.color) {
+      if (ci === 0) { c.material.color.setHex(0xd4b878); if (c.material.emissive) { c.material.emissive.setHex(0x000000); c.material.emissiveIntensity = 0; } }
+      else { c.material.color.setHex(0xb89040); }
+    }
+  });
+}
+
+window.addEventListener('click', e => {
+  if (popupOverlay.classList.contains('active')) return;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(getScrollObjects());
+  if (intersects.length > 0) {
+    const group = intersects[0].object.userData.parentGroup;
+    if (group) openPopup(group.userData.data);
+  }
+});
+
+function openPopup(data) {
+  popupTitle.textContent = data.label;
+  popupDesc.textContent = data.desc;
+  popupTip.innerHTML = '<strong>UNICAP:</strong> ' + data.tip;
+  popupOverlay.classList.add('active');
+}
+
+document.getElementById('popup-close').addEventListener('click', () => {
+  popupOverlay.classList.remove('active');
+});
+popupOverlay.addEventListener('click', e => {
+  if (e.target === popupOverlay) popupOverlay.classList.remove('active');
+});
+
+// ── ANIMATION ─────────────────────────────────────────────────
+let t = 0;
+const hintEl = document.getElementById('hint');
+setTimeout(() => { hintEl.style.opacity = '0'; }, 4000);
+
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.01;
+
+  // Sun warmth variation
+  const warmth = 1 + Math.sin(t * 0.3) * 0.08;
+  sun.intensity = 3 * warmth;
+
+  // Dust drift
+  const pos = dustGeo.attributes.position.array;
+  for (let i = 0; i < dustCount; i++) {
+    pos[i*3]   += dustSpeeds[i].x;
+    pos[i*3+1] += dustSpeeds[i].y;
+    pos[i*3+2] += dustSpeeds[i].z;
+    if (pos[i*3]   > 20) pos[i*3]   = -20;
+    if (pos[i*3]   < -20) pos[i*3]  = 20;
+    if (pos[i*3+1] > 10) pos[i*3+1] = 0.3;
+    if (pos[i*3+1] < 0.2) pos[i*3+1] = 9;
+    if (pos[i*3+2] > 15) pos[i*3+2] = -30;
+    if (pos[i*3+2] < -30) pos[i*3+2] = 15;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+
+  // Gentle scroll idle bob
+  scrollMeshes.forEach((g, i) => {
+    g.position.y = scrollData[i].pos[1] + Math.sin(t * 0.7 + i * 1.2) * 0.04;
+    g.rotation.y = Math.sin(t * 0.3 + i * 0.8) * 0.05;
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ── RESIZE ───────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

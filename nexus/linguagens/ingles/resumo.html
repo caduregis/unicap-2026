@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Inglês | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020610;
+    --surface: #060d1e;
+    --surface2: #0a1428;
+    --border: rgba(0,212,255,0.15);
+    --accent: #22d3ee;
+    --accent2: #0ea5e9;
+    --text: rgba(255,255,255,0.88);
+    --muted: rgba(255,255,255,0.42);
+    --green: #34d399;
+    --amber: #f59e0b;
+    --rose: #fb7185;
+    --purple: #a78bfa;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.7; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(0,212,255,0.25); border-radius: 3px; }
+
+  .top-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(2,6,16,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px;
+  }
+  .top-nav a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; transition: opacity 0.2s; }
+  .top-nav a:hover { opacity: 0.7; }
+  .top-nav .brand { font-family: 'Orbitron', monospace; font-size: 11px; color: #06b6d4; letter-spacing: 0.1em; }
+
+  .hero {
+    background: linear-gradient(135deg, #020610 0%, #040d20 50%, #020610 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 32px 48px; text-align: center;
+  }
+  .hero h1 { font-family: 'Orbitron', monospace; font-size: clamp(24px,4vw,40px); color: var(--accent); margin-bottom: 12px; letter-spacing: 0.05em; }
+  .hero p { color: var(--muted); font-size: 15px; max-width: 560px; margin: 0 auto 24px; }
+  .hero-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .hero-tag {
+    background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2);
+    color: #67e8f9; font-size: 11px; padding: 5px 14px; border-radius: 20px; letter-spacing: 0.05em;
+  }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .section { margin-bottom: 56px; }
+  .section-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace; font-size: 11px; color: var(--accent);
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: #fff; }
+  .section-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 16px; }
+  .card h3 { font-size: 15px; font-weight: 600; color: var(--accent); margin-bottom: 10px; }
+  .card p { font-size: 14px; color: var(--text); line-height: 1.75; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .mini-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+  .mini-card h4 { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+  .mini-card p, .mini-card li { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.65; }
+  .mini-card ul { padding-left: 16px; }
+
+  .tip-box {
+    background: linear-gradient(135deg, rgba(0,212,255,0.06), rgba(0,212,255,0.02));
+    border: 1px solid rgba(0,212,255,0.25); border-left: 4px solid var(--accent);
+    border-radius: 0 12px 12px 0; padding: 18px 20px; margin: 20px 0;
+  }
+  .tip-box .label { font-size: 10px; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .tip-box p, .tip-box ul { font-size: 14px; color: rgba(255,255,255,0.82); line-height: 1.75; }
+  .tip-box ul { padding-left: 18px; }
+
+  .warn-box {
+    background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.25);
+    border-left: 4px solid var(--amber); border-radius: 0 12px 12px 0;
+    padding: 16px 20px; margin: 14px 0;
+  }
+  .warn-box .label { font-size: 10px; font-weight: 600; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  .warn-box p { font-size: 13px; color: rgba(255,255,255,0.78); line-height: 1.7; }
+
+  .table-wrap { overflow-x: auto; margin: 16px 0; border-radius: 10px; border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: rgba(0,212,255,0.1); color: var(--accent); font-weight: 600; padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,212,255,0.02); }
+
+  code {
+    background: rgba(0,212,255,0.1); color: #67e8f9;
+    padding: 2px 7px; border-radius: 4px; font-size: 12.5px; font-family: 'Courier New', monospace;
+  }
+  strong { color: #fff; }
+  em { color: var(--amber); font-style: normal; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-cyan { background: rgba(0,212,255,0.12); color: #22d3ee; }
+  .badge-amber { background: rgba(245,158,11,0.12); color: #fbbf24; }
+  .badge-green { background: rgba(52,211,153,0.12); color: #34d399; }
+  .badge-rose { background: rgba(251,113,133,0.12); color: #fb7185; }
+  .badge-purple { background: rgba(167,139,250,0.12); color: #a78bfa; }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px; color: var(--text);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist input[type="checkbox"] { margin-top: 2px; accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+
+  .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .video-card {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; text-decoration: none; transition: border-color 0.2s, transform 0.2s; display: block;
+  }
+  .video-card:hover { border-color: rgba(0,212,255,0.45); transform: translateY(-2px); }
+  .video-card .vicon { font-size: 20px; margin-bottom: 8px; }
+  .video-card .vtitle { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  .video-card .vdesc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  .cta-map {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, rgba(0,212,255,0.07), rgba(0,212,255,0.03));
+    border: 1px solid rgba(0,212,255,0.25); border-radius: 14px;
+    padding: 24px 28px; margin: 40px 0; text-decoration: none; transition: border-color 0.2s;
+  }
+  .cta-map:hover { border-color: rgba(0,212,255,0.5); }
+  .cta-left h3 { font-family: 'Orbitron', monospace; font-size: 15px; color: var(--accent); margin-bottom: 4px; }
+  .cta-left p { font-size: 13px; color: var(--muted); }
+  .cta-arrow { font-size: 22px; color: var(--accent); }
+
+  .cta-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 32px 0; }
+  .cta-btn {
+    flex: 1; min-width: 200px; padding: 18px 24px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; text-decoration: none; transition: border-color 0.2s;
+  }
+  .cta-btn:hover { border-color: rgba(0,212,255,0.45); }
+  .cta-btn h4 { font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+  .cta-btn p { font-size: 12px; color: var(--muted); }
+
+  .ff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .ff-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .ff-item .wrong { color: var(--rose); font-size: 13px; margin-bottom: 4px; }
+  .ff-item .right { color: var(--green); font-size: 13px; }
+  .ff-item .word { font-weight: 700; font-size: 15px; color: #fff; margin-bottom: 8px; }
+
+  @media(max-width: 600px) {
+    .top-nav { padding: 12px 16px; }
+    .hero { padding: 40px 16px 32px; }
+    .container { padding: 28px 16px 60px; }
+    .ff-grid { grid-template-columns: 1fr; }
+    .cta-map { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="../../index.html">← Nexus</a>
+  <a href="mapa3d.html">🔬 Lab 3D</a>
+  <span class="brand">English — UNICAP 2026.2</span>
+  <a href="../portugues/resumo.html">Português →</a>
+</nav>
+
+<div class="hero">
+  <h1>English</h1>
+  <p>Tudo que cai na seção 6.2 do edital UNICAP. Foco em reading comprehension — a forma como a UNICAP realmente testa inglês.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Reading Strategies</span>
+    <span class="hero-tag">Verb Tenses</span>
+    <span class="hero-tag">Modal Verbs</span>
+    <span class="hero-tag">Pronouns</span>
+    <span class="hero-tag">Connectives</span>
+    <span class="hero-tag">Articles</span>
+    <span class="hero-tag">False Friends</span>
+    <span class="hero-tag">Vocabulary</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <a class="cta-map" href="mapa3d.html">
+    <div class="cta-left">
+      <h3>Lab de Línguas</h3>
+      <p>7 painéis holográficos orbitando — clique para explorar cada tema</p>
+    </div>
+    <span class="cta-arrow">→</span>
+  </a>
+
+  <!-- ═══ HOW UNICAP TESTS ENGLISH ═══════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">★</div>
+      <div>
+        <div class="section-title">Como a UNICAP Testa Inglês</div>
+        <div class="section-sub">Leia isto antes de qualquer coisa</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>O foco é leitura — não tradução, não gramática isolada</h3>
+      <p>
+        A UNICAP não cobra tradução de frases nem conjugação verbal isolada. O inglês da prova é sempre um <strong>texto real em inglês</strong> seguido de questões em português. Você precisa entender o texto o suficiente para responder — não traduzir tudo perfeitamente.
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="mini-card">
+        <h4>Tipos de questão UNICAP — Inglês</h4>
+        <ul>
+          <li><strong>Ideia principal:</strong> "O texto trata principalmente de..."</li>
+          <li><strong>Informação específica:</strong> "De acordo com o texto, qual..."</li>
+          <li><strong>Inferência:</strong> "Pode-se concluir que..."</li>
+          <li><strong>Vocabulário em contexto:</strong> "No texto, a palavra X significa..."</li>
+          <li><strong>Referência:</strong> "A palavra IT na linha X refere-se a..."</li>
+          <li><strong>Propósito/gênero:</strong> "O objetivo do autor é..."</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4>Gêneros Textuais na Prova</h4>
+        <ul>
+          <li>Artigos de revista científica ou jornalística</li>
+          <li>Editoriais e artigos de opinião</li>
+          <li>Relatórios e dados estatísticos</li>
+          <li>Textos sobre tecnologia, meio ambiente, sociedade</li>
+          <li>Register: sempre formal ou semi-formal</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">Estratégia de Prova</div>
+      <ul>
+        <li>Leia o título e as questões <strong>antes</strong> do texto inteiro</li>
+        <li>Use o contexto: mesmo sem saber uma palavra, o parágrafo diz o que significa</li>
+        <li>Cognatos são seus aliados — palavras parecidas com português geralmente têm o mesmo sentido</li>
+        <li>False friends são armadilhas — memorize os 10 principais (ver abaixo)</li>
+        <li>Concessão em inglês (however, although, despite) = o autor está prestes a contrariar o que disse antes</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ READING STRATEGIES ════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div>
+        <div class="section-title">Reading Strategies</div>
+        <div class="section-sub">Técnicas de leitura para vestibular</div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="mini-card">
+        <h4>Skimming</h4>
+        <p>Ler rapidamente para captar a ideia geral. Técnica: leia o título, subtítulo, primeiro e último parágrafo e a primeira frase de cada parágrafo do meio. Usado para: "O texto trata principalmente de..."</p>
+      </div>
+      <div class="mini-card">
+        <h4>Scanning</h4>
+        <p>Buscar informação específica sem ler tudo. Procure por datas, nomes, números, palavras-chave. Usado para: "De acordo com o texto, em que ano..."</p>
+      </div>
+      <div class="mini-card">
+        <h4>Inferência</h4>
+        <p>Deduzir o que não está explícito. Use o tom do autor, o vocabulário e o contexto. Usado para: "Pode-se concluir que o autor acredita que..."</p>
+      </div>
+      <div class="mini-card">
+        <h4>Vocabulário em Contexto</h4>
+        <p>Mesmo sem conhecer a palavra, o parágrafo fornece pistas. Analise: a palavra substitui um substantivo, verbo ou adjetivo? Qual seria o sentido que encaixa logicamente?</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VERB TENSES ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div>
+        <div class="section-title">Verb Tenses</div>
+        <div class="section-sub">Todos os tempos verbais com exemplos</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tempo Verbal</th><th>Estrutura</th><th>Uso Principal</th><th>Exemplo</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Present Simple</strong></td>
+            <td><code>verb / verb+s</code></td>
+            <td>Hábitos, fatos, verdades gerais</td>
+            <td><em>Scientists study climate change.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Present Continuous</strong></td>
+            <td><code>am/is/are + verb-ing</code></td>
+            <td>Ação agora / plano futuro próximo</td>
+            <td><em>Temperatures are rising rapidly.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Past Simple</strong></td>
+            <td><code>verb-ed / irregular</code></td>
+            <td>Ação completada no passado</td>
+            <td><em>The report was published in 2020.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Past Continuous</strong></td>
+            <td><code>was/were + verb-ing</code></td>
+            <td>Ação em progresso no passado / interrompida</td>
+            <td><em>Scientists were analyzing data when they found...</em></td>
+          </tr>
+          <tr>
+            <td><strong>Present Perfect</strong> ★</td>
+            <td><code>have/has + past participle</code></td>
+            <td>Passado com relevância presente / experiência</td>
+            <td><em>Researchers have discovered a new species.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Past Perfect</strong></td>
+            <td><code>had + past participle</code></td>
+            <td>Ação anterior a outra ação passada</td>
+            <td><em>By 2000, the company had already expanded.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Future — will</strong></td>
+            <td><code>will + infinitive</code></td>
+            <td>Previsão, promessa, decisão espontânea</td>
+            <td><em>The policy will take effect next year.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Future — going to</strong></td>
+            <td><code>am/is/are going to + inf</code></td>
+            <td>Plano pré-decidido, evidência presente</td>
+            <td><em>The government is going to reform the system.</em></td>
+          </tr>
+          <tr>
+            <td><strong>Passive Voice</strong></td>
+            <td><code>am/is/are/was/were + past part.</code></td>
+            <td>Foco na ação, não no agente. Muito comum em textos acadêmicos.</td>
+            <td><em>The study was conducted by researchers at MIT.</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">Dica UNICAP</div>
+      <p>Present Perfect (★) é o tempo mais cobrado porque aparece muito em textos jornalísticos e científicos ("have shown", "has increased", "have been reported"). Indica que a ação passada tem impacto atual. Passive Voice é onipresente em relatórios — o agente é omitido quando não importa ou é óbvio.</p>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL VERBS ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div>
+        <div class="section-title">Modal Verbs</div>
+        <div class="section-sub">Significado e nuance de cada modal</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Modal</th><th>Significado Principal</th><th>Exemplo em Texto</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>can / could</strong></td>
+            <td>Capacidade, possibilidade, permissão informal</td>
+            <td><em>The technology can reduce emissions by 40%.</em></td>
+          </tr>
+          <tr>
+            <td><strong>may / might</strong></td>
+            <td>Possibilidade (may = mais provável, might = menos)</td>
+            <td><em>The policy might lead to unexpected consequences.</em></td>
+          </tr>
+          <tr>
+            <td><strong>must</strong></td>
+            <td>Obrigação forte (interna/moral) ou dedução lógica</td>
+            <td><em>This must be a new approach to the problem.</em> (dedução)</td>
+          </tr>
+          <tr>
+            <td><strong>have to / need to</strong></td>
+            <td>Obrigação externa (regra, lei, necessidade)</td>
+            <td><em>Countries have to meet their emissions targets.</em></td>
+          </tr>
+          <tr>
+            <td><strong>should / ought to</strong></td>
+            <td>Conselho, expectativa, recomendação</td>
+            <td><em>Governments should invest more in renewable energy.</em></td>
+          </tr>
+          <tr>
+            <td><strong>would</strong></td>
+            <td>Condicional, hábito passado, forma educada</td>
+            <td><em>This approach would be more effective than...</em></td>
+          </tr>
+          <tr>
+            <td><strong>must have + pp</strong></td>
+            <td>Dedução sobre o passado (certeza)</td>
+            <td><em>The ancient civilization must have been advanced.</em></td>
+          </tr>
+          <tr>
+            <td><strong>should have + pp</strong></td>
+            <td>Crítica sobre o passado (não foi feito)</td>
+            <td><em>The authorities should have acted sooner.</em></td>
+          </tr>
+          <tr>
+            <td><strong>might have + pp</strong></td>
+            <td>Possibilidade sobre o passado (incerteza)</td>
+            <td><em>The decision might have been influenced by...</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">Must vs. Have to — distinção sutil</div>
+      <p>"Must" expressa obrigação <strong>interna</strong> (o autor acha que é necessário). "Have to" expressa obrigação <strong>externa</strong> (uma lei ou regra impõe). Num editorial de opinião, "governments must address..." revela a posição forte do autor. "Countries have to comply with..." indica uma obrigação legal ou acordada.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PRONOUNS ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div>
+        <div class="section-title">Pronouns</div>
+        <div class="section-sub">Todos os tipos + questões de referência</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Tipo</th><th>Pronomes</th><th>Uso</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-cyan">Sujeito</span></td>
+            <td><code>I, you, he, she, it, we, they</code></td>
+            <td>Sujeito da oração</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber">Objeto</span></td>
+            <td><code>me, you, him, her, it, us, them</code></td>
+            <td>Objeto do verbo ou da preposição</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Possessivo Adj.</span></td>
+            <td><code>my, your, his, her, its, our, their</code></td>
+            <td>Antes de substantivo: <em>my book</em></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Possessivo Pron.</span></td>
+            <td><code>mine, yours, his, hers, ours, theirs</code></td>
+            <td>Substituindo o substantivo: <em>That book is mine.</em></td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">Relativo</span></td>
+            <td><code>who</code> (pessoas), <code>which</code> (coisas), <code>that</code> (ambos), <code>whose</code> (posse), <code>where</code> (lugar), <code>when</code> (tempo)</td>
+            <td>Conectam orações subordinadas adjetivas</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-rose">Reflexivo</span></td>
+            <td><code>myself, yourself, himself, herself, itself, ourselves, themselves</code></td>
+            <td>Ação recai sobre o próprio sujeito; ênfase</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-cyan">Indefinido</span></td>
+            <td><code>someone, anyone, everyone, no one, something, anything, nothing</code></td>
+            <td>Referência não específica</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">Questão de Referência — mais cobrada</div>
+      <p>Formato típico: <em>"What does the pronoun 'it' in line 5 refer to?"</em> Regra: o pronome retoma o substantivo mais próximo que seja compatível em número (singular/plural) e gênero. Leia a frase <strong>anterior</strong> ao pronome. <code>whose</code> ≠ <code>who's</code> (who is) — atenção em questões de vocabulário.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PREPOSITIONS ═══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div>
+        <div class="section-title">Prepositions</div>
+        <div class="section-sub">In / On / At para tempo e lugar</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Preposição</th><th>Tempo</th><th>Lugar</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>IN</strong></td>
+            <td>Meses, anos, estações, séculos, períodos longos: <em>in 2024, in March, in the morning, in the 21st century</em></td>
+            <td>Dentro de (espaço fechado ou área): <em>in Brazil, in the room, in the city</em></td>
+          </tr>
+          <tr>
+            <td><strong>ON</strong></td>
+            <td>Dias e datas específicas: <em>on Monday, on June 14th, on weekends</em></td>
+            <td>Superfície: <em>on the table, on the floor, on page 3</em></td>
+          </tr>
+          <tr>
+            <td><strong>AT</strong></td>
+            <td>Horas e momentos específicos: <em>at 9am, at noon, at night, at the moment</em></td>
+            <td>Ponto específico: <em>at the bus stop, at the entrance, at home, at university</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Outras Preposições Comuns em Textos Formais</h3>
+      <p>
+        <code>according to</code> — de acordo com &nbsp;|&nbsp; <code>due to / owing to</code> — devido a &nbsp;|&nbsp; <code>despite / in spite of</code> — apesar de<br>
+        <code>instead of</code> — em vez de &nbsp;|&nbsp; <code>in terms of</code> — em termos de &nbsp;|&nbsp; <code>as a result of</code> — como resultado de<br>
+        <code>in addition to</code> — além de &nbsp;|&nbsp; <code>with regard to</code> — com relação a &nbsp;|&nbsp; <code>on behalf of</code> — em nome de
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ CONNECTIVES ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div>
+        <div class="section-title">Connectives &amp; Cohesion</div>
+        <div class="section-sub">Conectivos em inglês — fundamentais para compreensão</div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Relação</th><th>Conectivos em Inglês</th><th>Equivalente em Português</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-cyan">Addition</span></td>
+            <td><code>moreover, furthermore, in addition, besides, also, what is more</code></td>
+            <td>além disso, ademais, também</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-rose">Contrast</span></td>
+            <td><code>however, nevertheless, nonetheless, yet, on the other hand, although, despite, even though, whereas</code></td>
+            <td>no entanto, contudo, embora, apesar de</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber">Cause</span></td>
+            <td><code>because, since, as, due to, owing to, as a result of, given that</code></td>
+            <td>porque, pois, uma vez que, devido a</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Result</span></td>
+            <td><code>therefore, thus, hence, consequently, as a result, so</code></td>
+            <td>portanto, logo, assim, consequentemente</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-cyan">Example</span></td>
+            <td><code>for example, for instance, such as, like, including, namely</code></td>
+            <td>por exemplo, como, tais como</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-amber">Condition</span></td>
+            <td><code>if, unless, provided that, as long as, on condition that</code></td>
+            <td>se, desde que, contanto que</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">Concession</span></td>
+            <td><code>although, even though, while, whilst, despite the fact that</code></td>
+            <td>embora, ainda que, mesmo que</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">Emphasis</span></td>
+            <td><code>in fact, indeed, above all, especially, particularly, notably</code></td>
+            <td>de fato, com efeito, especialmente</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip-box">
+      <div class="label">Dica de Leitura</div>
+      <p>Quando você vê <strong>however / nevertheless / on the other hand</strong>, o parágrafo está prestes a contrariar ou qualificar a afirmação anterior. Quando você vê <strong>therefore / thus / consequently</strong>, o autor está chegando a uma conclusão. Isso resolve questões de "qual é a relação entre os parágrafos X e Y".</p>
+    </div>
+  </div>
+
+  <!-- ═══ ARTICLES ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div>
+        <div class="section-title">Articles &amp; Quantifiers</div>
+        <div class="section-sub">a / an / the — regras que mudam o sentido</div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="mini-card">
+        <h4>a / an — Indefinido</h4>
+        <ul>
+          <li>Primeira menção de algo</li>
+          <li>Membro de uma categoria geral</li>
+          <li><code>a</code> antes de consoante: <em>a university</em></li>
+          <li><code>an</code> antes de vogal sonora: <em>an hour, an MBA</em></li>
+          <li><em>"A study found that..."</em> = um estudo qualquer</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4>the — Definido</h4>
+        <ul>
+          <li>Já mencionado antes ou conhecido</li>
+          <li>Único no contexto: <em>the sun, the president</em></li>
+          <li>Substantivo superlativo: <em>the best solution</em></li>
+          <li>Rios, oceanos, montanhas, países plurais: <em>the Amazon, the USA</em></li>
+          <li><em>"The study confirmed..."</em> = aquele estudo específico</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4>Sem Artigo</h4>
+        <ul>
+          <li>Conceitos gerais (abstratos): <em>Education is important.</em></li>
+          <li>Substantivos incontáveis em geral: <em>Water is essential.</em></li>
+          <li>Nomes próprios (países, cidades): <em>Brazil, London</em></li>
+          <li>Refeições, esportes, idiomas: <em>breakfast, tennis, English</em></li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <h4>Quantifiers</h4>
+        <ul>
+          <li><code>many</code> (contável+), <code>much</code> (incontável+): <em>many problems, much evidence</em></li>
+          <li><code>few</code> (contável−), <code>little</code> (incontável−): <em>few studies, little data</em></li>
+          <li><code>a few / a little</code> = algum (positivo)</li>
+          <li><code>some</code> (afirmativo), <code>any</code> (negativo/interrogativo)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FALSE FRIENDS ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <div>
+        <div class="section-title">False Friends</div>
+        <div class="section-sub">Armadilhas clássicas de vocabulário</div>
+      </div>
+    </div>
+
+    <div class="ff-grid">
+      <div class="ff-item">
+        <div class="word">actually</div>
+        <div class="wrong">✗ atualmente</div>
+        <div class="right">✓ na verdade, de fato</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">sensible</div>
+        <div class="wrong">✗ sensível</div>
+        <div class="right">✓ sensato, razoável</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">pretend</div>
+        <div class="wrong">✗ pretender (intenção)</div>
+        <div class="right">✓ fingir, simular</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">eventually</div>
+        <div class="wrong">✗ eventualmente</div>
+        <div class="right">✓ finalmente, no final das contas</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">comprehensive</div>
+        <div class="wrong">✗ compreensivo (tolerante)</div>
+        <div class="right">✓ abrangente, completo</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">college</div>
+        <div class="wrong">✗ colégio (ensino médio)</div>
+        <div class="right">✓ faculdade, universidade</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">assist</div>
+        <div class="wrong">✗ assistir (ver)</div>
+        <div class="right">✓ auxiliar, ajudar</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">fabric</div>
+        <div class="wrong">✗ fábrica</div>
+        <div class="right">✓ tecido, pano</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">library</div>
+        <div class="wrong">✗ livraria</div>
+        <div class="right">✓ biblioteca</div>
+      </div>
+      <div class="ff-item">
+        <div class="word">lecture</div>
+        <div class="wrong">✗ leitura</div>
+        <div class="right">✓ aula, palestra</div>
+      </div>
+    </div>
+
+    <div class="warn-box" style="margin-top: 20px;">
+      <div class="label">Como Lidar com Vocabulário Desconhecido</div>
+      <p>1. Tente identificar se a palavra parece com alguma em português (cognatos). 2. Analise o contexto da frase — qual sentido faria lógica? 3. Identifique a classe gramatical (substantivo? verbo? adjetivo?) — isso já elimina alternativas. 4. Se for uma palavra-chave de uma questão, leia o parágrafo inteiro em volta dela.</p>
+    </div>
+  </div>
+
+  <!-- ═══ VOCABULARY STRATEGIES ══════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <div>
+        <div class="section-title">Vocabulary Strategies</div>
+        <div class="section-sub">Cognatos, famílias de palavras e vocabulário acadêmico</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Cognatos Úteis — Áreas da Prova UNICAP</h3>
+      <p>
+        <strong>Ciência/Tecnologia:</strong> <em>technology, innovation, research, experiment, analysis, hypothesis, evidence, data, digital, artificial intelligence, climate, environment</em><br><br>
+        <strong>Sociedade/Política:</strong> <em>democracy, inequality, economy, migration, community, institution, policy, government, human rights, education, culture</em><br><br>
+        <strong>Saúde:</strong> <em>pandemic, vaccine, medicine, hospital, symptom, treatment, mental health, nutrition, physical activity</em>
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>Famílias de Palavras (Word Families)</h3>
+      <p>
+        <strong>educate</strong> (verbo) → <strong>education</strong> (substantivo) → <strong>educational</strong> (adjetivo) → <strong>educationally</strong> (advérbio)<br>
+        <strong>analyze</strong> → <strong>analysis</strong> → <strong>analytical</strong> → <strong>analytically</strong><br>
+        <strong>develop</strong> → <strong>development</strong> → <strong>developmental</strong><br><br>
+        Reconhecer a raiz de uma palavra permite deduzir o significado mesmo sem conhecê-la na forma específica usada no texto.
+      </p>
+    </div>
+  </div>
+
+  <!-- ═══ CHECKLIST ═════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">✓</div>
+      <div>
+        <div class="section-title">Checklist de Revisão</div>
+        <div class="section-sub">Marque à medida que dominar</div>
+      </div>
+    </div>
+    <div class="card">
+      <ul class="checklist">
+        <li><input type="checkbox"> Ler um texto de artigo jornalístico em inglês e identificar a ideia principal</li>
+        <li><input type="checkbox"> Identificar presente perfeito, passado simples e passado perfeito num texto</li>
+        <li><input type="checkbox"> Saber a diferença entre must / have to / should + perfeito</li>
+        <li><input type="checkbox"> Responder questões de referência pronominal sem errar</li>
+        <li><input type="checkbox"> Memorizar os 10 false friends da lista acima</li>
+        <li><input type="checkbox"> Identificar o propósito de um texto (gênero + intenção do autor)</li>
+        <li><input type="checkbox"> Usar skimming e scanning num texto de 15 linhas em menos de 3 minutos</li>
+        <li><input type="checkbox"> Resolver 5 provas anteriores da UNICAP na seção de inglês</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ VIDEOS ════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">▶</div>
+      <div>
+        <div class="section-title">Vídeos Recomendados</div>
+        <div class="section-sub">Canais com foco em inglês para vestibular</div>
+      </div>
+    </div>
+    <div class="video-grid">
+      <a class="video-card" href="https://www.youtube.com/@EnglishinBrazil" target="_blank">
+        <div class="vicon">🎥</div>
+        <div class="vtitle">English in Brazil</div>
+        <div class="vdesc">Aulas em português explicando inglês para brasileiros. Gramática e vocabulário com contexto real.</div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/@SkilledIngles" target="_blank">
+        <div class="vicon">🎥</div>
+        <div class="vtitle">Skilled</div>
+        <div class="vdesc">Inglês para vestibular. Foco em interpretação de texto, tempos verbais e vocabulário cobrado.</div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/@ProfSlava" target="_blank">
+        <div class="vicon">🎥</div>
+        <div class="vtitle">Prof. Slava</div>
+        <div class="vdesc">Modal verbs, verb tenses e gramática funcional para provas de inglês. Didática direta.</div>
+      </a>
+      <a class="video-card" href="https://www.youtube.com/@EnglishDoZero" target="_blank">
+        <div class="vicon">🎥</div>
+        <div class="vtitle">English do Zero</div>
+        <div class="vdesc">Do básico ao intermediário. Bom para consolidar estruturas gramaticais antes da prova.</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA row -->
+  <div class="cta-row">
+    <a class="cta-btn" href="mapa3d.html">
+      <h4>🔬 Lab de Línguas 3D</h4>
+      <p>7 painéis orbitando com os temas de inglês</p>
+    </a>
+    <a class="cta-btn" href="../portugues/resumo.html">
+      <h4>⛪ Português</h4>
+      <p>Resumo completo de língua portuguesa</p>
+    </a>
+    <a class="cta-btn" href="../../index.html">
+      <h4>🏠 Hub UNICAP</h4>
+      <p>Voltar para o painel principal</p>
+    </a>
+  </div>
+
+</div>
+</body>
+</html>

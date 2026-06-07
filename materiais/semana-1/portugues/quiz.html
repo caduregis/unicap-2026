@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz · Português · UNICAP 2026.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>*{font-family:'Inter',sans-serif}body{background:linear-gradient(135deg,#0a0e1a 0%,#131829 50%,#0a0e1a 100%);min-height:100vh;color:#e8eaf0}.glass{background:rgba(19,24,41,0.7);backdrop-filter:blur(12px);border:1px solid rgba(0,212,255,0.1)}.cyan{color:#00d4ff}.amber{color:#ffb800}.alt{transition:all 200ms;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06)}.alt:hover{background:rgba(0,212,255,0.08);border-color:#00d4ff}.alt.acerto{background:rgba(16,185,129,0.18);border-color:#10b981}.alt.erro{background:rgba(239,68,68,0.18);border-color:#ef4444}.alt.disabled{cursor:not-allowed;pointer-events:none}</style></head>
+<body class="p-4 sm:p-8">
+<header class="max-w-3xl mx-auto mb-6">
+  <a href="../index.html" class="text-sm cyan hover:underline">← Semana 1</a>
+  <div class="flex items-baseline justify-between mt-3">
+    <h1 class="text-2xl font-bold">❓ Quiz · <span class="amber">Português</span></h1>
+    <p class="text-xs text-slate-500" id="timer">15:00</p>
+  </div>
+  <p class="text-xs text-slate-500 mt-1">15 questões · Regência, Concordância, Crase</p>
+</header>
+<section id="quizArea" class="max-w-3xl mx-auto"></section>
+<section id="resultadoArea" class="max-w-3xl mx-auto hidden glass rounded-2xl p-8 text-center">
+  <p class="text-6xl mb-4">🎯</p><p class="text-2xl font-bold mb-2">Quiz finalizado!</p>
+  <p class="text-4xl font-bold cyan mb-2"><span id="acertos">0</span>/15</p>
+  <p class="text-slate-400 mb-6" id="diagnostico"></p>
+  <div class="flex gap-3 justify-center">
+    <button onclick="reiniciar()" class="bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-6 py-3 rounded-lg">🔄 Refazer</button>
+    <a href="../index.html" class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg">← Voltar</a>
+  </div>
+</section>
+<script>
+const Q=[
+  {e:'"Aspiramos ___ uma vida melhor." Complete corretamente.',a:['a','à','ao','em','com'],c:0,exp:'Aspirar = almejar é T.I. (exige "a"). Mas "vida" não tem artigo definido obrigatório aqui (ASPIRAMOS A UMA vida), então sem crase.'},
+  {e:'Qual frase está com regência verbal correta?',a:['Prefiro estudar do que trabalhar.','Implica em vários problemas.','Visou o passaporte na imigração.','Lembrei dele ontem.','Obedeço meus pais.'],c:2,exp:'"Visar" no sentido de "dar visto" é T.D. (sem prep.). Erros nas outras: preferir rejeita "do que"; implicar = direto; lembrar/obedecer = T.I.'},
+  {e:'"___ muitos candidatos no vestibular." Qual verbo usar corretamente?',a:['Houveram','Houve','Existe','Tinha','Houveram tido'],c:1,exp:'HOUVE (impessoal, singular). "Existir" flexiona normalmente — seria "existem". "Tinha" não substitui "haver" impessoal.'},
+  {e:'Onde há crase obrigatória?',a:['Vou a pé.','Refiro-me a ela.','Cheguei à noite.','Voltarei a estudar.','Entreguei o trabalho a você.'],c:2,exp:'"À noite" é locução adverbial feminina, com crase obrigatória. As outras: pé (masc), ela (pron pessoal), verbo "estudar", "você" (pron).'},
+  {e:'Marque a alternativa com erro de concordância:',a:['Fazem dez anos que ele saiu.','Houve muitas dúvidas hoje.','Mais de um candidato se inscreveu.','A maioria dos alunos chegou.','Tudo é incerteza.'],c:0,exp:'"Fazem dez anos" está errado. "Fazer" indicando tempo é impessoal: "FAZ dez anos". As outras estão corretas.'},
+  {e:'"O pai assistiu ___ filho doente." Complete:',a:['o','ao','no','do','com'],c:1,exp:'"Assistir" no sentido de DAR ASSISTÊNCIA é T.I.: "Assistiu AO filho". Já no sentido de ver/presenciar, pode ser ambos ("Assisti o filme" ou "ao filme").'},
+  {e:'Qual está conforme a norma culta?',a:['Estou meio cansado da rotina.','Estou meia cansada da rotina.','As salas estão meia vazias.','Comeu meio maçã.','Vimos meia partida.'],c:0,exp:'"Meio" como ADVÉRBIO (= um pouco) é INVARIÁVEL — modifica adjetivo. "Meio cansado/a" sempre. Quando adjetivo (metade): "comi meia maçã".'},
+  {e:'"A planilha segue ___ a este e-mail." Complete:',a:['anexo','anexa','em anexo','anexamente','anexada'],c:1,exp:'"Anexa" concorda com "planilha" (feminino). "Em anexo" também é correto (locução invariável), mas a opção "anexa" sozinha é a melhor aqui.'},
+  {e:'"___ menos de uma semana que ele se mudou." Complete:',a:['Faz','Fazem','Há','Existe','Tem'],c:0,exp:'"Faz" (impessoal, tempo) é a forma culta. "Há" também seria correta. Plural "fazem" seria erro.'},
+  {e:'"Ele dirigiu-se ___ secretaria para reclamar." Complete:',a:['a','à','para','com','até a'],c:1,exp:'À secretaria. "Dirigir-se a" exige preposição. "Secretaria" é feminina e aceita artigo. Logo, a + a = À.'},
+  {e:'Qual frase apresenta concordância nominal CORRETA?',a:['Os alunos estavam meio cansadas.','As reuniões estão incluídas no calendário.','As advogadas estavam meias preocupadas.','A diretora foi muito grato.','Mulher cumprimentou: "Obrigado pela ajuda."'],c:1,exp:'"Incluídas" concorda com "reuniões" (fem. pl.). Em: A = meio inv.; C = meio inv.; D = "grata"; E = "obrigada".'},
+  {e:'"___ medidas urgentes ___ tomar." Complete corretamente:',a:['Existem / a','Existem / à','Há / a','Há / à','Existe / a'],c:2,exp:'"HÁ medidas... A tomar." "Há" (impessoal, existir) singular. "A tomar" sem crase (antes de verbo).'},
+  {e:'"Refiro-me ___ ideia que você expressou." Complete:',a:['a','à','àquela','em','com'],c:1,exp:'À ideia. "Referir-se a" + "a ideia" (fem com artigo) = À ideia. Crase obrigatória.'},
+  {e:'Em qual frase o uso da CRASE está INCORRETO?',a:['Daqui a uma hora começamos.','Voltarei à casa antes das 18h.','À noite, todos os gatos são pardos.','Cheguei às pressas.','Refiro-me àquela decisão polêmica.'],c:1,exp:'"À casa" SÓ tem crase quando especificada ("à casa da família"). "Casa" (própria, sem especificação) NÃO leva crase. As outras estão corretas.'},
+  {e:'"___ duas semanas que aguardo a resposta." Complete:',a:['Faz','Fazem','Houve','Existe','Tem'],c:0,exp:'"FAZ duas semanas" — verbo "fazer" indicando tempo é impessoal, sempre na 3ª pessoa do singular.'}
+];
+let r=new Array(Q.length).fill(null),ts=15*60,tid=null;
+function render(){const a=document.getElementById('quizArea');a.innerHTML=Q.map((q,i)=>`<div class="glass rounded-xl p-5 mb-4"><p class="text-xs cyan font-bold mb-2">Questão ${i+1}</p><p class="mb-4 leading-relaxed">${q.e}</p><div class="space-y-2">${q.a.map((alt,j)=>{let cls='alt';if(r[i]!==null){cls+=' disabled';if(j===q.c)cls+=' acerto';else if(j===r[i])cls+=' erro'}return`<div class="${cls} rounded-lg p-3 flex gap-3" onclick="resp(${i},${j})"><span class="font-bold cyan">${String.fromCharCode(65+j)})</span><span>${alt}</span></div>`}).join('')}</div>${r[i]!==null?`<p class="text-xs mt-3 ${r[i]===q.c?'text-emerald-300':'text-amber-300'}"><strong>${r[i]===q.c?'✓ Correto.':'✗ Resposta correta: '+String.fromCharCode(65+q.c)+'.'}</strong> ${q.exp}</p>`:''}</div>`).join('')+`<button onclick="fim()" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3 rounded-lg mt-4">Finalizar</button>`}
+function resp(i,j){if(r[i]!==null)return;r[i]=j;render()}
+function fim(){clearInterval(tid);const a=r.reduce((ac,rr,i)=>ac+(rr===Q[i].c?1:0),0);document.getElementById('quizArea').classList.add('hidden');document.getElementById('resultadoArea').classList.remove('hidden');document.getElementById('acertos').textContent=a;const p=(a/15)*100;let d='';if(p>=80)d='🔥 Domínio sólido.';else if(p>=60)d='👍 Base boa. Revise os erros.';else if(p>=40)d='⚠️ Gaps importantes. Releia o resumo.';else d='🚨 Estude o resumo antes de refazer.';document.getElementById('diagnostico').textContent=d}
+function reiniciar(){r=new Array(Q.length).fill(null);document.getElementById('quizArea').classList.remove('hidden');document.getElementById('resultadoArea').classList.add('hidden');render();ts=15*60;startTimer()}
+function startTimer(){tid=setInterval(()=>{ts--;const m=Math.floor(ts/60),s=ts%60;document.getElementById('timer').textContent=`${m}:${s.toString().padStart(2,'0')}`;if(ts<=0){clearInterval(tid);fim()}},1000)}
+render();startTimer();
+</script></body></html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Química Orgânica · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">QUÍMICA ORGÂNICA</div><div class="lt2">carbono · funções · isomeria · reações</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">C</div><div class="bt"><div class="l1">Química Orgânica</div><div class="l2">Química · Bloco 6 do PDF</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · QUÍ ORG</span><h1>Química Orgânica</h1><p>Química do carbono. Hidrocarbonetos, funções, isomeria, reações orgânicas, bioquímica. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#10b981', corHex2:'#059669', bg:'#04180c', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'QO 1',nome:'Carbono · Cadeias',sub:'Tetravalência, hibridização, cadeias',forma:'tetra',cor:0x10b981,
+topicos:['Características do carbono: tetravalência, capacidade de formar cadeias','Hibridização: sp³ (simples), sp² (dupla), sp (tripla)','Ligações: simples (σ), dupla (1σ+1π), tripla (1σ+2π)','Cadeias carbônicas: aberta (acíclica) × fechada (cíclica)','Cadeia normal × ramificada','Saturada (só ligações simples) × insaturada','Homogênea (só C-H) × heterogênea (com O, N, S, etc.)','Aromática (anel benzênico C₆H₆)','Carbonos: primário, secundário, terciário, quaternário','Fórmulas: molecular (C₃H₈), estrutural plana, condensada, em bastões'],
+resumo:'Carbono é especial: 4 ligações por átomo, forma cadeias estáveis. Esta é a base da vida e da química orgânica.',
+dica:'Carbono tetravalente faz CADEIAS longas → permite milhões de compostos orgânicos. Hibridização sp³ → tetraédrica (109,5°); sp² → trigonal plana; sp → linear.'},
+{cod:'QO 2',nome:'Hidrocarbonetos',sub:'Alcanos, alcenos, alcinos, aromáticos',forma:'octa',cor:0x84cc16,
+topicos:['Hidrocarbonetos: só C e H','Alcanos (CₙH₂ₙ₊₂): metano (CH₄), etano, propano, butano, pentano, hexano, heptano, octano','Alcenos (CₙH₂ₙ): eteno (etileno C₂H₄), propeno, buteno','Alcinos (CₙH₂ₙ₋₂): etino (acetileno C₂H₂), propino','Alcadienos: dienos (2 ligações duplas)','Ciclanos, ciclenos, ciclinos','Aromáticos: benzeno (C₆H₆), tolueno, naftaleno','Nomenclatura IUPAC: prefixo (n. C) + meio (saturação) + sufixo','Petróleo: mistura de hidrocarbonetos, refino por destilação fracionada','Frações do petróleo: GLP, gasolina, querosene, diesel, óleo lubrificante, asfalto','Octanagem da gasolina','Combustíveis: gasolina, etanol, biodiesel, gás natural'],
+resumo:'Hidrocarbonetos = base dos combustíveis. Petróleo é mistura deles. Brasil tem o pré-sal e é pioneiro em etanol (cana).',
+dica:'METANO (CH₄) é o mais simples. BENZENO (C₆H₆) é o aromático mais simples. Sufixos: -ano (saturado), -eno (1 dupla), -ino (1 tripla).'},
+{cod:'QO 3',nome:'Funções Orgânicas',sub:'Álcool, aldeído, ácido, éster, amina...',forma:'dodeca',cor:0x06b6d4,
+topicos:['Funções oxigenadas: álcool (R-OH: etanol C₂H₅OH), enol, fenol (R-aromático-OH)','Aldeído (R-CHO: formol HCHO, acetona CH₃-CO-CH₃)','Cetona (R-CO-R\')','Ácido carboxílico (R-COOH: ácido acético CH₃COOH, vinagre)','Éster (R-COO-R\': óleos e gorduras, ésteres aromáticos = frutas)','Éter (R-O-R\': éter dietílico C₂H₅-O-C₂H₅)','Funções nitrogenadas: amina (R-NH₂), amida (R-CONH₂), nitrocomposto','Funções halogenadas: cloreto de etila, BHC, DDT','Funções com S: tiol (R-SH)','Reconhecimento das funções por grupos funcionais','Aplicações: medicamentos (aspirina, ácido acetilsalicílico), cosméticos, plásticos, fibras'],
+resumo:'Funções orgânicas = "famílias" de compostos com grupo funcional comum. Reconhecer grupos é metade da química orgânica.',
+dica:'ÁLCOOL = R-OH. ÁCIDO CARBOXÍLICO = R-COOH. ÉSTER = R-COO-R\' (cheiros de frutas). ALDEÍDO = R-CHO. CETONA = R-CO-R\'. AMINA = R-NH₂.'},
+{cod:'QO 4',nome:'Isomeria',sub:'Plana, espacial, geométrica, óptica',forma:'icosa',cor:0xa855f7,
+topicos:['Isomeria: compostos com mesma fórmula molecular mas diferentes propriedades','Isomeria plana (constitucional):','- de cadeia: butano normal × isobutano','- de posição: 1-propanol × 2-propanol','- de função: aldeído × cetona; álcool × éter','- de compensação (metameria): éteres','- tautomeria: ceto-enólica','Isomeria espacial (estereoisomeria):','- geométrica (cis-trans, E-Z): 2-buteno cis × trans','- óptica: compostos quirais, carbono assimétrico (C*)','Enantiômeros (objeto e imagem espelhada não-sobreponíveis)','Misturas racêmicas (50/50)','Polarímetro, desvio do plano da luz polarizada','Importância biológica: aminoácidos têm forma L (natural)'],
+resumo:'Mesma fórmula, propriedades diferentes! Isomeria explica diversidade orgânica. Quiralidade tem importância em biologia/medicamentos.',
+dica:'TALIDOMIDA: enantiômero R é sedativo, enantiômero S causou má-formação fetal nos anos 60. Lembrança brutal da importância da isomeria.'},
+{cod:'QO 5',nome:'Reações Orgânicas',sub:'Substituição, adição, eliminação',forma:'torus',cor:0xfb923c,
+topicos:['Substituição (em alcanos e aromáticos): R-H + X-Y → R-X + H-Y','Cloração do metano (radicalar)','Adição (em alcenos, alcinos): C=C + H-X → C-C com H e X','Hidrogenação (H₂/Ni)','Halogenação, hidroalogenação','Eliminação: oposto da adição','Desidratação de álcool → alceno','Oxidação: álcool → aldeído → ácido carboxílico (oxidações brandas e enérgicas)','Combustão completa × incompleta','Esterificação: ácido + álcool → éster + H₂O','Hidrólise (inversa)','Polimerização: monômeros → polímero (PE, PVC, PET, isopreno)','Saponificação: gordura + NaOH → sabão + glicerol','Reações em alimentos: Maillard, caramelização'],
+resumo:'Reações orgânicas têm regularidades: substituição (saturados), adição (insaturados), eliminação, oxidação. Polimerização gera plásticos.',
+dica:'POLIMERIZAÇÃO: pequenos monômeros formam polímeros gigantes. PET (politereftalato de etileno) = garrafas. PE = sacolas. PVC = canos.'},
+{cod:'QO 6',nome:'Bioquímica · Aplicações',sub:'Compostos da vida',forma:'octa',cor:0xfde047,
+topicos:['Carboidratos: glicose, frutose, sacarose, amido, celulose, glicogênio','Lipídios: triglicerídeos, fosfolipídios, esteroides (colesterol)','Proteínas: aminoácidos (20 essenciais), peptídeos','Estruturas proteicas: primária, secundária, terciária, quaternária','Ácidos nucleicos: DNA (desoxirribonucleico), RNA (ribonucleico)','Bases nitrogenadas: A, T, G, C (DNA), A, U, G, C (RNA)','Pareamento: A-T, G-C; A-U no RNA','Enzimas — catalisadores biológicos','Vitaminas: hidrossolúveis (B, C) e lipossolúveis (A, D, E, K)','Hormônios','Aplicações industriais: fármacos, agroquímicos, cosméticos','Polímeros naturais × sintéticos','Química verde: química sustentável (12 princípios)','Biodegradabilidade, reciclagem'],
+resumo:'Bioquímica = química da vida. Carboidratos, lipídios, proteínas e ácidos nucleicos são as 4 macromoléculas. DNA carrega a informação genética.',
+dica:'DNA: A-T (2 pontes), G-C (3 pontes). Estrutura proteica: PRIMÁRIA (sequência aminoácidos) → SECUNDÁRIA (hélice α/folha β) → TERCIÁRIA (3D) → QUATERNÁRIA (várias subunidades).'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNICAP 2026.2 · Mapa Mestre · Direito + CC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #04050a;
+  --bg-soft: #0a0e1c;
+  --primary: #00d4ff;
+  --secondary: #ffb800;
+  --text: #eef2ff;
+  --text-soft: rgba(238, 242, 255, 0.7);
+  --text-dim: rgba(238, 242, 255, 0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  cursor: grab;
+}
+body.dragging { cursor: grabbing; }
+canvas { display: block; }
+
+#three-canvas { position: fixed; inset: 0; z-index: 1; }
+
+/* Vinheta sutil */
+.vinheta {
+  position: fixed; inset: 0; z-index: 4; pointer-events: none;
+  background: radial-gradient(ellipse 100% 90% at center, transparent 35%, rgba(0,0,0,0.55) 80%, #000 100%);
+}
+
+/* ═════════════════════════════════════════
+   HUD TOP — Brand
+   ═════════════════════════════════════════ */
+.hud-top {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 20; padding: 24px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  pointer-events: none;
+  animation: fadeDown 1s cubic-bezier(0.22, 1, 0.36, 1) 1.4s both;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hud-top > * { pointer-events: auto; }
+
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-weight: 900; font-size: 20px;
+  color: #000;
+  box-shadow: 0 0 24px rgba(0, 212, 255, 0.4), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+}
+.brand-text { line-height: 1.2; }
+.brand-text .t1 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px; font-weight: 700; letter-spacing: 0.04em;
+  color: #fff;
+}
+.brand-text .t2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--primary); margin-top: 2px;
+}
+
+.actions { display: flex; gap: 10px; }
+.btn {
+  padding: 10px 18px;
+  background: rgba(10, 14, 28, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.18);
+}
+
+/* ═════════════════════════════════════════
+   HUD BOTTOM-LEFT — Info do candidato
+   ═════════════════════════════════════════ */
+.info {
+  position: fixed; bottom: 32px; left: 32px;
+  max-width: 380px;
+  padding: 22px 26px;
+  background: rgba(10, 14, 28, 0.65);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  z-index: 20;
+  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) 1.7s both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.info::before {
+  content: '';
+  position: absolute; top: 0; left: 22px; right: 22px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+.info .badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.info .badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--primary); border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.5); }
+}
+.info h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 26px; font-weight: 700;
+  line-height: 1.1; margin-bottom: 8px;
+  background: linear-gradient(180deg, #fff 0%, var(--primary) 110%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.info p {
+  font-size: 13px; line-height: 1.6;
+  color: var(--text-soft);
+}
+.info .target {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex; gap: 16px;
+}
+.info .target div {
+  flex: 1;
+}
+.info .target .label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 4px;
+}
+.info .target .val {
+  font-family: 'Cinzel', serif; font-weight: 700; font-size: 15px;
+  color: #fff;
+}
+.info .target .val.gold { color: var(--secondary); }
+
+/* ═════════════════════════════════════════
+   HUD BOTTOM-RIGHT — Legend
+   ═════════════════════════════════════════ */
+.legend {
+  position: fixed; bottom: 32px; right: 32px;
+  z-index: 20;
+  display: flex; flex-direction: column; gap: 8px;
+  align-items: flex-end;
+  animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) 1.9s both;
+}
+.legend .row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  background: rgba(10, 14, 28, 0.6);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-soft);
+}
+.legend .row kbd {
+  display: inline-block;
+  background: rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  color: var(--primary);
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 10px;
+}
+
+/* ═════════════════════════════════════════
+   HOVER LABEL
+   ═════════════════════════════════════════ */
+.hover-tag {
+  position: fixed; z-index: 15;
+  pointer-events: none;
+  padding: 10px 16px;
+  background: rgba(4, 5, 10, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--primary);
+  border-radius: 10px;
+  color: #fff;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, calc(-100% - 16px));
+  transition: opacity 200ms;
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.3);
+}
+.hover-tag.show { opacity: 1; }
+.hover-tag .area-code {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--primary);
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}
+.hover-tag .area-name {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+}
+.hover-tag .area-q {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ═════════════════════════════════════════
+   PAINEL LATERAL
+   ═════════════════════════════════════════ */
+.painel {
+  position: fixed; top: 0; right: -560px;
+  width: 520px; height: 100%;
+  z-index: 30;
+  background: linear-gradient(180deg, rgba(4, 5, 10, 0.97) 0%, rgba(10, 14, 28, 0.97) 100%);
+  backdrop-filter: blur(28px);
+  border-left: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 56px 44px 44px;
+  overflow-y: auto;
+  transition: right 600ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -40px 0 100px rgba(0, 0, 0, 0.7);
+}
+.painel.open { right: 0; }
+.painel::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), var(--secondary), var(--primary), transparent);
+  box-shadow: 0 0 12px var(--primary);
+}
+.painel::-webkit-scrollbar { width: 5px; }
+.painel::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 3px; }
+
+.painel-close {
+  position: absolute; top: 20px; right: 20px;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff; font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 280ms;
+}
+.painel-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+.painel-codigo {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  color: var(--primary);
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  padding: 6px 14px; border-radius: 99px;
+  text-transform: uppercase;
+}
+
+.painel h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 36px; font-weight: 700;
+  margin: 16px 0 8px;
+  line-height: 1.05;
+  background: linear-gradient(180deg, #fff 0%, var(--primary) 110%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.painel .greek {
+  font-family: 'Cinzel', serif;
+  font-size: 18px;
+  color: var(--primary);
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
+.painel-stats {
+  display: flex; gap: 12px;
+  margin: 20px 0;
+  padding: 16px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.painel-stats div {
+  flex: 1;
+  text-align: center;
+}
+.painel-stats .v {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px; font-weight: 700;
+  color: var(--primary);
+  display: block;
+}
+.painel-stats .l {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+
+.section { margin-top: 28px; }
+.section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 12px;
+  position: relative;
+  padding-left: 18px;
+}
+.section-title::before {
+  content: ''; position: absolute; left: 0; top: 6px;
+  width: 12px; height: 2px;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+
+.painel p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(238, 242, 255, 0.85);
+}
+
+.painel ul { list-style: none; }
+.painel ul li {
+  position: relative;
+  padding: 10px 0 10px 22px;
+  font-size: 13px;
+  color: rgba(238, 242, 255, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  line-height: 1.5;
+}
+.painel ul li::before {
+  content: '◆';
+  position: absolute;
+  left: 0; top: 11px;
+  color: var(--primary);
+  font-size: 8px;
+  text-shadow: 0 0 6px var(--primary);
+}
+
+.tip {
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: rgba(255, 184, 0, 0.06);
+  border-left: 3px solid var(--secondary);
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-soft);
+}
+
+/* ═════════════════════════════════════════
+   LOADER
+   ═════════════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  transition: opacity 1s ease;
+}
+#loader.fade { opacity: 0; pointer-events: none; }
+#loader .l-wrap {
+  width: 160px; height: 160px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+#loader .l-core {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--primary), transparent 70%);
+  filter: blur(4px);
+  animation: lpulse 1.8s ease-in-out infinite;
+}
+@keyframes lpulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.6; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+#loader .l-ring {
+  position: absolute;
+  border: 1.5px solid transparent;
+  border-top-color: var(--primary);
+  border-right-color: var(--primary);
+  border-radius: 50%;
+  animation: lspin 1.4s linear infinite;
+}
+#loader .l-ring.r1 { width: 110px; height: 110px; box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+#loader .l-ring.r2 { width: 160px; height: 160px; animation-duration: 2.2s; animation-direction: reverse; border-top-color: var(--secondary); border-right-color: transparent; opacity: 0.6; }
+@keyframes lspin { to { transform: rotate(360deg); } }
+#loader .l-text {
+  margin-top: 30px;
+  text-align: center;
+}
+#loader .l-text .lt1 {
+  font-family: 'Cinzel', serif;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--primary);
+  text-shadow: 0 0 16px rgba(0, 212, 255, 0.5);
+}
+#loader .l-text .lt2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .hud-top { padding: 16px; }
+  .info { left: 16px; right: 16px; bottom: 16px; max-width: none; padding: 18px; }
+  .info h1 { font-size: 22px; }
+  .legend { display: none; }
+  .painel { width: 100%; right: -100%; padding: 50px 24px; }
+  .painel h2 { font-size: 28px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="l-wrap">
+    <div class="l-ring r1"></div>
+    <div class="l-ring r2"></div>
+    <div class="l-core"></div>
+  </div>
+  <div class="l-text">
+    <div class="lt1">UNICAP 2026.2</div>
+    <div class="lt2">cosmic atlas · loading</div>
+  </div>
+</div>
+
+<!-- THREE.JS CANVAS -->
+<div id="three-canvas"></div>
+<div class="vinheta"></div>
+
+<!-- HUD TOP -->
+<nav class="hud-top">
+  <div class="brand">
+    <div class="brand-mark">U</div>
+    <div class="brand-text">
+      <div class="t1">UNICAP 2026.2</div>
+      <div class="t2">cosmic atlas · 11 áreas</div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="reset-btn">⟲ Vista geral</button>
+    <a class="btn" href="dashboard.html">← Dashboard</a>
+  </div>
+</nav>
+
+<!-- HUD BOTTOM-LEFT -->
+<aside class="info">
+  <span class="badge" id="badgeDias">D-… · Prova 14 jun 2026</span>
+  <h1>Cosmic Atlas</h1>
+  <p>Cada planeta orbitando é uma matéria do programa oficial. Clique em qualquer um para abrir os tópicos que caem na prova UNICAP 2026.2.</p>
+  <div class="target">
+    <div>
+      <div class="label">1ª opção</div>
+      <div class="val gold">Direito</div>
+    </div>
+    <div>
+      <div class="label">2ª opção</div>
+      <div class="val">CC Manhã</div>
+    </div>
+    <div>
+      <div class="label">Vagas total</div>
+      <div class="val">431</div>
+    </div>
+  </div>
+</aside>
+
+<!-- HUD BOTTOM-RIGHT -->
+<div class="legend">
+  <div class="row"><kbd>DRAG</kbd> rotacionar</div>
+  <div class="row"><kbd>SCROLL</kbd> aproximar / afastar</div>
+  <div class="row"><kbd>CLICK</kbd> em planeta</div>
+</div>
+
+<!-- HOVER TAG -->
+<div class="hover-tag" id="hover-tag">
+  <span class="area-code" id="ht-code"></span>
+  <span class="area-name" id="ht-name"></span>
+  <span class="area-q" id="ht-q"></span>
+</div>
+
+<!-- PAINEL LATERAL -->
+<aside class="painel" id="painel">
+  <button class="painel-close" onclick="fechar()">✕</button>
+  <span class="painel-codigo" id="p-code"></span>
+  <h2 id="p-nome"></h2>
+  <div class="greek" id="p-sub"></div>
+
+  <div class="painel-stats">
+    <div><span class="v" id="p-questoes">0</span><span class="l">questões</span></div>
+    <div><span class="v" id="p-peso">1000</span><span class="l">peso máx.</span></div>
+    <div><span class="v" id="p-desemp">—</span><span class="l">desempate</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Sobre a Matéria</div>
+    <p id="p-resumo"></p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Tópicos do Programa Oficial</div>
+    <ul id="p-topicos"></ul>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Dica Estratégica</div>
+    <div class="tip" id="p-dica"></div>
+  </div>
+</aside>
+
+<!-- ════════ THREE.JS UMD (compatibilidade máxima) ════════ -->
+<script>
+(function(){const d=Math.max(0,Math.floor((new Date('2026-06-14T08:00:00')-new Date())/86400000));const b=document.getElementById('badgeDias');if(b)b.textContent='D-'+d+' · Prova 14 jun 2026';})();
+window.addEventListener('error', function(e) {
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.97);color:#ff6666;padding:40px;font-family:Consolas,Monaco,monospace;font-size:13px;overflow:auto;white-space:pre-wrap;line-height:1.5';
+  d.innerHTML = '<h1 style="color:#ff3333;font-family:Arial;font-size:22px;margin-bottom:18px">⚠️ ERRO</h1>' + (e.message || '') + '\n\nArquivo: ' + (e.filename || 'inline') + '\nLinha: ' + e.lineno;
+  document.body.appendChild(d);
+});
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// DADOS — 11 áreas do programa oficial UNICAP 2026.2
+// (extraído do PDF Conteúdos Programáticos)
+// ════════════════════════════════════════════════════════════
+
+const AREAS = [
+  {
+    id: 'redacao',
+    codigo: 'REDACAO',
+    nome: 'Redação',
+    sub: 'Dissertativo-argumentativa · 1000 pts',
+    questoes: 1,
+    peso: 1000,
+    desempate: '1º',
+    cor: 0xfb923c,
+    forma: 'octa',
+    resumo: 'O maior critério isolado da prova UNICAP. Norma padrão vale 300pts dos 1000 da redação. Título obrigatório, 8-30 linhas.',
+    topicos: [
+      'Estrutura (título, parágrafo, nº de linhas) — 100 pts',
+      'Apropriação temática — 200 pts',
+      'Construção dos argumentos — 200 pts',
+      'Relevância da argumentação — 200 pts',
+      'Domínio da norma padrão — 300 pts (MAIOR critério)',
+      'Eliminatório: nota < 200 = candidato eliminado'
+    ],
+    dica: '⚠️ Treine pelo menos 1 redação por semana COM TÍTULO. Norma padrão (300pts) é alavanca direta — dominar regência, concordância, crase e pontuação eleva a nota em DUAS frentes.'
+  },
+  {
+    id: 'linguagens',
+    codigo: 'LING',
+    nome: 'Linguagens',
+    sub: 'Português + Literatura BR + Inglês',
+    questoes: 16,
+    peso: 1000,
+    desempate: '2º',
+    cor: 0x00d4ff,
+    forma: 'dodeca',
+    resumo: 'Inclui Língua Portuguesa, Literatura Brasileira (com História da Arte) e Língua Inglesa. 2º critério de desempate.',
+    topicos: [
+      'Compreensão e interpretação de texto',
+      'Tipologia textual, gêneros, funções da linguagem',
+      'Coesão, coerência, figuras de linguagem',
+      'Regência, concordância, crase, pontuação',
+      'Domínio da norma padrão escrita',
+      'Literatura Brasileira: Quinhentismo → Modernismo',
+      'História da Arte associada à literatura',
+      'INGLÊS: articles, pronouns, verb tenses, modals, conjunctions, prepositions',
+      'Reading comprehension em inglês'
+    ],
+    dica: '⭐ Você tem 6/10 em Português E em Inglês — boa base. Foco principal: Literatura (4/10) e refinamento de gramática para a redação.'
+  },
+  {
+    id: 'matematica',
+    codigo: 'MAT',
+    nome: 'Matemática',
+    sub: '16 questões · 100 pts cada',
+    questoes: 16,
+    peso: 1000,
+    desempate: '3º',
+    cor: 0xf43f5e,
+    forma: 'icosa',
+    resumo: 'Mudança crítica: matemática agora tem 16 questões (não 10). 3º critério de desempate. 8 grandes blocos.',
+    topicos: [
+      'Matemática Fundamental (números, MMC/MDC, frações, juros)',
+      'Álgebra: funções afim/quadrática/exponencial/logarítmica',
+      'Polinômios, matrizes, determinantes, sistemas lineares, PA/PG',
+      'Trigonometria (triângulo retângulo, ciclo, identidades)',
+      'Análise Combinatória (PFC, permutação, arranjo, combinação)',
+      'Probabilidade (eventos, condicional, independentes)',
+      'Estatística Básica (média, mediana, moda, variância)',
+      'Geometria Plana e Espacial (Tales, Pitágoras, Sólidos de Platão)',
+      'Geometria Analítica Básica (retas, circunferência)'
+    ],
+    dica: 'Foco em funções, PA/PG, geometria plana e probabilidade — alta incidência. Aproveite que cada questão vale 62,5 pts; 12 acertos = 750 pts.'
+  },
+  {
+    id: 'historia',
+    codigo: 'HIST',
+    nome: 'História Geral + Brasil',
+    sub: 'Antiga → Contemporânea + Pré-colonial → CF/88',
+    questoes: 8,
+    peso: 500,
+    desempate: '5º (Humanas)',
+    cor: 0xd4af37,
+    forma: 'tetra',
+    resumo: 'Compartilha as 16 questões de Humanas com Geografia. ATENÇÃO: Revoluções Pernambucanas têm peso provável (UNICAP é em Recife).',
+    topicos: [
+      'História Antiga: Mesopotâmia, Egito, Grécia, Roma',
+      'Idade Média: feudalismo, Igreja, renascimento urbano',
+      'Idade Moderna: absolutismo, Iluminismo, Revoluções',
+      'Idade Contemporânea: Rev. Francesa → globalização',
+      'BR Colonial: capitanias, açúcar, Brasil holandês, ouro',
+      'Revoltas: Beckman, Mascates, Pernambucana 1817, Praieira',
+      'Inconfidência Mineira, Conjuração Baiana',
+      'Independência, Primeiro/Segundo Reinado',
+      'República: Vargas, ditadura militar, CF/88',
+      'Brasil de Sarney a Bolsonaro'
+    ],
+    dica: '⚠️ PERNAMBUCO: Revolução Pernambucana 1817 (1ª república brasileira), Confederação do Equador, Revolução Praieira, Beckman, Mascates. Banca local valoriza muito.'
+  },
+  {
+    id: 'geografia',
+    codigo: 'GEO',
+    nome: 'Geografia',
+    sub: '23 grandes tópicos do Brasil e mundo',
+    questoes: 8,
+    peso: 500,
+    desempate: '5º (Humanas)',
+    cor: 0x10b981,
+    forma: 'dodeca',
+    resumo: 'Sua matéria mais forte (7/10). Aproveite. Compartilha 16 questões de Humanas com História. 6 biomas brasileiros + geopolítica.',
+    topicos: [
+      'Cartografia, coordenadas, projeções',
+      'Estrutura geológica, rochas, relevo do Brasil',
+      'Climas do Brasil e do mundo, dinâmica climática',
+      'Hidrosfera, hidrografia brasileira',
+      'Domínios morfoclimáticos do Brasil',
+      'Biomas: Amazônia, Cerrado, Caatinga, Mata Atlântica, Pampa, Pantanal',
+      'Fontes de energia, matriz energética brasileira',
+      'Geopolítica: Guerra Fria, atores contemporâneos',
+      'Globalização, blocos econômicos',
+      'Indústria, agropecuária, urbanização do Brasil',
+      'Demografia, migração, crise dos refugiados',
+      'Regionalização do território brasileiro'
+    ],
+    dica: '✅ Ponto forte. Mantenha o nível e use Geografia como SEGURANÇA. Foque em domínios morfoclimáticos do Brasil + geopolítica atual.'
+  },
+  {
+    id: 'filosofia',
+    codigo: 'FILO',
+    nome: 'Filosofia & Sociologia',
+    sub: '~4 questões em Humanas · 2 mapas 3D dedicados',
+    questoes: 4,
+    peso: 250,
+    desempate: 'em Humanas (5º critério)',
+    cor: 0xa855f7,
+    forma: 'torus',
+    resumo: 'Cai dentro do bloco Humanas — Kant e Adorno foram cobrados explicitamente em 2026.1. Não é só repertório: é conteúdo direto. Nexus Premium: Sócrates, Platão, Aristóteles, Iluminismo (4 mapas 3D) + Sociologia.',
+    topicos: [
+      '⚠️ Kant (imperativo categórico) — cobrado 2026.1 Q19',
+      '⚠️ Adorno / Indústria Cultural (pseudoindividualização) — cobrado 2026.1 Q22',
+      'Sócrates, Platão (Alegoria da Caverna), Aristóteles',
+      'Contratualismo: Hobbes, Locke, Rousseau',
+      'Hegel (dialética) · Marx (materialismo, alienação, mais-valia)',
+      'Nietzsche ("Deus está morto"), Sartre (existência precede essência), Foucault (poder/saber)',
+      'Durkheim (fato social: exterior+coercitivo+geral), Weber (ação social, dominação)',
+      'Bauman (modernidade líquida), Bourdieu (habitus, campo, violência simbólica)',
+      'Sociologia brasileira: Gilberto Freyre, Sérgio Buarque, Florestan Fernandes'
+    ],
+    dica: '⚠️ NÃO ignore: Kant e Adorno caíram em 2026.1 como Humanas, não só como repertório. Abra nexus/index.html → seção Filosofia (Sócrates, Platão, Aristóteles, Iluminismo) e Sociologia. Use 1-2 filósofos por redação como repertório qualificado.'
+  },
+  {
+    id: 'quimica',
+    codigo: 'QUI',
+    nome: 'Química',
+    sub: '~5 questões · Natureza',
+    questoes: 5,
+    peso: 333,
+    desempate: '4º (Natureza)',
+    cor: 0xec4899,
+    forma: 'octa',
+    resumo: 'Sua área mais fraca (3/10) junto com Física. Foco DEFENSIVO: não zerar. Acerto de 2-3 questões = 125-200 pts em jogo.',
+    topicos: [
+      'Transformações químicas, leis ponderais, estequiometria',
+      'Propriedades dos materiais, tabela periódica, ligações',
+      'Água: pH, soluções, concentrações',
+      'Ácidos, bases, sais, óxidos',
+      'Dinâmica: cinética e equilíbrio químico',
+      'Energia: termoquímica, eletroquímica (pilha, eletrólise)',
+      'Compostos orgânicos: funções, isomeria, reações',
+      'Hidrocarbonetos, álcoois, polímeros'
+    ],
+    dica: '⚠️ Foco em estequiometria, funções inorgânicas e orgânica básica. Estratégia: garantir 2-3 acertos. Nunca zerar.'
+  },
+  {
+    id: 'fisica',
+    codigo: 'FIS',
+    nome: 'Física',
+    sub: '~5-6 questões · Natureza',
+    questoes: 6,
+    peso: 333,
+    desempate: '4º (Natureza)',
+    cor: 0x8b5cf6,
+    forma: 'icosa',
+    resumo: 'Sua segunda área mais fraca (3/10). Estratégia defensiva: garantir mecânica básica.',
+    topicos: [
+      'Cinemática (escalar, vetorial, projéteis, circular)',
+      'Dinâmica (Newton, energia, gravitação, Kepler)',
+      'Estática (equilíbrio, momento de força)',
+      'Hidrostática (Arquimedes, Pascal)',
+      'Termologia (calor, gases, termodinâmica)',
+      'Ondulatória (som, luz, MHS, Doppler)',
+      'Óptica geométrica (espelhos, lentes, refração)',
+      'Eletrostática e Eletrodinâmica',
+      'Magnetismo (Faraday, Lenz)'
+    ],
+    dica: '⚠️ Mecânica (cinemática + dinâmica) é base de 40% das questões. Domine isso primeiro. Aceite que magnetismo/física moderna podem ser perdidos.'
+  },
+  {
+    id: 'biologia',
+    codigo: 'BIO',
+    nome: 'Biologia',
+    sub: '~5-6 questões · Natureza',
+    questoes: 5,
+    peso: 334,
+    desempate: '4º (Natureza)',
+    cor: 0x06b6d4,
+    forma: 'dodeca',
+    resumo: 'Sua melhor área de Natureza (4/10). 14 grandes blocos no programa. Foco em citologia, ecologia e genética básica.',
+    topicos: [
+      'Composição química da célula',
+      'Células procarióticas e eucarióticas',
+      'Metabolismo: respiração, fotossíntese, fermentação',
+      'Núcleo, divisão celular (mitose × meiose)',
+      'Reprodução e desenvolvimento embrionário',
+      'Tecidos animais e fisiologia dos sistemas',
+      'Hereditariedade: Mendel, ABO, biotecnologia, PCR',
+      'Evolução: Lamarck, Darwin, Hardy-Weinberg',
+      'Ecologia: biomas brasileiros, ciclos biogeoquímicos',
+      'Sistemática: vírus, bactérias, protistas, fungos',
+      'Diversidade das plantas e animais'
+    ],
+    dica: 'Foco em citologia (organelas), genética mendeliana e ecologia (biomas brasileiros sobrepõe com Geografia). Aproveite a sobreposição.'
+  },
+  {
+    id: 'humanas',
+    codigo: 'HUM',
+    nome: 'Direito (1ª opção)',
+    sub: '337 Manhã + 51 Noite · 388 vagas',
+    questoes: 0,
+    peso: 0,
+    desempate: '⭐ alvo',
+    cor: 0xffb800,
+    forma: 'icosa',
+    resumo: 'Sua 1ª opção. Bacharelado de 10 semestres. Recife/PE. Prova 14/06/2026 das 8h15-13h15 (5h). Direito é alta procura mas tem boa quantidade de vagas.',
+    topicos: [
+      '337 vagas Manhã + 51 vagas Noite = 388 vagas',
+      'Duração: 10 semestres (5 anos)',
+      'Renov. Reconhecimento Port. Seres/MEC Nº 387',
+      'Pode optar prova UNICAP (R$150) ou ENEM 2016-2025 (R$75)',
+      'Critério desempate (Direito): Redação > Ling > Mat > Nat > Hum',
+      'Inscrições até 09/06/2026',
+      'Resultado: até 17/06/2026',
+      'Início das aulas: 05/08/2026'
+    ],
+    dica: '🎯 Foco máximo na Redação (1º desempate) + Linguagens (2º). 388 vagas é um número alto, nota de corte historicamente acessível.'
+  },
+  {
+    id: 'cc',
+    codigo: 'CC',
+    nome: 'Ciência da Computação (2ª opção)',
+    sub: '43 vagas Manhã',
+    questoes: 0,
+    peso: 0,
+    desempate: '⭐ alvo',
+    cor: 0xf472b6,
+    forma: 'torus',
+    resumo: 'Sua 2ª opção. Bacharelado de 8 semestres (7º em diante passa para noite). Mesma prova que Direito — pode escolher 2 opções na inscrição.',
+    topicos: [
+      '43 vagas Manhã · menor que Direito (338)',
+      'Duração: 8 semestres (7º e 8º passam para noite)',
+      'Mesma prova UNICAP que outras áreas (exceto Medicina)',
+      'Critério desempate idêntico ao Direito: Redação > Ling > Mat > Nat > Hum > Maior idade',
+      'Se classificado nas DUAS opções, escolhe UMA na matrícula',
+      'Mesma estrutura de prova: Ling + Hum + Nat + Mat + Redação'
+    ],
+    dica: 'Rede de segurança: se a nota de Direito não bater, CC Manhã entra. Mesmo plano de estudo serve — desempate idêntico (Redação > Linguagens primeiro).'
+  }
+];
+
+// ════════════════════════════════════════════════════════════
+// CENA THREE.JS
+// ════════════════════════════════════════════════════════════
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x04050a, 30, 150);
+
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 300);
+const CAM_FINAL = new THREE.Vector3(0, 10, 32);
+const CAM_INI = new THREE.Vector3(0, 35, 80);
+camera.position.copy(CAM_INI);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x04050a);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+// Controls
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 14;
+controls.maxDistance = 80;
+controls.minPolarAngle = Math.PI * 0.12;
+controls.maxPolarAngle = Math.PI * 0.85;
+controls.target.set(0, 0, 0);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.25;
+controls.enablePan = false;
+controls.enabled = false;
+
+renderer.domElement.addEventListener('mousedown', function() { document.body.classList.add('dragging'); });
+renderer.domElement.addEventListener('mouseup', function() { document.body.classList.remove('dragging'); });
+
+// ════════════════════════════════════════════════════════════
+// ESTRELAS — 1500 pontos esparsos
+// ════════════════════════════════════════════════════════════
+(function stars() {
+  const geo = new THREE.BufferGeometry();
+  const N = 1500;
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  const sz = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    const t = Math.random() * Math.PI * 2;
+    const p = Math.acos(2 * Math.random() - 1);
+    const r = 60 + Math.random() * 80;
+    pos[i*3]   = r * Math.sin(p) * Math.cos(t);
+    pos[i*3+1] = r * Math.sin(p) * Math.sin(t);
+    pos[i*3+2] = r * Math.cos(p);
+    const tint = Math.random();
+    if (tint > 0.95) { col[i*3] = 0.7; col[i*3+1] = 0.85; col[i*3+2] = 1.0; }
+    else if (tint > 0.9) { col[i*3] = 1.0; col[i*3+1] = 0.85; col[i*3+2] = 0.7; }
+    else { col[i*3] = 1.0; col[i*3+1] = 1.0; col[i*3+2] = 1.0; }
+    sz[i] = 0.05 + Math.random() * 0.15;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.PointsMaterial({
+    size: 0.15,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.85,
+    depthWrite: false,
+    sizeAttenuation: true
+  });
+  scene.add(new THREE.Points(geo, mat));
+})();
+
+// ════════════════════════════════════════════════════════════
+// ILUMINAÇÃO
+// ════════════════════════════════════════════════════════════
+scene.add(new THREE.AmbientLight(0x404068, 0.55));
+const sun = new THREE.PointLight(0x00d4ff, 2.5, 60);
+sun.position.set(0, 0, 0);
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffffff, 0.4);
+fill.position.set(10, 20, 10);
+scene.add(fill);
+
+// ════════════════════════════════════════════════════════════
+// HUB CENTRAL — esfera "UNICAP" com camadas
+// ════════════════════════════════════════════════════════════
+const hubGroup = new THREE.Group();
+scene.add(hubGroup);
+
+const hubCore = new THREE.Mesh(
+  new THREE.SphereGeometry(1.5, 48, 48),
+  new THREE.MeshStandardMaterial({
+    color: 0x00d4ff,
+    emissive: 0x00d4ff,
+    emissiveIntensity: 0.5,
+    roughness: 0.2,
+    metalness: 0.8
+  })
+);
+hubGroup.add(hubCore);
+
+const hubWire1 = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(2.4, 1),
+  new THREE.MeshBasicMaterial({ color: 0x00d4ff, wireframe: true, transparent: true, opacity: 0.4 })
+);
+hubGroup.add(hubWire1);
+
+const hubWire2 = new THREE.Mesh(
+  new THREE.IcosahedronGeometry(3.6, 0),
+  new THREE.MeshBasicMaterial({ color: 0xffb800, wireframe: true, transparent: true, opacity: 0.15 })
+);
+hubGroup.add(hubWire2);
+
+// ════════════════════════════════════════════════════════════
+// PLANETAS — 11 áreas em órbita
+// ════════════════════════════════════════════════════════════
+const RAIO = 13;
+const planetas = [];
+const interactives = [];
+
+AREAS.forEach(function(a, i) {
+  const angle = (i / AREAS.length) * Math.PI * 2;
+  const x = Math.cos(angle) * RAIO;
+  const z = Math.sin(angle) * RAIO;
+  const y = (i % 2 === 0) ? 0.6 : -0.6;
+
+  const grupo = new THREE.Group();
+  grupo.position.set(x, y, z);
+  scene.add(grupo);
+
+  // Forma 3D
+  let geo;
+  const sz = 1.0;
+  if (a.forma === 'icosa') geo = new THREE.IcosahedronGeometry(sz, 0);
+  else if (a.forma === 'dodeca') geo = new THREE.DodecahedronGeometry(sz, 0);
+  else if (a.forma === 'octa') geo = new THREE.OctahedronGeometry(sz * 1.1, 0);
+  else if (a.forma === 'torus') geo = new THREE.TorusKnotGeometry(sz * 0.6, sz * 0.22, 64, 8);
+  else if (a.forma === 'tetra') geo = new THREE.TetrahedronGeometry(sz * 1.2, 0);
+  else geo = new THREE.IcosahedronGeometry(sz, 0);
+
+  const mat = new THREE.MeshStandardMaterial({
+    color: a.cor,
+    emissive: a.cor,
+    emissiveIntensity: 0.35,
+    roughness: 0.3,
+    metalness: 0.7
+  });
+  const planeta = new THREE.Mesh(geo, mat);
+  planeta.userData = { area: a, indice: i };
+  grupo.add(planeta);
+  interactives.push(planeta);
+
+  // Anel
+  const anel = new THREE.Mesh(
+    new THREE.RingGeometry(sz * 1.5, sz * 1.9, 48),
+    new THREE.MeshBasicMaterial({
+      color: a.cor,
+      transparent: true,
+      opacity: 0.4,
+      side: THREE.DoubleSide,
+      fog: false
+    })
+  );
+  anel.rotation.x = Math.PI / 2.2 + (i * 0.15);
+  anel.rotation.y = i * 0.2;
+  grupo.add(anel);
+
+  // Halo (luz pontual sutil)
+  const halo = new THREE.PointLight(a.cor, 0.8, 5);
+  grupo.add(halo);
+
+  // Label sprite
+  const cv = document.createElement('canvas');
+  cv.width = 384; cv.height = 96;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = 'rgba(4, 5, 10, 0.92)';
+  ctx.fillRect(0, 0, 384, 96);
+  const hexCor = '#' + a.cor.toString(16).padStart(6, '0');
+  // borda gradiente
+  const grad = ctx.createLinearGradient(0, 0, 384, 0);
+  grad.addColorStop(0, 'transparent'); grad.addColorStop(0.5, hexCor); grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 384, 2); ctx.fillRect(0, 94, 384, 2);
+  // código
+  ctx.fillStyle = hexCor;
+  ctx.font = 'bold 18px JetBrains Mono, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(a.codigo, 192, 32);
+  // nome
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px Inter, sans-serif';
+  ctx.fillText(a.nome.length > 26 ? a.nome.slice(0, 24) + '…' : a.nome, 192, 64);
+
+  const tex = new THREE.CanvasTexture(cv);
+  tex.minFilter = THREE.LinearFilter;
+  const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+  label.scale.set(4.5, 1.15, 1);
+  label.position.set(0, 2.3, 0);
+  grupo.add(label);
+
+  // Linha do hub ao planeta
+  const linhaGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(x, y, z)
+  ]);
+  const linhaMat = new THREE.LineBasicMaterial({ color: a.cor, transparent: true, opacity: 0.15 });
+  scene.add(new THREE.Line(linhaGeo, linhaMat));
+
+  // Guardar grupo + estado
+  grupo.userData = {
+    angInicial: angle,
+    raio: RAIO,
+    yBase: y,
+    velOrbita: 0.06 + Math.random() * 0.03,
+    velRot: 0.4 + Math.random() * 0.5,
+    planeta: planeta,
+    anel: anel,
+    area: a
+  };
+  planetas.push(grupo);
+});
+
+// Órbita visível
+const orbitaVis = new THREE.Mesh(
+  new THREE.RingGeometry(RAIO - 0.04, RAIO + 0.04, 128),
+  new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.15, side: THREE.DoubleSide, fog: false })
+);
+orbitaVis.rotation.x = -Math.PI / 2;
+scene.add(orbitaVis);
+
+// ════════════════════════════════════════════════════════════
+// RAYCAST — hover e click
+// ════════════════════════════════════════════════════════════
+const ray = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = null;
+
+const hoverTag = document.getElementById('hover-tag');
+window.addEventListener('mousemove', function(e) {
+  mouse.x = (e.clientX / innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+  hoverTag.style.left = e.clientX + 'px';
+  hoverTag.style.top = e.clientY + 'px';
+});
+
+window.addEventListener('click', function(e) {
+  if (e.target.closest('.hud-top, .info, .legend, .painel')) return;
+  ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(interactives);
+  if (hits.length > 0) {
+    abrirArea(hits[0].object.userData.area, hits[0].object.parent);
+  }
+});
+
+function abrirArea(area, grupo) {
+  document.getElementById('p-code').textContent = area.codigo;
+  document.getElementById('p-nome').textContent = area.nome;
+  document.getElementById('p-sub').textContent = area.sub;
+  document.getElementById('p-questoes').textContent = area.questoes || '—';
+  document.getElementById('p-peso').textContent = area.peso || '—';
+  document.getElementById('p-desemp').textContent = area.desempate || '—';
+  document.getElementById('p-resumo').textContent = area.resumo;
+  document.getElementById('p-topicos').innerHTML = area.topicos.map(function(t) { return '<li>' + t + '</li>'; }).join('');
+  document.getElementById('p-dica').textContent = area.dica;
+  document.getElementById('painel').classList.add('open');
+
+  // Zoom até o planeta
+  const alvo = grupo.position.clone();
+  const off = new THREE.Vector3(alvo.x * 0.5 + 4, alvo.y + 3, alvo.z * 0.5 + 8);
+  tweenCam(camera.position.clone(), off, alvo, 1200);
+}
+
+window.fechar = function() {
+  document.getElementById('painel').classList.remove('open');
+  tweenCam(camera.position.clone(), CAM_FINAL, new THREE.Vector3(0, 0, 0), 1200);
+};
+
+// ════════════════════════════════════════════════════════════
+// TWEEN da câmera
+// ════════════════════════════════════════════════════════════
+let tween = null;
+function tweenCam(from, to, lookAt, dur) {
+  tween = {
+    from: from.clone(),
+    to: to.clone(),
+    look: lookAt.clone(),
+    fromT: controls.target.clone(),
+    start: performance.now(),
+    dur: dur
+  };
+  controls.enabled = false;
+}
+
+document.getElementById('reset-btn').addEventListener('click', function() {
+  tweenCam(camera.position.clone(), CAM_FINAL, new THREE.Vector3(0, 0, 0), 1400);
+  document.getElementById('painel').classList.remove('open');
+});
+
+// ════════════════════════════════════════════════════════════
+// LOOP
+// ════════════════════════════════════════════════════════════
+const clock = new THREE.Clock();
+let entrada = 0;
+const entradaIni = performance.now();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+  const delta = clock.getDelta();
+  const tNow = performance.now();
+
+  // Entrada cinematográfica
+  if (entrada < 1) {
+    entrada = Math.min((tNow - entradaIni) / 3000, 1);
+    const e = 1 - Math.pow(1 - entrada, 4);
+    camera.position.lerpVectors(CAM_INI, CAM_FINAL, e);
+    camera.lookAt(0, 0, 0);
+    if (entrada >= 1) {
+      controls.enabled = true;
+      controls.target.set(0, 0, 0);
+    }
+  }
+
+  // Tween
+  if (tween) {
+    const t = Math.min((tNow - tween.start) / tween.dur, 1);
+    const e = 1 - Math.pow(1 - t, 4);
+    camera.position.lerpVectors(tween.from, tween.to, e);
+    controls.target.lerpVectors(tween.fromT, tween.look, e);
+    if (t >= 1) {
+      tween = null;
+      controls.enabled = true;
+    }
+  }
+
+  controls.update();
+
+  // Hub
+  hubGroup.rotation.y += delta * 0.15;
+  hubWire1.rotation.x += delta * 0.1;
+  hubWire2.rotation.x -= delta * 0.08;
+  hubCore.material.emissiveIntensity = 0.5 + Math.sin(elapsed * 1.5) * 0.15;
+
+  // Planetas orbitando
+  planetas.forEach(function(g) {
+    const ud = g.userData;
+    const a = ud.angInicial + elapsed * ud.velOrbita * 0.3;
+    g.position.x = Math.cos(a) * ud.raio;
+    g.position.z = Math.sin(a) * ud.raio;
+    g.position.y = ud.yBase + Math.sin(elapsed * 0.5 + ud.angInicial * 2) * 0.3;
+    ud.planeta.rotation.y += delta * ud.velRot;
+    ud.planeta.rotation.x += delta * ud.velRot * 0.4;
+    ud.planeta.material.emissiveIntensity = 0.3 + Math.sin(elapsed + ud.angInicial * 4) * 0.1;
+    ud.anel.rotation.z += delta * 0.15;
+  });
+
+  // Hover detection
+  ray.setFromCamera(mouse, camera);
+  const hits = ray.intersectObjects(interactives);
+  if (hits.length > 0) {
+    const h = hits[0].object;
+    if (hovered !== h) {
+      if (hovered) hovered.scale.set(1, 1, 1);
+      hovered = h;
+      hovered.scale.set(1.3, 1.3, 1.3);
+      const a = h.userData.area;
+      document.getElementById('ht-code').textContent = a.codigo;
+      document.getElementById('ht-name').textContent = a.nome;
+      document.getElementById('ht-q').textContent = a.questoes ? a.questoes + ' questões · ' + a.peso + ' pts' : a.sub;
+      hoverTag.classList.add('show');
+      document.body.style.cursor = 'pointer';
+    }
+  } else {
+    if (hovered) {
+      hovered.scale.set(1, 1, 1);
+      hovered = null;
+      hoverTag.classList.remove('show');
+      document.body.style.cursor = '';
+    }
+  }
+
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', function() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+animate();
+setTimeout(function() {
+  document.getElementById('loader').classList.add('fade');
+}, 1500);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Alegoria da Caverna — Platão | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+  #canvas-container { width:100vw; height:100vh; }
+  #nav {
+    position:fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 24px;
+    background:linear-gradient(to bottom,rgba(0,0,0,0.8),transparent);
+    z-index:100;
+  }
+  #nav a {
+    color:#d4a860; text-decoration:none; font-size:13px; font-weight:500;
+    letter-spacing:0.04em; padding:7px 14px;
+    border:1px solid rgba(212,168,96,0.35); border-radius:6px;
+    transition:all 0.2s; background:rgba(0,0,0,0.5);
+  }
+  #nav a:hover { background:rgba(212,168,96,0.15); border-color:rgba(212,168,96,0.6); }
+  #badge {
+    color:#e8c878; font-size:13px; font-weight:600; letter-spacing:0.06em;
+    background:rgba(0,0,0,0.6); padding:7px 16px;
+    border:1px solid rgba(232,200,120,0.3); border-radius:20px;
+  }
+  #hint {
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    color:rgba(200,160,80,0.75); font-size:12px; font-weight:400;
+    letter-spacing:0.08em; text-transform:uppercase;
+    background:rgba(0,0,0,0.55); padding:8px 18px; border-radius:20px;
+    border:1px solid rgba(200,160,80,0.2); pointer-events:none; z-index:100;
+  }
+  #popup {
+    display:none; position:fixed; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    background:linear-gradient(145deg,rgba(8,5,3,0.98),rgba(15,10,5,0.97));
+    border:1px solid rgba(200,150,60,0.45);
+    border-radius:16px; padding:32px 36px; max-width:520px; width:90%;
+    z-index:200; box-shadow:0 20px 60px rgba(0,0,0,0.9),0 0 40px rgba(200,120,40,0.12);
+  }
+  #popup.active { display:block; animation:fadeUp 0.25s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translate(-50%,-48%)} to{opacity:1;transform:translate(-50%,-50%)} }
+  #popup-title { font-size:18px; font-weight:700; color:#d4a040; letter-spacing:0.03em; margin-bottom:14px; border-bottom:1px solid rgba(200,150,60,0.25); padding-bottom:12px; }
+  #popup-desc { font-size:14px; color:#c0a880; line-height:1.7; margin-bottom:18px; }
+  #popup-tip { font-size:13px; color:#a0e090; line-height:1.65; background:rgba(60,140,60,0.08); border-left:3px solid rgba(80,180,80,0.5); padding:12px 14px; border-radius:0 8px 8px 0; margin-bottom:18px; }
+  #popup-tip::before { content:"UNICAP "; font-weight:700; color:#70d060; }
+  #popup-close { display:block; text-align:center; cursor:pointer; background:rgba(200,150,60,0.12); color:#c09030; border:1px solid rgba(200,150,60,0.3); border-radius:8px; padding:9px; font-size:13px; font-weight:600; letter-spacing:0.05em; transition:all 0.2s; }
+  #popup-close:hover { background:rgba(200,150,60,0.22); }
+  #overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:150; }
+  #overlay.active { display:block; }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<nav id="nav">
+  <a href="resumo.html">← Resumo Platão</a>
+  <div id="badge">🕯️ A Alegoria da Caverna — Platão</div>
+  <a href="../../../index.html">Hub Principal</a>
+</nav>
+<div id="hint">Clique nas sombras na parede para iluminar os conceitos</div>
+<div id="overlay"></div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"></div>
+  <div id="popup-close">Fechar</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const W = window.innerWidth, H = window.innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(W, H);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x03020a);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x030208, 8, 35);
+
+const camera = new THREE.PerspectiveCamera(65, W/H, 0.1, 100);
+camera.position.set(0, 3, 10);
+camera.lookAt(0, 2, -5);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 2, -4);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.75;
+controls.minDistance = 3;
+controls.maxDistance = 20;
+
+// Ambient
+const ambLight = new THREE.AmbientLight(0x050302, 0.8);
+scene.add(ambLight);
+
+// Cave exit light (left side)
+const exitLight = new THREE.PointLight(0xffffff, 3, 12);
+exitLight.position.set(-7, 3, 0);
+scene.add(exitLight);
+
+// Fire light — flickers
+const fireLight = new THREE.PointLight(0xff6010, 6, 20);
+fireLight.position.set(0, 1.5, -8);
+scene.add(fireLight);
+
+// Cave walls — dark rock
+const rockMat = new THREE.MeshLambertMaterial({ color: 0x1a0f08, side: THREE.BackSide });
+const rockMatF = new THREE.MeshLambertMaterial({ color: 0x120a06, side: THREE.FrontSide });
+
+// Floor
+const floorGeo = new THREE.PlaneGeometry(18, 16);
+const floorMat = new THREE.MeshLambertMaterial({ color: 0x100c08 });
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -1;
+scene.add(floor);
+
+// Back wall (projection surface)
+const backWallGeo = new THREE.PlaneGeometry(18, 10);
+const backWallMat = new THREE.MeshLambertMaterial({ color: 0x1e140c });
+const backWall = new THREE.Mesh(backWallGeo, backWallMat);
+backWall.position.set(0, 4, -12);
+scene.add(backWall);
+
+// Left wall
+const leftWallGeo = new THREE.PlaneGeometry(16, 12);
+const leftWall = new THREE.Mesh(leftWallGeo, new THREE.MeshLambertMaterial({ color: 0x180e08 }));
+leftWall.position.set(-9, 5, -4);
+leftWall.rotation.y = Math.PI / 2;
+scene.add(leftWall);
+
+// Right wall
+const rightWall = new THREE.Mesh(leftWallGeo, new THREE.MeshLambertMaterial({ color: 0x180e08 }));
+rightWall.position.set(9, 5, -4);
+rightWall.rotation.y = -Math.PI / 2;
+scene.add(rightWall);
+
+// Ceiling
+const ceilGeo = new THREE.PlaneGeometry(20, 18);
+const ceilMat = new THREE.MeshLambertMaterial({ color: 0x0c0806 });
+const ceil = new THREE.Mesh(ceilGeo, ceilMat);
+ceil.rotation.x = Math.PI / 2;
+ceil.position.y = 7;
+scene.add(ceil);
+
+// Cave exit — bright opening in left wall area
+const exitGeo = new THREE.PlaneGeometry(3, 5);
+const exitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+const exitPlane = new THREE.Mesh(exitGeo, exitMat);
+exitPlane.position.set(-8.8, 2, 0);
+exitPlane.rotation.y = Math.PI / 2;
+scene.add(exitPlane);
+
+// Exit glow halo
+const exitHaloGeo = new THREE.PlaneGeometry(5, 7);
+const exitHaloMat = new THREE.MeshBasicMaterial({ color: 0xfff8e0, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+const exitHalo = new THREE.Mesh(exitHaloGeo, exitHaloMat);
+exitHalo.position.set(-8.5, 2, 0);
+exitHalo.rotation.y = Math.PI / 2;
+scene.add(exitHalo);
+
+// Prisoners (silhouettes)
+function makePrisoner(x) {
+  const g = new THREE.Group();
+  const bodyGeo = new THREE.BoxGeometry(0.5, 1.2, 0.3);
+  const bodyMat = new THREE.MeshLambertMaterial({ color: 0x050305 });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  body.position.y = 0.6;
+  g.add(body);
+  const headGeo = new THREE.SphereGeometry(0.25, 8, 8);
+  const head = new THREE.Mesh(headGeo, bodyMat);
+  head.position.y = 1.5;
+  g.add(head);
+  // Chain suggestion
+  const chainGeo = new THREE.CylinderGeometry(0.02, 0.02, 1.0, 6);
+  const chainMat = new THREE.MeshLambertMaterial({ color: 0x181010 });
+  const chain = new THREE.Mesh(chainGeo, chainMat);
+  chain.position.set(0, 0, 0.4);
+  chain.rotation.x = Math.PI / 2;
+  g.add(chain);
+  g.position.set(x, -0.8, -6);
+  g.rotation.y = Math.PI;
+  g.userData.baseX = x;
+  scene.add(g);
+  return g;
+}
+const prisoners = [makePrisoner(-3), makePrisoner(0), makePrisoner(3)];
+
+// Fire particles
+const fireParticleCount = 320;
+const firePositions = new Float32Array(fireParticleCount * 3);
+const fireColors = new Float32Array(fireParticleCount * 3);
+const fireSpeeds = new Float32Array(fireParticleCount);
+for (let i = 0; i < fireParticleCount; i++) {
+  firePositions[i*3] = (Math.random() - 0.5) * 1.2;
+  firePositions[i*3+1] = Math.random() * 3.5;
+  firePositions[i*3+2] = -8 + (Math.random() - 0.5) * 0.6;
+  fireSpeeds[i] = 0.03 + Math.random() * 0.05;
+  const t = Math.random();
+  fireColors[i*3] = 1.0;
+  fireColors[i*3+1] = t * 0.5;
+  fireColors[i*3+2] = 0;
+}
+const fireGeo = new THREE.BufferGeometry();
+fireGeo.setAttribute('position', new THREE.BufferAttribute(firePositions, 3));
+fireGeo.setAttribute('color', new THREE.BufferAttribute(fireColors, 3));
+const fireMat = new THREE.PointsMaterial({ size: 0.12, vertexColors: true, transparent: true, opacity: 0.85 });
+const fire = new THREE.Points(fireGeo, fireMat);
+scene.add(fire);
+
+// Fire sparks
+const sparkCount = 30;
+const sparkPositions = new Float32Array(sparkCount * 3);
+const sparkSpeeds = new Float32Array(sparkCount);
+for (let i = 0; i < sparkCount; i++) {
+  sparkPositions[i*3] = (Math.random()-0.5)*0.6;
+  sparkPositions[i*3+1] = Math.random()*2;
+  sparkPositions[i*3+2] = -8 + (Math.random()-0.5)*0.3;
+  sparkSpeeds[i] = 0.08 + Math.random()*0.08;
+}
+const sparkGeo = new THREE.BufferGeometry();
+sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
+const sparkMat = new THREE.PointsMaterial({ size: 0.06, color: 0xffff80, transparent: true, opacity: 0.9 });
+const sparks = new THREE.Points(sparkGeo, sparkMat);
+scene.add(sparks);
+
+// Concept shadows on back wall
+const shadowData = [
+  { pos: [-5, 6, -11.5], title: "Mundo das Aparências (Sensível)",
+    desc: "O mundo em que vivemos — percebido pelos sentidos: visão, audição, tato. Para Platão, este mundo é ILUSÓRIO, imperfeito, em constante mudança (influência de Heráclito). As coisas do mundo sensível são CÓPIAS imperfeitas das Ideias verdadeiras. Exemplo: todas as cadeiras do mundo são cópias imperfeitas da Ideia de Cadeira, que é perfeita e imutável.",
+    tip: "A caverna = o mundo sensível. Os prisioneiros = nós, humanos comuns, que tomamos sombras (aparências) por realidade. Questão UNICAP: 'O que representam os prisioneiros na alegoria?' → Os humanos limitados ao mundo sensível." },
+  { pos: [-1.5, 7, -11.5], title: "Mundo das Ideias (Inteligível)",
+    desc: "O mundo verdadeiro, acessível apenas pela razão (filosofia). As Ideias (ou Formas) são perfeitas, eternas, imutáveis. A Ideia mais elevada é a Ideia do Bem (equivalente ao Sol fora da caverna). O filósofo é quem sai da caverna e contempla as Ideias — especialmente a do Bem.",
+    tip: "Sol na alegoria = Ideia do Bem (não é Deus, é princípio do que é bom e verdadeiro). O filósofo que sai da caverna = quem usa a razão para alcançar a verdade. Volta para a caverna = retorno ao mundo político para governar sabiamente." },
+  { pos: [2, 6.5, -11.5], title: "A Teoria da Reminiscência",
+    desc: "A alma preexiste ao corpo — viveu no mundo das Ideias antes de encarnar. Ao nascer, esquecemos as Ideias. O conhecimento verdadeiro é RECORDAÇÃO (anamnese): a filosofia nos ajuda a recordar o que já sabíamos. Por isso Sócrates 'não ensinava' — apenas ajudava o interlocutor a recordar (maiêutica).",
+    tip: "Reminiscência explica POR QUE a maiêutica funciona: não é ensinamento novo, é recuperação do conhecimento já existente na alma. Questão: 'O que é anamnese para Platão?' → Recordação das Ideias que a alma viu antes de encarnar." },
+  { pos: [5, 5.5, -11.5], title: "A República e o Filósofo-Rei",
+    desc: "Na 'República', Platão descreve o Estado ideal governado por filósofos. 3 classes sociais: Governantes (filósofos-reis — razão), Guerreiros (coragem), Trabalhadores (apetites). O filósofo que 'saiu da caverna' DEVE VOLTAR para governar — mesmo que seja mais feliz fora. É seu dever político.",
+    tip: "A 'República' de Platão é aristocracia do mérito filosófico, não democracia. Para Platão, a democracia é desordenada. Questão polêmica: por que Platão critica a democracia? → Os 'prisioneiros' (o povo) não sabem o que é bom." },
+  { pos: [-2.5, 4.5, -11.5], title: "O Demiurgo e a Criação",
+    desc: "No 'Timeu', o Demiurgo (artesão divino, não um deus criador do nada) molda o mundo material a partir do Caos, usando as Ideias como modelo. O mundo material é imperfeito porque a matéria resiste ao modelo ideal. O Demiurgo é uma figura de racionalidade ordenadora — não é o Deus cristão.",
+    tip: "Demiurgo ≠ Deus judaico-cristão: o Demiurgo não cria do nada (ex nihilo) — trabalha com matéria preexistente usando Ideias como modelo. Esta distinção é importante em questões sobre Filosofia e Religião." }
+];
+
+const shadowMeshes = [];
+const shadowInfo = [];
+
+shadowData.forEach((s, i) => {
+  // Shadow silhouette on wall
+  const sGeo = new THREE.PlaneGeometry(2.2, 2.8);
+  const sMat = new THREE.MeshBasicMaterial({ color: 0x0a0608, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
+  const sMesh = new THREE.Mesh(sGeo, sMat);
+  sMesh.position.set(s.pos[0], s.pos[1], s.pos[2]);
+  scene.add(sMesh);
+  shadowMeshes.push(sMesh);
+  shadowInfo.push({ mesh: sMesh, mat: sMat, data: s });
+
+  // Text label on shadow
+  const tc = document.createElement('canvas');
+  tc.width = 180; tc.height = 220;
+  const tctx = tc.getContext('2d');
+  tctx.fillStyle = 'rgba(20,10,8,0.0)';
+  tctx.fillRect(0, 0, 180, 220);
+  tctx.fillStyle = 'rgba(60,35,20,0.5)';
+  tctx.font = 'bold 13px serif';
+  tctx.textAlign = 'center';
+  const words = s.title.split(' ');
+  let line = '', lines = [];
+  words.forEach(w => {
+    const test = line + w + ' ';
+    if (tctx.measureText(test).width > 160 && line) { lines.push(line.trim()); line = w + ' '; }
+    else line = test;
+  });
+  if (line) lines.push(line.trim());
+  const sy = 110 - (lines.length-1)*9;
+  lines.forEach((l, li) => tctx.fillText(l, 90, sy + li*18));
+  const tTex = new THREE.CanvasTexture(tc);
+  const lGeo = new THREE.PlaneGeometry(2.0, 2.5);
+  const lMat = new THREE.MeshBasicMaterial({ map: tTex, transparent: true, side: THREE.DoubleSide });
+  const lMesh = new THREE.Mesh(lGeo, lMat);
+  lMesh.position.set(s.pos[0], s.pos[1], s.pos[2] + 0.02);
+  scene.add(lMesh);
+});
+
+// Popup logic
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = -1;
+
+const popupEl = document.getElementById('popup');
+const overlayEl = document.getElementById('overlay');
+const titleEl = document.getElementById('popup-title');
+const descEl = document.getElementById('popup-desc');
+const tipEl = document.getElementById('popup-tip');
+
+function showPopup(d) {
+  titleEl.textContent = d.title;
+  descEl.textContent = d.desc;
+  tipEl.textContent = d.tip;
+  overlayEl.classList.add('active');
+  popupEl.classList.add('active');
+}
+
+document.getElementById('popup-close').addEventListener('click', () => {
+  popupEl.classList.remove('active');
+  overlayEl.classList.remove('active');
+  shadowInfo.forEach(si => { si.mat.color.setHex(0x0a0608); si.mat.opacity = 0.7; });
+});
+overlayEl.addEventListener('click', () => {
+  popupEl.classList.remove('active');
+  overlayEl.classList.remove('active');
+  shadowInfo.forEach(si => { si.mat.color.setHex(0x0a0608); si.mat.opacity = 0.7; });
+});
+
+renderer.domElement.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX/W)*2-1;
+  mouse.y = -(e.clientY/H)*2+1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(shadowMeshes);
+  if (hits.length > 0) {
+    const idx = shadowMeshes.indexOf(hits[0].object);
+    if (idx !== hovered) {
+      if (hovered >= 0) { shadowInfo[hovered].mat.color.setHex(0x0a0608); shadowInfo[hovered].mat.opacity = 0.7; }
+      hovered = idx;
+      shadowInfo[idx].mat.color.setHex(0x3a2510);
+      shadowInfo[idx].mat.opacity = 0.85;
+      document.body.style.cursor = 'pointer';
+    }
+  } else {
+    if (hovered >= 0) { shadowInfo[hovered].mat.color.setHex(0x0a0608); shadowInfo[hovered].mat.opacity = 0.7; hovered = -1; }
+    document.body.style.cursor = 'default';
+  }
+});
+
+renderer.domElement.addEventListener('click', e => {
+  mouse.x = (e.clientX/W)*2-1;
+  mouse.y = -(e.clientY/H)*2+1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(shadowMeshes);
+  if (hits.length > 0) {
+    const idx = shadowMeshes.indexOf(hits[0].object);
+    shadowInfo[idx].mat.color.setHex(0xffd080);
+    shadowInfo[idx].mat.opacity = 1.0;
+    showPopup(shadowInfo[idx].data);
+  }
+});
+
+// Rocky cave wall texture (procedural bump suggestion)
+const caveRockGeo = new THREE.SphereGeometry(25, 20, 12);
+const caveRockMat = new THREE.MeshLambertMaterial({ color: 0x0d0806, side: THREE.BackSide });
+const caveRock = new THREE.Mesh(caveRockGeo, caveRockMat);
+caveRock.position.set(0, 2, -3);
+scene.add(caveRock);
+
+const clock = new THREE.Clock();
+const fpArr = fireGeo.attributes.position.array;
+const spArr = sparkGeo.attributes.position.array;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  // Fire particles
+  for (let i = 0; i < fireParticleCount; i++) {
+    fpArr[i*3+1] += fireSpeeds[i];
+    if (fpArr[i*3+1] > 3.8) {
+      fpArr[i*3] = (Math.random()-0.5)*1.2;
+      fpArr[i*3+1] = 0;
+      fpArr[i*3+2] = -8 + (Math.random()-0.5)*0.6;
+    }
+    const ratio = fpArr[i*3+1]/3.8;
+    fireColors[i*3+1] = ratio * 0.6;
+  }
+  fireGeo.attributes.position.needsUpdate = true;
+  fireGeo.attributes.color.needsUpdate = true;
+
+  // Sparks
+  for (let i = 0; i < sparkCount; i++) {
+    spArr[i*3+1] += sparkSpeeds[i];
+    spArr[i*3] += (Math.random()-0.5)*0.02;
+    if (spArr[i*3+1] > 4.5) {
+      spArr[i*3] = (Math.random()-0.5)*0.6;
+      spArr[i*3+1] = 0;
+      spArr[i*3+2] = -8 + (Math.random()-0.5)*0.3;
+    }
+  }
+  sparkGeo.attributes.position.needsUpdate = true;
+
+  // Fire light flicker
+  fireLight.intensity = 5 + Math.sin(t*4.7)*1.5 + Math.sin(t*7.3)*0.8;
+  fireLight.color.setRGB(1, 0.35 + Math.sin(t*3)*0.05, 0.02);
+
+  // Exit light pulse
+  exitLight.intensity = 2.8 + Math.sin(t*0.5)*0.2;
+
+  // Prisoner sway
+  prisoners.forEach((p, i) => {
+    p.rotation.z = Math.sin(t*0.3 + i*1.2) * 0.02;
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  const w=window.innerWidth, h=window.innerHeight;
+  camera.aspect=w/h; camera.updateProjectionMatrix(); renderer.setSize(w,h);
+});
+</script>
+</body>
+</html>

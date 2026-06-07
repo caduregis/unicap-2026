@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biologia Celular — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">O Laboratório da Célula Viva</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ─── Scene Setup ────────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000810);
+scene.fog = new THREE.Fog(0x000810, 20, 60);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 5, 14);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 3;
+controls.maxDistance = 40;
+controls.target.set(0, 1, 0);
+
+// ─── Lighting ───────────────────────────────────────────────────────────────
+const ambientLight = new THREE.AmbientLight(0x001428, 0.5);
+scene.add(ambientLight);
+
+const mainLight = new THREE.PointLight(0x4488ff, 2, 30);
+mainLight.position.set(0, 6, 0);
+mainLight.castShadow = true;
+scene.add(mainLight);
+
+const rimLight = new THREE.PointLight(0x0022aa, 1.5, 20);
+rimLight.position.set(-6, 3, -4);
+scene.add(rimLight);
+
+const accentLight = new THREE.PointLight(0x002244, 1, 15);
+accentLight.position.set(6, 2, 4);
+scene.add(accentLight);
+
+// ─── Lab Floor ──────────────────────────────────────────────────────────────
+const floorGeo = new THREE.PlaneGeometry(30, 30, 20, 20);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x020a14, roughness: 0.9, metalness: 0.1
+});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = -2.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ─── Lab Benches ────────────────────────────────────────────────────────────
+function createBench(x, z, rotY) {
+  const group = new THREE.Group();
+  const benchMat = new THREE.MeshStandardMaterial({ color: 0x0c1a24, roughness: 0.7, metalness: 0.3 });
+  const topMat = new THREE.MeshStandardMaterial({ color: 0x0a2030, roughness: 0.4, metalness: 0.5, transparent: true, opacity: 0.9 });
+
+  const legs = new THREE.Mesh(new THREE.BoxGeometry(8, 2, 0.8), benchMat);
+  legs.position.y = -1.6;
+  group.add(legs);
+
+  const top = new THREE.Mesh(new THREE.BoxGeometry(8, 0.15, 1.2), topMat);
+  top.position.y = -0.5;
+  group.add(top);
+
+  group.position.set(x, 0, z);
+  group.rotation.y = rotY;
+  scene.add(group);
+}
+createBench(-9, 0, 0);
+createBench(9, 0, 0);
+createBench(0, -9, Math.PI / 2);
+
+// ─── Cell Membrane ──────────────────────────────────────────────────────────
+const membraneGeo = new THREE.SphereGeometry(3, 64, 64);
+const membraneMat = new THREE.MeshStandardMaterial({
+  color: 0x44aaff, transparent: true, opacity: 0.12,
+  roughness: 0.1, metalness: 0.2, side: THREE.DoubleSide
+});
+const membrane = new THREE.Mesh(membraneGeo, membraneMat);
+membrane.position.set(0, 1, 0);
+scene.add(membrane);
+
+const membraneWireGeo = new THREE.SphereGeometry(3.05, 24, 24);
+const membraneWireMat = new THREE.MeshBasicMaterial({
+  color: 0x2266aa, wireframe: true, transparent: true, opacity: 0.06
+});
+const membraneWire = new THREE.Mesh(membraneWireGeo, membraneWireMat);
+membraneWire.position.set(0, 1, 0);
+scene.add(membraneWire);
+
+// ─── Nucleus ────────────────────────────────────────────────────────────────
+const nucleusGeo = new THREE.SphereGeometry(0.9, 32, 32);
+const nucleusMat = new THREE.MeshStandardMaterial({
+  color: 0x1133cc, emissive: 0x2244ff, emissiveIntensity: 1.0,
+  roughness: 0.3, metalness: 0.1
+});
+const nucleus = new THREE.Mesh(nucleusGeo, nucleusMat);
+nucleus.position.set(0, 1, 0);
+scene.add(nucleus);
+
+const nucleusGlow = new THREE.PointLight(0x2244ff, 1.5, 6);
+nucleusGlow.position.set(0, 1, 0);
+scene.add(nucleusGlow);
+
+// ─── Organelles ─────────────────────────────────────────────────────────────
+const organelleColors = [0x00ffaa, 0xff6600, 0xffcc00, 0xff00cc, 0x00ccff, 0xaaff00];
+const organelles = [];
+for (let i = 0; i < 6; i++) {
+  const angle = (i / 6) * Math.PI * 2;
+  const r = 1.8;
+  const geo = i % 2 === 0
+    ? new THREE.TorusGeometry(0.18, 0.07, 8, 16)
+    : new THREE.SphereGeometry(0.22, 12, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    color: organelleColors[i], emissive: organelleColors[i],
+    emissiveIntensity: 0.4, roughness: 0.5
+  });
+  const org = new THREE.Mesh(geo, mat);
+  org.position.set(
+    Math.cos(angle) * r,
+    1 + Math.sin(i * 0.7) * 0.5,
+    Math.sin(angle) * r
+  );
+  org.userData = { orbitAngle: angle, orbitRadius: r, orbitSpeed: 0.3 + i * 0.05, orbitY: 1 + Math.sin(i * 0.7) * 0.5 };
+  scene.add(org);
+  organelles.push(org);
+}
+
+// ─── DNA Helix ───────────────────────────────────────────────────────────────
+const dnaGroup = new THREE.Group();
+dnaGroup.position.set(0, 1, 0);
+const strandSpheres = [];
+const strandCount = 30;
+
+for (let i = 0; i < strandCount; i++) {
+  const t = (i / strandCount) * Math.PI * 4;
+  const y = (i / strandCount) * 3.5 - 1.75;
+
+  // Strand A (blue)
+  const sA = new THREE.Mesh(
+    new THREE.SphereGeometry(0.065, 6, 6),
+    new THREE.MeshStandardMaterial({ color: 0x4488ff, emissive: 0x2244aa, emissiveIntensity: 0.8 })
+  );
+  sA.position.set(Math.cos(t) * 0.7, y, Math.sin(t) * 0.7);
+  dnaGroup.add(sA);
+  strandSpheres.push(sA);
+
+  // Strand B (green)
+  const sB = new THREE.Mesh(
+    new THREE.SphereGeometry(0.065, 6, 6),
+    new THREE.MeshStandardMaterial({ color: 0x44ff88, emissive: 0x22aa44, emissiveIntensity: 0.8 })
+  );
+  sB.position.set(Math.cos(t + Math.PI) * 0.7, y, Math.sin(t + Math.PI) * 0.7);
+  dnaGroup.add(sB);
+  strandSpheres.push(sB);
+
+  // Cross-link every 3 bases
+  if (i % 3 === 0) {
+    const linkGeo = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(Math.cos(t) * 0.7, y, Math.sin(t) * 0.7),
+      new THREE.Vector3(Math.cos(t + Math.PI) * 0.7, y, Math.sin(t + Math.PI) * 0.7)
+    ]);
+    const link = new THREE.Line(linkGeo, new THREE.LineBasicMaterial({ color: 0x334455, transparent: true, opacity: 0.6 }));
+    dnaGroup.add(link);
+  }
+}
+scene.add(dnaGroup);
+
+// ─── Floating Particles inside Cell ─────────────────────────────────────────
+const particleCount = 200;
+const particlePositions = new Float32Array(particleCount * 3);
+const particleSeeds = [];
+for (let i = 0; i < particleCount; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.random() * Math.PI;
+  const r = Math.random() * 2.5;
+  particlePositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+  particlePositions[i * 3 + 1] = 1 + r * Math.sin(phi) * Math.sin(theta);
+  particlePositions[i * 3 + 2] = r * Math.cos(phi);
+  particleSeeds.push(Math.random() * Math.PI * 2);
+}
+const particleGeo = new THREE.BufferGeometry();
+particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+const particleMat = new THREE.PointsMaterial({ color: 0x2244ff, size: 0.04, transparent: true, opacity: 0.5 });
+const particles = new THREE.Points(particleGeo, particleMat);
+scene.add(particles);
+
+// ─── Grid Lines on Floor ──────────────────────────────────────────────────────
+const gridHelper = new THREE.GridHelper(20, 20, 0x001122, 0x001122);
+gridHelper.position.y = -2.49;
+scene.add(gridHelper);
+
+// ─── Study Nodes ─────────────────────────────────────────────────────────────
+const nodes = [];
+const nodeData = [
+  {
+    pos: [0, 1, 3.5],
+    title: 'Membrana Celular',
+    body: 'Bicamada fosfolipídica com proteínas. Semipermeável: permite troca seletiva. Fosfolipídios: cabeça hidrofílica + cauda hidrofóbica. Transporte passivo (difusão, osmose) sem energia. Transporte ativo (bombas) com ATP. Endocitose e exocitose.',
+    tip: '<strong>UNICAP:</strong> Diferenciar transporte passivo (favor do gradiente, sem ATP) do ativo (contra gradiente, com ATP).'
+  },
+  {
+    pos: [0, 2, 0],
+    title: 'Núcleo e DNA',
+    body: 'Núcleo: centro de controle celular. DNA (ácido desoxirribonucleico): dupla hélice com bases nitrogenadas (A-T; C-G). Gene = trecho de DNA que codifica proteína. Cromossomos: DNA + proteínas histonas. Humanos: 46 cromossomos (23 pares). Nucléolo: produz RNA ribossômico.',
+    tip: '<strong>UNICAP:</strong> Bases complementares: A-T e C-G. Se um filamento tem 30% de A, quanto tem de T? (30%). De C+G? (40%).'
+  },
+  {
+    pos: [-4, 2, 2],
+    title: 'Mitose',
+    body: 'Divisão celular para crescimento e regeneração. Fases: IPMAT — Interfase (replicação DNA), Prófase (condensação), Metáfase (alinhamento), Anáfase (separação), Telófase (divisão). Resultado: 2 células filhas idênticas com 2n cromossomos. Células somáticas.',
+    tip: '<strong>UNICAP:</strong> Mitose: 1 célula 2n → 2 células 2n. Mantém o número cromossômico. Importância para crescimento.'
+  },
+  {
+    pos: [4, 2, 2],
+    title: 'Meiose',
+    body: 'Divisão para formação de gametas. 2 divisões consecutivas. Resultado: 4 células haploides (n). Meiose I: segregação dos homólogos. Meiose II: separação das cromátides. Crossing-over (quiasma) na Prófase I gera variabilidade genética. Acontece nas gônadas.',
+    tip: '<strong>UNICAP:</strong> Meiose: 1 célula 2n → 4 células n. Cria variabilidade. Saber diferença mitose×meiose é clássico.'
+  },
+  {
+    pos: [-4, 2, -2],
+    title: 'Leis de Mendel',
+    body: '1ª Lei (Segregação): cada característica é determinada por 2 fatores que se separam na formação dos gametas. 2ª Lei (Segregação Independente): diferentes características se combinam independentemente. Dominante (AA ou Aa) × recessivo (aa). Quadrado de Punnett: monohíbrido 3:1, dihíbrido 9:3:3:1.',
+    tip: '<strong>UNICAP:</strong> Aa × Aa: 25% AA, 50% Aa, 25% aa. Fenótipos: 75% dominante, 25% recessivo (razão 3:1).'
+  },
+  {
+    pos: [4, 2, -2],
+    title: 'RNA e Síntese de Proteínas',
+    body: 'Transcrição: DNA → RNA mensageiro (no núcleo). Tradução: mRNA → proteína (no ribossomo). RNAt (transporte): traz aminoácidos. Códon: tripleto de bases no mRNA. Anticódon: no RNAt. Código genético: 64 códons para 20 aminoácidos. Mutação: alteração no DNA.',
+    tip: '<strong>UNICAP:</strong> Etapas: DNA→RNA (transcrição no núcleo) → Proteína (tradução no ribossomo). Qual organela? Ribossomo.'
+  },
+  {
+    pos: [0, 4, 0],
+    title: 'Biotecnologia e Genética Moderna',
+    body: 'DNA recombinante: inserir gene de uma espécie em outra. OGM: organismos geneticamente modificados. PCR: amplificação de DNA. Genoma: conjunto de todos genes de um organismo. Projeto Genoma Humano. Terapia gênica: corrigir doenças genéticas. CRISPR-Cas9: edição de genes.',
+    tip: '<strong>UNICAP:</strong> Biotecnologia aparece em questões de atualidades. Saber o que é OGM e clonagem terapêutica.'
+  }
+];
+
+nodeData.forEach(data => {
+  const geo = new THREE.SphereGeometry(0.3, 12, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x00ff88, emissive: 0x00cc66, emissiveIntensity: 0.8,
+    roughness: 0.2, metalness: 0.1
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(...data.pos);
+  mesh.userData.baseY = data.pos[1];
+  scene.add(mesh);
+  nodes.push({ mesh, title: data.title, body: data.body, tip: data.tip });
+});
+
+// ─── Raycaster & Interaction ─────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+window.addEventListener('click', () => {
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  if (hits.length) {
+    const n = nodes.find(n => n.mesh === hits[0].object);
+    if (n) {
+      document.getElementById('popup-title').textContent = n.title;
+      document.getElementById('popup-body').textContent = n.body;
+      document.getElementById('popup-tip').innerHTML = n.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+// ─── Animation Loop ──────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Nucleus pulse
+  nucleusMat.emissiveIntensity = 0.6 + 0.4 * Math.sin(t * 1.5);
+  nucleusGlow.intensity = 1.0 + 0.5 * Math.sin(t * 1.5);
+
+  // Membrane gentle pulse
+  const scale = 1 + 0.02 * Math.sin(t * 0.5);
+  membrane.scale.setScalar(scale);
+  membraneWire.scale.setScalar(scale);
+
+  // Organelles orbit
+  organelles.forEach((org, i) => {
+    const d = org.userData;
+    d.orbitAngle += d.orbitSpeed * 0.01;
+    org.position.x = Math.cos(d.orbitAngle) * d.orbitRadius;
+    org.position.z = Math.sin(d.orbitAngle) * d.orbitRadius;
+    org.position.y = d.orbitY + Math.sin(t * 0.7 + i) * 0.15;
+    org.rotation.x += 0.02;
+    org.rotation.z += 0.015;
+  });
+
+  // DNA rotation
+  dnaGroup.rotation.y = t * 0.3;
+
+  // Hover effect on nodes
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  nodes.forEach(n => {
+    const isHit = hits.length && hits[0].object === n.mesh;
+    n.mesh.scale.setScalar(isHit ? 1.4 : 1.0);
+    n.mesh.material.emissiveIntensity = isHit ? 1.2 : 0.8;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  // Node bob animation (absolute, no drift)
+  nodes.forEach((n, i) => {
+    n.mesh.position.y = n.mesh.userData.baseY + Math.sin(t * 0.6 + i * 1.1) * 0.22;
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

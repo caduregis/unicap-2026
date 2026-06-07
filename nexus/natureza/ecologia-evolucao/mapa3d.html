@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecologia e Evolução — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">A Teia da Vida</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ─── Scene Setup ─────────────────────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x010602);
+scene.fog = new THREE.FogExp2(0x010602, 0.025);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 6, 16);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 4;
+controls.maxDistance = 40;
+controls.target.set(0, 1, 0);
+
+// ─── Lighting ─────────────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x020804, 1.2);
+scene.add(ambient);
+
+const moonLight = new THREE.DirectionalLight(0x1a2a3a, 0.6);
+moonLight.position.set(5, 20, 5);
+moonLight.castShadow = true;
+scene.add(moonLight);
+
+const forestGlow = new THREE.PointLight(0x00aa44, 0.8, 30);
+forestGlow.position.set(0, 4, 0);
+scene.add(forestGlow);
+
+// ─── Ground ─────────────────────────────────────────────────────────────────
+const groundGeo = new THREE.PlaneGeometry(40, 40, 30, 30);
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x020a04, roughness: 1.0 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -2.5;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const gridHelper = new THREE.GridHelper(30, 30, 0x010801, 0x010801);
+gridHelper.position.y = -2.49;
+scene.add(gridHelper);
+
+// ─── Trees ───────────────────────────────────────────────────────────────────
+function createTree(x, z, scale) {
+  const group = new THREE.Group();
+
+  const trunkMat = new THREE.MeshStandardMaterial({ color: 0x1a0f08, roughness: 1.0 });
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15 * scale, 0.25 * scale, 2.5 * scale, 8), trunkMat);
+  trunk.position.y = 1.25 * scale - 2.5;
+  trunk.castShadow = true;
+  group.add(trunk);
+
+  const canopyMat = new THREE.MeshStandardMaterial({
+    color: 0x0a1a08, transparent: true, opacity: 0.7, roughness: 0.9
+  });
+  const canopy = new THREE.Mesh(new THREE.SphereGeometry(1.2 * scale, 10, 10), canopyMat);
+  canopy.position.y = 3.2 * scale - 2.5;
+  canopy.castShadow = true;
+  group.add(canopy);
+
+  group.position.set(x, 0, z);
+  scene.add(group);
+  return group;
+}
+
+// 3 tree groups
+[[-8, -3], [-7, 2], [-9, -7]].forEach(([x, z]) => createTree(x, z, 1.0 + Math.random() * 0.3));
+[[8, -2], [7, 3], [9, -6]].forEach(([x, z]) => createTree(x, z, 0.9 + Math.random() * 0.3));
+[[-2, -8], [1, -9], [4, -8]].forEach(([x, z]) => createTree(x, z, 0.8 + Math.random() * 0.2));
+
+// ─── Trophic Level Spheres & Connections ─────────────────────────────────────
+const trophicLevels = [
+  { pos: [-4, 2, 0],  color: 0x44ff66, emissive: 0x22aa44, label: 'Produtor' },
+  { pos: [-1, 2, 0],  color: 0x4488ff, emissive: 0x2244aa, label: 'Consumidor 1' },
+  { pos: [2,  2, 0],  color: 0xff8844, emissive: 0xaa4422, label: 'Consumidor 2' },
+  { pos: [5,  2, 0],  color: 0xff4444, emissive: 0xaa2222, label: 'Consumidor 3' },
+  { pos: [0.5,2,-3],  color: 0xcc44ff, emissive: 0x7722aa, label: 'Decompositor' }
+];
+
+const trophicMeshes = [];
+trophicLevels.forEach(tl => {
+  const geo = new THREE.SphereGeometry(0.45, 20, 20);
+  const mat = new THREE.MeshStandardMaterial({
+    color: tl.color, emissive: tl.emissive, emissiveIntensity: 0.8,
+    roughness: 0.3, metalness: 0.1
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(...tl.pos);
+  mesh.castShadow = true;
+  scene.add(mesh);
+
+  // Point light for each trophic level
+  const light = new THREE.PointLight(tl.color, 0.5, 4);
+  light.position.set(...tl.pos);
+  scene.add(light);
+
+  trophicMeshes.push({ mesh, light, basePos: [...tl.pos] });
+});
+
+// Food chain connections
+const connectionPairs = [
+  [trophicLevels[0].pos, trophicLevels[1].pos],
+  [trophicLevels[1].pos, trophicLevels[2].pos],
+  [trophicLevels[2].pos, trophicLevels[3].pos],
+  [trophicLevels[3].pos, trophicLevels[4].pos],
+  [trophicLevels[4].pos, trophicLevels[0].pos]
+];
+
+connectionPairs.forEach(([from, to]) => {
+  const points = [new THREE.Vector3(...from), new THREE.Vector3(...to)];
+  const geo = new THREE.BufferGeometry().setFromPoints(points);
+  const mat = new THREE.LineBasicMaterial({ color: 0x224433, transparent: true, opacity: 0.4 });
+  scene.add(new THREE.Line(geo, mat));
+});
+
+// ─── Fireflies / Particles ────────────────────────────────────────────────────
+const fireflyCount = 80;
+const ffPositions = new Float32Array(fireflyCount * 3);
+const ffSeeds = [];
+for (let i = 0; i < fireflyCount; i++) {
+  ffPositions[i * 3]     = (Math.random() - 0.5) * 20;
+  ffPositions[i * 3 + 1] = Math.random() * 6;
+  ffPositions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+  ffSeeds.push(Math.random() * Math.PI * 2);
+}
+const ffGeo = new THREE.BufferGeometry();
+ffGeo.setAttribute('position', new THREE.BufferAttribute(ffPositions, 3));
+const ffMat = new THREE.PointsMaterial({ color: 0xffcc44, size: 0.08, transparent: true, opacity: 0.7 });
+const fireflies = new THREE.Points(ffGeo, ffMat);
+scene.add(fireflies);
+
+// Store original positions for animation
+const ffOriginalPositions = Float32Array.from(ffPositions);
+
+// ─── Nebula Background Sphere ─────────────────────────────────────────────────
+const nebulaMat = new THREE.MeshBasicMaterial({ color: 0x020a04, side: THREE.BackSide });
+const nebula = new THREE.Mesh(new THREE.SphereGeometry(80, 16, 16), nebulaMat);
+scene.add(nebula);
+
+// ─── Study Nodes ──────────────────────────────────────────────────────────────
+const nodes = [];
+const nodeData = [
+  {
+    pos: [-1, 4, 0],
+    title: 'Cadeia e Teia Alimentar',
+    body: 'Cadeia: sequência linear de quem come quem. Teia: conjunto de cadeias interconectadas — mais estável. Níveis tróficos: produtores (fotossíntese), consumidores 1°, 2°, 3°, decompositores. Energia: flui unidirecionalmente; 10% passa ao nível seguinte (pirâmide de energia).',
+    tip: '<strong>UNICAP:</strong> Numa cadeia: grama→gafanhoto→sapo→cobra→gavião. Identificar nível trófico de cada organismo.'
+  },
+  {
+    pos: [-5, 4, -2],
+    title: 'Relações Ecológicas',
+    body: 'Harmônicas: mutualismo (+/+), comensalismo (+/0), protocooperação (+/+ facultativo). Desarmônicas: predatismo (+/-), parasitismo (+/-), amensalismo (-/0), competição (-/-). Intra vs interespecífica. Inquilinismo: uma espécie usa estrutura de outra sem prejudicar.',
+    tip: '<strong>UNICAP:</strong> Classificar relações ecológicas dado uma descrição (ex.: epífitas sobre árvores = comensalismo).'
+  },
+  {
+    pos: [5, 4, -2],
+    title: 'Ciclos Biogeoquímicos',
+    body: 'Ciclo do carbono: fotossíntese (CO₂→glicose), respiração/decomposição (glicose→CO₂), combustão. Ciclo do nitrogênio: fixação (bactérias), nitrificação, desnitrificação. Ciclo da água: evaporação, condensação, precipitação. Ciclo do fósforo: sem fase gasosa relevante.',
+    tip: '<strong>UNICAP:</strong> Qual processo remove CO₂ da atmosfera? Fotossíntese. Qual libera? Respiração e combustão.'
+  },
+  {
+    pos: [-5, 4, 3],
+    title: 'Biomas Brasileiros',
+    body: 'Amazônia: maior biodiversidade. Cerrado: segundo maior, maior savana neotropical, berço das águas. Mata Atlântica: mais desmatada, maior biodiversidade endêmica. Caatinga: exclusivamente brasileira, xerófita. Pantanal: maior planície alagável do mundo. Pampa: vegetação campestre (RS). Manguezal: transição mar/terra.',
+    tip: '<strong>UNICAP:</strong> Qual bioma é exclusivamente brasileiro? Caatinga. Maior biodiversidade? Amazônia.'
+  },
+  {
+    pos: [5, 4, 3],
+    title: 'Evolução Darwinista',
+    body: 'Darwin: seleção natural. Variabilidade + ambiente hostil → indivíduos mais adaptados sobrevivem e reproduzem mais. Lamarck: uso e desuso (incorreto). Evidências evolutivas: fósseis, anatomia comparada (homólogos vs análogos), embriologia, bioquímica, biogeografia. Especiação: formação de novas espécies por isolamento.',
+    tip: '<strong>UNICAP:</strong> Diferenciar Lamarck (herança de caracteres adquiridos — errado) de Darwin (seleção natural — correto).'
+  },
+  {
+    pos: [0, 5, -5],
+    title: 'Impactos Ambientais e Sustentabilidade',
+    body: 'Desmatamento: perda de biodiversidade, erosão, aquecimento global. Efeito estufa: CO₂, metano, vapor d\'água retêm calor — natural e essencial, problema é intensificação. Chuva ácida: SO₂+NO₂+água → H₂SO₄. Camada de ozônio: CFC destrói O₃. Eutrofização: excesso de nutrientes → proliferação de algas.',
+    tip: '<strong>UNICAP:</strong> Qual gás é responsável pelo efeito estufa e está aumentando? CO₂ (e metano). Protocolo de Quioto/Paris.'
+  }
+];
+
+nodeData.forEach(data => {
+  const geo = new THREE.SphereGeometry(0.32, 12, 12);
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x88ff44, emissive: 0x44aa22, emissiveIntensity: 0.9,
+    roughness: 0.2
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(...data.pos);
+  scene.add(mesh);
+  nodes.push({ mesh, title: data.title, body: data.body, tip: data.tip });
+});
+
+// ─── Raycaster ────────────────────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+});
+window.addEventListener('click', () => {
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  if (hits.length) {
+    const n = nodes.find(n => n.mesh === hits[0].object);
+    if (n) {
+      document.getElementById('popup-title').textContent = n.title;
+      document.getElementById('popup-body').textContent = n.body;
+      document.getElementById('popup-tip').innerHTML = n.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+// ─── Animation ────────────────────────────────────────────────────────────────
+function animate() {
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Trophic spheres bob
+  trophicMeshes.forEach((tm, i) => {
+    tm.mesh.position.y = tm.basePos[1] + Math.sin(t * 0.8 + i) * 0.12;
+    tm.light.position.y = tm.mesh.position.y;
+    tm.mesh.rotation.y += 0.01;
+  });
+
+  // Fireflies oscillate
+  const ffPos = fireflies.geometry.attributes.position.array;
+  for (let i = 0; i < fireflyCount; i++) {
+    ffPos[i * 3]     = ffOriginalPositions[i * 3]     + Math.sin(t * 0.7 + ffSeeds[i]) * 0.3;
+    ffPos[i * 3 + 1] = ffOriginalPositions[i * 3 + 1] + Math.sin(t * 1.1 + ffSeeds[i] * 2) * 0.4;
+    ffPos[i * 3 + 2] = ffOriginalPositions[i * 3 + 2] + Math.cos(t * 0.6 + ffSeeds[i]) * 0.3;
+  }
+  fireflies.geometry.attributes.position.needsUpdate = true;
+  ffMat.opacity = 0.4 + 0.3 * Math.sin(t * 2);
+
+  // Forest glow pulse
+  forestGlow.intensity = 0.5 + 0.3 * Math.sin(t * 0.4);
+
+  // Node hover
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n => n.mesh));
+  nodes.forEach((n, i) => {
+    const isHit = hits.length && hits[0].object === n.mesh;
+    n.mesh.scale.setScalar(isHit ? 1.35 : 1.0);
+    n.mesh.position.y = nodeData[i].pos[1] + Math.sin(t + i * 0.8) * 0.1;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

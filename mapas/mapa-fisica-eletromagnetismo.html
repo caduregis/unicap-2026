@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eletromagnetismo · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">ELETROMAGNETISMO</div><div class="lt2">eletrostática · eletrodinâmica · magnetismo</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">⚡</div><div class="bt"><div class="l1">Eletromagnetismo</div><div class="l2">Física · Bloco 4</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · FÍS ELETRO</span><h1>Eletromagnetismo</h1><p>Eletrostática (cargas em repouso), eletrodinâmica (corrente), magnetismo, indução eletromagnética. Tópicos LITERAIS do PDF.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#facc15', corHex2:'#eab308', bg:'#1c1404', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'FIS E1',nome:'Eletrostática',sub:'Cargas em repouso, Coulomb',forma:'tetra',cor:0xfacc15,
+topicos:['Carga elétrica: positiva (próton) × negativa (elétron); neutra (nêutron)','Quantização da carga: e = 1,6·10⁻¹⁹ C (Q = n·e)','Princípios: conservação da carga (Q total = const), atração/repulsão (sinais opostos atraem, iguais repelem)','Eletrização: atrito (séries triboelétricas), contato, indução','Condutores × isolantes','Lei de Coulomb: F = k·|q₁·q₂|/r²; k = 9·10⁹ N·m²/C²','Campo elétrico (E): E = F/q (vetor)','Linhas de força (de + para −)','Potencial elétrico (V): V = E_p/q, unidade Volt (V)','U_AB = V_A − V_B = trabalho por carga','Capacitância (C = Q/V), capacitores'],
+resumo:'Eletrostática: cargas em repouso. Lei de Coulomb é "gêmea" da gravitação universal. Campo elétrico é central.',
+dica:'Coulomb: F ∝ 1/r² (cai com o quadrado da distância — IGUAL à gravitação). 1 elétron tem carga -e (1,6·10⁻¹⁹ C). Capacitor armazena energia elétrica.'},
+{cod:'FIS E2',nome:'Eletrodinâmica · Circuitos',sub:'Corrente, resistência, Lei de Ohm',forma:'dodeca',cor:0xfde047,
+topicos:['Corrente elétrica (i): fluxo de cargas, i = Q/t, unidade Ampère (A)','Sentido convencional × sentido real','Lei de Ohm: U = R·i (resistor ôhmico)','Resistência elétrica (R): R = ρ·L/A (resistividade × comprimento / área)','Curto-circuito (R muito pequeno, i muito grande)','Potência elétrica: P = U·i = R·i² = U²/R','Energia elétrica: E = P·t, unidade kWh','Conta de luz em kWh','Geradores: fem (ε) e resistência interna (r)','Receptores (motores)','Equação do gerador: U = ε − r·i','Associação de resistores: série (R_eq = R₁+R₂+R₃) × paralelo (1/R_eq = 1/R₁ + 1/R₂)','Leis de Kirchhoff: lei dos nós (correntes), lei das malhas (tensões)','Amperímetro × voltímetro (instrumentos)','Fusíveis, disjuntores'],
+resumo:'Eletrodinâmica: cargas em movimento. Lei de Ohm é a equação central. Circuitos práticos usam resistores em série e paralelo.',
+dica:'POTÊNCIA: P = U·i (sempre dá). Conta de luz: 1 kWh = energia de 1 kW durante 1h. Resistores em PARALELO: R_eq menor que o menor R.'},
+{cod:'FIS E3',nome:'Magnetismo · Campo Magnético',sub:'Ímãs, força de Lorentz',forma:'octa',cor:0xfb923c,
+topicos:['Ímãs: polos N e S','Polos iguais se repelem, opostos se atraem','Inseparabilidade dos polos (não existe monopolo magnético)','Campo magnético (B), unidade Tesla (T), linhas de campo de N para S externamente','Magnetismo terrestre: Terra é um grande ímã (polo N magnético está no Sul geográfico!)','Bússola','Materiais: ferromagnéticos (Fe, Ni, Co), paramagnéticos, diamagnéticos','Hans Christian Ørsted (1820): corrente elétrica gera campo magnético','Campo magnético gerado por: fio reto, espira, solenoide (bobina)','Força magnética sobre carga em movimento (Lorentz): F = q·v·B·sen(θ)','Regra da mão direita','Força magnética sobre fio com corrente: F = B·i·L·sen(θ)','Aplicações: motor elétrico, alto-falante, MRI (ressonância magnética)'],
+resumo:'Magnetismo: cargas em movimento criam campo magnético. Ørsted unificou eletricidade e magnetismo. Força de Lorentz rege as cargas em movimento num campo B.',
+dica:'Lembre: corrente elétrica → campo magnético (Ørsted). Variação de campo magnético → corrente elétrica (Faraday). Ying-Yang da física.'},
+{cod:'FIS E4',nome:'Indução Eletromagnética',sub:'Faraday, Lenz, transformadores',forma:'icosa',cor:0xef4444,
+topicos:['Michael Faraday (1831): variação de fluxo magnético gera corrente','Lei de Faraday: ε = -dΦ/dt','Lei de Lenz: corrente induzida tem sentido tal que se opõe à variação que a originou','Aplicações: gerador elétrico (transforma movimento em eletricidade)','Hidrelétrica = gerador elétrico em larga escala','Motor elétrico ↔ gerador (princípio de reciprocidade)','Transformadores: U₁/U₂ = N₁/N₂ (espiras)','Transformadores em alta tensão (linhas de transmissão)','Corrente contínua (CC, baterias) × corrente alternada (CA, tomadas)','Maxwell (1865): unificou eletricidade e magnetismo, previu ondas EM','Equações de Maxwell (4 equações), base da relatividade de Einstein','Ondas eletromagnéticas: rádio, TV, celular, Wi-Fi','Espectro EM: rádio < micro-ondas < IV < visível < UV < raios X < raios γ'],
+resumo:'Faraday descobriu que campo magnético VARIÁVEL gera corrente. Base de TODAS as usinas geradoras de eletricidade do mundo.',
+dica:'TODAS as usinas (hidrelétrica, termelétrica, nuclear, eólica) usam o MESMO princípio: girar uma turbina → girar bobina dentro de campo magnético → ε induzida.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

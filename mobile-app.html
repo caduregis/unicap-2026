@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0e1a">
+<link rel="manifest" href="manifest.json">
+<title>UNICAP · Carlos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0e1a;--bg2:#131829;--bg3:#1a2035;
+  --cyan:#00d4ff;--amber:#ffb800;--emerald:#10b981;--red:#ef4444;--purple:#8b5cf6;
+  --text:#e8eaf0;--muted:#8a93a8;
+  --border:rgba(0,212,255,0.12);
+  --nav:68px;--safe:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;}
+body{display:flex;flex-direction:column;}
+
+/* HEADER */
+.hdr{
+  flex-shrink:0;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px;
+  background:rgba(10,14,26,0.97);
+  border-bottom:1px solid var(--border);
+  position:relative;z-index:20;
+}
+.hdr-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.hdr-greet{font-size:17px;font-weight:800;}
+.hdr-greet span{color:var(--cyan);}
+.dias-badge{
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff;font-size:12px;font-weight:900;
+  padding:6px 12px;border-radius:20px;
+  box-shadow:0 2px 12px rgba(239,68,68,0.45);
+  white-space:nowrap;letter-spacing:0.3px;
+}
+.dias-badge.ok{background:linear-gradient(135deg,var(--amber),#d97706);}
+.dias-badge.safe{background:linear-gradient(135deg,var(--emerald),#059669);}
+.prog-row{display:flex;align-items:center;gap:8px;}
+.prog-lbl{font-size:11px;color:var(--muted);white-space:nowrap;}
+.prog-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--emerald));border-radius:3px;transition:width 600ms ease;}
+.prog-pct{font-size:11px;font-weight:700;color:var(--cyan);min-width:28px;text-align:right;}
+
+/* CONTENT */
+.content{flex:1;overflow:hidden;position:relative;}
+.tab{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  padding:14px 14px calc(var(--nav) + var(--safe) + 12px);
+  -webkit-overflow-scrolling:touch;
+  opacity:0;pointer-events:none;transition:opacity 180ms;
+}
+.tab.active{opacity:1;pointer-events:auto;}
+
+/* BOTTOM NAV */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav) + var(--safe));
+  padding-bottom:var(--safe);
+  background:rgba(10,14,26,0.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(20px);
+  display:grid;grid-template-columns:repeat(4,1fr);
+  z-index:100;flex-shrink:0;
+}
+.nbtn{
+  border:none;background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;color:var(--muted);cursor:pointer;padding:8px 4px;
+  transition:color 180ms;font-size:11px;font-weight:600;
+}
+.nbtn .ni{font-size:20px;line-height:1;transition:transform 150ms;}
+.nbtn.active{color:var(--cyan);}
+.nbtn.active .ni{transform:scale(1.15);}
+
+/* CARDS */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:16px;padding:14px;margin-bottom:10px;
+  transition:border-color 200ms;
+}
+
+/* SECTION TITLE */
+.stitle{
+  font-size:10px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--muted);
+  margin:18px 0 10px;display:flex;align-items:center;gap:8px;
+}
+.stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* URGENCY BANNER */
+.ubanner{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;border-radius:12px;margin-bottom:10px;
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);
+}
+.ubanner .uicon{font-size:20px;}
+.ubanner .utxt{font-size:13px;font-weight:700;color:var(--red);}
+.ubanner .usub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* TASK CARDS */
+.tcard{display:flex;align-items:flex-start;gap:12px;cursor:pointer;user-select:none;}
+.tcard:active{transform:scale(0.98);}
+.tchk{
+  width:22px;height:22px;flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.15);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:3px;transition:all 200ms;
+}
+.tcard.done .tchk{background:var(--emerald);border-color:var(--emerald);}
+.tcard.done .tchk::after{content:'✓';color:#fff;font-size:11px;font-weight:900;}
+.tcard.done .tbody{opacity:0.4;}
+.tcard.done .ttitle{text-decoration:line-through;}
+.tbody{flex:1;}
+.ttitle{font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.3;}
+.tmeta{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.ttag{
+  font-size:10px;font-weight:700;letter-spacing:0.3px;
+  padding:3px 8px;border-radius:6px;
+}
+.ttag.cyan{background:rgba(0,212,255,0.1);color:var(--cyan);}
+.ttag.red{background:rgba(239,68,68,0.12);color:var(--red);}
+.ttag.amber{background:rgba(255,184,0,0.1);color:var(--amber);}
+.ttag.green{background:rgba(16,185,129,0.1);color:var(--emerald);}
+.ttag.purple{background:rgba(139,92,246,0.1);color:var(--purple);}
+.ttime{font-size:11px;color:var(--muted);}
+.tlink{
+  display:inline-block;margin-top:6px;
+  font-size:11px;font-weight:700;color:var(--cyan);
+  background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+  padding:5px 10px;border-radius:7px;text-decoration:none;
+}
+
+/* CALENDAR */
+.dcard{
+  display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;
+  padding:13px;border-radius:14px;margin-bottom:8px;
+  border:1px solid var(--border);background:var(--bg2);
+}
+.dcard.today{border-color:var(--cyan);background:rgba(0,212,255,0.04);}
+.dcard.ev{border-color:var(--amber);}
+.dcard.sim{border-color:var(--purple);}
+.dcard.prova{border-color:var(--red);background:rgba(239,68,68,0.05);}
+.dnum{font-size:26px;font-weight:900;text-align:center;line-height:1;}
+.dnum.t{color:var(--cyan);}
+.dname{font-size:9px;font-weight:700;letter-spacing:0.5px;color:var(--muted);text-align:center;margin-top:2px;}
+.dtitle{font-size:13px;font-weight:700;margin-bottom:3px;}
+.dsubs{font-size:11px;color:var(--muted);line-height:1.5;}
+.dbadge{
+  display:inline-block;font-size:9px;font-weight:700;
+  padding:3px 8px;border-radius:6px;margin-top:4px;
+}
+.dbadge.h{background:rgba(0,212,255,0.15);color:var(--cyan);}
+.dbadge.ev{background:rgba(255,184,0,0.12);color:var(--amber);}
+.dbadge.sim{background:rgba(139,92,246,0.15);color:var(--purple);}
+.dbadge.pr{background:rgba(239,68,68,0.18);color:var(--red);}
+.dbadge.rd{background:rgba(239,68,68,0.1);color:var(--red);}
+
+.cal-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.ldot{width:7px;height:7px;border-radius:50%;}
+
+/* ALARMS */
+.perm-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 14px;
+  border-radius:12px;background:rgba(255,184,0,0.07);
+  border:1px solid rgba(255,184,0,0.25);margin-bottom:12px;
+}
+.perm-bar .ptxt{font-size:12px;color:var(--amber);flex:1;}
+.perm-bar button{
+  background:var(--amber);color:#000;border:none;
+  padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;
+}
+.add-btn{
+  width:100%;padding:14px;margin-bottom:14px;
+  background:linear-gradient(135deg,var(--cyan),#0099cc);
+  color:#0a0e1a;font-weight:900;font-size:15px;
+  border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,212,255,0.3);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform 150ms;
+}
+.add-btn:active{transform:scale(0.97);}
+.alarm-row{display:flex;align-items:center;gap:12px;padding:13px;}
+.atime{font-size:26px;font-weight:900;color:var(--text);font-family:'JetBrains Mono',monospace;}
+.abody{flex:1;}
+.albl{font-size:13px;font-weight:600;}
+.arep{font-size:10px;color:var(--muted);margin-top:2px;}
+.tog{
+  width:46px;height:25px;background:var(--bg3);border-radius:13px;
+  cursor:pointer;position:relative;transition:background 200ms;border:none;flex-shrink:0;
+}
+.tog.on{background:var(--emerald);}
+.tog::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:19px;height:19px;border-radius:50%;background:#fff;
+  transition:transform 200ms;box-shadow:0 1px 4px rgba(0,0,0,0.3);
+}
+.tog.on::after{transform:translateX(21px);}
+.adel{
+  width:32px;height:32px;background:rgba(239,68,68,0.08);
+  border:1px solid rgba(239,68,68,0.2);color:var(--red);
+  border-radius:8px;font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* MODAL */
+.mover{
+  position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  z-index:200;display:flex;align-items:flex-end;
+  backdrop-filter:blur(6px);
+}
+.mover.hidden{display:none;}
+.msheet{
+  width:100%;max-height:90vh;overflow-y:auto;
+  background:var(--bg2);border-radius:20px 20px 0 0;
+  border-top:1px solid var(--border);
+  padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));
+}
+.mhandle{width:40px;height:4px;background:var(--bg3);border-radius:2px;margin:0 auto 20px;}
+.mtitle{font-size:18px;font-weight:800;margin-bottom:18px;}
+.fg{margin-bottom:14px;}
+.fl{display:block;font-size:11px;font-weight:700;letter-spacing:0.5px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.fi{
+  width:100%;padding:12px 13px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-size:16px;font-family:inherit;
+}
+.fi:focus{outline:none;border-color:var(--cyan);}
+.bsave{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--emerald),#059669);
+  color:#fff;font-weight:800;font-size:16px;
+  border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 4px 18px rgba(16,185,129,0.3);
+}
+.bcancel{
+  width:100%;padding:13px;margin-top:8px;
+  background:transparent;color:var(--muted);
+  border:1px solid var(--border);border-radius:14px;
+  font-size:15px;cursor:pointer;
+}
+
+/* ALARM FIRE */
+.afire{
+  position:fixed;inset:0;background:rgba(0,0,0,0.94);
+  z-index:500;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;
+}
+.afire.hidden{display:none;}
+.afire-ring{
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(239,68,68,0.08);border:3px solid var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-size:60px;
+  animation:rpulse 0.8s ease-in-out infinite;
+}
+@keyframes rpulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5);}50%{transform:scale(1.06);box-shadow:0 0 0 24px transparent;}}
+.afire-time{font-size:54px;font-weight:900;color:var(--red);}
+.afire-lbl{font-size:20px;font-weight:800;text-align:center;padding:0 20px;}
+.afire-dismiss{
+  background:var(--red);color:#fff;border:none;
+  border-radius:16px;padding:15px 48px;
+  font-size:18px;font-weight:800;cursor:pointer;
+  margin-top:8px;
+}
+
+/* MATERIALS */
+.mat-sec{margin-bottom:20px;}
+.mat-stitle{
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.mat-stitle::after{content:'';flex:1;height:1px;background:var(--border);}
+.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.mcard{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:13px;padding:13px 11px;
+  text-decoration:none;color:var(--text);
+  display:flex;flex-direction:column;gap:5px;
+  transition:transform 150ms,border-color 150ms;
+}
+.mcard:active{transform:scale(0.95);}
+.mcard .mi{font-size:22px;}
+.mcard .mn{font-size:12px;font-weight:700;line-height:1.3;}
+.mcard .mt{font-size:10px;color:var(--muted);}
+.mcard.cyan{border-color:rgba(0,212,255,0.2);}
+.mcard.amber{border-color:rgba(255,184,0,0.2);}
+.mcard.green{border-color:rgba(16,185,129,0.2);}
+.mcard.red{border-color:rgba(239,68,68,0.2);}
+.mcard.purple{border-color:rgba(139,92,246,0.2);}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;}
+.empty .ee{font-size:40px;margin-bottom:10px;}
+
+/* INSTALL BANNER */
+.ibanner{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 13px;border-radius:12px;
+  background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);
+  margin-bottom:12px;cursor:pointer;
+}
+.ibanner .itxt{font-size:12px;color:var(--cyan);flex:1;}
+.ibanner .iarrow{font-size:16px;color:var(--cyan);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-row">
+    <div class="hdr-greet" id="greet">Olá, <span>Carlos!</span></div>
+    <div class="dias-badge" id="dias-badge"><span id="dias-num">14</span> dias</div>
+  </div>
+  <div class="prog-row">
+    <span class="prog-lbl" id="prog-lbl">0/0 tarefas</span>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <span class="prog-pct" id="prog-pct">0%</span>
+  </div>
+</header>
+
+<main class="content">
+  <!-- TAB HOJE -->
+  <div id="tab-hoje" class="tab active">
+    <div id="ubanner" class="ubanner" style="display:none">
+      <div class="uicon">⚠️</div>
+      <div><div class="utxt" id="utxt"></div><div class="usub">Não deixe para depois.</div></div>
+    </div>
+    <div id="ibanner" class="ibanner" onclick="installPWA()" style="display:none">
+      <span class="itxt">📲 Instalar no celular — acesso offline</span>
+      <span class="iarrow">→</span>
+    </div>
+    <div class="stitle" id="hoje-stitle">Tarefas de hoje</div>
+    <div id="tasks"></div>
+    <div id="empty-hoje" class="empty" style="display:none"><div class="ee">✅</div><div>Nenhuma tarefa para hoje!</div></div>
+    <div class="stitle">Acesso rápido</div>
+    <div class="mgrid">
+      <a href="final-sprint.html" class="mcard" style="border-color:rgba(245,197,66,0.35);"><span class="mi">⚡</span><span class="mn" style="color:#f5c542;">Sprint Final</span><span class="mt">Contador · Revisão · Prova</span></a>
+      <a href="dopamina.html" class="mcard amber"><span class="mi">🔥</span><span class="mn">Modo Boss</span><span class="mt">Anti-procrastinação</span></a>
+      <a href="materiais/flashcards.html" class="mcard cyan"><span class="mi">🃏</span><span class="mn">Flashcards</span><span class="mt">SM-2 espaçado</span></a>
+      <a href="materiais/quiz.html" class="mcard green"><span class="mi">🧩</span><span class="mn">Quiz</span><span class="mt">20 questões</span></a>
+      <a href="redacao/trainer.html" class="mcard red"><span class="mi">✍️</span><span class="mn">Redação</span><span class="mt">Trainer + correção</span></a>
+    </div>
+    <div class="stitle">Dashboard</div>
+    <div class="mgrid">
+      <a href="dashboard.html" class="mcard cyan"><span class="mi">📊</span><span class="mn">Dashboard</span><span class="mt">Visão geral</span></a>
+      <a href="nexus/index.html" class="mcard purple"><span class="mi">🗺️</span><span class="mn">Nexus</span><span class="mt">25 mapas 3D</span></a>
+    </div>
+  </div>
+
+  <!-- TAB AGENDA -->
+  <div id="tab-agenda" class="tab">
+    <div style="font-size:16px;font-weight:800;margin-bottom:12px;">14 dias · Cronograma final</div>
+    <div class="cal-legend">
+      <div class="leg"><div class="ldot" style="background:var(--cyan)"></div>Hoje</div>
+      <div class="leg"><div class="ldot" style="background:var(--amber)"></div>Evento</div>
+      <div class="leg"><div class="ldot" style="background:var(--purple)"></div>Simulado</div>
+      <div class="leg"><div class="ldot" style="background:var(--red)"></div>Prova</div>
+    </div>
+    <div id="calendar"></div>
+  </div>
+
+  <!-- TAB ALARMES -->
+  <div id="tab-alarmes" class="tab">
+    <div id="perm-bar" class="perm-bar" style="display:none">
+      <span style="font-size:18px">🔕</span>
+      <span class="ptxt">Notificações bloqueadas. Permite para receber alarmes.</span>
+      <button onclick="reqPerm()">Permitir</button>
+    </div>
+    <button class="add-btn" onclick="openModal()"><span style="font-size:18px">+</span> Novo Alarme</button>
+    <div id="alarms-list">
+      <div class="empty"><div class="ee">🔔</div><div>Nenhum alarme ainda</div></div>
+    </div>
+  </div>
+
+  <!-- TAB MATERIAIS -->
+  <div id="tab-materiais" class="tab">
+    <div id="materials"></div>
+  </div>
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <button class="nbtn active" id="nav-hoje" onclick="goTab('hoje')"><span class="ni">📋</span>Hoje</button>
+  <button class="nbtn" id="nav-agenda" onclick="goTab('agenda')"><span class="ni">📅</span>Agenda</button>
+  <button class="nbtn" id="nav-alarmes" onclick="goTab('alarmes')"><span class="ni">🔔</span>Alarmes</button>
+  <button class="nbtn" id="nav-materiais" onclick="goTab('materiais')"><span class="ni">📚</span>Materiais</button>
+</nav>
+
+<!-- ALARM MODAL -->
+<div class="mover hidden" id="modal" onclick="closeModal(event)">
+  <div class="msheet">
+    <div class="mhandle"></div>
+    <div class="mtitle">Novo Alarme</div>
+    <div class="fg"><label class="fl">Horário</label><input type="time" class="fi" id="ai-time" value="07:00"></div>
+    <div class="fg"><label class="fl">Descrição</label><input type="text" class="fi" id="ai-lbl" placeholder="Ex: Acordar e estudar!" maxlength="60"></div>
+    <div class="fg">
+      <label class="fl">Repetir</label>
+      <select class="fi" id="ai-rep">
+        <option value="once">Hoje apenas</option>
+        <option value="daily">Todo dia</option>
+        <option value="weekdays">Dias úteis (Seg–Sex)</option>
+      </select>
+    </div>
+    <button class="bsave" onclick="saveAlarm()">Salvar Alarme</button>
+    <button class="bcancel" onclick="closeModal()">Cancelar</button>
+  </div>
+</div>
+
+<!-- ALARM FIRE -->
+<div class="afire hidden" id="afire">
+  <div class="afire-ring">⏰</div>
+  <div class="afire-time" id="afire-time">07:00</div>
+  <div class="afire-lbl" id="afire-lbl">Hora de estudar!</div>
+  <button class="afire-dismiss" onclick="dismissAlarm()">Dispensar</button>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+const PLANO = [
+  {date:'2026-05-31',title:'Redação + Linguagens Intro',
+   events:[{type:'urgente',txt:'RED #2 vence hoje!'}],
+   tasks:[
+    {id:'t0531a',lbl:'RED #2 — Desigualdade Social',min:50,tag:'Redação',tc:'red',link:'redacao/trainer.html'},
+    {id:'t0531b',lbl:'Tipologia e Interpretação de Texto',min:40,tag:'Português',tc:'cyan',link:'nexus/linguagens/portugues/mapa3d.html'},
+    {id:'t0531c',lbl:'Análise Sintática',min:40,tag:'Português',tc:'cyan',link:'nexus/linguagens/portugues/resumo.html'},
+    {id:'t0531d',lbl:'Flashcards — revisão geral',min:20,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+   ]},
+  {date:'2026-06-01',title:'Português Completo',
+   events:[{type:'evento',txt:'PM2 na escola'}],
+   tasks:[
+    {id:'t0601a',lbl:'Regência e Concordância',min:45,tag:'Português',tc:'cyan',link:'nexus/linguagens/portugues/resumo.html'},
+    {id:'t0601b',lbl:'Figuras e Funções de Linguagem',min:40,tag:'Português',tc:'cyan',link:'nexus/linguagens/portugues/mapa3d.html'},
+    {id:'t0601c',lbl:'Quiz — Português',min:25,tag:'Revisão',tc:'green',link:'materiais/quiz.html'},
+   ]},
+  {date:'2026-06-02',title:'Literatura I — Romantismo + Realismo',
+   tasks:[
+    {id:'t0602a',lbl:'Romantismo (mapa 3D + resumo)',min:45,tag:'Literatura',tc:'purple',link:'nexus/linguagens/literatura/romantismo/mapa3d.html'},
+    {id:'t0602b',lbl:'Realismo / Naturalismo',min:45,tag:'Literatura',tc:'purple',link:'nexus/linguagens/literatura/realismo/mapa3d.html'},
+    {id:'t0602c',lbl:'Flashcards Literatura',min:25,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+   ]},
+  {date:'2026-06-03',title:'Literatura II + RED #3',
+   events:[{type:'urgente',txt:'RED #3 — Saúde Mental'}],
+   tasks:[
+    {id:'t0603a',lbl:'RED #3 — Saúde Mental',min:50,tag:'Redação',tc:'red',link:'redacao/trainer.html'},
+    {id:'t0603b',lbl:'Modernismo 1ª fase',min:40,tag:'Literatura',tc:'purple',link:'nexus/linguagens/literatura/modernismo/mapa3d.html'},
+    {id:'t0603c',lbl:'Modernismo 2ª fase',min:35,tag:'Literatura',tc:'purple',link:'nexus/linguagens/literatura/modernismo/resumo.html'},
+   ]},
+  {date:'2026-06-04',title:'Inglês Completo',
+   tasks:[
+    {id:'t0604a',lbl:'Inglês: Verb Tenses + Pronomes',min:45,tag:'Inglês',tc:'amber',link:'nexus/linguagens/ingles/mapa3d.html'},
+    {id:'t0604b',lbl:'Inglês: Leitura e Gramática',min:45,tag:'Inglês',tc:'amber',link:'nexus/linguagens/ingles/resumo.html'},
+    {id:'t0604c',lbl:'Revisão Linguagens',min:30,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+   ]},
+  {date:'2026-06-05',title:'Geografia Completo',
+   tasks:[
+    {id:'t0605a',lbl:'Cartografia + Clima do Brasil',min:40,tag:'Geografia',tc:'green',link:'nexus/humanas/geografia/mapa3d.html'},
+    {id:'t0605b',lbl:'Globalização e Blocos Econômicos',min:35,tag:'Geografia',tc:'green',link:'nexus/humanas/geografia/resumo.html'},
+    {id:'t0605c',lbl:'Urbanização e Migração',min:35,tag:'Geografia',tc:'green',link:'nexus/humanas/geografia/resumo.html'},
+    {id:'t0605d',lbl:'Flashcards Humanas',min:20,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+   ]},
+  {date:'2026-06-06',title:'Simulado UNICAP Interno',
+   events:[{type:'simulado',txt:'Simulado 8h15 – 13h15 (5h)'}],
+   tasks:[
+    {id:'t0606a',lbl:'Simulado UNICAP Cronometrado (5h)',min:300,tag:'Simulado',tc:'purple',link:'simulados/simulado-cronometrado.html'},
+    {id:'t0606b',lbl:'Análise dos erros — pós-simulado',min:60,tag:'Revisão',tc:'amber',link:'dashboard.html'},
+   ]},
+  {date:'2026-06-07',title:'História Completo',
+   tasks:[
+    {id:'t0607a',lbl:'Grécia e Roma Antigas',min:45,tag:'História',tc:'amber',link:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html'},
+    {id:'t0607b',lbl:'Brasil Colonial e Imperial',min:40,tag:'História',tc:'amber',link:'nexus/humanas/historia/brasil-colonial-imperial/mapa3d.html'},
+    {id:'t0607c',lbl:'Brasil República + Contemporânea',min:40,tag:'História',tc:'amber',link:'nexus/humanas/historia/brasil-republica/mapa3d.html'},
+   ]},
+  {date:'2026-06-08',title:'Filosofia + Sociologia + Atualidades',
+   tasks:[
+    {id:'t0608a',lbl:'Filosofia: Sócrates + Platão + Aristóteles',min:40,tag:'Filosofia',tc:'purple',link:'nexus/humanas/filosofia/socrates/mapa3d.html'},
+    {id:'t0608b',lbl:'Iluminismo',min:30,tag:'Filosofia',tc:'purple',link:'nexus/humanas/filosofia/iluminismo/mapa3d.html'},
+    {id:'t0608c',lbl:'Sociologia Clássica',min:40,tag:'Sociologia',tc:'cyan',link:'nexus/humanas/sociologia/mapa3d.html'},
+    {id:'t0608d',lbl:'Atualidades',min:30,tag:'Atualidades',tc:'amber',link:'dashboard.html'},
+   ]},
+  {date:'2026-06-09',title:'OBMEP + Revisão Leve',
+   events:[{type:'evento',txt:'OBMEP — descanso UNICAP'}],
+   tasks:[
+    {id:'t0609a',lbl:'OBMEP — Olimpíada de Matemática',min:120,tag:'Evento',tc:'amber',link:'dashboard.html'},
+    {id:'t0609b',lbl:'Flashcards Humanas (leve)',min:25,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+   ]},
+  {date:'2026-06-10',title:'Matemática — Aritmética e Funções',
+   tasks:[
+    {id:'t0610a',lbl:'Razão, Proporção e Regra de 3',min:40,tag:'Matemática',tc:'cyan',link:'nexus/matematica/aritmetica/mapa3d.html'},
+    {id:'t0610b',lbl:'Porcentagem e Juros',min:35,tag:'Matemática',tc:'cyan',link:'nexus/matematica/aritmetica/resumo.html'},
+    {id:'t0610c',lbl:'Funções de 1º e 2º grau',min:45,tag:'Matemática',tc:'cyan',link:'nexus/matematica/funcoes/mapa3d.html'},
+   ]},
+  {date:'2026-06-11',title:'Matemática + Biologia',
+   tasks:[
+    {id:'t0611a',lbl:'Geometria Plana',min:40,tag:'Matemática',tc:'cyan',link:'nexus/matematica/geometria/mapa3d.html'},
+    {id:'t0611b',lbl:'Probabilidade + Estatística',min:35,tag:'Matemática',tc:'cyan',link:'nexus/matematica/aritmetica/resumo.html'},
+    {id:'t0611c',lbl:'Biologia: Célula',min:35,tag:'Biologia',tc:'green',link:'nexus/natureza/biologia-celular/mapa3d.html'},
+    {id:'t0611d',lbl:'Biologia: Ecologia e Biomas',min:30,tag:'Biologia',tc:'green',link:'nexus/natureza/ecologia-evolucao/mapa3d.html'},
+   ]},
+  {date:'2026-06-12',title:'Química + Física + Revisão Geral',
+   tasks:[
+    {id:'t0612a',lbl:'Química: Tabela Periódica + Ligações',min:40,tag:'Química',tc:'amber',link:'nexus/natureza/quimica/mapa3d.html'},
+    {id:'t0612b',lbl:'Física: Mecânica',min:40,tag:'Física',tc:'amber',link:'nexus/natureza/fisica/mapa3d.html'},
+    {id:'t0612c',lbl:'REVISÃO GERAL — Quiz completo',min:60,tag:'Revisão',tc:'red',link:'materiais/quiz.html'},
+   ]},
+  {date:'2026-06-13',title:'VÉSPERA — Revisão Final',
+   tasks:[
+    {id:'t0613a',lbl:'Revisão Redação — estrutura e argumentos',min:60,tag:'Redação',tc:'red',link:'redacao/trainer.html'},
+    {id:'t0613b',lbl:'Flashcards críticos',min:45,tag:'Revisão',tc:'green',link:'materiais/flashcards.html'},
+    {id:'t0613c',lbl:'DESCANSO — dormir cedo 🌙',min:0,tag:'Obrigatório',tc:'amber',link:'dashboard.html'},
+   ]},
+  {date:'2026-06-14',title:'🏆 DIA DA PROVA UNICAP',
+   events:[{type:'prova',txt:'Prova às 8h15 — Boa sorte!'}],
+   tasks:[]},
+];
+
+const MATS=[
+  {sec:'🎯 Ferramentas',items:[
+    {n:'Redação Trainer',i:'✍️',t:'Escrever + corrigir',l:'redacao/trainer.html',c:'red'},
+    {n:'Flashcards SM-2',i:'🃏',t:'Repetição espaçada',l:'materiais/flashcards.html',c:'cyan'},
+    {n:'Quiz Diagnóstico',i:'🧩',t:'20 questões',l:'materiais/quiz.html',c:'green'},
+    {n:'Simulado 5h',i:'⏱️',t:'Prova completa',l:'simulados/simulado-cronometrado.html',c:'purple'},
+    {n:'Relâmpago 20q',i:'⚡',t:'25 min com gabarito',l:'materiais/simulado-relampago.html',c:'amber'},
+    {n:'Modo Boss',i:'⚡',t:'Anti-procrastinação',l:'dopamina.html',c:'amber'},
+    {n:'Dashboard',i:'📊',t:'Visão geral',l:'dashboard.html',c:'cyan'},
+  ]},
+  {sec:'📖 Linguagens',items:[
+    {n:'Português',i:'📝',t:'Mapa 3D',l:'nexus/linguagens/portugues/mapa3d.html',c:'cyan'},
+    {n:'Romantismo',i:'💛',t:'Mapa 3D',l:'nexus/linguagens/literatura/romantismo/mapa3d.html',c:'purple'},
+    {n:'Realismo',i:'📘',t:'Mapa 3D',l:'nexus/linguagens/literatura/realismo/mapa3d.html',c:'purple'},
+    {n:'Modernismo',i:'🎨',t:'Mapa 3D',l:'nexus/linguagens/literatura/modernismo/mapa3d.html',c:'purple'},
+    {n:'Inglês',i:'🇺🇸',t:'Mapa 3D',l:'nexus/linguagens/ingles/mapa3d.html',c:'amber'},
+  ]},
+  {sec:'🏛️ Humanas',items:[
+    {n:'Geografia',i:'🌍',t:'Mapa 3D',l:'nexus/humanas/geografia/mapa3d.html',c:'green'},
+    {n:'História Geral',i:'🏺',t:'Grécia e Roma',l:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html',c:'amber'},
+    {n:'Brasil Colonial',i:'⚓',t:'Colônia e Império',l:'nexus/humanas/historia/brasil-colonial-imperial/mapa3d.html',c:'amber'},
+    {n:'Brasil República',i:'🇧🇷',t:'República + Contemporânea',l:'nexus/humanas/historia/brasil-republica/mapa3d.html',c:'amber'},
+    {n:'Filosofia',i:'🦉',t:'Sócrates→Iluminismo',l:'nexus/humanas/filosofia/socrates/mapa3d.html',c:'purple'},
+    {n:'Sociologia',i:'👥',t:'Clássicos',l:'nexus/humanas/sociologia/mapa3d.html',c:'cyan'},
+    {n:'Atualidades',i:'🌐',t:'2025–2026',l:'nexus/humanas/atualidades/resumo.html',c:'cyan'},
+  ]},
+  {sec:'🔢 Matemática',items:[
+    {n:'Aritmética',i:'📊',t:'Razão, %, Regra de 3',l:'nexus/matematica/aritmetica/mapa3d.html',c:'cyan'},
+    {n:'Funções',i:'📈',t:'1º e 2º grau',l:'nexus/matematica/funcoes/mapa3d.html',c:'cyan'},
+    {n:'Geometria',i:'📐',t:'Plana + Trigonometria',l:'nexus/matematica/geometria/mapa3d.html',c:'amber'},
+  ]},
+  {sec:'🔬 Natureza',items:[
+    {n:'Biologia Celular',i:'🧬',t:'Célula e Organelas',l:'nexus/natureza/biologia-celular/mapa3d.html',c:'green'},
+    {n:'Ecologia',i:'🌱',t:'Biomas e Ecossistemas',l:'nexus/natureza/ecologia-evolucao/mapa3d.html',c:'green'},
+    {n:'Química',i:'⚗️',t:'Tabela + Ligações',l:'nexus/natureza/quimica/mapa3d.html',c:'amber'},
+    {n:'Física',i:'⚡',t:'Mecânica',l:'nexus/natureza/fisica/mapa3d.html',c:'purple'},
+  ]},
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let done={},alarms=[];
+let deferredInstall=null;
+
+// ── INIT ──────────────────────────────────────────────────────────────
+(function init(){
+  try{done=JSON.parse(localStorage.getItem('uc_done')||'{}');}catch(e){done={};}
+  try{alarms=JSON.parse(localStorage.getItem('uc_alarms')||'[]');}catch(e){alarms=[];}
+  updateGreeting();
+  updateCountdown();
+  renderTasks();
+  renderCalendar();
+  renderAlarms();
+  renderMaterials();
+  checkPerm();
+  setInterval(checkAlarms,30000);
+  setInterval(updateCountdown,60000);
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+  window.addEventListener('beforeinstallprompt',e=>{
+    e.preventDefault();deferredInstall=e;
+    document.getElementById('ibanner').style.display='flex';
+  });
+})();
+
+function installPWA(){
+  if(deferredInstall){deferredInstall.prompt();document.getElementById('ibanner').style.display='none';}
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function save(){localStorage.setItem('uc_done',JSON.stringify(done));localStorage.setItem('uc_alarms',JSON.stringify(alarms));}
+function daysLeft(){
+  const n=new Date();n.setHours(0,0,0,0);
+  const e=new Date('2026-06-14');e.setHours(0,0,0,0);
+  return Math.max(0,Math.round((e-n)/86400000));
+}
+function todayPlan(){return PLANO.find(d=>d.date===todayStr())||null;}
+
+// ── GREETING ──────────────────────────────────────────────────────────
+function updateGreeting(){
+  const h=new Date().getHours();
+  const s=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  document.getElementById('greet').innerHTML=`${s}, <span>Carlos!</span>`;
+}
+
+// ── COUNTDOWN ──────────────────────────────────────────────────────────
+function updateCountdown(){
+  const d=daysLeft();
+  const el=document.getElementById('dias-num');
+  const b=document.getElementById('dias-badge');
+  if(el)el.textContent=d;
+  if(b){
+    b.className='dias-badge';
+    if(d>10)b.classList.add('safe');
+    else if(d>5)b.classList.add('ok');
+  }
+}
+
+// ── TODAY TASKS ──────────────────────────────────────────────────────
+function renderTasks(){
+  const p=todayPlan();
+  const container=document.getElementById('tasks');
+  const st=document.getElementById('hoje-stitle');
+  const empty=document.getElementById('empty-hoje');
+  const ubanner=document.getElementById('ubanner');
+  if(!p||!p.tasks.length){
+    if(container)container.innerHTML='';
+    if(empty)empty.style.display='block';
+    if(ubanner)ubanner.style.display='none';
+    updateProg(0,0);return;
+  }
+  // Section title
+  const dn=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const mn=['jan','fev','mar','abr','mai','jun'];
+  const t=new Date();
+  if(st)st.textContent=`${dn[t.getDay()]}, ${t.getDate()} ${mn[t.getMonth()]} · ${p.title}`;
+  // Banner
+  if(p.events){
+    const u=p.events.find(e=>e.type==='urgente');
+    if(u&&ubanner){ubanner.style.display='flex';document.getElementById('utxt').textContent=u.txt;}
+  }
+  // Tasks
+  if(container)container.innerHTML=p.tasks.map(task=>{
+    const d=!!done[task.id];
+    return`<div class="card tcard${d?' done':''}" id="tc${task.id}" onclick="toggle('${task.id}')">
+      <div class="tchk"></div>
+      <div class="tbody">
+        <div class="ttitle">${task.lbl}</div>
+        <div class="tmeta">
+          <span class="ttag ${task.tc}">${task.tag}</span>
+          ${task.min>0?`<span class="ttime">⏱ ${task.min} min</span>`:''}
+        </div>
+        ${task.link?`<a href="${task.link}" class="tlink" onclick="event.stopPropagation()">Abrir →</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  if(empty)empty.style.display='none';
+  const nd=p.tasks.filter(t=>!!done[t.id]).length;
+  updateProg(nd,p.tasks.length);
+}
+
+function toggle(id){
+  done[id]=!done[id];save();
+  const c=document.getElementById('tc'+id);
+  if(c)c.classList.toggle('done',!!done[id]);
+  const p=todayPlan();
+  if(p){const nd=p.tasks.filter(t=>!!done[t.id]).length;updateProg(nd,p.tasks.length);}
+}
+
+function updateProg(d,t){
+  const pct=t>0?Math.round(d/t*100):0;
+  document.getElementById('prog-lbl').textContent=`${d}/${t} tarefas`;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────
+function renderCalendar(){
+  const c=document.getElementById('calendar');if(!c)return;
+  const today=todayStr();
+  const dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses=['jan','fev','mar','abr','mai','jun'];
+  c.innerHTML=PLANO.map(day=>{
+    const d=new Date(day.date+'T12:00:00');
+    const isT=day.date===today,isE=day.date==='2026-06-14';
+    const ev=day.events||[];
+    const sim=ev.find(e=>e.type==='simulado');
+    const evt=ev.find(e=>e.type==='evento');
+    const urg=ev.find(e=>e.type==='urgente');
+    let cc='dcard';
+    if(isT)cc+=' today';else if(isE)cc+=' prova';else if(sim)cc+=' sim';else if(evt)cc+=' ev';
+    let badge='';
+    if(isT)badge='<span class="dbadge h">HOJE</span>';
+    else if(isE)badge='<span class="dbadge pr">🏆 PROVA</span>';
+    else if(sim)badge='<span class="dbadge sim">Simulado</span>';
+    else if(evt)badge=`<span class="dbadge ev">${evt.txt.split('—')[0].trim()}</span>`;
+    else if(urg)badge='<span class="dbadge rd">Redação</span>';
+    const subs=[...new Set(day.tasks.map(t=>t.tag))].slice(0,3).join(', ');
+    return`<div class="${cc}">
+      <div style="text-align:center">
+        <div class="dnum${isT?' t':''}">${d.getDate()}</div>
+        <div class="dname">${dias[d.getDay()]} ${meses[d.getMonth()]}</div>
+      </div>
+      <div>
+        <div class="dtitle">${isE?'🏆 '+day.title:day.title}</div>
+        <div class="dsubs">${subs}</div>
+        ${badge}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── ALARMS ──────────────────────────────────────────────────────────
+function checkPerm(){
+  const b=document.getElementById('perm-bar');
+  if(!('Notification' in window)||Notification.permission==='granted'){if(b)b.style.display='none';}
+  else{if(b)b.style.display='flex';}
+}
+function reqPerm(){Notification.requestPermission().then(p=>{if(p==='granted')document.getElementById('perm-bar').style.display='none';});}
+
+function renderAlarms(){
+  const c=document.getElementById('alarms-list');if(!c)return;
+  if(!alarms.length){c.innerHTML='<div class="empty"><div class="ee">🔔</div><div>Nenhum alarme ainda</div></div>';return;}
+  c.innerHTML=[...alarms].sort((a,b)=>a.time.localeCompare(b.time)).map(al=>`
+    <div class="card alarm-row" id="al${al.id}">
+      <div><div class="atime">${al.time}</div><div class="arep">{{rep}}</div></div>
+      <div class="abody"><div class="albl">${al.lbl}</div></div>
+      <button class="tog${al.on?' on':''}" onclick="togAlarm('${al.id}')"></button>
+      <button class="adel" onclick="delAlarm('${al.id}')">🗑️</button>
+    </div>
+  `.replace('{{rep}}',{once:'Hoje',daily:'Todo dia',weekdays:'Dias úteis'}[al.rep]||al.rep)).join('');
+}
+
+function openModal(){
+  document.getElementById('modal').classList.remove('hidden');
+  const n=new Date();
+  document.getElementById('ai-time').value=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('ai-lbl').value='';
+  setTimeout(()=>document.getElementById('ai-lbl').focus(),100);
+}
+function closeModal(e){if(!e||e.target===document.getElementById('modal'))document.getElementById('modal').classList.add('hidden');}
+function saveAlarm(){
+  const time=document.getElementById('ai-time').value;
+  const lbl=document.getElementById('ai-lbl').value.trim()||'Alarme';
+  const rep=document.getElementById('ai-rep').value;
+  if(!time)return;
+  alarms.push({id:Date.now().toString(),time,lbl,rep,on:true,lastFired:null});
+  save();renderAlarms();closeModal();
+}
+function togAlarm(id){const a=alarms.find(x=>x.id===id);if(a){a.on=!a.on;save();renderAlarms();}}
+function delAlarm(id){alarms=alarms.filter(x=>x.id!==id);save();renderAlarms();}
+
+let audioCtx=null;
+function checkAlarms(){
+  if(!alarms.length)return;
+  const n=new Date();
+  const now=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
+  const todayKey=todayStr();const dow=n.getDay();
+  alarms.forEach(al=>{
+    if(!al.on||al.time!==now||al.lastFired===todayKey)return;
+    if(al.rep==='weekdays'&&(dow===0||dow===6))return;
+    if(al.rep==='once'&&al.lastFired)return;
+    al.lastFired=todayKey;save();fireAlarm(al);
+  });
+}
+function fireAlarm(al){
+  document.getElementById('afire-time').textContent=al.time;
+  document.getElementById('afire-lbl').textContent=al.lbl;
+  document.getElementById('afire').classList.remove('hidden');
+  playBeep();
+  if(Notification.permission==='granted')new Notification('⏰ '+al.lbl,{body:'Carlos, hora de estudar!'});
+}
+function dismissAlarm(){document.getElementById('afire').classList.add('hidden');stopBeep();}
+
+let beepInterval=null;
+function playBeep(){
+  try{
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    const play=()=>{
+      [880,1100,880,660].forEach((f,i)=>{
+        const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.connect(g);g.connect(audioCtx.destination);
+        o.frequency.value=f;o.type='sine';
+        const t=audioCtx.currentTime+i*0.22;
+        g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.35,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+0.2);
+        o.start(t);o.stop(t+0.22);
+      });
+    };
+    play();beepInterval=setInterval(play,1200);
+  }catch(e){}
+}
+function stopBeep(){if(beepInterval){clearInterval(beepInterval);beepInterval=null;}}
+
+// ── MATERIALS ──────────────────────────────────────────────────────────
+function renderMaterials(){
+  const c=document.getElementById('materials');if(!c)return;
+  c.innerHTML=MATS.map(sec=>`
+    <div class="mat-sec">
+      <div class="mat-stitle">${sec.sec}</div>
+      <div class="mgrid">${sec.items.map(it=>`
+        <a href="${it.l}" class="mcard ${it.c}">
+          <span class="mi">${it.i}</span><span class="mn">${it.n}</span><span class="mt">${it.t}</span>
+        </a>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ── TAB NAV ──────────────────────────────────────────────────────────
+function goTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  if(name==='alarmes')checkPerm();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sócrates — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #d4a840;
+  --gold-light: #e8c870;
+  --gold-dim: rgba(212,168,64,0.15);
+  --bg: #06050a;
+  --bg2: #0d0c14;
+  --bg3: #141320;
+  --text: #c8c0d0;
+  --text-bright: #e8e0f0;
+  --green: #70c878;
+  --green-bg: rgba(80,180,90,0.08);
+  --red: #e07060;
+  --border: rgba(212,168,64,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; line-height:1.6; }
+a { color:var(--gold); text-decoration:none; }
+a:hover { color:var(--gold-light); }
+
+.topbar {
+  background:rgba(0,0,0,0.6); border-bottom:1px solid var(--border);
+  padding:14px 32px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+}
+.topbar-left { display:flex; gap:12px; }
+.btn-nav {
+  padding:7px 16px; border:1px solid var(--border); border-radius:8px;
+  color:var(--gold); font-size:13px; font-weight:500; letter-spacing:0.04em;
+  background:rgba(0,0,0,0.3); transition:all 0.2s;
+}
+.btn-nav:hover { background:var(--gold-dim); border-color:rgba(212,168,64,0.5); color:var(--gold-light); }
+.topbar-title { font-size:14px; font-weight:600; color:var(--gold-light); letter-spacing:0.06em; }
+
+.hero {
+  text-align:center; padding:60px 24px 40px;
+  background:linear-gradient(180deg, rgba(212,168,64,0.06) 0%, transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.hero-tag { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.hero h1 { font-size:42px; font-weight:800; color:var(--text-bright); letter-spacing:-0.02em; margin-bottom:10px; }
+.hero-sub { font-size:16px; color:rgba(200,192,210,0.7); max-width:560px; margin:0 auto 24px; }
+.hero-chips { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.chip {
+  padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600;
+  border:1px solid var(--border); background:var(--gold-dim); color:var(--gold-light);
+  letter-spacing:0.04em;
+}
+
+.container { max-width:900px; margin:0 auto; padding:0 24px 80px; }
+
+.section {
+  margin-top:48px;
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:16px; overflow:hidden;
+}
+.section-header {
+  padding:20px 28px 16px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(90deg, rgba(212,168,64,0.06) 0%, transparent 100%);
+  display:flex; align-items:center; gap:14px;
+}
+.section-icon { font-size:22px; }
+.section-title { font-size:18px; font-weight:700; color:var(--text-bright); letter-spacing:0.01em; }
+.section-body { padding:24px 28px; }
+
+p { margin-bottom:14px; color:var(--text); font-size:15px; }
+p:last-child { margin-bottom:0; }
+strong { color:var(--text-bright); font-weight:600; }
+em { color:var(--gold-light); font-style:italic; }
+
+.highlight-box {
+  background:var(--gold-dim); border-left:3px solid var(--gold);
+  padding:14px 18px; border-radius:0 10px 10px 0;
+  margin:16px 0; font-size:15px; color:var(--text-bright);
+  font-style:italic;
+}
+
+.unicap-tip {
+  background:var(--green-bg); border-left:3px solid rgba(80,180,90,0.5);
+  padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0;
+}
+.unicap-tip-label {
+  font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--green);
+  text-transform:uppercase; margin-bottom:6px;
+}
+.unicap-tip p { font-size:14px; color:#b0e0b8; margin:0; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+@media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
+
+.col-box {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:12px; padding:18px;
+}
+.col-box h4 { font-size:13px; font-weight:700; color:var(--gold-light); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px; }
+.col-box ul { list-style:none; }
+.col-box ul li { font-size:14px; color:var(--text); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.col-box ul li:last-child { border-bottom:none; }
+.col-box ul li::before { content:"› "; color:var(--gold); font-weight:700; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th {
+  background:rgba(212,168,64,0.12); color:var(--gold-light); font-weight:700;
+  padding:11px 16px; text-align:left; letter-spacing:0.04em; font-size:13px;
+  border-bottom:1px solid var(--border);
+}
+td {
+  padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.05);
+  color:var(--text); vertical-align:top;
+}
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+td:first-child { color:var(--gold-light); font-weight:600; }
+
+.timeline { position:relative; padding-left:28px; margin:16px 0; }
+.timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--border); }
+.timeline-item { position:relative; margin-bottom:18px; }
+.timeline-item::before {
+  content:''; position:absolute; left:-24px; top:5px;
+  width:10px; height:10px; border-radius:50%;
+  background:var(--gold); border:2px solid var(--bg2);
+}
+.timeline-date { font-size:12px; color:var(--gold); font-weight:700; letter-spacing:0.06em; margin-bottom:3px; }
+.timeline-text { font-size:14px; color:var(--text); }
+
+.checklist { list-style:none; margin:0; }
+.checklist li {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05);
+  font-size:14px; color:var(--text);
+}
+.checklist li:last-child { border-bottom:none; }
+.check-box {
+  width:20px; height:20px; min-width:20px;
+  border:2px solid var(--border); border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all 0.2s; margin-top:1px;
+}
+.check-box.done { background:var(--gold); border-color:var(--gold); }
+.check-box.done::after { content:'✓'; color:#000; font-size:11px; font-weight:700; }
+
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+.video-card {
+  background:var(--bg3); border:1px solid var(--border); border-radius:12px;
+  padding:16px; transition:all 0.2s;
+}
+.video-card:hover { border-color:rgba(212,168,64,0.4); background:var(--gold-dim); }
+.video-platform { font-size:11px; color:var(--gold); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.video-title { font-size:13px; color:var(--text-bright); font-weight:500; line-height:1.4; }
+.video-desc { font-size:12px; color:rgba(200,192,210,0.6); margin-top:4px; }
+
+.badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.badge {
+  padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600;
+  letter-spacing:0.04em; border:1px solid;
+}
+.badge-gold { color:var(--gold); border-color:rgba(212,168,64,0.4); background:rgba(212,168,64,0.08); }
+.badge-green { color:var(--green); border-color:rgba(80,180,90,0.4); background:rgba(80,180,90,0.08); }
+.badge-red { color:var(--red); border-color:rgba(220,110,90,0.4); background:rgba(220,110,90,0.08); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../../../index.html" class="btn-nav">← Hub Principal</a>
+    <a href="mapa3d.html" class="btn-nav">🏛️ Mapa 3D — Ágora</a>
+  </div>
+  <div class="topbar-title">FILOSOFIA — SÓCRATES</div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Filosofia Grega • Séc. V a.C.</div>
+  <h1>Sócrates</h1>
+  <div class="hero-sub">O pai da filosofia moral. O método socrático. A morte pela liberdade de pensar.</div>
+  <div class="hero-chips">
+    <span class="chip">Ironia + Maiêutica</span>
+    <span class="chip">Intelectualismo Moral</span>
+    <span class="chip">Sócrates vs. Sofistas</span>
+    <span class="chip">399 a.C. — Julgamento</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Contexto Histórico -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛️</span>
+      <div class="section-title">Contexto Histórico — Atenas, Séc. V a.C.</div>
+    </div>
+    <div class="section-body">
+      <p>Sócrates viveu em Atenas entre <strong>470-399 a.C.</strong>, período de ouro da democracia ateniense. A cidade era governada por <strong>Péricles</strong>, vivia o auge cultural, mas também enfrentava guerras (Guerra do Peloponeso contra Esparta, 431-404 a.C.).</p>
+      <p>Este é o contexto da filosofia socrática: uma democracia que glorifica o debate público, mas que também pode ser corrompida pela retórica vazia dos <strong>Sofistas</strong>. Sócrates entra em cena como contraponto — não como político, mas como "moscardo" (gadfly) filosófico.</p>
+      <div class="highlight-box">"A vida que não é examinada não vale a pena ser vivida." — Sócrates (via Platão, Apologia)</div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>O contexto de Atenas explica tanto o surgimento da filosofia (democracia valoriza o debate) quanto a morte de Sócrates (democracia pode condenar quem a questiona). Esta tensão é tema frequente em questões de filosofia e cidadania.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- O Problema Socrático -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <div class="section-title">O Problema Socrático — As Fontes</div>
+    </div>
+    <div class="section-body">
+      <p>Sócrates <strong>não escreveu nada</strong>. Todo o conhecimento sobre ele vem de terceiros — e cada fonte apresenta um Sócrates diferente. Este é o famoso "problema socrático": qual é o Sócrates histórico real?</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fonte</th><th>Obra Principal</th><th>Tipo de Sócrates</th><th>Valor Histórico</th></tr></thead>
+          <tbody>
+            <tr><td>Platão</td><td>Diálogos (Apologia, Mênon, Fédon...)</td><td>Filósofo profundo, porta-voz das próprias ideias de Platão</td><td>Mais completo, mas mistura Sócrates histórico com Platão</td></tr>
+            <tr><td>Xenofonte</td><td>Memoráveis, Apologia de Sócrates</td><td>Pragmático, homem simples e de bom caráter</td><td>Mais histórico, mas superficial filosoficamente</td></tr>
+            <tr><td>Aristófanes</td><td>As Nuvens (comédia, 423 a.C.)</td><td>Ridículo, sofista, charlatan</td><td>Parodia, não filosófico — mas revela como era visto pelo povo</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Fonte MAIS importante sobre Sócrates → Platão (diálogos filosóficos). Fonte MAIS cômica/crítica → Aristófanes ("As Nuvens"). Se a questão perguntar "quem retratou Sócrates como sofista?" → Aristófanes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- O Método Socrático -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💬</span>
+      <div class="section-title">O Método Socrático — Ironia e Maiêutica</div>
+    </div>
+    <div class="section-body">
+      <p>O método socrático tem <strong>duas fases complementares</strong> e sempre acontece no <em>diálogo</em> (não em textos escritos):</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>1. Ironia (eironeia)</h4>
+          <ul>
+            <li>Fingir ignorância para fazer o interlocutor falar</li>
+            <li>"Só sei que nada sei" — ponto de partida</li>
+            <li>Revela que o interlocutor está em contradição</li>
+            <li>Destrói a falsa certeza (aporia = impasse)</li>
+            <li>Fase destrutiva/negativa do método</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>2. Maiêutica (maieutike)</h4>
+          <ul>
+            <li>"Arte da parteira" — ajudar a dar à luz ideias</li>
+            <li>Por perguntas, conduz o interlocutor à verdade</li>
+            <li>A verdade já existe dentro da alma (reminiscência)</li>
+            <li>Sócrates não ensina — ele ajuda a recordar</li>
+            <li>Fase construtiva/positiva do método</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box">Exemplo de diálogo socrático: Mênon pergunta "o que é a virtude?" Sócrates finge não saber, leva Mênon a definições que depois destrói por contradições, e por fim conduz Mênon a uma compreensão mais profunda que ele "redescobre" por si mesmo.</div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>A UNICAP diferencia ironia socrática (método filosófico) de ironia literária (figura de linguagem). "Só sei que nada sei" = ponto de PARTIDA filosófico, não niilismo. É a humildade necessária para buscar o conhecimento. O método é DIALÓGICO — acontece na conversa, não em textos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sócrates vs. Sofistas -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <div class="section-title">Sócrates vs. Sofistas</div>
+    </div>
+    <div class="section-body">
+      <p>Os <strong>Sofistas</strong> (Protágoras, Górgias, Trasímaco, Hípias) eram professores itinerantes que ensinavam retórica e argumentação mediante pagamento. Eram os "consultores de comunicação" da Atenas democrática.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Sofistas</th><th>Sócrates</th></tr></thead>
+          <tbody>
+            <tr><td>Objetivo</td><td>Persuadir, vencer debates</td><td>Buscar a verdade</td></tr>
+            <tr><td>Verdade</td><td>Relativa ("o homem é a medida de todas as coisas" — Protágoras)</td><td>Universal e objetiva</td></tr>
+            <tr><td>Pagamento</td><td>Cobrava pelo ensino</td><td>Recusava pagamento</td></tr>
+            <tr><td>Método</td><td>Retórica, eloquência</td><td>Diálogo, perguntas</td></tr>
+            <tr><td>Virtude</td><td>Pode ser ensinada como técnica</td><td>É conhecimento (intelectualismo moral)</td></tr>
+            <tr><td>Política</td><td>Defendiam interesses de quem pagava</td><td>Buscava o bem da polis</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão clássica: "Qual a diferença entre Sócrates e os sofistas?" Resposta direta: Sócrates busca a verdade universal via diálogo; sofistas defendem o relativismo e usam a retórica para persuadir. O relativismo sofista = "não há verdade universal, apenas opiniões". Platão odiava os sofistas — via-os como corruptores da juventude.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A Virtude como Conhecimento -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💡</span>
+      <div class="section-title">A Virtude como Conhecimento — Intelectualismo Moral</div>
+    </div>
+    <div class="section-body">
+      <p>Esta é a grande tese ética de Sócrates, chamada de <strong>intelectualismo moral</strong>:</p>
+      <div class="highlight-box">Ninguém age mal voluntariamente. Quem pratica o mal, pratica por ignorância — porque não conhece o Bem verdadeiro. O conhecimento do Bem inevitavelmente leva à prática do Bem.</div>
+      <p>Consequências desta tese:</p>
+      <ul style="list-style:none; padding-left:0;">
+        <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px; color:var(--text);">→ <strong>Ação má = ausência de conhecimento</strong>, não maldade intrínseca</li>
+        <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px; color:var(--text);">→ <strong>Filosofia é moral</strong>: buscar o conhecimento é buscar ser melhor</li>
+        <li style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px; color:var(--text);">→ <strong>Cuidado da alma</strong>: a preocupação mais importante é conhecer-se a si mesmo</li>
+        <li style="padding:8px 0; font-size:15px; color:var(--text);">→ Base para o conceito platônico de reminiscência (a alma que conhece o Bem age bem)</li>
+      </ul>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão frequente: "Segundo Sócrates, por que as pessoas fazem o mal?" → Por ignorância, não por maldade. Este conceito distingue Sócrates dos sofistas (que viam a ética como relativa) e é base para entender Platão (as Ideias como o que a alma deve conhecer).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- O Julgamento e a Morte -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚱️</span>
+      <div class="section-title">O Julgamento e a Morte — 399 a.C.</div>
+    </div>
+    <div class="section-body">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">399 a.C.</div>
+          <div class="timeline-text">Sócrates é acusado formalmente por <strong>Meleto, Anito e Lícon</strong>: corrupção da juventude ateniense e impiedade (não reconhecer os deuses da cidade)</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Julgamento</div>
+          <div class="timeline-text"><strong>501 juízes</strong> votam. Sócrates faz sua defesa (a Apologia, registrada por Platão) — recusa ceder, nega ter feito mal algum. Condenado por maioria estreita</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Proposta de pena</div>
+          <div class="timeline-text">Poderia propor pena alternativa (multa ou exílio). Recusa o exílio — prefere a morte à renúncia de sua missão filosófica em Atenas</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">Execução</div>
+          <div class="timeline-text">Toma cicuta. Seus últimos momentos são registrados por Platão no diálogo <strong>"Fédon"</strong> — discute a imortalidade da alma</div>
+        </div>
+      </div>
+      <p>A morte de Sócrates tornou-se símbolo da tensão entre <strong>liberdade de consciência e poder do Estado</strong>. Platão ficou profundamente traumatizado — abandonou a política e passou a confiar apenas na filosofia como caminho para o bem.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>A morte de Sócrates é usada em questões sobre liberdade de pensamento, censura, relação indivíduo-Estado, e limites da democracia. A ironia histórica: foi a democracia ateniense que condenou Sócrates — isso leva Platão a desconfiar da democracia em "A República".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daemon e Missão -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔮</span>
+      <div class="section-title">O Daemon e a Missão do Filósofo</div>
+    </div>
+    <div class="section-body">
+      <p>Sócrates afirmava ter um <strong>daemon</strong> (δαίμων) — uma voz interior, força espiritual orientadora (não um deus, não o demônio cristão). Este daemon <em>nunca ordenava, apenas impedia</em> — especialmente de praticar o errado.</p>
+      <p>A <strong>metáfora do moscardo (gadfly)</strong>: Sócrates compara-se a um moscardo preso num grande cavalo sonolento (Atenas). O moscardo pica e incomoda — impedindo que o cavalo adormeça (que Atenas se acomode na ignorância). Sócrates aceita que será morto — mas considera sua missão insubstituível.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Daemon socrático ≠ demônio cristão. É uma força interior que orienta moralmente. A metáfora do moscardo = o filósofo que incomoda a sociedade acomodada é necessário, mesmo que seja odiado por isso. Esta ideia conecta-se com o conceito moderno de "intelectual público".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <div class="section-title">Checklist de Domínio — Sócrates</div>
+    </div>
+    <div class="section-body">
+      <ul class="checklist" id="checklist-socrates">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar as duas etapas do método socrático (ironia + maiêutica) com exemplos</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Distinguir ironia socrática de ironia literária</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Listar as 3 fontes sobre Sócrates e explicar o "problema socrático"</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Fazer uma tabela comparativa Sócrates vs. Sofistas (4 aspectos)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar o intelectualismo moral: por que ninguém age mal voluntariamente?</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Narrar o julgamento de Sócrates e sua importância política</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar o daemon socrático e a metáfora do moscardo</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Conectar a morte de Sócrates com a desconfiança de Platão na democracia</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <div class="section-title">Recursos de Vídeo Recomendados</div>
+    </div>
+    <div class="section-body">
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Canal Filosofia Animada</div>
+          <div class="video-desc">Sócrates animado, método socrático visual</div>
+          <div class="badge-row"><span class="badge badge-green">Iniciante</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Prof. Anderson Lima — Sócrates</div>
+          <div class="video-desc">Método socrático e Sócrates vs. Sofistas detalhado</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Me Salva! Filosofia</div>
+          <div class="video-desc">Revisão rápida para vestibular, questões comentadas</div>
+          <div class="badge-row"><span class="badge badge-gold">Revisão</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Descomplica — Filosofia Grega</div>
+          <div class="video-desc">Contexto histórico e morte de Sócrates</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  saveChecklist();
+}
+function saveChecklist() {
+  const boxes = document.querySelectorAll('#checklist-socrates .check-box');
+  const state = Array.from(boxes).map(b => b.classList.contains('done'));
+  localStorage.setItem('check-socrates', JSON.stringify(state));
+}
+function loadChecklist() {
+  const saved = localStorage.getItem('check-socrates');
+  if (saved) {
+    const state = JSON.parse(saved);
+    const boxes = document.querySelectorAll('#checklist-socrates .check-box');
+    state.forEach((done, i) => { if (done && boxes[i]) boxes[i].classList.add('done'); });
+  }
+}
+loadChecklist();
+</script>
+</body>
+</html>

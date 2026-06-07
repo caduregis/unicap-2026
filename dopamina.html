@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="theme-color" content="#0a0e1a">
+<title>⚡ Modo Boss · Anti-Procrastinação</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0e1a;--bg2:#131829;--bg3:#1a2035;
+  --cyan:#00d4ff;--amber:#ffb800;--emerald:#10b981;--red:#ef4444;--purple:#8b5cf6;--gold:#f59e0b;
+  --text:#e8eaf0;--muted:#8a93a8;--border:rgba(0,212,255,0.1);
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;}
+body{padding-bottom:40px;}
+
+/* ── TOPBAR ── */
+.topbar{
+  padding:14px 16px 12px;
+  background:rgba(10,14,26,0.97);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.topbar-back{
+  display:flex;align-items:center;gap:6px;
+  color:var(--muted);font-size:13px;font-weight:600;
+  text-decoration:none;border:none;background:none;cursor:pointer;padding:4px 0;
+}
+.urgency-pill{
+  background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+  color:var(--red);font-size:11px;font-weight:800;
+  padding:5px 12px;border-radius:20px;letter-spacing:0.3px;
+}
+/* XP BAR */
+.xp-section{margin-bottom:2px;}
+.xp-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.xp-level{font-size:11px;font-weight:800;letter-spacing:0.5px;color:var(--gold);}
+.xp-pts{font-size:11px;color:var(--muted);}
+.xp-bar{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--amber));border-radius:4px;transition:width 600ms cubic-bezier(.34,1.56,.64,1);}
+
+/* ── HERO ── */
+.hero{
+  margin:16px 14px 0;padding:20px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,212,255,0.04),transparent 60%);pointer-events:none;
+}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;}
+.hstat{text-align:center;}
+.hstat-val{font-size:28px;font-weight:900;line-height:1;}
+.hstat-lbl{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+.hstat-val.dias{color:var(--red);}
+.hstat-val.streak{color:var(--amber);}
+.hstat-val.lvl{color:var(--gold);}
+.hero-identity{
+  background:var(--bg3);border-radius:12px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+}
+.identity-icon{font-size:32px;}
+.identity-title{font-size:13px;font-weight:800;color:var(--text);}
+.identity-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.identity-progress{font-size:10px;color:var(--gold);margin-top:3px;font-weight:700;}
+
+/* ── COMMITMENT ── */
+.commit-section{margin:14px 14px 0;}
+.commit-card{
+  background:var(--bg2);border:1px solid rgba(16,185,129,0.2);
+  border-radius:16px;padding:16px;
+}
+.commit-title{font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--emerald);margin-bottom:12px;}
+.commit-pledged{
+  background:var(--bg3);border-radius:10px;padding:12px 14px;
+  font-size:15px;font-weight:700;color:var(--text);line-height:1.4;
+  margin-bottom:10px;border-left:3px solid var(--emerald);
+}
+.commit-form{display:none;}
+.commit-input{
+  width:100%;padding:11px 13px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-size:15px;font-family:inherit;
+  margin-bottom:8px;
+}
+.commit-input:focus{outline:none;border-color:var(--emerald);}
+.commit-btn{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--emerald),#059669);
+  color:#fff;font-weight:800;font-size:14px;
+  border:none;border-radius:12px;cursor:pointer;
+  box-shadow:0 3px 14px rgba(16,185,129,0.3);
+}
+.commit-edit{
+  background:transparent;border:none;color:var(--muted);
+  font-size:11px;cursor:pointer;text-decoration:underline;float:right;
+}
+
+/* ── SECTION HEADER ── */
+.sec{margin:18px 14px 0;}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.sec-title{font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.sec-hdr::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── QUESTS ── */
+.quest-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:16px;padding:15px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:12px;
+  transition:border-color 200ms,opacity 200ms;cursor:pointer;
+}
+.quest-card:active{transform:scale(0.98);}
+.quest-card.done{opacity:0.45;border-color:rgba(16,185,129,0.3);}
+.qcheck{
+  width:26px;height:26px;flex-shrink:0;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 200ms;margin-top:2px;
+}
+.quest-card.done .qcheck{background:var(--emerald);border-color:var(--emerald);}
+.quest-card.done .qcheck::after{content:'✓';color:#fff;font-size:13px;font-weight:900;}
+.quest-card.done .qtext{text-decoration:line-through;}
+.qbody{flex:1;}
+.qtext{font-size:14px;font-weight:700;margin-bottom:5px;line-height:1.3;}
+.qxp{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:800;color:var(--gold);
+  background:rgba(245,158,11,0.1);padding:3px 8px;border-radius:6px;
+}
+.qlink{
+  display:inline-block;margin-top:6px;
+  font-size:11px;font-weight:700;color:var(--cyan);
+  background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+  padding:5px 10px;border-radius:7px;text-decoration:none;
+}
+
+/* ── POMODORO ── */
+.pomo-card{
+  margin:0 14px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:20px;padding:24px;text-align:center;
+}
+.pomo-ring-wrap{position:relative;width:160px;height:160px;margin:0 auto 16px;}
+.pomo-ring-svg{position:absolute;inset:0;transform:rotate(-90deg);}
+.pomo-ring-bg{fill:none;stroke:var(--bg3);stroke-width:10;}
+.pomo-ring-fill{fill:none;stroke:var(--cyan);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1000ms linear;stroke-dasharray:440;stroke-dashoffset:440;}
+.pomo-ring-fill.work{stroke:var(--cyan);}
+.pomo-ring-fill.break{stroke:var(--emerald);}
+.pomo-inner{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.pomo-time{font-size:38px;font-weight:900;line-height:1;}
+.pomo-mode{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.pomo-label{font-size:13px;color:var(--muted);margin-bottom:14px;}
+.pomo-subject{
+  font-size:12px;font-weight:700;color:var(--cyan);
+  background:rgba(0,212,255,0.08);padding:6px 14px;border-radius:8px;
+  margin-bottom:16px;cursor:pointer;
+}
+.pomo-btns{display:flex;gap:10px;justify-content:center;}
+.pbtn{
+  padding:13px 24px;border:none;border-radius:12px;
+  font-size:14px;font-weight:800;cursor:pointer;
+  transition:transform 150ms,box-shadow 150ms;
+}
+.pbtn:active{transform:scale(0.96);}
+.pbtn.start{
+  background:linear-gradient(135deg,var(--cyan),#0099cc);
+  color:#0a0e1a;flex:1;
+  box-shadow:0 4px 18px rgba(0,212,255,0.3);
+}
+.pbtn.reset{background:var(--bg3);color:var(--muted);}
+.pbtn.skip{background:rgba(139,92,246,0.15);color:var(--purple);font-size:12px;}
+.pomo-count{font-size:11px;color:var(--muted);margin-top:12px;}
+.pomo-count span{color:var(--text);font-weight:700;}
+
+/* ── BOSS BATTLE ── */
+.boss-card{
+  margin:0 14px;
+  background:var(--bg2);border:2px solid rgba(239,68,68,0.2);
+  border-radius:20px;padding:20px;text-align:center;
+}
+.boss-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.boss-name{font-size:16px;font-weight:900;color:var(--red);}
+.boss-badge{
+  background:rgba(239,68,68,0.12);color:var(--red);
+  font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;
+}
+.boss-avatar{font-size:60px;margin-bottom:8px;
+  filter:drop-shadow(0 0 12px rgba(239,68,68,0.4));
+  animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.boss-hp-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.boss-hp-bar{height:14px;background:var(--bg3);border-radius:7px;overflow:hidden;margin-bottom:4px;}
+.boss-hp-fill{height:100%;background:linear-gradient(90deg,var(--red),#dc2626);border-radius:7px;transition:width 500ms ease;}
+.boss-hp-nums{font-size:11px;color:var(--muted);margin-bottom:16px;}
+.boss-hp-nums span{color:var(--red);font-weight:700;}
+.boss-atk-btn{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--red),#dc2626);
+  color:#fff;font-weight:900;font-size:16px;
+  border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 4px 18px rgba(239,68,68,0.35);
+  transition:transform 150ms;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.boss-atk-btn:active{transform:scale(0.96);}
+.boss-atk-btn.disabled{background:var(--bg3);color:var(--muted);box-shadow:none;pointer-events:none;}
+.boss-history{font-size:11px;color:var(--muted);margin-top:10px;min-height:20px;}
+.boss-killed{
+  padding:16px;border-radius:14px;
+  background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);
+  font-size:14px;font-weight:700;color:var(--emerald);text-align:center;
+}
+
+/* ── ACHIEVEMENTS ── */
+.ach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:0 14px;}
+.ach-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:14px;padding:12px 8px;text-align:center;
+  transition:border-color 200ms;
+}
+.ach-card.unlocked{border-color:var(--gold);}
+.ach-icon{font-size:26px;margin-bottom:5px;}
+.ach-name{font-size:10px;font-weight:700;line-height:1.3;}
+.ach-card:not(.unlocked) .ach-icon{filter:grayscale(1);opacity:0.3;}
+.ach-card:not(.unlocked) .ach-name{color:var(--muted);}
+.ach-card.unlocked .ach-name{color:var(--gold);}
+
+/* ── MOTIVATIONAL WALL ── */
+.mwall{margin:0 14px;}
+.mquote{
+  background:var(--bg2);border:1px solid var(--border);
+  border-left:3px solid var(--cyan);border-radius:0 14px 14px 0;
+  padding:14px 16px;margin-bottom:10px;cursor:pointer;
+  transition:border-color 200ms;
+}
+.mquote:active{border-left-color:var(--amber);}
+.mquote-text{font-size:14px;font-weight:600;line-height:1.5;color:var(--text);}
+.mquote-from{font-size:11px;color:var(--muted);margin-top:5px;}
+
+/* ── XP POPUP ── */
+.xp-popup{
+  position:fixed;top:80px;right:14px;z-index:300;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#0a0e1a;font-size:16px;font-weight:900;
+  padding:10px 20px;border-radius:40px;
+  box-shadow:0 4px 24px rgba(245,158,11,0.5);
+  animation:popXP 1.8s ease forwards;
+  pointer-events:none;
+}
+@keyframes popXP{
+  0%{opacity:0;transform:translateY(10px) scale(0.8);}
+  15%{opacity:1;transform:translateY(0) scale(1.1);}
+  30%{transform:scale(1);}
+  70%{opacity:1;transform:translateY(-20px);}
+  100%{opacity:0;transform:translateY(-40px);}
+}
+
+/* ── LEVEL UP OVERLAY ── */
+.lvlup{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,0.88);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  backdrop-filter:blur(6px);
+}
+.lvlup.hidden{display:none;}
+.lvlup-ring{
+  font-size:80px;
+  animation:spin 0.6s ease-out;
+}
+@keyframes spin{from{transform:scale(0) rotate(-180deg);}to{transform:scale(1) rotate(0);}}
+.lvlup-title{font-size:28px;font-weight:900;color:var(--gold);}
+.lvlup-name{font-size:18px;font-weight:700;color:var(--text);text-align:center;}
+.lvlup-dismiss{
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#0a0e1a;border:none;border-radius:14px;
+  padding:14px 40px;font-size:16px;font-weight:900;
+  cursor:pointer;margin-top:8px;
+}
+
+/* ── CONFETTI ── */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:600;overflow:hidden;}
+.confetti-particle{
+  position:absolute;width:8px;height:8px;border-radius:2px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+
+/* ── UTILS ── */
+.p14{padding:0 14px;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-row">
+    <a href="mobile-app.html" class="topbar-back">← Dashboard</a>
+    <div class="urgency-pill" id="urgency-pill">⚡ <span id="u-days">14</span> dias</div>
+  </div>
+  <div class="xp-section">
+    <div class="xp-row">
+      <span class="xp-level" id="xp-level-label">Nível 1 · Estagiário</span>
+      <span class="xp-pts" id="xp-pts-label">0 / 500 XP</span>
+    </div>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid">
+    <div class="hstat"><div class="hstat-val dias" id="h-dias">14</div><div class="hstat-lbl">Dias</div></div>
+    <div class="hstat"><div class="hstat-val streak" id="h-streak">🔥0</div><div class="hstat-lbl">Streak</div></div>
+    <div class="hstat"><div class="hstat-val lvl" id="h-lvl">1</div><div class="hstat-lbl">Nível</div></div>
+  </div>
+  <div class="hero-identity">
+    <div class="identity-icon" id="id-icon">👨‍💼</div>
+    <div>
+      <div class="identity-title" id="id-title">Estagiário de Direito</div>
+      <div class="identity-sub">Carlos Régis · UNICAP 2026.2</div>
+      <div class="identity-progress" id="id-progress">⚖️ Próximo: Advogado Jr. (+500 XP)</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMITMENT -->
+<div class="commit-section">
+  <div class="commit-card">
+    <div class="commit-title">Compromisso do dia</div>
+    <div class="commit-pledged" id="commit-pledged" style="display:none"></div>
+    <button class="commit-edit" id="commit-edit-btn" onclick="editCommit()" style="display:none">editar</button>
+    <div class="commit-form" id="commit-form">
+      <input type="text" class="commit-input" id="commit-input" placeholder="Hoje vou estudar Redação + Linguagens por 3 horas..." maxlength="120">
+      <button class="commit-btn" onclick="saveCommit()">Confirmar compromisso ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- DAILY QUESTS -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Missões do dia</span></div>
+  <div id="quests"></div>
+</div>
+
+<!-- POMODORO -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Pomodoro · 25 min</span></div>
+</div>
+<div class="pomo-card">
+  <div class="pomo-ring-wrap">
+    <svg class="pomo-ring-svg" viewBox="0 0 160 160">
+      <circle class="pomo-ring-bg" cx="80" cy="80" r="70"/>
+      <circle class="pomo-ring-fill work" id="pomo-ring" cx="80" cy="80" r="70"/>
+    </svg>
+    <div class="pomo-inner">
+      <div class="pomo-time" id="pomo-time">25:00</div>
+      <div class="pomo-mode" id="pomo-mode">FOCO</div>
+    </div>
+  </div>
+  <div class="pomo-subject" id="pomo-subject" onclick="cyclePomoPomSubject()">📝 Redação — Desigualdade Social</div>
+  <div class="pomo-label" id="pomo-label">Clique para iniciar · +100 XP ao completar</div>
+  <div class="pomo-btns">
+    <button class="pbtn start" id="pomo-start" onclick="togglePomo()">▶ Iniciar</button>
+    <button class="pbtn reset" onclick="resetPomo()">↺</button>
+  </div>
+  <div class="pomo-count">Sessões hoje: <span id="pomo-sessions">0</span> · Long break a cada 4</div>
+</div>
+
+<!-- BOSS BATTLE -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Boss Battle</span></div>
+</div>
+<div class="boss-card" id="boss-card">
+  <div class="boss-header">
+    <div class="boss-name" id="boss-name">🐉 Procrastinação</div>
+    <div class="boss-badge">+300 XP ao derrotar</div>
+  </div>
+  <div class="boss-avatar" id="boss-avatar">📚</div>
+  <div class="boss-hp-label">HP do Inimigo</div>
+  <div class="boss-hp-bar"><div class="boss-hp-fill" id="boss-hp-fill" style="width:100%"></div></div>
+  <div class="boss-hp-nums"><span id="boss-hp-cur">500</span> / <span id="boss-hp-max">500</span> HP</div>
+  <button class="boss-atk-btn" id="boss-atk-btn" onclick="bossAttack()">
+    ⚔️ Atacar — Responder questão (+50 dmg)
+  </button>
+  <div class="boss-history" id="boss-history"></div>
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Conquistas</span></div>
+</div>
+<div class="ach-grid" id="ach-grid"></div>
+
+<!-- MOTIVATIONAL WALL -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Mensagens do Futuro</span></div>
+</div>
+<div class="mwall" id="mwall"></div>
+
+<!-- TINY HABITS -->
+<div class="sec">
+  <div class="sec-hdr"><span class="sec-title">Só Mais 5 Minutos</span></div>
+</div>
+<div class="p14">
+  <div style="background:var(--bg2);border:1px solid rgba(139,92,246,0.25);border-radius:16px;padding:16px;">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Você não precisa estudar 3 horas. Precisa só COMEÇAR. Os 5 minutos viram 25 automaticamente.</div>
+    <button onclick="startTinyHabit()" style="
+      width:100%;padding:14px;
+      background:linear-gradient(135deg,var(--purple),#7c3aed);
+      color:#fff;font-weight:800;font-size:15px;
+      border:none;border-radius:12px;cursor:pointer;
+      box-shadow:0 4px 18px rgba(139,92,246,0.35);
+    ">⚡ Só 5 minutos — Começar agora</button>
+  </div>
+</div>
+
+<!-- LEVEL UP OVERLAY -->
+<div class="lvlup hidden" id="lvlup">
+  <div class="lvlup-ring">🏆</div>
+  <div class="lvlup-title">LEVEL UP!</div>
+  <div class="lvlup-name" id="lvlup-name">Advogado Jr.</div>
+  <button class="lvlup-dismiss" onclick="dismissLvlUp()">Continuar →</button>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti"></div>
+
+<script>
+// ── LEVELS ──────────────────────────────────────────────────────────
+const LEVELS=[
+  {n:'Estagiário',         icon:'👨‍💼', xp:0},
+  {n:'Advogado Jr.',       icon:'⚖️',  xp:500},
+  {n:'Advogado',           icon:'🧑‍⚖️', xp:1000},
+  {n:'Advogado Sênior',   icon:'💼',  xp:2000},
+  {n:'Promotor de Justiça',icon:'🏛️', xp:3500},
+  {n:'Juiz de 1ª Instância',icon:'⚖️',xp:5500},
+  {n:'Desembargador',      icon:'📜',  xp:8000},
+  {n:'Ministro do STJ',    icon:'🇧🇷', xp:11000},
+  {n:'Ministro do STF',    icon:'⭐',  xp:15000},
+  {n:'Presidente do STF',  icon:'🏆',  xp:20000},
+];
+
+// ── QUESTS ──────────────────────────────────────────────────────────
+function getTodayQuests(){
+  const today=new Date().toISOString().slice(0,10);
+  const MAP={
+    '2026-05-31':[
+      {id:'q0531a',txt:'Escrever RED #2 — Desigualdade Social',xp:500,link:'redacao/trainer.html'},
+      {id:'q0531b',txt:'Completar 2 Pomodoros de Linguagens',xp:200,link:null},
+      {id:'q0531c',txt:'Revisar 10 flashcards',xp:100,link:'materiais/flashcards.html'},
+    ],
+    '2026-06-01':[
+      {id:'q0601a',txt:'Estudar Regência e Figuras de Linguagem',xp:200,link:'nexus/linguagens/portugues/mapa3d.html'},
+      {id:'q0601b',txt:'Completar 2 Pomodoros de Português',xp:200,link:null},
+      {id:'q0601c',txt:'Fazer Quiz de Português',xp:150,link:'materiais/quiz.html'},
+    ],
+    '2026-06-02':[
+      {id:'q0602a',txt:'Estudar Romantismo e Realismo',xp:200,link:'nexus/linguagens/literatura/romantismo/mapa3d.html'},
+      {id:'q0602b',txt:'Completar 2 Pomodoros de Literatura',xp:200,link:null},
+      {id:'q0602c',txt:'Flashcards de Literatura',xp:100,link:'materiais/flashcards.html'},
+    ],
+    '2026-06-03':[
+      {id:'q0603a',txt:'Escrever RED #3 — Saúde Mental',xp:500,link:'redacao/trainer.html'},
+      {id:'q0603b',txt:'Estudar Modernismo (1ª e 2ª fase)',xp:200,link:'nexus/linguagens/literatura/modernismo/mapa3d.html'},
+      {id:'q0603c',txt:'Completar 2 Pomodoros',xp:200,link:null},
+    ],
+    '2026-06-04':[
+      {id:'q0604a',txt:'Estudar Inglês completo (2 mapas)',xp:200,link:'nexus/linguagens/ingles/mapa3d.html'},
+      {id:'q0604b',txt:'Completar 2 Pomodoros de Inglês',xp:200,link:null},
+      {id:'q0604c',txt:'Revisão geral Linguagens',xp:150,link:'materiais/flashcards.html'},
+    ],
+    '2026-06-05':[
+      {id:'q0605a',txt:'Estudar os 4 tópicos de Geografia',xp:300,link:'nexus/humanas/geografia/mapa3d.html'},
+      {id:'q0605b',txt:'Completar 3 Pomodoros de Humanas',xp:300,link:null},
+      {id:'q0605c',txt:'Flashcards Humanas',xp:100,link:'materiais/flashcards.html'},
+    ],
+    '2026-06-06':[
+      {id:'q0606a',txt:'Fazer o Simulado UNICAP completo (5h)',xp:800,link:'simulados/simulado-cronometrado.html'},
+      {id:'q0606b',txt:'Analisar erros do simulado',xp:200,link:'dashboard.html'},
+    ],
+    '2026-06-07':[
+      {id:'q0607a',txt:'Estudar História: Grécia, Roma, Brasil',xp:300,link:'nexus/humanas/historia/geral-antiga-medieval/mapa3d.html'},
+      {id:'q0607b',txt:'Completar 3 Pomodoros de História',xp:300,link:null},
+    ],
+    '2026-06-08':[
+      {id:'q0608a',txt:'Estudar Filosofia e Sociologia',xp:300,link:'nexus/humanas/filosofia/socrates/mapa3d.html'},
+      {id:'q0608b',txt:'Estudar Atualidades',xp:150,link:'dashboard.html'},
+      {id:'q0608c',txt:'Completar 3 Pomodoros',xp:300,link:null},
+    ],
+    '2026-06-10':[
+      {id:'q0610a',txt:'Estudar Aritmética e Funções',xp:250,link:'nexus/matematica/aritmetica/mapa3d.html'},
+      {id:'q0610b',txt:'Completar 2 Pomodoros de Matemática',xp:200,link:null},
+    ],
+    '2026-06-11':[
+      {id:'q0611a',txt:'Estudar Geometria + Biologia',xp:300,link:'nexus/matematica/geometria/mapa3d.html'},
+      {id:'q0611b',txt:'Completar 3 Pomodoros',xp:300,link:null},
+    ],
+    '2026-06-12':[
+      {id:'q0612a',txt:'Estudar Química e Física',xp:250,link:'nexus/natureza/quimica/mapa3d.html'},
+      {id:'q0612b',txt:'Revisão Geral — Quiz completo',xp:300,link:'materiais/quiz.html'},
+      {id:'q0612c',txt:'Completar 3 Pomodoros',xp:300,link:null},
+    ],
+    '2026-06-13':[
+      {id:'q0613a',txt:'Revisão final de Redação',xp:200,link:'redacao/trainer.html'},
+      {id:'q0613b',txt:'Flashcards críticos — últimas revisões',xp:150,link:'materiais/flashcards.html'},
+    ],
+  };
+  return MAP[today]||[
+    {id:'qgen1',txt:'Completar 1 Pomodoro de estudo',xp:100,link:null},
+    {id:'qgen2',txt:'Revisar 10 flashcards',xp:100,link:'materiais/flashcards.html'},
+    {id:'qgen3',txt:'Abrir 1 mapa do Nexus',xp:100,link:'nexus/index.html'},
+  ];
+}
+
+// ── BOSSES ──────────────────────────────────────────────────────────
+const BOSSES=[
+  {name:'Monstro da Redação',avatar:'📝',hp:400,reward:300,desc:'Derrotar: Escrever parágrafos completos'},
+  {name:'Dragão da Gramática',avatar:'🐉',hp:500,reward:350,desc:'Derrotar: Acertar questões de Português'},
+  {name:'Fantasma da História',avatar:'👻',hp:450,reward:320,desc:'Derrotar: Lembrar datas e eventos'},
+  {name:'Monstro de Filosofia',avatar:'🧠',hp:350,reward:280,desc:'Derrotar: Identificar filósofos e ideias'},
+  {name:'Ogro da Matemática',avatar:'🧮',hp:600,reward:400,desc:'Derrotar: Resolver cálculos e funções'},
+  {name:'Wyvern da Química',avatar:'⚗️',hp:500,reward:350,desc:'Derrotar: Acertar questões de Química'},
+  {name:'Espectro da Física',avatar:'⚡',hp:550,reward:380,desc:'Derrotar: Resolver problemas de Física'},
+];
+
+// ── ACHIEVEMENTS ──────────────────────────────────────────────────────
+const ACHIEVEMENTS=[
+  {id:'a1',name:'Primeira Missão',icon:'🎯',cond:()=>st.questsDone>=1},
+  {id:'a2',name:'Primeiro Pomo',icon:'🍅',cond:()=>st.pomosTotal>=1},
+  {id:'a3',name:'Sequência 3 dias',icon:'🔥',cond:()=>st.streak>=3},
+  {id:'a4',name:'Boss Killer',icon:'⚔️',cond:()=>st.bossesKilled>=1},
+  {id:'a5',name:'Nível 3',icon:'⭐',cond:()=>getLevel(st.xp).idx>=2},
+  {id:'a6',name:'Redação Escrita',icon:'✍️',cond:()=>st.redsWritten>=1},
+  {id:'a7',name:'10 Pomodoros',icon:'🏅',cond:()=>st.pomosTotal>=10},
+  {id:'a8',name:'3 Bosses',icon:'🗡️',cond:()=>st.bossesKilled>=3},
+  {id:'a9',name:'Nível 5',icon:'🌟',cond:()=>getLevel(st.xp).idx>=4},
+];
+
+// ── QUOTES ──────────────────────────────────────────────────────────
+const QUOTES=[
+  {txt:'Carlos do dia 15 de junho aqui. Passei em Direito. Você precisava só continuar. Não desiste.',from:'— Carlos, 15/06/2026'},
+  {txt:'O vestibulando que passou em Direito não era mais inteligente. Era mais consistente.',from:'— Princípio do Estudo'},
+  {txt:'Cada Pomodoro que você completa hoje é um voto a favor de quem você quer se tornar.',from:'— James Clear'},
+  {txt:'A diferença entre quem passa e quem não passa não é talento. É quantas vezes voltou à mesa.',from:'— Princípio do Vestibular'},
+  {txt:'Você está em Recife, estudando sozinho, sem cursinho. Isso já é mais coragem que a maioria.',from:'— Sua própria determinação'},
+  {txt:'CPOR, Direito, advocacia. Tudo começa com as próximas 2 semanas. Exatamente estas.',from:'— Seu plano de vida'},
+];
+
+// ── POMO SUBJECTS ──────────────────────────────────────────────────
+const POMO_SUBS=[
+  '📝 Redação — Desigualdade Social',
+  '📖 Português — Tipologia/Análise',
+  '📚 Literatura — Romantismo',
+  '📚 Literatura — Realismo',
+  '🎨 Literatura — Modernismo',
+  '🇺🇸 Inglês — Gramática',
+  '🌍 Geografia',
+  '🏺 História Geral',
+  '🇧🇷 História do Brasil',
+  '🦉 Filosofia',
+  '👥 Sociologia',
+  '📊 Matemática — Aritmética',
+  '📈 Matemática — Funções',
+  '📐 Geometria',
+  '🧬 Biologia',
+  '⚗️ Química',
+  '⚡ Física',
+];
+let pomoSubIdx=0;
+
+// ── STATE ──────────────────────────────────────────────────────────
+const DEFAULT_ST={
+  xp:0,streak:0,lastStudyDate:null,
+  questsDone:0,pomosTotal:0,pomosToday:0,lastPomoDate:null,
+  bossesKilled:0,redsWritten:0,
+  questDone:{},bossHp:500,bossIdx:0,bossKilled:false,
+  commitment:'',commitDate:null,
+  unlockedAch:[],prevLevel:0,
+};
+let st={...DEFAULT_ST};
+let pomoRunning=false,pomoBreak=false,pomoSecs=25*60,pomoTimer=null,pomoCurrent=0;
+
+// ── PERSISTENCE ──────────────────────────────────────────────────────
+function loadSt(){
+  try{const s=JSON.parse(localStorage.getItem('uc_dopamina')||'null');if(s)st={...DEFAULT_ST,...s};}catch(e){}
+}
+function saveSt(){localStorage.setItem('uc_dopamina',JSON.stringify(st));}
+
+// ── XP SYSTEM ──────────────────────────────────────────────────────
+function getLevel(xp){
+  let idx=0;
+  for(let i=0;i<LEVELS.length-1;i++){if(xp>=LEVELS[i+1].xp)idx=i+1;}
+  return{idx,lv:LEVELS[idx],next:LEVELS[Math.min(idx+1,LEVELS.length-1)]};
+}
+function addXP(amount,source){
+  const prevLv=getLevel(st.xp);
+  st.xp+=amount;
+  st.questsDone+=source==='quest'?1:0;
+  st.pomosTotal+=source==='pomo'?1:0;
+  st.bossesKilled+=source==='boss'?1:0;
+  st.redsWritten+=source==='red'?1:0;
+  saveSt();
+  updateXPBar();
+  showXPPop('+'+amount+' XP');
+  const newLv=getLevel(st.xp);
+  if(newLv.idx>prevLv.idx)showLevelUp(newLv.lv);
+  checkAchievements();
+}
+function updateXPBar(){
+  const{idx,lv,next}=getLevel(st.xp);
+  const atLevel=st.xp-lv.xp;
+  const toNext=next.xp-lv.xp;
+  const pct=idx===LEVELS.length-1?100:Math.min(100,Math.round(atLevel/toNext*100));
+  document.getElementById('xp-fill').style.width=pct+'%';
+  document.getElementById('xp-level-label').textContent=`Nível ${idx+1} · ${lv.n}`;
+  document.getElementById('xp-pts-label').textContent=`${st.xp} / ${next.xp} XP`;
+  document.getElementById('h-lvl').textContent=idx+1;
+  document.getElementById('id-icon').textContent=lv.icon;
+  document.getElementById('id-title').textContent=lv.n+' de Direito';
+  document.getElementById('id-progress').textContent=idx<LEVELS.length-1?`⚖️ Próximo: ${next.n} (+${next.xp-st.xp} XP)`:'🏆 Nível máximo!';
+}
+
+// ── STREAK ──────────────────────────────────────────────────────────
+function checkStreak(){
+  const today=new Date().toISOString().slice(0,10);
+  if(st.lastStudyDate===today)return;
+  if(st.lastStudyDate){
+    const last=new Date(st.lastStudyDate);
+    const diff=Math.round((new Date(today)-last)/86400000);
+    st.streak=diff===1?st.streak+1:0;
+  } else st.streak=1;
+  st.lastStudyDate=today;
+  saveSt();
+  document.getElementById('h-streak').textContent='🔥'+st.streak;
+}
+
+// ── COMMITMENT ──────────────────────────────────────────────────────
+function loadCommit(){
+  const today=new Date().toISOString().slice(0,10);
+  if(st.commitment&&st.commitDate===today){
+    showPledge(st.commitment);
+  } else {
+    document.getElementById('commit-form').style.display='block';
+    document.getElementById('commit-pledged').style.display='none';
+    document.getElementById('commit-edit-btn').style.display='none';
+  }
+}
+function showPledge(txt){
+  document.getElementById('commit-pledged').style.display='block';
+  document.getElementById('commit-pledged').textContent='✊ '+txt;
+  document.getElementById('commit-edit-btn').style.display='inline';
+  document.getElementById('commit-form').style.display='none';
+}
+function saveCommit(){
+  const txt=document.getElementById('commit-input').value.trim();
+  if(!txt)return;
+  st.commitment=txt;st.commitDate=new Date().toISOString().slice(0,10);
+  saveSt();showPledge(txt);checkStreak();addXP(50,'commit');
+}
+function editCommit(){
+  document.getElementById('commit-input').value=st.commitment||'';
+  document.getElementById('commit-form').style.display='block';
+  document.getElementById('commit-pledged').style.display='none';
+  document.getElementById('commit-edit-btn').style.display='none';
+}
+
+// ── QUESTS ──────────────────────────────────────────────────────────
+function renderQuests(){
+  const qs=getTodayQuests();
+  const c=document.getElementById('quests');
+  c.innerHTML=qs.map(q=>{
+    const done=!!st.questDone[q.id];
+    return`<div class="quest-card${done?' done':''}" id="qc${q.id}" onclick="completeQuest('${q.id}',${q.xp})">
+      <div class="qcheck"></div>
+      <div class="qbody">
+        <div class="qtext">${q.txt}</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+          <span class="qxp">⭐ +${q.xp} XP</span>
+          ${q.link?`<a href="${q.link}" class="qlink" onclick="event.stopPropagation()">Abrir →</a>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function completeQuest(id,xp){
+  if(st.questDone[id])return;
+  st.questDone[id]=true;saveSt();
+  const c=document.getElementById('qc'+id);
+  if(c)c.classList.add('done');
+  addXP(xp,'quest');checkStreak();
+  // Check all done
+  const qs=getTodayQuests();
+  if(qs.every(q=>st.questDone[q.id])){
+    setTimeout(()=>{addXP(300,'bonus');launchConfetti();},400);
+  }
+}
+
+// ── POMODORO ──────────────────────────────────────────────────────────
+function togglePomo(){
+  if(pomoRunning){pausePomo();}else{startPomo();}
+}
+function startPomo(){
+  pomoRunning=true;
+  document.getElementById('pomo-start').textContent='⏸ Pausar';
+  document.getElementById('pomo-label').textContent=pomoBreak?'Descanse! Você merece.':'Foco total — sem celular!';
+  checkStreak();
+  pomoTimer=setInterval(tickPomo,1000);
+}
+function pausePomo(){
+  pomoRunning=false;clearInterval(pomoTimer);
+  document.getElementById('pomo-start').textContent='▶ Continuar';
+  document.getElementById('pomo-label').textContent='Pausado — retome quando puder.';
+}
+function resetPomo(){
+  clearInterval(pomoTimer);pomoRunning=false;pomoBreak=false;pomoSecs=25*60;
+  document.getElementById('pomo-start').textContent='▶ Iniciar';
+  document.getElementById('pomo-mode').textContent='FOCO';
+  document.getElementById('pomo-label').textContent='Clique para iniciar · +100 XP ao completar';
+  document.getElementById('pomo-ring').className='pomo-ring-fill work';
+  updatePomoDisplay();
+}
+function tickPomo(){
+  pomoSecs--;
+  updatePomoDisplay();
+  if(pomoSecs<=0){
+    clearInterval(pomoTimer);pomoRunning=false;
+    if(!pomoBreak){
+      // Work done!
+      pomoCurrent++;
+      st.pomosToday=(st.pomosToday||0)+1;
+      const isLong=pomoCurrent%4===0;
+      addXP(100,'pomo');checkStreak();
+      document.getElementById('pomo-sessions').textContent=st.pomosToday;
+      document.getElementById('pomo-mode').textContent='DESCANSE';
+      document.getElementById('pomo-ring').className='pomo-ring-fill break';
+      document.getElementById('pomo-start').textContent='▶ Iniciar pausa';
+      document.getElementById('pomo-label').textContent=isLong?'Pausa longa de 15 min merece!':'Boa! 5 min de descanso.';
+      pomoBreak=true;pomoSecs=isLong?15*60:5*60;
+      launchConfetti();
+    } else {
+      // Break done!
+      pomoBreak=false;pomoSecs=25*60;
+      document.getElementById('pomo-mode').textContent='FOCO';
+      document.getElementById('pomo-ring').className='pomo-ring-fill work';
+      document.getElementById('pomo-start').textContent='▶ Iniciar';
+      document.getElementById('pomo-label').textContent='Descansado! Próximo Pomodoro. +100 XP';
+    }
+  }
+}
+function updatePomoDisplay(){
+  const m=Math.floor(pomoSecs/60),s=pomoSecs%60;
+  document.getElementById('pomo-time').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const total=pomoBreak?(document.getElementById('pomo-label').textContent.includes('15')?15*60:5*60):25*60;
+  const ratio=1-(pomoSecs/total);
+  const circ=2*Math.PI*70;
+  document.getElementById('pomo-ring').style.strokeDashoffset=circ*(1-ratio);
+}
+function cyclePomoPomSubject(){
+  pomoSubIdx=(pomoSubIdx+1)%POMO_SUBS.length;
+  document.getElementById('pomo-subject').textContent=POMO_SUBS[pomoSubIdx];
+}
+function startTinyHabit(){
+  document.getElementById('tab-agenda')&&void 0; // noop
+  resetPomo();pomoSecs=25*60;
+  startPomo();
+  document.getElementById('pomo-card')&&scrollIntoView({behavior:'smooth'});
+  document.querySelector('.pomo-card').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ── BOSS BATTLE ──────────────────────────────────────────────────────
+function renderBoss(){
+  const b=BOSSES[st.bossIdx%BOSSES.length];
+  const hpPct=Math.max(0,Math.round(st.bossHp/b.hp*100));
+  document.getElementById('boss-name').textContent=b.avatar+' '+b.name;
+  document.getElementById('boss-avatar').textContent=st.bossKilled?'💀':b.avatar;
+  document.getElementById('boss-hp-fill').style.width=hpPct+'%';
+  document.getElementById('boss-hp-cur').textContent=Math.max(0,st.bossHp);
+  document.getElementById('boss-hp-max').textContent=b.hp;
+  const btn=document.getElementById('boss-atk-btn');
+  if(st.bossKilled){
+    btn.className='boss-atk-btn disabled';btn.textContent='✓ Boss Derrotado!';
+    document.getElementById('boss-history').innerHTML='<div class="boss-killed">🏆 +'+b.reward+' XP coletado! Próximo boss amanhã.</div>';
+  }
+}
+function bossAttack(){
+  if(st.bossKilled)return;
+  const dmg=Math.floor(40+Math.random()*30);
+  const b=BOSSES[st.bossIdx%BOSSES.length];
+  st.bossHp=Math.max(0,st.bossHp-dmg);
+  saveSt();
+  const btn=document.getElementById('boss-atk-btn');
+  btn.textContent=`💥 -${dmg} dano!`;
+  setTimeout(()=>{btn.textContent='⚔️ Atacar — Responder questão (+50 dmg)';},600);
+  document.getElementById('boss-history').textContent=`Último ataque: -${dmg} HP`;
+  if(st.bossHp<=0){
+    st.bossKilled=true;saveSt();
+    addXP(b.reward,'boss');launchConfetti();
+  }
+  renderBoss();
+}
+
+// ── ACHIEVEMENTS ──────────────────────────────────────────────────────
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{
+    if(!st.unlockedAch.includes(a.id)&&a.cond()){
+      st.unlockedAch.push(a.id);saveSt();
+      showXPPop('🏅 Conquista: '+a.name);
+    }
+  });
+  renderAchievements();
+}
+function renderAchievements(){
+  const c=document.getElementById('ach-grid');if(!c)return;
+  c.innerHTML=ACHIEVEMENTS.map(a=>{
+    const u=st.unlockedAch.includes(a.id);
+    return`<div class="ach-card${u?' unlocked':''}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── MOTIVATIONAL WALL ──────────────────────────────────────────────
+function renderQuotes(){
+  const c=document.getElementById('mwall');if(!c)return;
+  c.innerHTML=QUOTES.map((q,i)=>`
+    <div class="mquote" onclick="nextQuote(${i})">
+      <div class="mquote-text">${q.txt}</div>
+      <div class="mquote-from">${q.from}</div>
+    </div>
+  `).join('');
+}
+
+// ── XP POPUP ──────────────────────────────────────────────────────
+function showXPPop(msg){
+  const el=document.createElement('div');
+  el.className='xp-popup';el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1900);
+}
+
+// ── LEVEL UP ──────────────────────────────────────────────────────
+function showLevelUp(lv){
+  document.getElementById('lvlup-name').textContent=lv.icon+' '+lv.n;
+  document.getElementById('lvlup').classList.remove('hidden');
+  launchConfetti();
+}
+function dismissLvlUp(){document.getElementById('lvlup').classList.add('hidden');}
+
+// ── CONFETTI ──────────────────────────────────────────────────────
+const COLORS=['#00d4ff','#ffb800','#10b981','#ef4444','#8b5cf6','#f59e0b','#fff'];
+function launchConfetti(){
+  const c=document.getElementById('confetti');
+  for(let i=0;i<50;i++){
+    const p=document.createElement('div');
+    p.className='confetti-particle';
+    p.style.cssText=`
+      left:${Math.random()*100}%;
+      background:${COLORS[Math.floor(Math.random()*COLORS.length)]};
+      animation-duration:${1.5+Math.random()*1.5}s;
+      animation-delay:${Math.random()*0.5}s;
+      transform:scale(${0.5+Math.random()});
+    `;
+    c.appendChild(p);
+    setTimeout(()=>p.remove(),3500);
+  }
+}
+
+// ── COUNTDOWN ──────────────────────────────────────────────────────
+function updateDays(){
+  const n=new Date();n.setHours(0,0,0,0);
+  const e=new Date('2026-06-14');e.setHours(0,0,0,0);
+  const d=Math.max(0,Math.round((e-n)/86400000));
+  document.getElementById('u-days').textContent=d;
+  document.getElementById('h-dias').textContent=d;
+  const p=document.getElementById('urgency-pill');
+  if(p){
+    if(d<=3)p.style.animation='rpulse 0.8s ease-in-out infinite';
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+(function init(){
+  loadSt();
+  updateDays();
+  updateXPBar();
+  loadCommit();
+  renderQuests();
+  renderBoss();
+  renderAchievements();
+  renderQuotes();
+  document.getElementById('h-streak').textContent='🔥'+st.streak;
+  document.getElementById('pomo-sessions').textContent=st.pomosToday||0;
+  // Init pomo ring
+  const circ=2*Math.PI*70;
+  document.getElementById('pomo-ring').style.strokeDasharray=circ;
+  document.getElementById('pomo-ring').style.strokeDashoffset=circ;
+  // Pomodoro subject
+  document.getElementById('pomo-subject').textContent=POMO_SUBS[0];
+  setInterval(updateDays,60000);
+})();
+</script>
+</body>
+</html>

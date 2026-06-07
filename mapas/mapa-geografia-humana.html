@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia Humana · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">GEOGRAFIA HUMANA</div><div class="lt2">população · cidade · migração</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">⚇</div><div class="bt"><div class="l1">Geografia Humana</div><div class="l2">Geografia · Bloco 2</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · GEO HUMANA</span><h1>Geografia Humana</h1><p>População, urbanização, migração, sociedade. Tópicos LITERAIS do PDF Conteúdos Programáticos.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em marco</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#f472b6', corHex2:'#ec4899', bg:'#1a0414', hubForma:'icosa' };
+window.MARCOS = [
+{cod:'GEO H1',nome:'População · Demografia',sub:'Crescimento, distribuição, estrutura',forma:'icosa',cor:0xf472b6,
+topicos:['Distribuição populacional mundial e brasileira','Crescimento demográfico: taxa de natalidade, mortalidade, mortalidade infantil','Crescimento vegetativo (natalidade - mortalidade)','Taxa de fecundidade — Brasil 2025: ~1,5 (abaixo da reposição 2,1)','Teorias demográficas: malthusiana × neomalthusiana × reformista (marxista)','Transição demográfica: estágios I-V','Estrutura etária: pirâmides etárias (Brasil já está em envelhecimento)','Distribuição por gênero, raça, classe','IDH (Índice de Desenvolvimento Humano): expectativa de vida, educação, renda','Países do "G20" × países em desenvolvimento','Demografia brasileira: censos do IBGE (decenal)','Censo 2022: ~203 milhões de brasileiros'],
+resumo:'Brasil completou transição demográfica. Já temos baixa natalidade e estamos envelhecendo. População urbanizou-se (85% mora em cidades).',
+dica:'Brasil tem taxa de fecundidade ABAIXO da reposição (1,5 < 2,1) → ENVELHECIMENTO acelerado. Pirâmide etária se aproxima da Europa. Bônus demográfico se esgotou.'},
+{cod:'GEO H2',nome:'Migrações · Fluxos',sub:'Êxodo rural, internacionais, refugiados',forma:'octa',cor:0xec4899,
+topicos:['Migrações internas: êxodo rural (1950-80), migração inter-regional','Migrações NE → SE no Brasil (1950-80): pau-de-arara','Volta dos nordestinos (a partir de 2000): "boomerang"','Migração urbana: cidades médias atraindo','Migrações internacionais: emigração brasileira (EUA, Japão, Portugal)','Refugiados: sírios, venezuelanos (Roraima), haitianos','Imigração no Brasil hoje: venezuelanos, haitianos, bolivianos','Êxodo rural × êxodo urbano (movimento contracorrente)','Diáspora africana × imigração europeia (1880-1930)','Xenofobia, racismo, conflitos étnicos','ACNUR (ONU), Brasil signatário da Convenção dos Refugiados (1951)'],
+resumo:'Migrações = sangue da humanidade. Brasil teve grandes fluxos internos (NE→SE) e hoje recebe muitos refugiados. Volta dos nordestinos (2000+) também importante.',
+dica:'⚠️ VENEZUELANOS em Roraima é o tópico mais quente hoje. Brasil é tradicionalmente país de imigração — desde 1880 italianos, alemães, japoneses, libaneses.'},
+{cod:'GEO H3',nome:'Urbanização · Cidades',sub:'Êxodo, metrópoles, problemas urbanos',forma:'dodeca',cor:0xa855f7,
+topicos:['Urbanização: passagem da população rural à urbana','Êxodo rural brasileiro (1950-80) — industrialização do SE','Brasil hoje: 85% urbano (2022)','Rede urbana: pequenas, médias, grandes cidades, metrópoles, megacidades','Metrópole × Megalópole (conjunto de metrópoles conurbadas)','RM (Região Metropolitana): SP (21M), RJ (12M), Belo Horizonte, Brasília, RECIFE (4M), Salvador, Fortaleza, Curitiba, Porto Alegre, Manaus','Problemas urbanos: favelas, violência, mobilidade, poluição, especulação imobiliária','Segregação socioespacial, gentrificação','Cidades globais: NY, Londres, Tóquio, Paris, Xangai, São Paulo','Megacidades do mundo: Tóquio, Délhi, Xangai, São Paulo, Cidade do México, Cairo','Planejamento urbano, Estatuto da Cidade (2001)','Plano Diretor obrigatório (Estatuto da Cidade)','Direito à cidade — Henri Lefebvre, David Harvey'],
+resumo:'Brasil urbanizou-se rápido e mal — em 30 anos passou de 30% para 85% urbano. Resultado: favelas, violência, desigualdade espacial intensa.',
+dica:'⚠️ RECIFE é a 4ª maior RM do Brasil (~4 milhões). Problemas: enchentes, alagamentos, ZEIS (Zonas Especiais de Interesse Social), conflitos no Pina-Brasília Teimosa.'},
+{cod:'GEO H4',nome:'Etnias e Cultura',sub:'Brasil multicultural',forma:'torus',cor:0x84cc16,
+topicos:['Etnias e cultura no Brasil: indígenas, africanos, europeus, asiáticos','Indígenas: ~900 mil hoje (Censo 2022), mais de 305 etnias, 274 línguas','Demarcação de terras indígenas — debates atuais','Quilombolas: comunidades remanescentes de quilombos (reconhecimento na CF/88 Art. 68 ADCT)','Africanos: tráfico negreiro (4-5 milhões trazidos), cultura, religiões (candomblé, umbanda)','Europeus: portugueses, italianos, alemães, poloneses, espanhóis','Asiáticos: japoneses (SP, PR), chineses, coreanos, sírio-libaneses (NE, SP)','Diversidade cultural × racismo estrutural','Lei Áurea (1888), mas sem reparação','Lei 10.639/2003: obrigatoriedade de ensino de história africana e afro-brasileira nas escolas','Movimentos: MNU (Movimento Negro Unificado), feminismo negro','Cotas raciais nas universidades públicas (desde 2004 UnB; lei federal 2012)','Apropriação cultural, identidade'],
+resumo:'Brasil é multicultural: indígenas + africanos + europeus + asiáticos. Mas racismo estrutural persiste. Lei de Cotas (2012) e Lei 10.639/2003 são marcos.',
+dica:'⚠️ Lei 10.639/2003 (história afro-brasileira obrigatória) é tópico hot em redação e prova. Cotas raciais válidas no STF desde 2012 (ADPF 186). 305 etnias indígenas.'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

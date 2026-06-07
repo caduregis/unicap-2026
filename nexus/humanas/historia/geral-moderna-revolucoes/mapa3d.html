@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grande Salão — Absolutismo e Revoluções</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #030102; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(3,1,2,0.97) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  #nav a {
+    pointer-events: all;
+    color: #c89030; text-decoration: none; font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border: 1px solid rgba(200,144,48,0.3);
+    border-radius: 20px; background: rgba(3,1,2,0.85);
+    transition: all 0.2s;
+  }
+  #nav a:hover { background: rgba(200,144,48,0.15); border-color: rgba(200,144,48,0.6); }
+  #nav-badge {
+    font-size: 13px; font-weight: 600; color: #f0d890;
+    background: rgba(3,1,2,0.85); border: 1px solid rgba(200,144,48,0.25);
+    padding: 6px 16px; border-radius: 20px; letter-spacing: 0.02em;
+  }
+
+  #tooltip {
+    position: fixed; pointer-events: none; z-index: 200;
+    background: rgba(3,1,2,0.95); border: 1px solid rgba(200,144,48,0.5);
+    color: #f0e0a0; font-size: 12px; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px;
+    display: none; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+  }
+
+  #popup-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #popup-overlay.active { display: flex; }
+  #popup {
+    background: linear-gradient(145deg, #140a02, #0a0804);
+    border: 1px solid rgba(200,144,48,0.3);
+    border-radius: 16px; max-width: 660px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(200,144,48,0.04);
+    padding: 28px;
+  }
+  #popup-title {
+    font-size: 18px; font-weight: 700; color: #c89030;
+    margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(200,144,48,0.2);
+    line-height: 1.3;
+  }
+  #popup-desc {
+    font-size: 14px; line-height: 1.75; color: #d4c090;
+    margin-bottom: 16px;
+  }
+  #popup-tip {
+    background: rgba(200,144,48,0.06);
+    border-left: 3px solid #c89030;
+    padding: 14px 16px; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #b8a070;
+  }
+  #popup-tip strong { color: #c89030; font-weight: 700; }
+  #popup-close {
+    display: block; width: 100%; margin-top: 20px;
+    padding: 10px; background: rgba(200,144,48,0.1);
+    border: 1px solid rgba(200,144,48,0.3); border-radius: 8px;
+    color: #c89030; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+  }
+  #popup-close:hover { background: rgba(200,144,48,0.2); }
+
+  #hint {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(3,1,2,0.9); border: 1px solid rgba(200,144,48,0.2);
+    color: rgba(200,144,48,0.7); font-size: 12px; padding: 8px 18px;
+    border-radius: 20px; pointer-events: none; z-index: 50; transition: opacity 1s;
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<nav id="nav">
+  <a href="../../../index.html">&#8592; Nexus</a>
+  <div id="nav-badge">&#128081; Versalhes — Absolutismo e Revoluções</div>
+  <a href="resumo.html">Resumo &#8594;</a>
+</nav>
+
+<div id="tooltip"></div>
+
+<div id="popup-overlay">
+  <div id="popup">
+    <div id="popup-title"></div>
+    <div id="popup-desc"></div>
+    <div id="popup-tip"></div>
+    <button id="popup-close">FECHAR</button>
+  </div>
+</div>
+
+<div id="hint">Clique nos documentos para estudar · Arraste para orbitar · Scroll para zoom</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ── SCENE SETUP ──────────────────────────────────────────────
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x030102);
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x040203, 20, 60);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 7, 16);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 2, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.58;
+controls.minDistance = 4;
+controls.maxDistance = 35;
+controls.update();
+
+// ── LIGHTS ───────────────────────────────────────────────────
+// Chandelier warm light
+const chandelierLight = new THREE.PointLight(0xffa040, 4, 18);
+chandelierLight.position.set(-4, 8, -2);
+chandelierLight.castShadow = true;
+scene.add(chandelierLight);
+
+// Fire light (right side — revolutionary)
+const fireLight = new THREE.PointLight(0xff4010, 4, 20);
+fireLight.position.set(14, 5, 0);
+scene.add(fireLight);
+
+// General ambient
+const ambient = new THREE.AmbientLight(0x100508, 0.8);
+scene.add(ambient);
+
+// Left royal glow
+const royalGlow = new THREE.PointLight(0xffc040, 1.5, 15);
+royalGlow.position.set(-8, 4, -5);
+scene.add(royalGlow);
+
+// ── FLOOR (parquet) ───────────────────────────────────────────
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1a0e06';
+  ctx.fillRect(0, 0, 512, 512);
+  const tileW = 64, tileH = 32;
+  for (let row = 0; row < 16; row++) {
+    for (let col = 0; col < 8; col++) {
+      const shade = (row + col) % 2 === 0 ? '#2a1808' : '#231406';
+      ctx.fillStyle = shade;
+      ctx.fillRect(col * tileW, row * tileH, tileW - 1, tileH - 1);
+    }
+  }
+  ctx.strokeStyle = 'rgba(100,60,20,0.4)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= 512; x += tileW) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,512); ctx.stroke(); }
+  for (let y = 0; y <= 512; y += tileH) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(512,y); ctx.stroke(); }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(4, 3);
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 25),
+    new THREE.MeshLambertMaterial({ map: tex })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+})();
+
+// ── ROYAL LEFT SIDE ──────────────────────────────────────────
+// Gilded columns
+[-14, -10].forEach(z => {
+  const col = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.4, 0.4, 10, 12),
+    new THREE.MeshLambertMaterial({ color: 0xc89030, emissive: 0x301000, emissiveIntensity: 0.2 })
+  );
+  col.position.set(-14, 5, z);
+  col.castShadow = true;
+  scene.add(col);
+  // Capital
+  const cap = new THREE.Mesh(
+    new THREE.BoxGeometry(1.2, 0.4, 1.2),
+    new THREE.MeshLambertMaterial({ color: 0xd8a030, emissive: 0x401800, emissiveIntensity: 0.3 })
+  );
+  cap.position.set(-14, 10.2, z);
+  scene.add(cap);
+});
+
+// Tapestry (left wall)
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 200;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#2a1010';
+  ctx.fillRect(0,0,256,200);
+  // Sun king motif
+  ctx.strokeStyle = '#d4a030';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(128, 100, 40, 0, Math.PI*2);
+  ctx.stroke();
+  // Rays
+  for (let i = 0; i < 12; i++) {
+    const a = (i/12)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(128+50*Math.cos(a), 100+50*Math.sin(a));
+    ctx.lineTo(128+75*Math.cos(a), 100+75*Math.sin(a));
+    ctx.stroke();
+  }
+  ctx.font = 'bold 14px serif';
+  ctx.fillStyle = '#d4a030';
+  ctx.textAlign = 'center';
+  ctx.fillText("L'État, c'est moi", 128, 175);
+  const tex = new THREE.CanvasTexture(canvas);
+  const tapestry = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 8),
+    new THREE.MeshLambertMaterial({ map: tex })
+  );
+  tapestry.position.set(-16, 5, -5);
+  tapestry.rotation.y = Math.PI / 2;
+  scene.add(tapestry);
+})();
+
+// Portrait frame
+const portrait = new THREE.Mesh(
+  new THREE.PlaneGeometry(3, 4),
+  new THREE.MeshLambertMaterial({ color: 0x8a6020 })
+);
+portrait.position.set(-16, 5, 2);
+portrait.rotation.y = Math.PI / 2;
+scene.add(portrait);
+// Gold frame
+const frame = new THREE.Mesh(
+  new THREE.BoxGeometry(0.15, 4.4, 0.15),
+  new THREE.MeshLambertMaterial({ color: 0xc89030 })
+);
+frame.position.set(-15.9, 5, 2);
+scene.add(frame);
+
+// Chandelier
+const chanGroup = new THREE.Group();
+const chanRing = new THREE.Mesh(
+  new THREE.TorusGeometry(2, 0.08, 8, 32),
+  new THREE.MeshLambertMaterial({ color: 0xc89030, emissive: 0x604000, emissiveIntensity: 0.5 })
+);
+chanGroup.add(chanRing);
+// Pendants
+for (let i = 0; i < 8; i++) {
+  const a = (i / 8) * Math.PI * 2;
+  const pend = new THREE.Mesh(
+    new THREE.ConeGeometry(0.06, 0.3, 6),
+    new THREE.MeshLambertMaterial({ color: 0xf0d060, emissive: 0x604010, emissiveIntensity: 0.4 })
+  );
+  pend.position.set(2 * Math.cos(a), -0.3, 2 * Math.sin(a));
+  chanGroup.add(pend);
+}
+// Support rod
+const rod = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.03, 0.03, 3, 6),
+  new THREE.MeshLambertMaterial({ color: 0xa07010 })
+);
+rod.position.y = 1.5;
+chanGroup.add(rod);
+chanGroup.position.set(-4, 9, -2);
+scene.add(chanGroup);
+
+// ── REVOLUTIONARY RIGHT SIDE ──────────────────────────────────
+// Broken window frame
+(function() {
+  const frame = new THREE.Mesh(
+    new THREE.BoxGeometry(4, 5, 0.15),
+    new THREE.MeshLambertMaterial({ color: 0x2a1808 })
+  );
+  frame.position.set(16, 4.5, 0);
+  frame.rotation.y = -Math.PI / 2;
+  scene.add(frame);
+  // Glass shards (emissive orange for fire outside)
+  [[-0.5,-0.5],[0.3,-0.8],[0.7,0.2],[-0.3,0.7],[0.5,0.9]].forEach(([rx,ry]) => {
+    const shard = new THREE.Mesh(
+      new THREE.PlaneGeometry(0.6+Math.random()*0.4, 0.6+Math.random()*0.4),
+      new THREE.MeshBasicMaterial({ color: 0xff6010, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+    );
+    shard.position.set(16 - 0.1, 4.5 + ry * 1.5, rx);
+    shard.rotation.y = -Math.PI / 2;
+    shard.rotation.z = Math.random() * 0.5;
+    scene.add(shard);
+  });
+})();
+
+// Pamphlets on floor (right side)
+[[8,0.06,2],[9,0.06,-1],[11,0.06,1],[10,0.06,-2.5],[7.5,0.06,3],[12,0.06,0]].forEach(([x,y,z]) => {
+  const pamp = new THREE.Mesh(
+    new THREE.BoxGeometry(0.4, 0.02, 0.3),
+    new THREE.MeshLambertMaterial({ color: 0xd4c090 })
+  );
+  pamp.position.set(x, y, z);
+  pamp.rotation.y = Math.random() * Math.PI;
+  scene.add(pamp);
+});
+
+// Toppled chair
+(function() {
+  const mat = new THREE.MeshLambertMaterial({ color: 0x3a1a08 });
+  // Seat
+  const seat = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.07, 0.7), mat);
+  seat.position.set(10, 0.5, 3);
+  seat.rotation.z = 0.8;
+  seat.rotation.y = 0.4;
+  scene.add(seat);
+  // Back
+  const back = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.7, 0.07), mat);
+  back.position.set(10.3, 0.7, 3);
+  back.rotation.z = 0.8;
+  back.rotation.y = 0.4;
+  scene.add(back);
+})();
+
+// ── CENTRAL TABLE ─────────────────────────────────────────────
+const tableMat = new THREE.MeshLambertMaterial({ color: 0x180a04 });
+const table = new THREE.Mesh(new THREE.BoxGeometry(12, 0.2, 3), tableMat);
+table.position.set(0, 0.7, 0);
+table.castShadow = true;
+table.receiveShadow = true;
+scene.add(table);
+// Table legs
+[-5.5,5.5].forEach(lx => [-1.2,1.2].forEach(lz => {
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.7,8), tableMat);
+  leg.position.set(lx, 0.35, lz);
+  scene.add(leg);
+}));
+
+// ── CONCEPT DOCUMENTS ─────────────────────────────────────────
+const docData = [
+  {
+    pos: [-5, 0.82, 0],
+    label: "Absolutismo e Reforma Protestante (séc. XVI)",
+    desc: "REFORMA PROTESTANTE (1517): Martinho Lutero, 95 Teses — crítica à venda de indulgências. Calvino (predestinação, ética do trabalho), Henrique VIII (Anglicanismo por razões políticas). GUERRAS RELIGIOSAS (católicos vs. protestantes): Paz de Westfália (1648) — primeiro tratado moderno a reconhecer soberania estatal. ABSOLUTISMO: Luís XIV ('L'État, c'est moi'). Teoria do Direito Divino (Bossuet). Mercantilismo como política econômica: metalismo, balança comercial favorável, protecionismo.",
+    tip: "Paz de Westfália (1648) é cobrada em questões sobre Relações Internacionais — inaugurou o sistema de Estados-nação soberanos. A Reforma Protestante é ligada ao surgimento do capitalismo por Weber (ética protestante). Questão: 'Por que Henrique VIII criou o Anglicanismo?' → Razões POLÍTICAS (divórcio negado pelo Papa), não teológicas."
+  },
+  {
+    pos: [-2, 0.82, -0.5],
+    label: "Expansão Marítima Ibérica (séc. XV-XVI)",
+    desc: "Portugal: Bartolomeu Dias (Cabo da Boa Esperança, 1488), Vasco da Gama (Índia, 1498), Pedro Álvares Cabral (Brasil, 1500). Espanha: Colombo (América, 1492), Fernão de Magalhães (1ª circunavegação, 1519-22). Tratado de Tordesilhas (1494): divide o mundo entre Portugal e Espanha. Causas: busca por especiarias (comércio lucrativo), tecnologia náutica (caravela, astrolábio), queda de Constantinopla (1453) fechou rota terrestre. Impacto: genocídio indígena, escravidão africana, integração das Américas ao capitalismo mundial.",
+    tip: "Colombo NÃO sabia que havia chegado à América — morreu pensando que estava nas Índias. América foi nomeada por Américo Vespúcio que reconheceu ser um 'Novo Mundo'. Tratado de Tordesilhas é cobrado junto ao contexto da chegada de Cabral ao Brasil."
+  },
+  {
+    pos: [1, 0.82, 0.3],
+    label: "Revolução Americana (1776)",
+    desc: "13 colônias britânicas da América do Norte → independência. Causas: 'No taxation without representation' — taxação sem representação no parlamento inglês. Iluminismo: Locke (direito à revolução), Montesquieu (separação de poderes). Declaração de Independência (4/07/1776): Jefferson — 'todos os homens são criados iguais'. Constituição dos EUA (1787): primeira constituição escrita moderna. Contradição: escravidão coexistiu com a democracia até a Guerra Civil (1861-65).",
+    tip: "A Revolução Americana é cobrada junto ao Iluminismo — mostrar como ideias filosóficas viraram ação política. A contradição 'liberdade + escravidão' é frequente em questões críticas. Questão: 'Como o Iluminismo influenciou a Revolução Americana?' → Conceitos de Locke (propriedade, revolução), Montesquieu (3 poderes)."
+  },
+  {
+    pos: [4, 0.82, 0],
+    label: "Revolução Francesa (1789)",
+    desc: "CAUSAS: crise fiscal francesa, fome, Antigo Regime rígido, Iluminismo. FASES: 1) Monarquia Constitucional (1789-92): Declaração dos Direitos do Homem e do Cidadão. 2) Convenção/Terror (1792-95): Robespierre, guilhotina, execução de Luís XVI. 3) Diretório (1795-99): instabilidade. 4) Napoleão (1799-1815). LEGADO: liberdade, igualdade, fraternidade; abolição do feudalismo; Estado laico; soberania popular. Código Napoleônico (base do direito civil ocidental).",
+    tip: "A Revolução Francesa tem 3 fases claras para memorizar. O Terror (guilhotina) representa que revoluções podem devorar seus próprios filhos. Código Napoleônico é base do direito civil brasileiro. Questão clássica: 'Qual o lema da Revolução Francesa?' → Liberdade, Igualdade, Fraternidade."
+  },
+  {
+    pos: [-4, 0.82, 0.5],
+    label: "Revolução Industrial (Inglaterra, séc. XVIII-XIX)",
+    desc: "Inglaterra como berço: enclosures, acumulação de capital, carvão e ferro, invenção da máquina a vapor (James Watt, 1769). Transformações: urbanização acelerada, surgimento do proletariado, condições miseráveis de trabalho (crianças nas fábricas, 16h/dia). Respostas: Luddismo (quebravam máquinas), sindicatos (trade unions), marxismo, socialismo utópico (Owen, Saint-Simon). 2ª Revolução Industrial (séc. XIX): eletricidade, petróleo, aço, química — Alemanha e EUA ultrapassam a Inglaterra.",
+    tip: "A Revolução Industrial criou as CONDIÇÕES para o marxismo existir — sem o proletariado industrial, Marx não teria audiência. Questão: 'O que foi o Luddismo?' → Movimento que destruía máquinas, não era anti-tecnologia por princípio, mas protesto contra as condições de trabalho e o desemprego."
+  },
+  {
+    pos: [5.5, 0.82, -0.5],
+    label: "Revoluções de 1848 e Nacionalismo",
+    desc: "1848: 'Primavera dos Povos' — revoluções simultâneas em toda a Europa (França, Alemanha, Áustria, Itália). Combinação: liberalismo burguês + nacionalismo + questão social. Fracassaram militarmente mas plantaram sementes. Unificações nacionais: Alemanha (Bismarck, 'ferro e sangue', 1871), Itália (Garibaldi, Cavour, 1861). Imperialismo do séc. XIX: Europa divide a África e Ásia (Conferência de Berlim 1884). Nasce o mundo que vai explodir em 1914.",
+    tip: "O imperialismo do séc. XIX é o elo entre a Revolução Industrial e a 1ª Guerra Mundial. Questão: 'Por que houve a Conferência de Berlim?' → Potências europeias precisavam dividir a África de forma 'ordenada' para evitar guerras entre elas (mas sem consultar os africanos)."
+  }
+];
+
+const docMeshes = [];
+
+function makeDocCanvas(label) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 192;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#c8b060';
+  ctx.fillRect(0, 0, 256, 192);
+  ctx.fillStyle = 'rgba(0,0,0,0.12)';
+  for (let i = 0; i < 7; i++) {
+    ctx.fillRect(16, 30 + i * 22, 224, 1);
+  }
+  ctx.fillStyle = '#3a2208';
+  ctx.font = 'bold 14px serif';
+  ctx.textAlign = 'center';
+  const words = label.split(' ');
+  let line = ''; let y = 50;
+  words.forEach(word => {
+    const test = line + word + ' ';
+    if (ctx.measureText(test).width > 220) { ctx.fillText(line, 128, y); y += 20; line = word + ' '; }
+    else line = test;
+  });
+  ctx.fillText(line, 128, y);
+  return canvas;
+}
+
+docData.forEach((data, i) => {
+  const canvas = makeDocCanvas(data.label);
+  const tex = new THREE.CanvasTexture(canvas);
+  const mesh = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.5, 1.8),
+    new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide })
+  );
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.set(data.pos[0], data.pos[1], data.pos[2]);
+  mesh.userData = { isDoc: true, data, index: i };
+  scene.add(mesh);
+  docMeshes.push(mesh);
+});
+
+// ── RAYCASTER ────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredDoc = null;
+const tooltip = document.getElementById('tooltip');
+const popupOverlay = document.getElementById('popup-overlay');
+const popupTitle = document.getElementById('popup-title');
+const popupDesc = document.getElementById('popup-desc');
+const popupTip = document.getElementById('popup-tip');
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(docMeshes);
+  if (intersects.length > 0) {
+    const mesh = intersects[0].object;
+    if (mesh !== hoveredDoc) {
+      if (hoveredDoc) hoveredDoc.material.emissive && (hoveredDoc.material.emissiveIntensity = 0);
+      hoveredDoc = mesh;
+    }
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = mesh.userData.data.label;
+    document.body.style.cursor = 'pointer';
+  } else {
+    hoveredDoc = null;
+    tooltip.style.display = 'none';
+    document.body.style.cursor = 'default';
+  }
+});
+
+window.addEventListener('click', e => {
+  if (popupOverlay.classList.contains('active')) return;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(docMeshes);
+  if (intersects.length > 0) {
+    const data = intersects[0].object.userData.data;
+    popupTitle.textContent = data.label;
+    popupDesc.textContent = data.desc;
+    popupTip.innerHTML = '<strong>UNICAP:</strong> ' + data.tip;
+    popupOverlay.classList.add('active');
+  }
+});
+
+document.getElementById('popup-close').addEventListener('click', () => popupOverlay.classList.remove('active'));
+popupOverlay.addEventListener('click', e => { if (e.target === popupOverlay) popupOverlay.classList.remove('active'); });
+
+// ── ANIMATION ─────────────────────────────────────────────────
+let t = 0;
+const hintEl = document.getElementById('hint');
+setTimeout(() => { hintEl.style.opacity = '0'; }, 4000);
+
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.016;
+
+  // Fire flickering
+  fireLight.intensity = 3.5 + Math.sin(t * 3.7) * 1.5 + Math.sin(t * 7.3) * 0.5;
+  fireLight.color.setRGB(1.0, 0.25 + Math.sin(t*2.1)*0.05, 0.04);
+
+  // Chandelier sway
+  chanGroup.rotation.z = Math.sin(t * 0.5) * 0.04;
+  chandelierLight.intensity = 3.5 + Math.sin(t * 1.2) * 0.5;
+
+  // Documents gentle pulse if hovered
+  docMeshes.forEach(m => {
+    if (m === hoveredDoc) {
+      m.position.y = m.userData.data.pos[1] + 0.04 + Math.sin(t * 4) * 0.01;
+    } else {
+      m.position.y = m.userData.data.pos[1];
+    }
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

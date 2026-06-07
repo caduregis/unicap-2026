@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Romantismo — Resumo Completo | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04020d;
+  --bg2: #07041a;
+  --bg3: #0d0820;
+  --card: #0f0b1e;
+  --border: rgba(140,100,200,0.2);
+  --accent: #9060d0;
+  --accent2: #c090f0;
+  --gold: #d4b060;
+  --text: #c8b8e0;
+  --textsoft: #8878a8;
+  --rose: #e080b0;
+  --silver: #b0b8d0;
+  --green: #60d090;
+  --red: #e06080;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(4,2,13,0.96);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  padding: 12px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav .nav-left { display:flex; gap:16px; align-items:center; }
+nav a {
+  color: var(--textsoft); text-decoration: none; font-size: 12.5px; font-weight: 500;
+  padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px;
+  transition: all 0.2s;
+}
+nav a:hover { color: var(--accent2); border-color: var(--accent); background: rgba(144,96,208,0.1); }
+nav .badge {
+  background: linear-gradient(135deg, #2a1040, #180828);
+  border: 1px solid var(--accent);
+  color: var(--accent2); font-size: 12px; font-weight: 700;
+  padding: 5px 16px; border-radius: 20px; letter-spacing: 0.05em;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 50%, var(--bg3) 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 60px 32px 48px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(100,60,180,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(80,40,140,0.08) 0%, transparent 50%);
+}
+.hero-icon { font-size: 52px; margin-bottom: 16px; display:block; position:relative; }
+.hero h1 {
+  font-size: 36px; font-weight: 800; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #e0d0ff 0%, #b080e8 50%, #8040c0 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px; position: relative;
+}
+.hero-sub { color: var(--textsoft); font-size: 15px; position:relative; }
+.hero-tags { display:flex; gap:8px; justify-content:center; margin-top:20px; flex-wrap:wrap; position:relative; }
+.hero-tags span {
+  background: rgba(140,100,200,0.12); border: 1px solid rgba(140,100,200,0.25);
+  color: var(--accent2); font-size: 11.5px; font-weight: 600; padding: 4px 12px; border-radius: 12px;
+}
+
+/* LAYOUT */
+.container { max-width: 1100px; margin: 0 auto; padding: 40px 32px; }
+section { margin-bottom: 48px; }
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.section-icon { font-size: 22px; }
+.section-title { font-size: 18px; font-weight: 700; color: var(--accent2); letter-spacing: 0.02em; }
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 22px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: rgba(140,100,200,0.4); }
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-title { font-size: 15px; font-weight: 700; color: var(--gold); }
+.card-tag {
+  font-size: 10.5px; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.tag-1g { background: rgba(80,180,100,0.15); color: var(--green); border: 1px solid rgba(80,180,100,0.25); }
+.tag-2g { background: rgba(220,80,120,0.15); color: var(--rose); border: 1px solid rgba(220,80,120,0.25); }
+.tag-3g { background: rgba(80,160,220,0.15); color: var(--silver); border: 1px solid rgba(80,160,220,0.25); }
+.tag-gen { background: rgba(140,100,200,0.15); color: var(--accent2); border: 1px solid rgba(140,100,200,0.25); }
+.tag-uni { background: rgba(212,176,96,0.15); color: var(--gold); border: 1px solid rgba(212,176,96,0.3); }
+
+.card p { color: var(--textsoft); font-size: 13.5px; line-height: 1.75; margin-bottom: 10px; }
+.card p:last-child { margin-bottom: 0; }
+
+/* WORKS LIST */
+.works-list { list-style: none; }
+.works-list li {
+  padding: 7px 0; border-bottom: 1px solid rgba(140,100,200,0.08);
+  color: var(--textsoft); font-size: 13.5px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.works-list li:last-child { border-bottom: none; }
+.works-list li::before { content: '▸'; color: var(--accent); font-size: 10px; margin-top: 3px; flex-shrink: 0; }
+.works-list b { color: var(--text); }
+
+/* UNICAP TIP */
+.unicap-tip {
+  background: linear-gradient(135deg, rgba(140,90,220,0.12) 0%, rgba(100,60,180,0.08) 100%);
+  border: 1px solid rgba(140,100,200,0.35);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px; margin: 14px 0;
+  font-size: 13px; color: var(--accent2); line-height: 1.65;
+}
+.unicap-tip::before {
+  content: "⚡ DICA UNICAP — ";
+  font-weight: 800; color: #b070ff; font-size: 11px; letter-spacing: 0.06em;
+  display: block; margin-bottom: 4px;
+}
+
+/* HIGHLIGHT BOX */
+.highlight {
+  background: rgba(212,176,96,0.07);
+  border: 1px solid rgba(212,176,96,0.2);
+  border-radius: 8px; padding: 16px 20px;
+  margin: 14px 0;
+}
+.highlight .poem {
+  font-style: italic; color: #d4c080; font-size: 14px; line-height: 1.9;
+  border-left: 2px solid rgba(212,176,96,0.4); padding-left: 16px;
+}
+
+/* TWO COLUMN GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:700px){ .grid-2 { grid-template-columns: 1fr; } }
+
+/* COMPARISON TABLE */
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-table th {
+  padding: 12px 16px; text-align: left;
+  background: rgba(140,100,200,0.12); color: var(--accent2); font-weight: 700;
+  border: 1px solid var(--border);
+}
+.compare-table td {
+  padding: 10px 16px; border: 1px solid var(--border);
+  color: var(--textsoft); vertical-align: top; line-height: 1.6;
+}
+.compare-table tr:nth-child(even) td { background: rgba(140,100,200,0.04); }
+.compare-table td:first-child { color: var(--gold); font-weight: 600; white-space: nowrap; }
+
+/* CHECKLIST */
+.checklist { list-style: none; }
+.checklist li {
+  padding: 8px 0; border-bottom: 1px solid rgba(140,100,200,0.08);
+  display: flex; align-items: center; gap: 12px;
+  color: var(--textsoft); font-size: 13.5px;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-box {
+  width: 18px; height: 18px; border: 2px solid var(--border);
+  border-radius: 4px; flex-shrink: 0; cursor: pointer;
+  transition: all 0.2s; display: flex; align-items:center; justify-content:center;
+}
+.check-box:hover { border-color: var(--accent); }
+.check-box.done { background: var(--accent); border-color: var(--accent); }
+.check-box.done::after { content:'✓'; color:#fff; font-size:11px; font-weight:700; }
+
+/* VIDEOS */
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.video-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px; text-decoration: none; transition: all 0.2s; display: block;
+}
+.video-card:hover { border-color: var(--accent); background: rgba(140,100,200,0.08); }
+.video-card .vc-ch { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform:uppercase; margin-bottom:6px; }
+.video-card .vc-title { color: var(--text); font-size: 13px; font-weight: 600; line-height: 1.5; margin-bottom:4px; }
+.video-card .vc-desc { color: var(--textsoft); font-size: 11.5px; line-height: 1.5; }
+.video-card .vc-icon { float:right; font-size:18px; }
+
+/* FOOTER */
+footer {
+  text-align: center; padding: 40px 32px;
+  border-top: 1px solid var(--border);
+  color: var(--textsoft); font-size: 12px;
+}
+footer a { color: var(--accent2); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-left">
+    <a href="../../../index.html">← Linguagens</a>
+    <a href="mapa3d.html">🌙 Mapa 3D</a>
+  </div>
+  <div class="badge">🌙 Romantismo — Resumo Completo</div>
+  <a href="../realismo/resumo.html">Realismo →</a>
+</nav>
+
+<div class="hero">
+  <span class="hero-icon">🌙</span>
+  <h1>Romantismo Brasileiro</h1>
+  <p class="hero-sub">1836–1881 · Identidade Nacional · Sentimento · Evasão</p>
+  <div class="hero-tags">
+    <span>3 Gerações</span>
+    <span>Gonçalves Dias</span>
+    <span>Álvares de Azevedo</span>
+    <span>Castro Alves</span>
+    <span>José de Alencar</span>
+    <span>Indianismo</span>
+    <span>Mal do Século</span>
+    <span>Condoreirismo</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- CONTEXTO HISTÓRICO -->
+  <section id="contexto">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <span class="section-title">Contexto Histórico</span>
+    </div>
+    <div class="card">
+      <p>O Romantismo brasileiro surge após a <b>Independência do Brasil (1822)</b> e se consolida com a fundação do IHGB (Instituto Histórico e Geográfico Brasileiro) em 1838. O contexto é de um país recém-independente que precisa construir uma identidade nacional própria, diferente da metrópole portuguesa.</p>
+      <p>A chegada do Romantismo vem de Portugal com a publicação de <b>"Suspiros Poéticos e Saudades"</b> de Gonçalves de Magalhães (1836), considerado o marco inaugural. O movimento dura até 1881, quando Machado de Assis publica "Memórias Póstumas de Brás Cubas", inaugurando o Realismo.</p>
+      <p><b>Contexto político:</b> Segundo Reinado (Dom Pedro II), abolicionismo crescente, republicanismo, guerra do Paraguai, imigração, café como base econômica.</p>
+    </div>
+    <div class="unicap-tip">
+      A data de 1836 (Gonçalves de Magalhães) é o marco oficial do início do Romantismo no Brasil. A data de 1881 (Memórias Póstumas) é o marco do fim. Esses limites cronológicos aparecem em questões de contextualização.
+    </div>
+  </section>
+
+  <!-- CARACTERÍSTICAS GERAIS -->
+  <section id="caracteristicas">
+    <div class="section-header">
+      <span class="section-icon">✦</span>
+      <span class="section-title">Características Gerais</span>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Temáticas</span>
+          <span class="card-tag tag-gen">Temas</span>
+        </div>
+        <ul class="works-list">
+          <li><span>Subjetivismo e individualismo exacerbado — o "eu" é o centro</span></li>
+          <li><span>Sentimentalismo e emoção sobre a razão</span></li>
+          <li><span>Idealização da mulher e do amor (inacessível, puro)</span></li>
+          <li><span>Fuga da realidade: temporal (passado/Idade Média), espacial (natureza), religiosa, pela morte</span></li>
+          <li><span>Valorização do nacional: natureza brasileira, índio como herói</span></li>
+          <li><span>Saudade, melancolia, nostalgia</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Estilo e Linguagem</span>
+          <span class="card-tag tag-gen">Forma</span>
+        </div>
+        <ul class="works-list">
+          <li><span>Linguagem rebuscada, retórica, prolífica</span></li>
+          <li><span>Adjetivação excessiva e hipérboles</span></li>
+          <li><span>Natureza como personagem e espelho das emoções</span></li>
+          <li><span>Nacionalismo linguístico: brasileirismos na prosa de Alencar</span></li>
+          <li><span>Verso longo, lírico, narrativo</span></li>
+          <li><span>Temas: amor, morte, pátria, natureza, religião, solidão</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="unicap-tip">
+      Em questões com fragmento de texto: identifique o Romantismo pela presença de "eu" dominante, natureza como cenário emotivo, mulher idealizada ou morte/sofrimento exaltados. Compare com o Realismo, que observa de fora, sem sentimentalismo.
+    </div>
+  </section>
+
+  <!-- 3 GERAÇÕES -->
+  <section id="geracoes">
+    <div class="section-header">
+      <span class="section-icon">🔱</span>
+      <span class="section-title">As Três Gerações Românticas</span>
+    </div>
+
+    <!-- 1ª GERAÇÃO -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">1ª Geração — Indianismo / Nacionalismo</span>
+        <span class="card-tag tag-1g">c. 1836–1860</span>
+      </div>
+      <p><b>Tom:</b> Otimismo, celebração da pátria, valorização do índio como símbolo nacional ("bom selvagem" rousseauniano), natureza brasileira como tema central.</p>
+      <p><b>Principais autores:</b></p>
+      <ul class="works-list">
+        <li><b>Gonçalves Dias</b> — "Canção do Exílio" (Minha terra tem palmeiras…), "I-Juca Pirama" (poema épico indianista), "Os Timbiras". Morreu afogado em 1864.</li>
+        <li><b>Gonçalves de Magalhães</b> — "Suspiros Poéticos e Saudades" (1836, marco inaugural), "A Confederação dos Tamoios".</li>
+        <li><b>Araújo Porto Alegre</b> — papel secundário na inauguração do movimento.</li>
+      </ul>
+      <div class="highlight">
+        <div class="poem">
+          "Minha terra tem palmeiras,<br>
+          Onde canta o sabiá;<br>
+          As aves que aqui gorjeiam,<br>
+          Não gorjeiam como lá."<br>
+          <small style="color:var(--textsoft);font-style:normal;">— Gonçalves Dias, "Canção do Exílio" (1843)</small>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        "Canção do Exílio" foi escrita em Coimbra, Portugal, enquanto Gonçalves Dias estudava. Esse contexto da saudade da pátria estando no exterior é fundamental para interpretar o poema. Carlos Drummond parodiou o poema em "Europa, França e Bahia" — questão de intertextualidade frequente.
+      </div>
+    </div>
+
+    <!-- 2ª GERAÇÃO -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">2ª Geração — Ultrarromantismo / Mal do Século</span>
+        <span class="card-tag tag-2g">c. 1850–1870</span>
+      </div>
+      <p><b>Tom:</b> Pessimismo radical, culto da morte ("saudade de morrer"), boemia, amor impossível e frustrado, spleen (tédio existencial), fuga pela morte ou pelo álcool. Influência do inglês Byron e do francês Musset.</p>
+      <p><b>Principais autores:</b></p>
+      <ul class="works-list">
+        <li><b>Álvares de Azevedo</b> — "Noite na Taverna" (prosa poética, boemia, morte, erotismo), "Macário" (drama), "Lira dos Vinte Anos". Morreu aos 20 anos. Quintilha do estudo: "Moribundo vivendo, vivi morrendo."</li>
+        <li><b>Casimiro de Abreu</b> — "As Primaveras" ("Minha terra tem palmeiras" → saudade da infância). Morreu aos 21 anos.</li>
+        <li><b>Fagundes Varela</b> — "Noturnas", poesia de decadência e melancolia.</li>
+        <li><b>Junqueira Freire</b> — frade que queria sair do convento; poesia religiosa e conflituosa.</li>
+      </ul>
+      <div class="unicap-tip">
+        A morte precoce dos autores da 2ª geração era vista como coerente com a filosofia do "mal do século" — morrer jovem era poeticamente consistente. Álvares de Azevedo (20 anos), Casimiro de Abreu (21 anos). Se o fragmento tem boemia, morte, desespero amoroso, jovem atormentado → 2ª geração romântica.
+      </div>
+    </div>
+
+    <!-- 3ª GERAÇÃO -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">3ª Geração — Condoreirismo / Hugoísmo</span>
+        <span class="card-tag tag-3g">c. 1860–1881</span>
+      </div>
+      <p><b>Tom:</b> Social, político, oratório. Poesia comprometida com causas coletivas: abolicionismo, republicanismo, liberdade. Influência de Victor Hugo (condor = ave de voo alto, símbolo de grandiosidade). Também chamado de Hugoísmo.</p>
+      <p><b>Principais autores:</b></p>
+      <ul class="works-list">
+        <li><b>Castro Alves</b> — "O Navio Negreiro" (denúncia da escravidão, leitura obrigatória), "Vozes d'África", "Os Escravos". "O Poeta dos Escravos".</li>
+        <li><b>Tobias Barreto</b> — Escola do Recife, transição ao Realismo.</li>
+        <li><b>Sousândrade</b> — mais experimental, menos estudado em vestibulares.</li>
+      </ul>
+      <div class="highlight">
+        <div class="poem">
+          "Era um sonho dantesco... o tombadilho<br>
+          Que das luzernas avermelha o brilho.<br>
+          Em sangue a se banhar.<br>
+          Tinir de ferros... estalar de açoite...<br>
+          Legiões de homens negros como a noite,<br>
+          Horrendos a dançar..."<br>
+          <small style="color:var(--textsoft);font-style:normal;">— Castro Alves, "O Navio Negreiro"</small>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        "O Navio Negreiro" é quase obrigatório quando o tema é Romantismo social ou denúncia da escravidão. Saber: o poema descreve um navio negreiro que o poeta vê da costa, em tom dramático e oratório. A linguagem é retórica, com apóstrofes e exclamações — características da 3ª geração.
+      </div>
+    </div>
+  </section>
+
+  <!-- ROMANCE ROMÂNTICO -->
+  <section id="romance">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">O Romance Romântico em Prosa</span>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">José de Alencar — O Grande Romancista</span>
+        <span class="card-tag tag-gen">Prosa</span>
+      </div>
+      <p>Maior prosador do Romantismo brasileiro. Dividiu sua obra em quatro ciclos:</p>
+      <ul class="works-list">
+        <li><b>Indianista:</b> "O Guarani" (1857), "Iracema" (1865), "Ubirajara" (1874) — o índio idealizado como fundador da identidade nacional.</li>
+        <li><b>Regionalista/Sertanejo:</b> "O Sertanejo" (1875), "O Gaúcho" (1870), "Til" (1872) — retratos do interior do Brasil.</li>
+        <li><b>Urbano:</b> "Lucíola" (1862), "Diva" (1864), "Senhora" (1875) — conflito amor × interesse, crítica social da elite carioca.</li>
+        <li><b>Histórico:</b> "As Minas de Prata", "A Guerra dos Mascarados".</li>
+      </ul>
+      <div class="highlight">
+        <div class="poem">
+          <b>Iracema</b> — anagrama de "América". A índia Iracema, guardiã do segredo da jurema, se entrega ao guerreiro branco Martim, tem um filho (Moacir = "o nascido do sofrimento") e morre. Alegoria da formação do Brasil: índio + europeu = mestiçagem fundante.
+        </div>
+      </div>
+      <div class="unicap-tip">
+        "Iracema" = anagrama de "América" — essa informação cai com frequência. "Senhora" tem a personagem Aurélia Camargo que "compra" o noivo Seixas — crítica ao casamento por interesse, mulher com agência → cai em questões de análise literária.
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Joaquim Manuel de Macedo</span>
+          <span class="card-tag tag-1g">Marco</span>
+        </div>
+        <p><b>"A Moreninha" (1844)</b> — considerado o primeiro romance brasileiro. Narrativa de amor entre estudantes. Leve, sentimental, sem profundidade psicológica. Inaugurou o romance romântico no Brasil.</p>
+        <div class="unicap-tip">
+          "A Moreninha" = 1º romance brasileiro. Data: 1844. Autor: Joaquim Manuel de Macedo. Questão direta frequente.
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Manuel Antônio de Almeida</span>
+          <span class="card-tag tag-gen">Transição</span>
+        </div>
+        <p><b>"Memórias de um Sargento de Milícias" (1853)</b> — considerado obra de transição entre o Romantismo e o Realismo. Protagonista Leonardo Pataca, malandro, vivendo na Lisboa colonial do Rio. Tom picaresco, humor, crítica social sutil.</p>
+        <div class="unicap-tip">
+          "Memórias de um Sargento de Milícias" é frequentemente citada como "obra fora da linhagem romântica tradicional" por seu realismo e humor. Cai em questões sobre antecipação do Realismo ou picaresco no Romantismo.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARAÇÃO ROMANTISMO vs REALISMO -->
+  <section id="comparacao">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <span class="section-title">Romantismo vs. Realismo — Tabela de Contraste</span>
+    </div>
+    <div class="card" style="overflow-x:auto; padding:0;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Aspecto</th>
+            <th style="color:#c0a8e8">Romantismo (1836–1881)</th>
+            <th style="color:#c8a060">Realismo (1881–1902)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Visão do mundo</td>
+            <td>Idealista, subjetiva, emotiva</td>
+            <td>Objetiva, crítica, científica</td>
+          </tr>
+          <tr>
+            <td>Narrador</td>
+            <td>Envolvido emocionalmente, 1ª pessoa lírica</td>
+            <td>Distante, irônico, não confiável (Machado)</td>
+          </tr>
+          <tr>
+            <td>Mulher</td>
+            <td>Idealizada, anjo, pura, inacessível</td>
+            <td>Real, com falhas, ambígua (Capitu)</td>
+          </tr>
+          <tr>
+            <td>Amor</td>
+            <td>Impossível, sofrido, espiritual</td>
+            <td>Mercantil, interesse social, adultério</td>
+          </tr>
+          <tr>
+            <td>Natureza</td>
+            <td>Refúgio, espelho das emoções</td>
+            <td>Determinismo do meio (Naturalismo)</td>
+          </tr>
+          <tr>
+            <td>Linguagem</td>
+            <td>Rebuscada, retórica, adjetivada</td>
+            <td>Objetiva, precisa, irônica</td>
+          </tr>
+          <tr>
+            <td>Foco social</td>
+            <td>Burguesia sentimental, índio nobre</td>
+            <td>Crítica à burguesia, classes baixas (Naturalismo)</td>
+          </tr>
+          <tr>
+            <td>Filosofia</td>
+            <td>Rousseau (bom selvagem), individualismo</td>
+            <td>Positivismo (Comte), Determinismo (Taine)</td>
+          </tr>
+          <tr>
+            <td>Obra-símbolo</td>
+            <td>"Canção do Exílio", "O Navio Negreiro"</td>
+            <td>"Memórias Póstumas de Brás Cubas"</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="unicap-tip">
+      Questões de contraste entre Romantismo e Realismo são muito frequentes na UNICAP. Decore a lógica central: Romantismo = idealiza, foge, sente. Realismo = observa, critica, analisa. Ao ver um fragmento, procure indicadores de qual dos dois está presente.
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section id="checklist">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <span class="section-title">Checklist de Revisão</span>
+    </div>
+    <div class="card">
+      <ul class="checklist" id="checklist-items">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei o marco inicial (1836 — Gonçalves de Magalhães) e final (1881 — Machado)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei identificar as 3 gerações pelo tema e pelo autor</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Conheço "Canção do Exílio" e seu contexto biográfico</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei o que é "mal do século" e identifico na 2ª geração</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Associo Castro Alves a "O Navio Negreiro" e abolicionismo</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei os 4 ciclos de José de Alencar e as obras principais</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei que "Iracema" = anagrama de "América"</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei que "A Moreninha" é o 1º romance brasileiro (1844)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Sei contrastar Romantismo vs. Realismo nos 8 aspectos da tabela</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Reconheço Romantismo em fragmento de texto por palavras-chave</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VÍDEOS -->
+  <section id="videos">
+    <div class="section-header">
+      <span class="section-icon">▶</span>
+      <span class="section-title">Vídeos Recomendados</span>
+    </div>
+    <div class="video-grid">
+      <a href="https://www.youtube.com/@deboraaladimliteratura" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Débora Aladim</div>
+        <div class="vc-title">Romantismo Brasileiro Completo</div>
+        <div class="vc-desc">Melhor canal para literatura. Cobre as 3 gerações com profundidade e exemplos de prova.</div>
+      </a>
+      <a href="https://www.youtube.com/@StefaneMota" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Stéfane Mota</div>
+        <div class="vc-title">Romantismo — Fases e Autores</div>
+        <div class="vc-desc">Didático para vestibular. Foca nas informações mais cobradas em provas.</div>
+      </a>
+      <a href="https://www.youtube.com/@profnoslen" target="_blank" class="video-card">
+        <span class="vc-icon">▶</span>
+        <div class="vc-ch">Prof. Noslen</div>
+        <div class="vc-title">Literatura Romantismo</div>
+        <div class="vc-desc">Focado em ENEM e vestibulares. Resumos ágeis com questões comentadas.</div>
+      </a>
+      <a href="https://brasilescola.uol.com.br/literatura/romantismo.htm" target="_blank" class="video-card">
+        <span class="vc-icon">📖</span>
+        <div class="vc-ch">Brasil Escola</div>
+        <div class="vc-title">Romantismo — Artigos Completos</div>
+        <div class="vc-desc">Textos de referência sobre cada geração, autor e obra. Bom para consulta rápida.</div>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>UNICAP Nexus — Material de estudo para Carlos Régis · UNICAP 2026.2 · Direito Manhã</p>
+  <p style="margin-top:8px;"><a href="mapa3d.html">🌙 Ver Mapa 3D — Ruínas ao Luar</a> · <a href="../realismo/resumo.html">Próximo: Realismo →</a></p>
+</footer>
+
+<script>
+function toggleCheck(el){
+  el.classList.toggle('done');
+}
+</script>
+</body>
+</html>

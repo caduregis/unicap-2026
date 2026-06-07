@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Gabinete do Cartógrafo — Geografia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #020308; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(2,3,8,0.97) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  #nav a {
+    pointer-events: all;
+    color: #4090d0; text-decoration: none; font-size: 13px; font-weight: 500;
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border: 1px solid rgba(64,144,208,0.3);
+    border-radius: 20px; background: rgba(2,3,8,0.85);
+    transition: all 0.2s;
+  }
+  #nav a:hover { background: rgba(64,144,208,0.15); border-color: rgba(64,144,208,0.6); }
+  #nav-badge {
+    font-size: 13px; font-weight: 600; color: #90d0f0;
+    background: rgba(2,3,8,0.85); border: 1px solid rgba(64,144,208,0.25);
+    padding: 6px 16px; border-radius: 20px; letter-spacing: 0.02em;
+  }
+
+  #tooltip {
+    position: fixed; pointer-events: none; z-index: 200;
+    background: rgba(2,3,12,0.95); border: 1px solid rgba(64,144,208,0.5);
+    color: #a0d0f0; font-size: 12px; font-weight: 500;
+    padding: 6px 12px; border-radius: 8px;
+    display: none; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+  }
+
+  #popup-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #popup-overlay.active { display: flex; }
+  #popup {
+    background: linear-gradient(145deg, #040810, #020508);
+    border: 1px solid rgba(64,144,208,0.3);
+    border-radius: 16px; max-width: 660px; width: 100%;
+    max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9), 0 0 40px rgba(64,144,208,0.04);
+    padding: 28px;
+  }
+  #popup-title {
+    font-size: 18px; font-weight: 700; color: #4090d0;
+    margin-bottom: 16px;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(64,144,208,0.2);
+    line-height: 1.3;
+  }
+  #popup-desc {
+    font-size: 14px; line-height: 1.75; color: #90b8d8;
+    margin-bottom: 16px;
+  }
+  #popup-tip {
+    background: rgba(64,144,208,0.06);
+    border-left: 3px solid #4090d0;
+    padding: 14px 16px; border-radius: 0 8px 8px 0;
+    font-size: 13px; line-height: 1.7; color: #70a0c0;
+  }
+  #popup-tip strong { color: #4090d0; font-weight: 700; }
+  #popup-close {
+    display: block; width: 100%; margin-top: 20px;
+    padding: 10px; background: rgba(64,144,208,0.1);
+    border: 1px solid rgba(64,144,208,0.3); border-radius: 8px;
+    color: #4090d0; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif;
+    letter-spacing: 0.04em;
+  }
+  #popup-close:hover { background: rgba(64,144,208,0.2); }
+
+  #hint {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(2,3,8,0.9); border: 1px solid rgba(64,144,208,0.2);
+    color: rgba(64,144,208,0.7); font-size: 12px; padding: 8px 18px;
+    border-radius: 20px; pointer-events: none; z-index: 50; transition: opacity 1s;
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<nav id="nav">
+  <a href="../../index.html">&#8592; Nexus</a>
+  <div id="nav-badge">&#128506; Gabinete do Cartógrafo — Geografia</div>
+  <a href="resumo.html">Resumo &#8594;</a>
+</nav>
+
+<div id="tooltip"></div>
+
+<div id="popup-overlay">
+  <div id="popup">
+    <div id="popup-title"></div>
+    <div id="popup-desc"></div>
+    <div id="popup-tip"></div>
+    <button id="popup-close">FECHAR</button>
+  </div>
+</div>
+
+<div id="hint">Clique nos pergaminhos para estudar · Arraste para orbitar · Scroll para zoom</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// ── SCENE SETUP ──────────────────────────────────────────────
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x020308);
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x030408, 20, 55);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 150);
+camera.position.set(0, 7, 15);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 2, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.6;
+controls.minDistance = 4;
+controls.maxDistance = 30;
+controls.update();
+
+// ── LIGHTS ───────────────────────────────────────────────────
+const lampLight = new THREE.PointLight(0xffa040, 4, 15);
+lampLight.position.set(0, 3.5, 0);
+lampLight.castShadow = true;
+scene.add(lampLight);
+
+const screenGlow = new THREE.PointLight(0x3060ff, 1.8, 12);
+screenGlow.position.set(-12, 4, -3);
+scene.add(screenGlow);
+
+const screenGlow2 = new THREE.PointLight(0x2050aa, 1.2, 10);
+screenGlow2.position.set(-12, 4, 3);
+scene.add(screenGlow2);
+
+const ambient = new THREE.AmbientLight(0x060810, 0.8);
+scene.add(ambient);
+
+const fillRight = new THREE.PointLight(0x100c08, 1, 20);
+fillRight.position.set(8, 6, 0);
+scene.add(fillRight);
+
+// ── FLOOR (dark wood) ─────────────────────────────────────────
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#100c08';
+  ctx.fillRect(0,0,256,256);
+  ctx.strokeStyle = 'rgba(40,28,16,0.5)';
+  ctx.lineWidth = 2;
+  for (let y = 0; y <= 256; y += 32) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(256,y); ctx.stroke(); }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(6, 4);
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(30, 20),
+    new THREE.MeshLambertMaterial({ map: tex })
+  );
+  floor.rotation.x = -Math.PI / 2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+})();
+
+// ── MAP TABLE ─────────────────────────────────────────────────
+const tableMat = new THREE.MeshLambertMaterial({ color: 0x1a0e06 });
+const tableTop = new THREE.Mesh(new THREE.BoxGeometry(10, 0.2, 6), tableMat);
+tableTop.position.set(0, 0.8, 0);
+tableTop.castShadow = true;
+tableTop.receiveShadow = true;
+scene.add(tableTop);
+// Legs
+[-4.5,4.5].forEach(lx => [-2.5,2.5].forEach(lz => {
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.8,8), tableMat);
+  leg.position.set(lx, 0.4, lz);
+  scene.add(leg);
+}));
+
+// ── BRAZIL MAP ON TABLE ───────────────────────────────────────
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 320;
+  const ctx = canvas.getContext('2d');
+
+  // Ocean background
+  ctx.fillStyle = '#0a1828';
+  ctx.fillRect(0,0,512,320);
+
+  // Draw simplified Brazil outline
+  ctx.beginPath();
+  // Rough Brazil shape using bezier curves
+  ctx.moveTo(200, 40);  // North coast start
+  ctx.lineTo(280, 30);  // North coast
+  ctx.lineTo(340, 60);
+  ctx.lineTo(400, 50);
+  ctx.lineTo(460, 100); // Northeast
+  ctx.lineTo(480, 160);
+  ctx.lineTo(450, 220); // East coast
+  ctx.lineTo(400, 280);
+  ctx.lineTo(350, 310); // South
+  ctx.lineTo(280, 295);
+  ctx.lineTo(220, 300);
+  ctx.lineTo(150, 280);
+  ctx.lineTo(100, 230); // Southwest
+  ctx.lineTo(60, 200);
+  ctx.lineTo(50, 160);
+  ctx.lineTo(80, 120);  // West
+  ctx.lineTo(90, 80);
+  ctx.lineTo(140, 50);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(30,80,40,0.7)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(60,200,80,0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Region labels
+  const regions = [
+    { label: 'Norte', x: 160, y: 110, color: 'rgba(40,200,80,0.8)' },
+    { label: 'Nordeste', x: 360, y: 130, color: 'rgba(220,160,40,0.8)' },
+    { label: 'C.Oeste', x: 230, y: 190, color: 'rgba(180,200,60,0.8)' },
+    { label: 'Sudeste', x: 320, y: 240, color: 'rgba(60,120,220,0.8)' },
+    { label: 'Sul', x: 280, y: 285, color: 'rgba(100,160,220,0.8)' },
+  ];
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'center';
+  regions.forEach(r => {
+    ctx.fillStyle = r.color;
+    ctx.fillText(r.label, r.x, r.y);
+  });
+
+  // Brasília dot
+  ctx.beginPath();
+  ctx.arc(238, 200, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#ff8020';
+  ctx.fill();
+  ctx.fillStyle = '#ff8020';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Brasília', 245, 204);
+
+  // Title
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillStyle = 'rgba(200,220,255,0.9)';
+  ctx.textAlign = 'center';
+  ctx.fillText('BRASIL', 256, 22);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  const mapPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(9, 5),
+    new THREE.MeshLambertMaterial({ map: tex, emissive: 0x0a0804, emissiveIntensity: 0.3 })
+  );
+  mapPlane.rotation.x = -Math.PI / 2;
+  mapPlane.position.set(0, 0.91, 0);
+  scene.add(mapPlane);
+})();
+
+// ── GLOBE ─────────────────────────────────────────────────────
+(function() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256; canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#0a1828';
+  ctx.fillRect(0,0,256,256);
+  // Continents simplified
+  const continents = [
+    // N America
+    { path: [[60,40],[100,35],[120,60],[110,100],[80,120],[50,100],[40,70]] },
+    // S America (Brazil region)
+    { path: [[80,120],[110,100],[130,130],[120,180],[90,190],[70,160]] },
+    // Europe/Africa
+    { path: [[120,30],[145,25],[155,60],[160,120],[140,180],[115,185],[105,140],[115,80]] },
+    // Asia
+    { path: [[145,25],[200,20],[215,50],[210,100],[185,130],[155,100],[155,60]] },
+  ];
+  ctx.fillStyle = 'rgba(40,140,60,0.6)';
+  ctx.strokeStyle = 'rgba(60,180,80,0.3)';
+  ctx.lineWidth = 1;
+  continents.forEach(c => {
+    ctx.beginPath();
+    ctx.moveTo(c.path[0][0], c.path[0][1]);
+    c.path.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  });
+  // Grid lines (lat/lon)
+  ctx.strokeStyle = 'rgba(100,140,200,0.15)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x <= 256; x += 32) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,256); ctx.stroke(); }
+  for (let y = 0; y <= 256; y += 32) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(256,y); ctx.stroke(); }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  const globe = new THREE.Mesh(
+    new THREE.SphereGeometry(1.5, 24, 24),
+    new THREE.MeshLambertMaterial({ map: tex })
+  );
+  globe.position.set(5, 2.3, 0);
+  globe.userData.isGlobe = true;
+  scene.add(globe);
+
+  // Globe base disc
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.7, 0.5, 0.2, 16),
+    new THREE.MeshLambertMaterial({ color: 0x2a1a08 })
+  );
+  base.position.set(5, 0.9, 0);
+  scene.add(base);
+
+  // Support rod
+  const rod = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.08, 0.08, 1.2, 8),
+    new THREE.MeshLambertMaterial({ color: 0xb07020 })
+  );
+  rod.position.set(5, 1.5, 0);
+  scene.add(rod);
+
+  window._globe = globe;
+})();
+
+// ── DRAWING COMPASS ───────────────────────────────────────────
+[-0.2, 0.2].forEach((rx, i) => {
+  const arm = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.025, 0.025, 1.2, 8),
+    new THREE.MeshLambertMaterial({ color: 0xc08030 })
+  );
+  arm.position.set(-3.5 + i*0.3, 0.91, 2);
+  arm.rotation.z = (i === 0 ? -0.3 : 0.3);
+  scene.add(arm);
+});
+
+// ── BOOKSHELVES ───────────────────────────────────────────────
+(function() {
+  const shelfMat = new THREE.MeshLambertMaterial({ color: 0x1a0c04 });
+  // Back shelf unit
+  const shelf = new THREE.Mesh(new THREE.BoxGeometry(12, 7, 0.5), shelfMat);
+  shelf.position.set(0, 3.5, -9.7);
+  scene.add(shelf);
+  // Shelves
+  [1, 2.8, 4.6].forEach(y => {
+    const plank = new THREE.Mesh(new THREE.BoxGeometry(11, 0.12, 0.5), shelfMat);
+    plank.position.set(0, y, -9.5);
+    scene.add(plank);
+  });
+  // Books
+  const bookColors = [0x8b2222, 0x2244aa, 0x226622, 0xaa7722, 0x7722aa, 0x224488, 0x882244];
+  let bx = -5.2;
+  for (let i = 0; i < 28; i++) {
+    const w = 0.22 + Math.random() * 0.18;
+    const h = 0.6 + Math.random() * 0.6;
+    const book = new THREE.Mesh(
+      new THREE.BoxGeometry(w, h, 0.38),
+      new THREE.MeshLambertMaterial({ color: bookColors[i % bookColors.length] })
+    );
+    const shelfY = [1, 2.8, 4.6];
+    book.position.set(bx, shelfY[i % 3] + h/2 + 0.07, -9.5);
+    book.rotation.y = (Math.random()-0.5)*0.05;
+    scene.add(book);
+    bx += w + 0.06;
+    if (bx > 5.2) bx = -5.2;
+  }
+})();
+
+// ── SCREENS (left wall) ───────────────────────────────────────
+(function() {
+  // Screen 1 — Brazil climate map
+  const c1 = document.createElement('canvas');
+  c1.width = 192; c1.height = 128;
+  const ctx1 = c1.getContext('2d');
+  ctx1.fillStyle = '#050a18';
+  ctx1.fillRect(0,0,192,128);
+  const climates = [
+    { label: 'Equatorial', x:60, y:40, color:'#00aa44' },
+    { label: 'Semiárido', x:130, y:50, color:'#dd8800' },
+    { label: 'Tropical', x:90, y:75, color:'#44cc44' },
+    { label: 'Subtropical', x:95, y:108, color:'#4488dd' },
+  ];
+  ctx1.font = '10px sans-serif';
+  climates.forEach(cl => {
+    ctx1.fillStyle = cl.color;
+    ctx1.fillText(cl.label, cl.x, cl.y);
+    ctx1.beginPath();
+    ctx1.arc(cl.x-12, cl.y-4, 4, 0, Math.PI*2);
+    ctx1.fill();
+  });
+  ctx1.fillStyle = 'rgba(100,180,255,0.6)';
+  ctx1.font = 'bold 11px sans-serif';
+  ctx1.fillText('CLIMAS DO BRASIL', 30, 15);
+  const tex1 = new THREE.CanvasTexture(c1);
+
+  // Screen 2 — geopolitical
+  const c2 = document.createElement('canvas');
+  c2.width = 192; c2.height = 128;
+  const ctx2 = c2.getContext('2d');
+  ctx2.fillStyle = '#030810';
+  ctx2.fillRect(0,0,192,128);
+  ctx2.strokeStyle = 'rgba(60,120,200,0.4)';
+  ctx2.lineWidth = 1;
+  // World grid
+  for (let x=0;x<192;x+=32) { ctx2.beginPath(); ctx2.moveTo(x,0); ctx2.lineTo(x,128); ctx2.stroke(); }
+  for (let y=0;y<128;y+=24) { ctx2.beginPath(); ctx2.moveTo(0,y); ctx2.lineTo(192,y); ctx2.stroke(); }
+  ctx2.fillStyle = 'rgba(40,120,60,0.4)';
+  ctx2.fillRect(10,30,40,35);  // Americas
+  ctx2.fillRect(60,25,55,40);  // Europe/Africa
+  ctx2.fillRect(120,20,65,45); // Asia
+  ctx2.fillStyle = 'rgba(100,180,255,0.6)';
+  ctx2.font = 'bold 11px sans-serif';
+  ctx2.fillText('GEOPOLÍTICA GLOBAL', 10, 15);
+  ctx2.fillStyle = '#dd4422';
+  ctx2.fillRect(30,40,4,4); // hotspot
+  ctx2.fillRect(100,35,4,4);
+  ctx2.fillRect(150,30,4,4);
+  const tex2 = new THREE.CanvasTexture(c2);
+
+  [{ tex: tex1, z: -2 }, { tex: tex2, z: 2 }].forEach(({ tex, z }) => {
+    const screen = new THREE.Mesh(
+      new THREE.PlaneGeometry(3, 2),
+      new THREE.MeshBasicMaterial({ map: tex })
+    );
+    screen.position.set(-13.9, 4, z);
+    screen.rotation.y = Math.PI / 2;
+    scene.add(screen);
+    // Frame
+    const frame = new THREE.Mesh(
+      new THREE.BoxGeometry(0.1, 2.2, 3.2),
+      new THREE.MeshLambertMaterial({ color: 0x0a0c14 })
+    );
+    frame.position.set(-13.85, 4, z);
+    scene.add(frame);
+  });
+})();
+
+// ── LAMP ON TABLE ─────────────────────────────────────────────
+(function() {
+  const brass = new THREE.MeshLambertMaterial({ color: 0xb07010 });
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 1.2, 8), brass);
+  stem.position.set(-4, 1.5, -2);
+  scene.add(stem);
+  const shade = new THREE.Mesh(
+    new THREE.ConeGeometry(0.4, 0.5, 12, 1, true),
+    new THREE.MeshLambertMaterial({ color: 0xd09030, side: THREE.DoubleSide })
+  );
+  shade.rotation.x = Math.PI;
+  shade.position.set(-4, 2.3, -2);
+  scene.add(shade);
+  const bulb = new THREE.Mesh(
+    new THREE.SphereGeometry(0.1, 8, 8),
+    new THREE.MeshBasicMaterial({ color: 0xffe080 })
+  );
+  bulb.position.set(-4, 2.0, -2);
+  scene.add(bulb);
+})();
+
+// ── MAP ROLLS (concept objects) ─────────────────────────────────
+const rollData = [
+  {
+    pos: [0, 0.91, 0],
+    label: "Brasil: Regiões e Biomas",
+    desc: "5 REGIÕES: Norte (maior área, menor população, Amazônia, 59% do território), Nordeste (semiárido, maior densidade costeira, caatinga + mata atlântica), Centro-Oeste (cerrado, agronegócio, capital política Brasília), Sudeste (mais industrializado e populoso, mata atlântica fragmentada), Sul (subtropical, pinheiro-araucária, colonização europeia). 6 BIOMAS: Amazônia, Cerrado, Mata Atlântica, Caatinga, Pampa, Pantanal.",
+    tip: "O CERRADO é o 2º maior bioma e o mais ameaçado (80% destruído). Questão: 'Qual bioma brasileiro foi quase totalmente destruído?' → Mata Atlântica (12-15% restante). Mas o CERRADO tem maior taxa atual de destruição. Os biomas exclusivos do Brasil são Cerrado, Caatinga, Pampa e Pantanal."
+  },
+  {
+    pos: [-4, 0.91, -1.5],
+    label: "Clima e Hidrografia",
+    desc: "CLIMAS: Equatorial (Norte, quente e úmido), Tropical (centro do Brasil, chuvas sazonais), Semiárido (Nordeste interior, seca prolongada), Subtropical (Sul, 4 estações definidas), Tropical de Altitude (Sudeste serrano). HIDROGRAFIA: Bacia Amazônica (maior do mundo em volume), Bacia do São Francisco (rio da integração nacional, único de caudal perene que corta o semiárido), Bacia do Paraná/Prata (mais importante economicamente, Itaipu).",
+    tip: "Rio São Francisco ≠ maior do Brasil em extensão ou volume (é o Amazonas). Mas é o mais IMPORTANTE para o Nordeste. Questão: 'Qual rio tem importância histórica e econômica para o Nordeste?' → Rio São Francisco. Itaipu (Brasil-Paraguai) foi a maior usina hidrelétrica do mundo em geração até Três Gargantas (China)."
+  },
+  {
+    pos: [4, 0.91, -1.5],
+    label: "Urbanização e Desigualdade Regional",
+    desc: "Brasil é 87% urbano (2020). Megalópoles: São Paulo (12M), Rio de Janeiro (6.7M). Região Metropolitana SP: maior da América do Sul. DESIGUALDADE REGIONAL: Sudeste e Sul têm IDH alto; Norte e Nordeste têm IDH médio-baixo. Políticas de integração: SUDENE (Nordeste), Polo Industrial de Manaus (Zona Franca — incentivos fiscais para a Amazônia). Migração nordestina para o Sudeste (séculos XX-XXI). Êxodo rural → favelização → segregação urbana.",
+    tip: "Zona Franca de Manaus = área de livre comércio na Amazônia, criada para ocupar e desenvolver a região sem destruir a floresta. Questão: 'Por que indústrias se instalam em Manaus?' → Incentivos fiscais da Zona Franca. A questão da desigualdade regional é frequente em Humanas."
+  },
+  {
+    pos: [-4, 0.91, 1.5],
+    label: "Geopolítica: Brasil no Mundo",
+    desc: "MERCOSUL: criado 1991, membros plenos Brasil, Argentina, Uruguai, Paraguai (suspenso). Área de livre comércio + união aduaneira. BRICS: Brasil, Rússia, Índia, China, África do Sul — economias emergentes. UNASUL: integração política sul-americana. OEA: organização hemisférica. Brasil é 5ª maior nação em área, 7ª economia (flutuante). Política externa: tradicional multilateralismo, não-intervenção, solução pacífica de conflitos.",
+    tip: "MERCOSUL ≠ União Europeia. O MERCOSUL é uma união aduaneira incompleta (sem moeda única, sem livre circulação de pessoas plena). Questão: 'Quais são os membros fundadores do MERCOSUL?' → Brasil, Argentina, Uruguai, Paraguai (1991, Tratado de Assunção)."
+  },
+  {
+    pos: [4, 0.91, 1.5],
+    label: "Geopolítica Mundial",
+    desc: "Ordem internacional pós-Guerra Fria: unipolaridade EUA (1991-2000s) → multipolaridade emergente (China ascendente, BRICS, conflitos regionais). Globalização: integração econômica, cultural e tecnológica — mas desigual. Neoliberalismo: Consenso de Washington (privatizações, abertura comercial, ajuste fiscal). Questões globais: aquecimento global (Acordos de Paris), migrações forçadas, terrorismo (pós-11/09), disputas comerciais EUA-China.",
+    tip: "Consenso de Washington (1989) = receita do FMI/Banco Mundial para países em desenvolvimento: privatizar, abrir mercados, cortar gastos sociais. Teve grande impacto no Brasil nos anos 1990. Questão: 'O que foi o Consenso de Washington?' → Conjunto de políticas neoliberais impostas às economias emergentes."
+  },
+  {
+    pos: [-2, 0.91, -2.2],
+    label: "Cartografia e Representações",
+    desc: "Toda representação cartográfica tem distorções (projeções deformam área, forma, distância ou direção). Projeção de Mercator: preserva formas mas distorce áreas (Europa e América do Norte parecem maiores). Projeção de Peters: preserva áreas mas distorce formas. Norte acima é CONVENÇÃO, não lei natural. Coordenadas: latitude (distância ao Equador), longitude (distância ao Meridiano de Greenwich). Fusos horários: cada 15° de longitude = 1h de diferença.",
+    tip: "Brasil tem 4 fusos horários (de UTC-2 a UTC-5). A discussão sobre projeções cartográficas é filosofia e política da representação — quem está no centro do mapa? Quem parece maior? Questão frequente em Humanas sobre Cartografia crítica."
+  },
+  {
+    pos: [2, 0.91, -2.2],
+    label: "Globalização e Meio Ambiente",
+    desc: "Globalização econômica vs. ambiental: enquanto fluxos de capital, pessoas e informação se globalizaram, os problemas ambientais também. Aquecimento global: queima de combustíveis fósseis + desmatamento → efeito estufa → mudanças climáticas. Brasil: desmatamento da Amazônia (ameaça global), Pantanal em crise, São Francisco em seca. Energia renovável: Brasil é líder global em hidroelétricas (70%+ da energia). COP (Conferências do Clima): Paris 2015 — meta de limitar aquecimento a 1.5°C.",
+    tip: "Brasil gera ~80% de sua eletricidade de fontes renováveis (hídrica + solar + eólica) — um dos maiores percentuais do mundo. Questão de atualidades: 'O que o Brasil comprometeu no Acordo de Paris?' → Reduzir emissões 43% até 2030 (em relação a 2005) e zerar desmatamento ilegal."
+  }
+];
+
+const rollMeshes = [];
+
+rollData.forEach((data) => {
+  const group = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color: 0xd4b878 });
+
+  // Roll body
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.3, 2.5, 16), mat.clone());
+  body.castShadow = true;
+  group.add(body);
+
+  // End caps
+  [-1.25, 1.25].forEach(y => {
+    const cap = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.38, 0.38, 0.15, 16),
+      new THREE.MeshLambertMaterial({ color: 0x907020 })
+    );
+    cap.position.y = y;
+    group.add(cap);
+  });
+
+  group.position.set(data.pos[0], data.pos[1] + 1.35, data.pos[2]);
+  group.userData = { isRoll: true, data, baseY: data.pos[1] + 1.35 };
+  scene.add(group);
+  rollMeshes.push(group);
+});
+
+// ── RAYCASTER ────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredRoll = null;
+const tooltip = document.getElementById('tooltip');
+const popupOverlay = document.getElementById('popup-overlay');
+const popupTitle = document.getElementById('popup-title');
+const popupDesc = document.getElementById('popup-desc');
+const popupTip = document.getElementById('popup-tip');
+
+function getAllChildren() {
+  const objs = [];
+  rollMeshes.forEach(g => g.children.forEach(c => { c.userData.parentGroup = g; objs.push(c); }));
+  return objs;
+}
+
+function setRollHover(group, on) {
+  group.children.forEach((c, ci) => {
+    if (c.material && c.material.color) {
+      if (on) {
+        c.material.color.setHex(ci === 0 ? 0x80c0ff : 0x4080c0);
+        if (c.material.emissive) { c.material.emissive.setHex(0x103060); c.material.emissiveIntensity = 0.5; }
+      } else {
+        c.material.color.setHex(ci === 0 ? 0xd4b878 : 0x907020);
+        if (c.material.emissive) { c.material.emissive.setHex(0x000000); c.material.emissiveIntensity = 0; }
+      }
+    }
+  });
+}
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(getAllChildren());
+  if (intersects.length > 0) {
+    const group = intersects[0].object.userData.parentGroup;
+    if (group && group !== hoveredRoll) {
+      if (hoveredRoll) setRollHover(hoveredRoll, false);
+      hoveredRoll = group;
+      setRollHover(hoveredRoll, true);
+    }
+    tooltip.style.display = 'block';
+    tooltip.style.left = (e.clientX + 15) + 'px';
+    tooltip.style.top = (e.clientY - 10) + 'px';
+    tooltip.textContent = group.userData.data.label;
+    document.body.style.cursor = 'pointer';
+  } else {
+    if (hoveredRoll) { setRollHover(hoveredRoll, false); hoveredRoll = null; }
+    tooltip.style.display = 'none';
+    document.body.style.cursor = 'default';
+  }
+});
+
+window.addEventListener('click', e => {
+  if (popupOverlay.classList.contains('active')) return;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(getAllChildren());
+  if (intersects.length > 0) {
+    const group = intersects[0].object.userData.parentGroup;
+    if (group) {
+      const data = group.userData.data;
+      popupTitle.textContent = data.label;
+      popupDesc.textContent = data.desc;
+      popupTip.innerHTML = '<strong>UNICAP:</strong> ' + data.tip;
+      popupOverlay.classList.add('active');
+    }
+  }
+});
+
+document.getElementById('popup-close').addEventListener('click', () => popupOverlay.classList.remove('active'));
+popupOverlay.addEventListener('click', e => { if (e.target === popupOverlay) popupOverlay.classList.remove('active'); });
+
+// ── ANIMATION ─────────────────────────────────────────────────
+let t = 0;
+const hintEl = document.getElementById('hint');
+setTimeout(() => { hintEl.style.opacity = '0'; }, 4000);
+
+function animate() {
+  requestAnimationFrame(animate);
+  t += 0.012;
+
+  // Globe rotation
+  if (window._globe) window._globe.rotation.y += 0.002;
+
+  // Lamp light warmth flicker
+  lampLight.intensity = 4 + Math.sin(t * 2.3) * 0.15;
+
+  // Screen glow pulse
+  screenGlow.intensity = 1.6 + Math.sin(t * 1.8) * 0.3;
+
+  // Roll idle bob
+  rollMeshes.forEach((g, i) => {
+    g.position.y = g.userData.baseY + Math.sin(t * 0.6 + i * 1.1) * 0.04;
+    g.rotation.y = Math.sin(t * 0.25 + i * 0.9) * 0.06;
+  });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado Diagnóstico · UNICAP 2026.2 Direito</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', system-ui, sans-serif; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  body { background: linear-gradient(135deg, #0a0e1a 0%, #131829 50%, #0a0e1a 100%); min-height: 100vh; color: #e8eaf0; }
+  .glass { background: rgba(19, 24, 41, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0,212,255,0.10); }
+  .cyan { color: #00d4ff; } .amber { color: #ffb800; }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: #0a0e1a; font-weight: 700; transition: transform 240ms ease-out, box-shadow 240ms; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
+  .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; font-weight: 700; transition: transform 240ms; }
+  .btn-danger:hover { transform: translateY(-2px); }
+  .alternativa { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); transition: all 200ms ease-out; cursor: pointer; }
+  .alternativa:hover { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.3); }
+  .alternativa.selected { background: rgba(0,212,255,0.16); border-color: #00d4ff; box-shadow: 0 0 16px rgba(0,212,255,0.2); }
+  .alternativa.correta { background: rgba(16,185,129,0.18); border-color: #10b981; }
+  .alternativa.errada { background: rgba(239,68,68,0.18); border-color: #ef4444; }
+  .timer-warning { animation: pulse 1s ease-in-out infinite; color: #ffb800; }
+  .timer-danger { animation: pulse 0.6s ease-in-out infinite; color: #ef4444; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .question-nav-btn { width: 32px; height: 32px; border-radius: 6px; font-weight: 600; transition: all 180ms; cursor: pointer; font-size: 12px; }
+  .qn-pendente { background: rgba(255,255,255,0.05); color: #94a3b8; }
+  .qn-respondida { background: rgba(0,212,255,0.25); color: #00d4ff; }
+  .qn-atual { background: #00d4ff; color: #0a0e1a; }
+  .fade { animation: fade 320ms ease-out both; }
+  @keyframes fade { from {opacity:0; transform: translateY(8px)} to {opacity:1; transform: translateY(0)} }
+</style>
+</head>
+<body class="p-4 sm:p-8">
+
+<!-- TELA INICIAL -->
+<div id="telaInicial" class="max-w-3xl mx-auto fade">
+  <h1 class="text-4xl font-black mb-2">🎯 Simulado <span class="cyan">Diagnóstico</span></h1>
+  <p class="text-slate-400 mb-8">Ground truth do seu nível antes da sprint começar</p>
+
+  <div class="glass rounded-2xl p-8 mb-6">
+    <h2 class="text-xl font-bold mb-4">Regras</h2>
+    <ul class="space-y-3 text-slate-300">
+      <li class="flex gap-3"><span class="cyan font-bold">·</span> 20 questões objetivas (A-E), uma única correta cada</li>
+      <li class="flex gap-3"><span class="cyan font-bold">·</span> Cronômetro de <span class="mono amber">2h00min</span> (= 6 min/questão)</li>
+      <li class="flex gap-3"><span class="cyan font-bold">·</span> Sem consulta, sem celular, sem pausa</li>
+      <li class="flex gap-3"><span class="cyan font-bold">·</span> Distribuição: 5 Linguagens · 5 Humanas · 5 Natureza · 3 Matemática · 2 Bônus</li>
+      <li class="flex gap-3"><span class="cyan font-bold">·</span> Ao fim: score por área, identificação dos 3 piores tópicos como <span class="amber font-bold">PRIORIDADE 1</span></li>
+    </ul>
+  </div>
+
+  <div class="glass rounded-2xl p-8 mb-6 border-amber-500/30">
+    <p class="text-sm text-slate-300">
+      <span class="amber font-bold">⚠ HONESTIDADE:</span> não consulte. Não chute "estratégico" — chute aleatório quando não souber. O objetivo é diagnosticar onde você está <em>de verdade</em>. Quanto mais fiel à realidade, melhor a calibragem do plano.
+    </p>
+  </div>
+
+  <button onclick="comecar()" class="btn-primary px-10 py-4 rounded-xl text-lg w-full sm:w-auto">⚡ Começar Diagnóstico</button>
+</div>
+
+<!-- TELA DO SIMULADO -->
+<div id="telaSimulado" class="hidden max-w-7xl mx-auto">
+  <header class="flex items-center justify-between mb-6 glass rounded-xl px-5 py-3">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🎯</span>
+      <div>
+        <p class="font-bold">Diagnóstico UNICAP 2026.2</p>
+        <p class="text-xs text-slate-400">Questão <span id="qNumero">1</span> de 20</p>
+      </div>
+    </div>
+    <div class="text-right">
+      <p class="text-xs text-slate-400 uppercase tracking-wide">Tempo restante</p>
+      <p id="timer" class="mono text-3xl font-bold cyan">2:00:00</p>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_240px] gap-6">
+    <div id="questoes"></div>
+
+    <aside class="glass rounded-xl p-5 lg:sticky lg:top-4 h-fit">
+      <p class="text-sm font-bold mb-3">Navegação</p>
+      <div id="navQuestoes" class="grid grid-cols-5 gap-2 mb-4"></div>
+      <div class="text-xs text-slate-400 space-y-1.5 mb-5">
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded qn-respondida"></div> Respondida</div>
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded qn-atual"></div> Atual</div>
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded qn-pendente"></div> Pendente</div>
+      </div>
+      <button onclick="finalizar()" class="btn-danger w-full px-4 py-3 rounded-lg">Finalizar Prova</button>
+      <p class="text-xs text-slate-500 mt-3 text-center">Você pode finalizar a qualquer momento</p>
+    </aside>
+  </div>
+</div>
+
+<!-- TELA RESULTADO -->
+<div id="telaResultado" class="hidden max-w-5xl mx-auto fade">
+  <h1 class="text-4xl font-black mb-2">📊 Resultado do <span class="cyan">Diagnóstico</span></h1>
+  <p class="text-slate-400 mb-8">Calibragem completa — seus 3 piores tópicos foram marcados como PRIORIDADE 1</p>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="glass rounded-xl p-5 text-center">
+      <p class="text-xs uppercase tracking-wide text-slate-400 mb-1">Score Geral</p>
+      <p class="mono text-5xl font-bold cyan" id="scoreGeral">--</p>
+      <p class="text-xs text-slate-500 mt-1"><span id="acertos">--</span> / 20 questões</p>
+    </div>
+    <div class="glass rounded-xl p-5 text-center">
+      <p class="text-xs uppercase tracking-wide text-slate-400 mb-1">Tempo usado</p>
+      <p class="mono text-5xl font-bold amber" id="tempoUsado">--</p>
+      <p class="text-xs text-slate-500 mt-1">de 2h disponíveis</p>
+    </div>
+    <div class="glass rounded-xl p-5 text-center">
+      <p class="text-xs uppercase tracking-wide text-slate-400 mb-1">Projeção UNICAP</p>
+      <p class="mono text-5xl font-bold text-emerald-400" id="projecao">--</p>
+      <p class="text-xs text-slate-500 mt-1">aprovação estimada</p>
+    </div>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4">Score por área</h2>
+    <div id="scoresPorArea" class="space-y-3"></div>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6 border-amber-500/30">
+    <h2 class="text-xl font-bold mb-4 amber">🎯 Suas 3 Prioridades 1 (mais erros)</h2>
+    <div id="prioridades1" class="space-y-3"></div>
+    <p class="text-xs text-slate-400 mt-4">Esses tópicos abrem a Semana 1 do plano. Voltarão como flashcard em D+1, D+3, D+7.</p>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4">📝 Gabarito Comentado</h2>
+    <div id="gabaritoComentado" class="space-y-6"></div>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6 border-cyan-500/30">
+    <h2 class="text-lg font-bold mb-2">Atualizar progresso.json</h2>
+    <p class="text-sm text-slate-400 mb-3">Copie o JSON abaixo e mande pro Claude no chat com a frase "Atualize meu progresso" — ele vai aplicar no progresso.json.</p>
+    <pre id="jsonExport" class="bg-slate-900/60 p-4 rounded-lg text-xs mono overflow-x-auto"></pre>
+    <button onclick="copiarJson()" class="mt-3 btn-primary px-5 py-2 rounded-lg text-sm">📋 Copiar JSON</button>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-3">
+    <a href="../dashboard.html" class="btn-primary px-6 py-3 rounded-lg text-center">← Voltar ao Dashboard</a>
+    <a href="../materiais/semana-1/" class="glass border border-cyan-500/30 px-6 py-3 rounded-lg text-center">Ir para Materiais Sem 1 →</a>
+  </div>
+</div>
+
+<script>
+// ================ BANCO DE QUESTÕES (20) ================
+const QUESTOES = [
+  // -------- LINGUAGENS (5) --------
+  {
+    n: 1, area: 'Linguagens', topico: 'Português · Regência verbal',
+    enunciado: 'Assinale a alternativa em que TODAS as orações apresentam regência verbal correta segundo a norma-padrão da língua portuguesa:',
+    alternativas: [
+      'Ele aspira o cargo de juiz / Prefiro estudar do que trabalhar / Lembrei-me dele ontem.',
+      'Ele aspira ao cargo de juiz / Prefiro estudar a trabalhar / Lembrei-me dele ontem.',
+      'Ele aspira ao cargo de juiz / Prefiro estudar do que trabalhar / Lembrei dele ontem.',
+      'Ele aspirou o cargo de juiz / Prefiro mais estudar a trabalhar / Lembrei ele ontem.',
+      'Ele aspira no cargo de juiz / Prefiro estudar que trabalhar / Lembrei-lhe dele ontem.'
+    ],
+    correta: 1,
+    explicacao: 'O verbo "aspirar" no sentido de "almejar/desejar" é transitivo indireto (preposição "a"). "Preferir" rejeita "do que", exigindo apenas a preposição "a" (prefere X a Y). "Lembrar-se" é pronominal e exige preposição "de".'
+  },
+  {
+    n: 2, area: 'Linguagens', topico: 'Português · Interpretação de texto',
+    enunciado: '"A justiça atrasada não é justiça, senão injustiça qualificada e manifesta." (Rui Barbosa)\n\nA figura de linguagem predominante e a função sintática de "qualificada e manifesta" são, respectivamente:',
+    alternativas: [
+      'Metáfora; sujeito composto.',
+      'Antítese; predicativo do sujeito.',
+      'Paradoxo; adjunto adnominal de "injustiça".',
+      'Hipérbole; adjunto adverbial.',
+      'Eufemismo; aposto.'
+    ],
+    correta: 2,
+    explicacao: 'Há paradoxo (justiça atrasada = injustiça — duas ideias logicamente opostas que coexistem). "Qualificada e manifesta" são adjetivos que caracterizam o substantivo "injustiça", funcionando como adjunto adnominal.'
+  },
+  {
+    n: 3, area: 'Linguagens', topico: 'Português · Crase',
+    enunciado: 'Indique a frase que apresenta uso INCORRETO da crase:',
+    alternativas: [
+      'O processo foi encaminhado à juíza substituta.',
+      'A advogada chegou à sala de audiência às 14h.',
+      'Refiro-me àquela sentença proferida em 2024.',
+      'Entreguei a petição à pessoa errada.',
+      'O réu foi condenado à pena máxima à dois meses atrás.'
+    ],
+    correta: 4,
+    explicacao: 'Crase é a fusão da preposição "a" com o artigo "a" (ou "aquele/aquela"). NÃO há crase antes de palavras masculinas, verbos, e em expressões com sentido de "passado" como "há dois meses atrás" — o correto é "HÁ dois meses" (do verbo haver), sem crase.'
+  },
+  {
+    n: 4, area: 'Linguagens', topico: 'Literatura · Modernismo brasileiro',
+    enunciado: 'Sobre o Modernismo brasileiro, é CORRETO afirmar que:',
+    alternativas: [
+      'A Semana de Arte Moderna de 1922 marcou o auge do Parnasianismo no Brasil.',
+      'A 1ª fase (1922-1930) foi marcada pelo rompimento radical com a tradição, com obras como "Macunaíma" de Mário de Andrade.',
+      'A 2ª geração (1930-1945) é exclusivamente urbana, dedicando-se à crítica das vanguardas europeias.',
+      'Guimarães Rosa pertence à 1ª fase modernista e escreveu "Memórias Sentimentais de João Miramar".',
+      'Drummond e Cecília Meireles fazem parte da geração de 22, ao lado de Oswald de Andrade.'
+    ],
+    correta: 1,
+    explicacao: 'A 1ª fase modernista (1922-1930) foi caracterizada pela ruptura com a tradição parnasiana, valorização do brasileiro e do popular. "Macunaíma" (1928) de Mário de Andrade é obra-símbolo. Guimarães Rosa é da 3ª geração (1945+). "Memórias Sentimentais" é de Oswald de Andrade.'
+  },
+  {
+    n: 5, area: 'Linguagens', topico: 'Português · Concordância verbal',
+    enunciado: 'Em qual alternativa a concordância verbal está conforme a norma-padrão?',
+    alternativas: [
+      'Fazem dez anos que ele estuda Direito.',
+      'Houveram protestos contra a nova lei.',
+      'Mais de um candidato se inscreveu no vestibular.',
+      'A maioria dos alunos passaram na primeira chamada.',
+      'Tudo são problemas quando o prazo aperta.'
+    ],
+    correta: 2,
+    explicacao: 'O verbo "fazer" em sentido de tempo é impessoal: "Faz dez anos". "Haver" em sentido de existência é impessoal: "Houve protestos". "Mais de um" + verbo no SINGULAR (Mais de um candidato se inscreveu — correto). "A maioria" admite verbo no singular (preferencial) ou plural. "Tudo" exige verbo no singular: "Tudo é problema".'
+  },
+
+  // -------- HUMANAS (5) --------
+  {
+    n: 6, area: 'Humanas', topico: 'Filosofia · Contratualismo',
+    enunciado: 'Compare as concepções de Estado em Hobbes, Locke e Rousseau. Marque a alternativa CORRETA:',
+    alternativas: [
+      'Para Hobbes, o estado de natureza é uma idade de ouro pacífica que o Estado vem corromper.',
+      'Locke defende o absolutismo monárquico como única forma de evitar o caos social.',
+      'Rousseau afirma que "o homem é o lobo do homem" e propõe um soberano com poder ilimitado.',
+      'Hobbes vê o estado de natureza como "guerra de todos contra todos" e justifica um soberano absoluto; Locke defende direitos naturais (vida, liberdade, propriedade) preservados num Estado limitado; Rousseau propõe o contrato social como vontade geral.',
+      'Os três pensadores defendem exatamente a mesma concepção de soberania popular.'
+    ],
+    correta: 3,
+    explicacao: 'Distinção clássica: Hobbes (Leviatã, 1651) — estado de natureza violento, soberano absoluto. Locke (Dois Tratados, 1689) — direitos naturais, Estado limitado, divisão de poderes (legislativo, executivo, federativo). Rousseau (Contrato Social, 1762) — homem nasce bom, vontade geral, soberania popular. Esses três autores são DNA do estudante de Direito.'
+  },
+  {
+    n: 7, area: 'Humanas', topico: 'História do Brasil · Era Vargas',
+    enunciado: 'Sobre o Estado Novo (1937-1945), é CORRETO afirmar:',
+    alternativas: [
+      'Foi um regime democrático com partidos plurais e eleições regulares.',
+      'Marcou-se pela Constituição "Polaca" de 1937, censura via DIP, repressão a comunistas (Intentona de 1935) e integralistas, criação da CLT em 1943 e participação do Brasil na 2ª Guerra ao lado dos Aliados.',
+      'Foi instaurado por meio de eleição direta vencida por Getúlio Vargas.',
+      'Vargas foi deposto em 1945 após o Brasil declarar guerra à URSS.',
+      'A CLT só foi promulgada em 1964 pelos militares.'
+    ],
+    correta: 1,
+    explicacao: 'O Estado Novo (golpe de 10/11/1937) foi ditadura outorgada pela Constituição de 1937 (a "Polaca", inspirada em modelos autoritários). DIP fazia propaganda e censura. CLT em 1943 consolidou direitos trabalhistas. Brasil entrou na 2ª Guerra em 1942 contra Eixo (Alemanha/Itália/Japão). Vargas foi deposto em outubro/1945.'
+  },
+  {
+    n: 8, area: 'Humanas', topico: 'Geografia · Brasil contemporâneo',
+    enunciado: 'Sobre a urbanização brasileira no século XXI, marque a alternativa CORRETA:',
+    alternativas: [
+      'O Brasil é majoritariamente rural, com cerca de 70% da população no campo.',
+      'A urbanização brasileira é homogênea entre as regiões, com Norte e Sudeste apresentando a mesma taxa.',
+      'O Brasil é altamente urbanizado (cerca de 87% segundo o Censo 2022), com megalópole São Paulo-Rio, conurbação metropolitana intensa e fenômenos como periferização, segregação socioespacial e crescimento de cidades médias.',
+      'O êxodo rural só começou após 2010 no Brasil.',
+      'O Nordeste é a região mais urbanizada do país, ultrapassando o Sudeste em densidade.'
+    ],
+    correta: 2,
+    explicacao: 'Censo 2022 (IBGE): cerca de 87,4% da população brasileira vive em áreas urbanas. O Sudeste é o mais urbanizado (~93%). O êxodo rural foi intenso de 1950 a 1980. Fenômenos urbanos atuais incluem periferização, gentrificação, formação de regiões metropolitanas e crescimento das cidades médias.'
+  },
+  {
+    n: 9, area: 'Humanas', topico: 'Sociologia · Modernidade',
+    enunciado: 'Zygmunt Bauman, ao cunhar o conceito de "modernidade líquida", refere-se a:',
+    alternativas: [
+      'A imposição de regras rígidas e estruturas sociais permanentes no mundo contemporâneo.',
+      'O retorno aos valores medievais como reação à industrialização.',
+      'A fluidez, transitoriedade e dissolução de instituições, vínculos e identidades sólidas da modernidade clássica, gerando incerteza, individualismo e consumo como forma de pertencimento.',
+      'O domínio total da racionalidade científica sobre a vida cotidiana.',
+      'A construção de utopias socialistas no século XXI.'
+    ],
+    correta: 2,
+    explicacao: 'Bauman (1925-2017) define modernidade líquida como fase em que as estruturas sólidas (família, trabalho, partido, religião) se dissolvem em fluxos voláteis. O indivíduo perde âncoras e o consumo passa a ser substituto de identidade. Conceito chave para entender pós-modernidade.'
+  },
+  {
+    n: 10, area: 'Humanas', topico: 'História Geral · Iluminismo',
+    enunciado: 'O Iluminismo (séc. XVIII) caracterizou-se por:',
+    alternativas: [
+      'Defesa do direito divino dos reis e da autoridade absoluta da Igreja.',
+      'Crença na razão como instrumento de progresso, crítica ao absolutismo e ao clericalismo, valorização das liberdades individuais e influência direta em revoluções como a Americana (1776) e a Francesa (1789).',
+      'Rejeição da ciência empírica em favor do dogma religioso.',
+      'Reforço do sistema feudal e da servidão.',
+      'Movimento exclusivamente alemão, sem influência fora da Prússia.'
+    ],
+    correta: 1,
+    explicacao: 'Iluminismo: movimento intelectual que valoriza a razão (Voltaire, Diderot, D\'Alembert), defende liberdade política (Locke), separação dos poderes (Montesquieu), soberania popular (Rousseau) e crítica ao absolutismo. Base ideológica das revoluções liberais e da declaração dos direitos do homem.'
+  },
+
+  // -------- NATUREZA (5) --------
+  {
+    n: 11, area: 'Natureza', topico: 'Biologia · Citologia',
+    enunciado: 'Sobre as organelas celulares, é CORRETO afirmar:',
+    alternativas: [
+      'A mitocôndria produz proteínas a partir do RNA mensageiro.',
+      'O retículo endoplasmático rugoso (REr) sintetiza lipídios.',
+      'A mitocôndria realiza a respiração celular, produzindo ATP, principalmente pela cadeia respiratória na membrana interna.',
+      'Os ribossomos são organelas membranosas exclusivas de células eucariontes.',
+      'O cloroplasto é encontrado em todas as células animais.'
+    ],
+    correta: 2,
+    explicacao: 'Mitocôndria = "usina celular", produz ATP por fosforilação oxidativa na membrana interna (cristas). REr sintetiza proteínas; REL sintetiza lipídios. Ribossomos NÃO têm membrana e existem em procariontes e eucariontes. Cloroplastos só existem em células vegetais e alguns protistas (autotróficos fotossintetizantes).'
+  },
+  {
+    n: 12, area: 'Natureza', topico: 'Biologia · Genética',
+    enunciado: 'Em uma família, o pai é heterozigoto para uma característica autossômica dominante (Aa) e a mãe é homozigota recessiva (aa). Qual a probabilidade de um filho expressar o fenótipo recessivo?',
+    alternativas: [
+      '0% (nenhuma chance)',
+      '25%',
+      '50%',
+      '75%',
+      '100%'
+    ],
+    correta: 2,
+    explicacao: 'Cruzamento Aa × aa: gametas paternos = A ou a (50% cada); gametas maternos = sempre a. Descendentes: 50% Aa (dominante) e 50% aa (recessivo). Probabilidade de fenótipo recessivo = 50%.'
+  },
+  {
+    n: 13, area: 'Natureza', topico: 'Química · Estequiometria',
+    enunciado: 'Na reação 2H₂ + O₂ → 2H₂O, quantos mols de água são produzidos a partir de 4 mols de H₂ em presença de O₂ em excesso?',
+    alternativas: [
+      '2 mols', '3 mols', '4 mols', '6 mols', '8 mols'
+    ],
+    correta: 2,
+    explicacao: 'A estequiometria mostra que 2 mols de H₂ produzem 2 mols de H₂O (proporção 1:1). Portanto, 4 mols de H₂ → 4 mols de H₂O. Resposta: 4 mols.'
+  },
+  {
+    n: 14, area: 'Natureza', topico: 'Física · Cinemática',
+    enunciado: 'Um carro percorre 180 km em 2 horas com velocidade constante. Qual sua velocidade média em m/s?',
+    alternativas: [
+      '15 m/s', '20 m/s', '25 m/s', '30 m/s', '36 m/s'
+    ],
+    correta: 2,
+    explicacao: 'v = Δs/Δt = 180 km / 2 h = 90 km/h. Convertendo: 90 ÷ 3,6 = 25 m/s. Para converter km/h em m/s, divida por 3,6.'
+  },
+  {
+    n: 15, area: 'Natureza', topico: 'Física · Energia',
+    enunciado: 'Um corpo de massa 2 kg está a 10 m de altura, em repouso. Considerando g = 10 m/s², sua energia potencial gravitacional vale:',
+    alternativas: [
+      '20 J', '100 J', '200 J', '500 J', '1000 J'
+    ],
+    correta: 2,
+    explicacao: 'Energia potencial gravitacional: Epg = m · g · h = 2 · 10 · 10 = 200 J. Como o corpo está em repouso, energia cinética é zero; toda a energia mecânica está na forma potencial.'
+  },
+
+  // -------- MATEMÁTICA (3) --------
+  {
+    n: 16, area: 'Matemática', topico: 'Funções · Função quadrática',
+    enunciado: 'O vértice da parábola y = x² − 4x + 3 tem coordenadas:',
+    alternativas: [
+      '(1, 0)', '(2, −1)', '(2, 1)', '(−2, 15)', '(3, 0)'
+    ],
+    correta: 1,
+    explicacao: 'Para y = ax² + bx + c, o vértice tem x_v = −b/(2a) = 4/2 = 2. Substituindo: y_v = (2)² − 4(2) + 3 = 4 − 8 + 3 = −1. Vértice: (2, −1).'
+  },
+  {
+    n: 17, area: 'Matemática', topico: 'Análise combinatória',
+    enunciado: 'De quantos modos diferentes podemos sentar 5 pessoas em 5 cadeiras enfileiradas?',
+    alternativas: [
+      '5', '25', '60', '120', '625'
+    ],
+    correta: 3,
+    explicacao: 'Permutação simples de 5 elementos: P(5) = 5! = 5 × 4 × 3 × 2 × 1 = 120 modos.'
+  },
+  {
+    n: 18, area: 'Matemática', topico: 'Probabilidade',
+    enunciado: 'Ao lançar dois dados comuns simultaneamente, qual a probabilidade de a soma dos resultados ser igual a 7?',
+    alternativas: [
+      '1/12', '1/9', '1/6', '1/4', '1/3'
+    ],
+    correta: 2,
+    explicacao: 'Total de resultados possíveis: 6 × 6 = 36. Combinações que somam 7: (1,6),(2,5),(3,4),(4,3),(5,2),(6,1) = 6 combinações. P = 6/36 = 1/6.'
+  },
+
+  // -------- BÔNUS (2) --------
+  {
+    n: 19, area: 'Redação', topico: 'Repertório · Direitos Humanos',
+    enunciado: 'A Declaração Universal dos Direitos Humanos (1948), proclamada pela ONU após a 2ª Guerra Mundial, estabelece como princípio fundamental que:',
+    alternativas: [
+      'Os direitos humanos são privilégios concedidos pelos Estados aos cidadãos virtuosos.',
+      'Todos os seres humanos nascem livres e iguais em dignidade e direitos, dotados de razão e consciência, devendo agir uns para com os outros em espírito de fraternidade (Art. 1º).',
+      'Os direitos humanos só se aplicam aos cidadãos dos países signatários.',
+      'A Declaração tem força obrigatória de tratado internacional, prevalecendo sobre toda legislação nacional.',
+      'A liberdade individual é limitada pela vontade do governante.'
+    ],
+    correta: 1,
+    explicacao: 'O Art. 1º da DUDH (1948) é fonte clássica de repertório para redação de candidato a Direito. Princípios da universalidade, igualdade em dignidade, liberdade, fraternidade. A DUDH é declaração (não tratado vinculante per se), mas inspirou tratados como o Pacto Internacional dos Direitos Civis e Políticos.'
+  },
+  {
+    n: 20, area: 'Humanas', topico: 'Filosofia · Ética kantiana',
+    enunciado: 'Imanuel Kant, em sua filosofia moral, propõe o imperativo categórico em sua formulação mais conhecida como:',
+    alternativas: [
+      '"Faça aos outros o que gostaria que fizessem a você."',
+      '"Age de tal forma que a máxima de tua ação possa ser convertida em lei universal."',
+      '"O fim justifica os meios."',
+      '"A liberdade é a obediência à lei que se prescreveu a si mesmo." (Rousseau)',
+      '"Penso, logo existo."'
+    ],
+    correta: 1,
+    explicacao: 'Imperativo categórico de Kant (Fundamentação da Metafísica dos Costumes, 1785): princípio moral incondicional. Diferente da Regra de Ouro cristã, exige universalização racional da máxima. Conceito CRÍTICO pra candidato de Direito — relaciona-se com a ideia de norma jurídica universal e dignidade humana como fim em si mesma.'
+  }
+];
+
+// ================ ESTADO ================
+let respostas = new Array(20).fill(null);
+let qAtual = 0;
+let tempoRestante = 2 * 3600; // 2h em segundos
+let tempoTotal = 2 * 3600;
+let timerId = null;
+let inicio = null;
+let finalizado = false;
+
+// ================ LÓGICA ================
+function comecar() {
+  document.getElementById('telaInicial').classList.add('hidden');
+  document.getElementById('telaSimulado').classList.remove('hidden');
+  inicio = new Date();
+  renderQuestao();
+  renderNav();
+  iniciarTimer();
+}
+
+function renderQuestao() {
+  const q = QUESTOES[qAtual];
+  document.getElementById('qNumero').textContent = qAtual + 1;
+  const container = document.getElementById('questoes');
+  container.innerHTML = `
+    <div class="glass rounded-2xl p-6 sm:p-8 fade">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider cyan px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30">${q.area}</span>
+        <span class="text-xs text-slate-500">${q.topico}</span>
+      </div>
+      <p class="text-lg leading-relaxed mb-6 whitespace-pre-line">${q.enunciado}</p>
+      <div class="space-y-3">
+        ${q.alternativas.map((alt, i) => `
+          <div class="alternativa rounded-xl p-4 flex gap-3 ${respostas[qAtual] === i ? 'selected' : ''}" onclick="responder(${i})">
+            <span class="font-bold cyan mono shrink-0">${String.fromCharCode(65 + i)})</span>
+            <span class="leading-relaxed">${alt}</span>
+          </div>`).join('')}
+      </div>
+      <div class="flex justify-between mt-6">
+        <button onclick="navegar(-1)" ${qAtual === 0 ? 'disabled' : ''} class="px-5 py-2 rounded-lg bg-slate-700/50 hover:bg-slate-700 disabled:opacity-30 transition">← Anterior</button>
+        <button onclick="navegar(1)" ${qAtual === 19 ? 'disabled' : ''} class="btn-primary px-5 py-2 rounded-lg disabled:opacity-30">${qAtual === 19 ? 'Última' : 'Próxima →'}</button>
+      </div>
+    </div>`;
+}
+
+function renderNav() {
+  const nav = document.getElementById('navQuestoes');
+  nav.innerHTML = QUESTOES.map((_, i) => {
+    let cls = 'qn-pendente';
+    if (respostas[i] !== null) cls = 'qn-respondida';
+    if (i === qAtual) cls = 'qn-atual';
+    return `<button class="question-nav-btn ${cls}" onclick="irPara(${i})">${i+1}</button>`;
+  }).join('');
+}
+
+function responder(idx) {
+  respostas[qAtual] = idx;
+  renderQuestao();
+  renderNav();
+}
+
+function navegar(passo) {
+  const novo = qAtual + passo;
+  if (novo >= 0 && novo < 20) {
+    qAtual = novo;
+    renderQuestao();
+    renderNav();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+}
+
+function irPara(i) {
+  qAtual = i;
+  renderQuestao();
+  renderNav();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function iniciarTimer() {
+  timerId = setInterval(() => {
+    tempoRestante--;
+    const h = Math.floor(tempoRestante / 3600);
+    const m = Math.floor((tempoRestante % 3600) / 60);
+    const s = tempoRestante % 60;
+    const el = document.getElementById('timer');
+    el.textContent = `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+    el.classList.remove('timer-warning', 'timer-danger');
+    if (tempoRestante <= 300) el.classList.add('timer-danger');
+    else if (tempoRestante <= 900) el.classList.add('timer-warning');
+    if (tempoRestante <= 0) { clearInterval(timerId); finalizar(); }
+  }, 1000);
+}
+
+function finalizar() {
+  if (finalizado) return;
+  finalizado = true;
+  clearInterval(timerId);
+  const tempoUsadoSec = tempoTotal - tempoRestante;
+
+  // Calcula
+  let acertos = 0;
+  const porArea = {};
+  const errosPorTopico = [];
+  QUESTOES.forEach((q, i) => {
+    const acertou = respostas[i] === q.correta;
+    if (acertou) acertos++;
+    if (!porArea[q.area]) porArea[q.area] = { total: 0, acertos: 0 };
+    porArea[q.area].total++;
+    if (acertou) porArea[q.area].acertos++;
+    if (!acertou) errosPorTopico.push({ topico: q.topico, area: q.area });
+  });
+
+  // Render resultado
+  document.getElementById('telaSimulado').classList.add('hidden');
+  document.getElementById('telaResultado').classList.remove('hidden');
+  document.getElementById('scoreGeral').textContent = Math.round((acertos/20)*100) + '%';
+  document.getElementById('acertos').textContent = acertos;
+  const mins = Math.floor(tempoUsadoSec/60);
+  document.getElementById('tempoUsado').textContent = `${Math.floor(mins/60)}h${(mins%60).toString().padStart(2,'0')}`;
+
+  // Projeção
+  const projPercent = Math.round((acertos/20)*100);
+  let proj = 'baixa';
+  if (projPercent >= 65) proj = 'alta';
+  else if (projPercent >= 50) proj = 'média-alta';
+  else if (projPercent >= 40) proj = 'média';
+  else if (projPercent >= 30) proj = 'baixa-média';
+  document.getElementById('projecao').textContent = proj;
+
+  // Score por área
+  const scoresEl = document.getElementById('scoresPorArea');
+  scoresEl.innerHTML = Object.entries(porArea).map(([area, d]) => {
+    const pct = Math.round((d.acertos/d.total)*100);
+    let cor = 'grad-cyan';
+    if (pct < 40) cor = 'bg-red-500';
+    else if (pct < 60) cor = 'bg-amber-500';
+    else cor = 'bg-emerald-500';
+    return `
+      <div>
+        <div class="flex justify-between mb-1">
+          <span class="font-medium">${area}</span>
+          <span class="mono text-sm">${d.acertos}/${d.total} (${pct}%)</span>
+        </div>
+        <div class="h-2 bg-slate-700/40 rounded-full overflow-hidden">
+          <div class="h-full ${cor} rounded-full" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Prioridades 1 (até 3 tópicos errados; se acertou tudo, mostra mensagem)
+  const prio = document.getElementById('prioridades1');
+  if (errosPorTopico.length === 0) {
+    prio.innerHTML = '<p class="text-emerald-400">🎉 Você acertou TODAS as questões. Estratégia: foco em redação e prova anterior real.</p>';
+  } else {
+    prio.innerHTML = errosPorTopico.slice(0, 3).map((e, i) => `
+      <div class="flex items-center gap-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+        <span class="amber font-bold text-xl">${i+1}</span>
+        <div>
+          <p class="font-semibold">${e.topico}</p>
+          <p class="text-xs text-slate-400">${e.area}</p>
+        </div>
+      </div>`).join('');
+  }
+
+  // Gabarito comentado
+  const gab = document.getElementById('gabaritoComentado');
+  gab.innerHTML = QUESTOES.map((q, i) => {
+    const escolhida = respostas[i];
+    const acertou = escolhida === q.correta;
+    return `
+      <div class="border-l-2 ${acertou ? 'border-emerald-500' : 'border-red-500'} pl-4">
+        <p class="text-xs text-slate-500 mb-1">Questão ${q.n} · ${q.area} · ${q.topico}</p>
+        <p class="text-sm font-medium mb-2 whitespace-pre-line">${q.enunciado}</p>
+        <div class="text-xs space-y-1 mb-2">
+          ${q.alternativas.map((alt, idx) => {
+            let cls = 'text-slate-400';
+            if (idx === q.correta) cls = 'text-emerald-400 font-bold';
+            if (idx === escolhida && !acertou) cls = 'text-red-400';
+            return `<p class="${cls}">${String.fromCharCode(65+idx)}) ${alt}</p>`;
+          }).join('')}
+        </div>
+        <p class="text-xs ${acertou ? 'text-emerald-300' : 'text-amber-300'} mt-2"><span class="font-bold">${acertou ? '✓ ACERTOU' : '✗ ERROU'}</span> · ${q.explicacao}</p>
+      </div>`;
+  }).join('');
+
+  // JSON Export
+  const exp = {
+    diagnostico_unicap_2026_2: {
+      data: new Date().toISOString(),
+      tempo_usado_segundos: tempoUsadoSec,
+      score_total: acertos,
+      score_pct: Math.round((acertos/20)*100),
+      score_por_area: porArea,
+      respostas: QUESTOES.map((q, i) => ({
+        questao: q.n,
+        area: q.area,
+        topico: q.topico,
+        escolhida: respostas[i] !== null ? String.fromCharCode(65 + respostas[i]) : 'em branco',
+        correta_letra: String.fromCharCode(65 + q.correta),
+        acertou: respostas[i] === q.correta
+      })),
+      prioridades_1: errosPorTopico.slice(0, 3)
+    }
+  };
+  document.getElementById('jsonExport').textContent = JSON.stringify(exp, null, 2);
+  localStorage.setItem('unicap-diagnostico', JSON.stringify(exp));
+}
+
+function copiarJson() {
+  const text = document.getElementById('jsonExport').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert('JSON copiado! Cole no chat com o Claude com a frase "Atualize meu progresso".');
+  });
+}
+</script>
+</body>
+</html>

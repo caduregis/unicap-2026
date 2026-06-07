@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Observatório das Curvas — UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:'Inter',sans-serif; }
+canvas { display:block; }
+#nav { position:fixed; top:16px; left:16px; right:16px; display:flex; justify-content:space-between; align-items:center; z-index:100; }
+#nav-back, #nav-resumo {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.6); text-decoration:none; font-size:12px; font-weight:500;
+  padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px); transition:all 0.2s;
+}
+#nav-back:hover, #nav-resumo:hover { background:rgba(255,255,255,0.1); color:#fff; }
+#nav-title {
+  background:rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.4); font-size:11px; font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; padding:8px 16px; border-radius:8px; backdrop-filter:blur(10px);
+}
+#popup {
+  display:none; position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+  background:rgba(8,6,18,0.97); border:1px solid rgba(255,255,255,0.12);
+  border-radius:16px; padding:24px 28px; max-width:480px; width:90%; z-index:200;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8); backdrop-filter:blur(20px);
+}
+#popup-title { font-size:16px; font-weight:700; color:#e0d8f8; margin-bottom:10px; }
+#popup-body { font-size:13px; color:#9080a8; line-height:1.6; margin-bottom:14px; }
+#popup-tip {
+  font-size:11px; color:#7060a8; background:rgba(124,96,232,0.08);
+  border:1px solid rgba(124,96,232,0.2); border-radius:8px; padding:10px 14px;
+  margin-bottom:14px; line-height:1.5;
+}
+#popup-tip strong { color:#a090d8; }
+#popup-close {
+  background:none; border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.4);
+  font-size:12px; padding:6px 16px; border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+#popup-close:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#hint {
+  position:fixed; bottom:24px; right:24px; font-size:11px; color:rgba(255,255,255,0.2);
+  font-family:'Inter',sans-serif; letter-spacing:0.05em;
+}
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">O Observatório das Curvas</span>
+  <a href="resumo.html" id="nav-resumo">Resumo →</a>
+</div>
+<div id="popup">
+  <div id="popup-title"></div>
+  <div id="popup-body"></div>
+  <div id="popup-tip"></div>
+  <button id="popup-close" onclick="document.getElementById('popup').style.display='none'">Fechar</button>
+</div>
+<div id="hint">Clique nos elementos para estudar</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+// Scene setup
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x000a12);
+scene.fog = new THREE.FogExp2(0x000a12, 0.025);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 200);
+camera.position.set(0, 8, 16);
+camera.lookAt(0, 0, 0);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.target.set(0, 2, 0);
+controls.minDistance = 4;
+controls.maxDistance = 40;
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0x0a1628, 0.8);
+scene.add(ambientLight);
+const blueLight = new THREE.PointLight(0x1a4080, 2.0, 40);
+blueLight.position.set(0, 12, 0);
+scene.add(blueLight);
+const accentLight = new THREE.PointLight(0x4060ff, 1.5, 30);
+accentLight.position.set(-8, 6, -4);
+scene.add(accentLight);
+const warmLight = new THREE.PointLight(0x2040a0, 1.0, 25);
+warmLight.position.set(8, 4, 4);
+scene.add(warmLight);
+
+// Floor with grid
+const floorGeo = new THREE.PlaneGeometry(40, 40);
+const floorMat = new THREE.MeshStandardMaterial({
+  color: 0x020814, roughness: 0.9, metalness: 0.1
+});
+const floor = new THREE.Mesh(floorGeo, floorMat);
+floor.rotation.x = -Math.PI/2;
+floor.position.y = -0.5;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Grid lines on floor
+function addGridLine(x1,z1,x2,z2, color) {
+  const pts = [new THREE.Vector3(x1,-0.45,z1), new THREE.Vector3(x2,-0.45,z2)];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.15 });
+  scene.add(new THREE.Line(geo, mat));
+}
+for(let i=-10; i<=10; i++) {
+  addGridLine(i,-10,i,10, 0x1a3060);
+  addGridLine(-10,i,10,i, 0x1a3060);
+}
+
+// Coordinate axes on floor (luminous blue lines)
+function addAxis(x1,y1,z1, x2,y2,z2, color, opacity=1.0) {
+  const pts = [new THREE.Vector3(x1,y1,z1), new THREE.Vector3(x2,y2,z2)];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color, transparent:true, opacity });
+  return new THREE.Line(geo, mat);
+}
+scene.add(addAxis(-9, -0.4, 0, 9, -0.4, 0, 0x2060ff, 0.9));  // X axis
+scene.add(addAxis(0, -0.4, 0, 0, 7, 0, 0x2060ff, 0.9));       // Y axis
+scene.add(addAxis(0, -0.4, -9, 0, -0.4, 9, 0x2060ff, 0.4));   // Z axis
+
+// Function curves as THREE.Line — raised above floor
+// Parabola y = x^2 * 0.3 (red)
+const parabolaPts = [];
+for(let x=-4; x<=4; x+=0.08) {
+  parabolaPts.push(new THREE.Vector3(x, x*x*0.3, 0.5));
+}
+const parabolaGeo = new THREE.BufferGeometry().setFromPoints(parabolaPts);
+const parabolaMat = new THREE.LineBasicMaterial({ color: 0xff4444, linewidth: 2 });
+const parabola = new THREE.Line(parabolaGeo, parabolaMat);
+scene.add(parabola);
+
+// Linear y = 0.5x + 1 (blue)
+const linearPts = [];
+for(let x=-6; x<=6; x+=0.2) {
+  linearPts.push(new THREE.Vector3(x, x*0.5+1, -0.5));
+}
+const linearGeo = new THREE.BufferGeometry().setFromPoints(linearPts);
+const linearMat = new THREE.LineBasicMaterial({ color: 0x4488ff, linewidth: 2 });
+const linearLine = new THREE.Line(linearGeo, linearMat);
+scene.add(linearLine);
+
+// Exponential y = e^x * 0.3 (green), limited range
+const expPts = [];
+for(let x=-4; x<=2.5; x+=0.06) {
+  const y = Math.exp(x) * 0.3;
+  if(y < 8) expPts.push(new THREE.Vector3(x, y, -1.5));
+}
+const expGeo = new THREE.BufferGeometry().setFromPoints(expPts);
+const expMat = new THREE.LineBasicMaterial({ color: 0x44ff88, linewidth: 2 });
+const expLine = new THREE.Line(expGeo, expMat);
+scene.add(expLine);
+
+// Logarithm y = ln(x) * 1.2 (orange)
+const logPts = [];
+for(let x=0.15; x<=7; x+=0.06) {
+  const y = Math.log(x) * 1.2;
+  logPts.push(new THREE.Vector3(x, y, -2.5));
+}
+const logGeo = new THREE.BufferGeometry().setFromPoints(logPts);
+const logMat = new THREE.LineBasicMaterial({ color: 0xff8844, linewidth: 2 });
+const logLine = new THREE.Line(logGeo, logMat);
+scene.add(logLine);
+
+// Dome / observatory walls (cylinder open top)
+const domeGeo = new THREE.CylinderGeometry(14, 14, 20, 32, 1, true);
+const domeMat = new THREE.MeshStandardMaterial({
+  color: 0x040a18, side: THREE.BackSide, roughness:1
+});
+scene.add(new THREE.Mesh(domeGeo, domeMat));
+
+// Telescope — stacked boxes pointing upward-diagonal
+const telGroup = new THREE.Group();
+telGroup.position.set(-7, -0.5, -5);
+const telBase = new THREE.Mesh(
+  new THREE.BoxGeometry(0.6, 0.4, 0.6),
+  new THREE.MeshStandardMaterial({ color: 0x2a2a3a, metalness:0.6, roughness:0.4 })
+);
+telBase.position.y = 0.2;
+telGroup.add(telBase);
+const telPillar = new THREE.Mesh(
+  new THREE.BoxGeometry(0.3, 2.5, 0.3),
+  new THREE.MeshStandardMaterial({ color: 0x1a1a2a, metalness:0.7, roughness:0.3 })
+);
+telPillar.position.y = 1.65;
+telGroup.add(telPillar);
+const telTube = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.18, 0.22, 3.5, 12),
+  new THREE.MeshStandardMaterial({ color: 0x3a3a5a, metalness:0.8, roughness:0.2 })
+);
+telTube.position.set(0.5, 3.2, 0);
+telTube.rotation.z = -Math.PI/4;
+telGroup.add(telTube);
+const telLens = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.22, 0.14, 0.5, 12),
+  new THREE.MeshStandardMaterial({ color: 0x4466aa, metalness:0.9, roughness:0.1, emissive:0x112244 })
+);
+telLens.position.set(1.4, 4.2, 0);
+telLens.rotation.z = -Math.PI/4;
+telGroup.add(telLens);
+scene.add(telGroup);
+
+// Star ceiling — 2000 particles
+const starCount = 2000;
+const starPositions = new Float32Array(starCount * 3);
+for(let i=0; i<starCount; i++) {
+  const theta = Math.random() * Math.PI * 2;
+  const phi = Math.random() * Math.PI * 0.5;
+  const r = 13.5;
+  starPositions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+  starPositions[i*3+1] = 8 + r * Math.cos(phi);
+  starPositions[i*3+2] = r * Math.sin(phi) * Math.sin(theta);
+}
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent:true, opacity:0.9 });
+scene.add(new THREE.Points(starGeo, starMat));
+
+// Study nodes — glowing cyan spheres at different positions
+const nodeMat = new THREE.MeshStandardMaterial({
+  color: 0x40e0ff, emissive: 0x20a0cc, emissiveIntensity: 0.8,
+  roughness: 0.2, metalness: 0.3
+});
+function makeNode(x, y, z) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.25, 12, 12), nodeMat.clone());
+  m.position.set(x, y, z);
+  scene.add(m);
+  return m;
+}
+
+const n1 = makeNode(-5, 2.5, 3);
+const n2 = makeNode(5, 3.5, 2);
+const n3 = makeNode(3, 4.5, -3);
+const n4 = makeNode(-3, 3.0, -4);
+const n5 = makeNode(0, 5.0, -2);
+const n6 = makeNode(-6, 1.8, -2);
+const n7 = makeNode(6, 2.0, -5);
+
+// Node glow rings
+function addGlowRing(node) {
+  const ringGeo = new THREE.TorusGeometry(0.38, 0.03, 8, 32);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x40e0ff, transparent:true, opacity:0.4 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.position.copy(node.position);
+  scene.add(ring);
+  return ring;
+}
+const rings = [n1,n2,n3,n4,n5,n6,n7].map(addGlowRing);
+
+// Connecting lines between nodes and the curves (visual guides)
+function connectLine(from, to, color) {
+  const pts = [from.clone(), to.clone()];
+  const geo = new THREE.BufferGeometry().setFromPoints(pts);
+  const mat = new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.25 });
+  scene.add(new THREE.Line(geo, mat));
+}
+connectLine(n1.position, new THREE.Vector3(-5, -0.4, 0.5), 0xff4444);
+connectLine(n2.position, new THREE.Vector3(4, -0.4, -0.5), 0x4488ff);
+connectLine(n3.position, new THREE.Vector3(2, -0.4, -1.5), 0x44ff88);
+connectLine(n4.position, new THREE.Vector3(-3, -0.4, -2.5), 0xff8844);
+
+const nodes = [
+  {
+    mesh: n1,
+    title: 'Função 1º Grau',
+    body: 'f(x)=ax+b. Se a>0 crescente, se a<0 decrescente. Raiz em x=-b/a. Zero da função = intersecção com eixo x. Coeficiente angular a e coeficiente linear b determinam o gráfico completamente.',
+    tip: '<strong>UNICAP:</strong> Cai sempre: dado f(x)=3x-6, encontrar zero e interpretar gráfico.'
+  },
+  {
+    mesh: n2,
+    title: 'Função 2º Grau',
+    body: 'f(x)=ax²+bx+c. Vértice em x=-b/2a; y_v=f(x_v). Delta=b²-4ac determina raízes reais. Parábola abre pra cima se a>0, pra baixo se a<0. Fórmula de Bhaskara: x=(-b±√Δ)/2a.',
+    tip: '<strong>UNICAP:</strong> Determinar vértice e raízes, analisar sinal e fazer gráfico esquemático.'
+  },
+  {
+    mesh: n3,
+    title: 'Função Exponencial',
+    body: 'f(x)=a·b^x, b>0, b≠1. Se b>1 crescente; se 0<b<1 decrescente. Passa por (0,a). Crescimento exponencial: populações, juros compostos. Jamais corta o eixo x (assíntota horizontal y=0).',
+    tip: '<strong>UNICAP:</strong> Problemas de crescimento populacional ou radioatividade usam f(t)=f₀·e^(kt).'
+  },
+  {
+    mesh: n4,
+    title: 'Função Logarítmica',
+    body: 'f(x)=log_b(x). Inversa da exponencial. Domínio: x>0. log_b(b)=1; log_b(1)=0. Propriedades: log(ab)=log(a)+log(b); log(a/b)=log(a)-log(b); log(a^n)=n·log(a). Base natural: ln=log_e.',
+    tip: '<strong>UNICAP:</strong> Mudança de base: log_b(a)=log(a)/log(b). Aparece em problemas de pH, decibéis.'
+  },
+  {
+    mesh: n5,
+    title: 'Domínio, Imagem e Contradomínio',
+    body: 'Domínio: conjunto dos valores de x para os quais f existe. Imagem: conjunto dos valores que f(x) realmente assume. Contradomínio: conjunto maior que contém a imagem. f(x)=1/x: domínio=ℝ-{0}. f(x)=√x: domínio=ℝ≥0.',
+    tip: '<strong>UNICAP:</strong> Saber determinar domínio de funções compostas e radicais é recorrente.'
+  },
+  {
+    mesh: n6,
+    title: 'Composição de Funções',
+    body: '(f∘g)(x)=f(g(x)). Aplica g primeiro, depois f. Não é comutativa: f∘g ≠ g∘f em geral. Função inversa: f⁻¹ tal que f(f⁻¹(x))=x. Para encontrar f⁻¹, trocar x e y e isolar y.',
+    tip: '<strong>UNICAP:</strong> Dado f(x)=2x+3, encontrar f⁻¹(x) e calcular (f∘g)(2) com g dado.'
+  },
+  {
+    mesh: n7,
+    title: 'Gráficos e Transformações',
+    body: 'Translação vertical: f(x)+k sobe k unidades. Translação horizontal: f(x-h) desloca h para direita. Reflexão: -f(x) inverte pelo eixo x; f(-x) inverte pelo eixo y. Compressão/expansão: a·f(x) estica verticalmente.',
+    tip: '<strong>UNICAP:</strong> Identificar que f(x-2)+3 é f deslocada 2 à direita e 3 acima.'
+  }
+];
+
+// Raycaster
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let lastHovered = null;
+
+window.addEventListener('mousemove', e => {
+  mouse.x = (e.clientX/window.innerWidth)*2-1;
+  mouse.y = -(e.clientY/window.innerHeight)*2+1;
+});
+
+window.addEventListener('click', e => {
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = nodes.map(n=>n.mesh);
+  const hits = raycaster.intersectObjects(meshes);
+  if(hits.length) {
+    const n = nodes.find(n=>n.mesh===hits[0].object);
+    if(n){
+      document.getElementById('popup-title').textContent = n.title;
+      document.getElementById('popup-body').textContent = n.body;
+      document.getElementById('popup-tip').innerHTML = n.tip;
+      document.getElementById('popup').style.display = 'block';
+    }
+  }
+});
+
+// Animation
+function animate(){
+  requestAnimationFrame(animate);
+  const t = Date.now() * 0.001;
+
+  // Animate curves floating gently
+  parabola.position.y = Math.sin(t * 0.4) * 0.15;
+  linearLine.position.y = Math.sin(t * 0.35 + 1) * 0.12;
+  expLine.position.y = Math.sin(t * 0.45 + 2) * 0.1;
+  logLine.position.y = Math.sin(t * 0.38 + 3) * 0.13;
+
+  // Animate rings
+  rings.forEach((ring, i) => {
+    ring.rotation.x = t * 0.5 + i;
+    ring.rotation.y = t * 0.3 + i * 0.7;
+    ring.material.opacity = 0.3 + Math.sin(t + i) * 0.15;
+  });
+
+  // Floating node animation
+  nodes.forEach((nd, i) => {
+    nd.mesh.position.y = nd.mesh.userData.baseY !== undefined
+      ? nd.mesh.userData.baseY + Math.sin(t * 0.6 + i * 1.1) * 0.25
+      : nd.mesh.position.y;
+  });
+
+  // Store base Y on first run
+  if(!nodes[0].mesh.userData.baseY) {
+    nodes.forEach(nd => nd.mesh.userData.baseY = nd.mesh.position.y);
+  }
+
+  // Light flicker
+  blueLight.intensity = 1.8 + Math.sin(t * 2.1) * 0.3;
+
+  // Raycaster hover
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(nodes.map(n=>n.mesh));
+  nodes.forEach(nd => {
+    const isHit = hits.length && hits[0].object === nd.mesh;
+    const target = isHit ? 1.3 : 1.0;
+    nd.mesh.scale.lerp(new THREE.Vector3(target, target, target), 0.1);
+    nd.mesh.material.emissiveIntensity = isHit ? 1.5 : 0.8;
+  });
+  document.body.style.cursor = hits.length ? 'pointer' : 'default';
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

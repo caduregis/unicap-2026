@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards · Inglês · UNICAP 2026.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{font-family:'Inter',sans-serif}
+  body{background:linear-gradient(135deg,#0a0e1a 0%,#131829 50%,#0a0e1a 100%);min-height:100vh;color:#e8eaf0}
+  .glass{background:rgba(19,24,41,0.7);backdrop-filter:blur(12px);border:1px solid rgba(6,182,212,0.2)}
+  .cyan{color:#00d4ff} .amber{color:#ffb800}
+  .card-3d-container{perspective:1500px}
+  .card-3d{position:relative;width:100%;height:400px;transform-style:preserve-3d;transition:transform 700ms cubic-bezier(0.22,1,0.36,1);cursor:pointer}
+  .card-3d.flipped{transform:rotateY(180deg)}
+  .card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:32px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;border:1px solid rgba(6,182,212,0.3);box-shadow:0 16px 48px rgba(0,0,0,0.4)}
+  .card-front{background:linear-gradient(135deg,rgba(19,24,41,0.95) 0%,rgba(10,14,26,0.95) 100%)}
+  .card-back{background:linear-gradient(135deg,rgba(6,182,212,0.08) 0%,rgba(19,24,41,0.95) 100%);transform:rotateY(180deg);border-color:rgba(6,182,212,0.4)}
+  .btn-action{transition:all 200ms ease-out;border:1px solid;border-radius:10px;padding:10px 18px;font-weight:700;font-size:13px}
+  .btn-action:hover{transform:translateY(-2px)}
+  .btn-errei{color:#ef4444;border-color:#ef4444}
+  .btn-dificil{color:#ffb800;border-color:#ffb800}
+  .btn-bom{color:#00d4ff;border-color:#00d4ff}
+  .btn-facil{color:#10b981;border-color:#10b981}
+</style></head>
+<body class="p-4 sm:p-8">
+<header class="max-w-3xl mx-auto mb-6">
+  <a href="../index.html" class="text-sm cyan hover:underline">← Semana 1</a>
+  <h1 class="text-2xl font-bold mt-3">🗂️ Flashcards · <span style="color:#06b6d4">Inglês</span></h1>
+  <p class="text-xs text-slate-500">Grammar + Reading · descoberta no edital oficial 2026.2</p>
+</header>
+<section class="max-w-3xl mx-auto mb-4 glass rounded-xl p-4">
+  <div class="grid grid-cols-4 text-center gap-2 text-xs">
+    <div><p class="text-2xl font-bold cyan" id="statTotal">0</p><p class="text-slate-400">Total</p></div>
+    <div><p class="text-2xl font-bold amber" id="statHoje">0</p><p class="text-slate-400">Hoje</p></div>
+    <div><p class="text-2xl font-bold text-emerald-400" id="statDominadas">0</p><p class="text-slate-400">Dominadas</p></div>
+    <div><p class="text-2xl font-bold text-red-400" id="statRevisar">0</p><p class="text-slate-400">A revisar</p></div>
+  </div>
+</section>
+<section class="max-w-3xl mx-auto card-3d-container mb-6">
+  <div id="card" class="card-3d" onclick="virarCarta()">
+    <div class="card-face card-front"><p class="text-xs uppercase tracking-widest text-slate-400 mb-4">Question</p><p id="frente" class="text-xl sm:text-2xl font-medium leading-relaxed"></p><p class="text-xs text-slate-500 mt-6">Click to reveal</p></div>
+    <div class="card-face card-back"><p class="text-xs uppercase tracking-widest" style="color:#06b6d4">Answer</p><p id="verso" class="text-sm sm:text-base leading-relaxed mt-4"></p></div>
+  </div>
+</section>
+<section id="acoesRevisao" class="max-w-3xl mx-auto hidden">
+  <div class="glass rounded-xl p-4">
+    <p class="text-center text-xs text-slate-400 mb-3 uppercase tracking-widest">How was your recall?</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <button onclick="responder('errei')" class="btn-action btn-errei">😵 Failed</button>
+      <button onclick="responder('dificil')" class="btn-action btn-dificil">🤔 Hard</button>
+      <button onclick="responder('bom')" class="btn-action btn-bom">😊 Good</button>
+      <button onclick="responder('facil')" class="btn-action btn-facil">⚡ Easy</button>
+    </div>
+  </div>
+</section>
+<section id="conclusao" class="max-w-3xl mx-auto hidden glass rounded-2xl p-8 text-center">
+  <p class="text-6xl mb-4">🎉</p>
+  <p class="text-2xl font-bold mb-2">Session done!</p>
+  <a href="../index.html" class="inline-block bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-bold px-6 py-3 rounded-lg">← Back</a>
+</section>
+<script>
+const STORAGE_KEY='unicap-flashcards-ingles';
+const CARTAS_BASE=[
+  {f:'Qual a diferença entre "its" e "it\'s"?',v:'ITS = possessive adjective (de it): "The dog wagged ITS tail." IT\'S = contraction of IT IS or IT HAS: "It\'s raining." Erro clássico — confunde o gênero.'},
+  {f:'Quando usar "a" e quando usar "an"?',v:'A = antes de CONSOANTE no SOM (não na letra): a university (u soa "you"), a hour ❌→ AN hour (h mudo). AN = antes de som vocálico: an apple, an MBA (M = "em" = vocálico).'},
+  {f:'Qual a estrutura do Present Perfect?',v:'SUBJECT + HAVE/HAS + PAST PARTICIPLE (3ª coluna). Ex: "I have studied" / "She has gone". Usado para: passado com efeito no presente · ações inacabadas (since/for) · experiências (ever/never).'},
+  {f:'Quando usar "since" e quando usar "for" em Present Perfect?',v:'SINCE = ponto específico no tempo: "since 2020", "since Monday", "since I was 10". FOR = duração: "for 5 years", "for 3 months", "for a long time".'},
+  {f:'Diferença entre Simple Past e Present Perfect?',v:'SIMPLE PAST = ação acabada COM tempo definido: "I went to Recife yesterday" / "She studied in 2020". PRESENT PERFECT = passado SEM tempo definido / efeito no presente: "I have been to Recife" / "She has studied a lot".'},
+  {f:'Para que serve o modal "must"? Como negar?',v:'MUST = obrigação forte / certeza ("You must study." / "He must be tired"). Negativo: MUSTN\'T = PROIBIDO ("You mustn\'t smoke"). ≠ DON\'T HAVE TO = não é obrigado ("You don\'t have to come").'},
+  {f:'Quando usar "who" e quando usar "which" como relative pronouns?',v:'WHO = para PESSOAS. "The man WHO called you..." WHICH = para COISAS/ANIMAIS. "The book WHICH I read..." Em estruturas defining, pode trocar por THAT (pessoas ou coisas).'},
+  {f:'O que é "subjunctive" depois de "wish"?',v:'WISH + SIMPLE PAST (ou WERE para todos): "I wish I WERE rich" (não "was", mesmo em 1ª pessoa). Expressa desejo irreal/impossível no presente. WISH + HAD + past participle = passado: "I wish I HAD studied more."'},
+  {f:'Como traduzir "library" e "actually"? (false friends)',v:'LIBRARY = BIBLIOTECA (não "livraria" — bookstore). ACTUALLY = NA VERDADE (não "atualmente" — currently/nowadays). False friends que confundem brasileiros.'},
+  {f:'Estrutura do First Conditional (condicional real)?',v:'IF + PRESENT, FUTURE (will): "If it rains, I will stay home." Condição realista no presente/futuro. Second Conditional (irreal): IF + PAST, WOULD: "If I had money, I would travel."'},
+  {f:'Como diferenciar "in", "on" e "at" para LUGAR?',v:'IN = espaço fechado/grande (in Brazil, in the room, in Recife). ON = superfície (on the table, on the wall). AT = ponto específico (at home, at school, at the door, at the airport).'},
+  {f:'Como diferenciar "in", "on" e "at" para TEMPO?',v:'IN = mês/ano/período (in May, in 2026, in the morning). ON = dia/data (on Monday, on May 14th). AT = hora específica (at 5pm, at night, at noon).'},
+  {f:'O que é "phrasal verb"? Dê 5 exemplos.',v:'Phrasal verb = verbo + preposição/advérbio que muda o sentido. Exemplos: GIVE UP (desistir), LOOK FOR (procurar), LOOK AFTER (cuidar), TAKE OFF (decolar), PUT ON (vestir), GET ON (subir transporte), RUN OUT OF (ficar sem).'},
+  {f:'Estrutura básica de Reported Speech (discurso indireto) com Simple Present?',v:'Discurso direto → indireto: tempo verbal recua. SAY: "I love you" → He SAID (that) he LOVED her. Present → Past · Will → Would · Can → Could · Have → Had.'},
+  {f:'Como formar o comparativo e superlativo de adjetivos curtos?',v:'COMPARATIVO: -ER + than: "TALLER than", "BIGGER than". SUPERLATIVO: THE + -EST: "THE tallest", "THE biggest". Adjetivos LONGOS (3+ sílabas): more/most + adj. "MORE important than" / "THE MOST important".'}
+];
+function loadState(){const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);return{cartas:CARTAS_BASE.map((c,i)=>({id:i,frente:c.f,verso:c.v,ef:2.5,intervalo:0,repeticoes:0,proxima:new Date().toISOString().slice(0,10)})),criada:new Date().toISOString()}}
+function saveState(s){localStorage.setItem(STORAGE_KEY,JSON.stringify(s))}
+let state=loadState(),cartaAtual=null,sessaoFeitas=0;
+function devidas(){const h=new Date().toISOString().slice(0,10);return state.cartas.filter(c=>c.proxima<=h)}
+function proximaCarta(){const d=devidas();if(d.length===0){concluir();return}cartaAtual=d[Math.floor(Math.random()*d.length)];document.getElementById('frente').textContent=cartaAtual.frente;document.getElementById('verso').textContent=cartaAtual.verso;document.getElementById('card').classList.remove('flipped');document.getElementById('acoesRevisao').classList.add('hidden');stats()}
+function virarCarta(){const c=document.getElementById('card');if(c.classList.contains('flipped'))return;c.classList.add('flipped');setTimeout(()=>document.getElementById('acoesRevisao').classList.remove('hidden'),350)}
+function responder(q){const qm={'errei':0,'dificil':2,'bom':4,'facil':5};const quality=qm[q];let{ef,intervalo,repeticoes}=cartaAtual;if(quality<3){repeticoes=0;intervalo=1}else{if(repeticoes===0)intervalo=1;else if(repeticoes===1)intervalo=3;else intervalo=Math.round(intervalo*ef);repeticoes++;ef=Math.max(1.3,ef+(0.1-(5-quality)*(0.08+(5-quality)*0.02)))}const pd=new Date();pd.setDate(pd.getDate()+intervalo);cartaAtual.ef=ef;cartaAtual.intervalo=intervalo;cartaAtual.repeticoes=repeticoes;cartaAtual.proxima=pd.toISOString().slice(0,10);saveState(state);sessaoFeitas++;setTimeout(()=>proximaCarta(),300)}
+function stats(){const d=devidas();document.getElementById('statTotal').textContent=state.cartas.length;document.getElementById('statHoje').textContent=sessaoFeitas;document.getElementById('statRevisar').textContent=d.length;document.getElementById('statDominadas').textContent=state.cartas.filter(c=>c.repeticoes>=4&&c.ef>2.5).length}
+function concluir(){document.querySelector('.card-3d-container').classList.add('hidden');document.getElementById('acoesRevisao').classList.add('hidden');document.getElementById('conclusao').classList.remove('hidden')}
+proximaCarta();
+</script></body></html>

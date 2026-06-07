@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Antiguidade e Idade Média | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #d4a840;
+    --gold-dim: rgba(212,168,64,0.15);
+    --gold-border: rgba(212,168,64,0.25);
+    --bg: #040208;
+    --surface: #0d0906;
+    --surface2: #140c08;
+    --text: #ddd0b8;
+    --text-dim: #8a7a60;
+    --red: #e06040;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .topnav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(4,2,8,0.97); border-bottom: 1px solid var(--gold-border);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    backdrop-filter: blur(8px);
+  }
+  .topnav a { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; }
+  .topnav a:hover { text-decoration: underline; }
+  .nav-links { display: flex; gap: 20px; }
+  .badge {
+    font-size: 12px; font-weight: 600; color: var(--gold);
+    background: var(--gold-dim); border: 1px solid var(--gold-border);
+    padding: 4px 12px; border-radius: 20px; letter-spacing: 0.05em;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 60px 32px 48px;
+    background: linear-gradient(180deg, #100808 0%, var(--bg) 100%);
+    text-align: center;
+    border-bottom: 1px solid var(--gold-border);
+  }
+  .hero h1 {
+    font-size: clamp(24px, 4vw, 40px); font-weight: 700;
+    color: #fff; margin-bottom: 12px; letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p { color: var(--text-dim); font-size: 15px; max-width: 600px; margin: 0 auto 24px; }
+  .hero-cta {
+    display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn {
+    display: inline-block; padding: 10px 22px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; text-decoration: none;
+    transition: all 0.2s; cursor: pointer;
+    letter-spacing: 0.04em;
+  }
+  .btn-gold { background: var(--gold); color: #0a0604; }
+  .btn-gold:hover { background: #e8b840; }
+  .btn-outline { border: 1px solid var(--gold-border); color: var(--gold); background: transparent; }
+  .btn-outline:hover { background: var(--gold-dim); }
+
+  /* CONTAINER */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+  /* SECTION CARDS */
+  .section {
+    margin: 40px 0;
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 20px 28px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--gold-dim); border: 1px solid var(--gold-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: var(--gold);
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 16px; font-weight: 700; color: #fff;
+  }
+  .section-body { padding: 24px 28px; }
+  .section-body p { font-size: 14px; color: var(--text); margin-bottom: 14px; }
+  .section-body p:last-child { margin-bottom: 0; }
+
+  /* WHY STUDY BOX */
+  .why-box {
+    background: linear-gradient(135deg, rgba(212,168,64,0.08), rgba(212,168,64,0.02));
+    border: 1px solid var(--gold-border); border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .why-box p { font-size: 14px; color: var(--text); margin-bottom: 8px; }
+  .stat-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; }
+  .stat-box {
+    background: var(--gold-dim); border: 1px solid var(--gold-border);
+    border-radius: 10px; padding: 12px 20px; text-align: center; flex: 1; min-width: 120px;
+  }
+  .stat-box .num { font-size: 22px; font-weight: 700; color: var(--gold); display: block; }
+  .stat-box .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--gold-dim); color: var(--gold);
+    padding: 10px 14px; text-align: left; font-weight: 600;
+    border-bottom: 1px solid var(--gold-border); font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text); vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .tag {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+  }
+  .tag-atenas { background: rgba(60,120,220,0.2); color: #6090ff; }
+  .tag-esparta { background: rgba(200,50,50,0.2); color: #ff6060; }
+
+  /* HIGHLIGHT BOX */
+  .highlight {
+    background: rgba(212,168,64,0.06);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    margin: 16px 0; font-size: 13.5px; color: var(--text);
+  }
+  .highlight strong { color: var(--gold); }
+
+  .danger {
+    background: rgba(224,96,64,0.08);
+    border-left: 3px solid var(--red);
+    padding: 14px 18px; border-radius: 0 8px 8px 0;
+    margin: 16px 0; font-size: 13.5px; color: #d0a898;
+  }
+  .danger strong { color: var(--red); }
+
+  /* FASES */
+  .phases { display: flex; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+  .phase {
+    flex: 1; min-width: 140px;
+    background: var(--surface2); padding: 14px 16px;
+    border-right: 1px solid rgba(255,255,255,0.05);
+  }
+  .phase:last-child { border-right: none; }
+  .phase-title { font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .phase-date { font-size: 11px; color: var(--text-dim); margin-bottom: 8px; }
+  .phase p { font-size: 12px; color: var(--text); line-height: 1.5; margin: 0; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding: 8px 0; }
+  .tl-item {
+    display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;
+  }
+  .tl-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0; margin-top: 5px;
+    box-shadow: 0 0 8px rgba(212,168,64,0.5);
+  }
+  .tl-line {
+    position: absolute; left: 5px; top: 8px; bottom: 8px;
+    width: 2px; background: linear-gradient(180deg, var(--gold) 0%, rgba(212,168,64,0.1) 100%);
+  }
+  .tl-left { position: relative; }
+  .tl-date { font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .tl-text { font-size: 13px; color: var(--text); }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13px; color: var(--text); padding: 10px 14px;
+    background: var(--surface2); border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .check-box {
+    width: 18px; height: 18px; border: 1.5px solid var(--gold-border);
+    border-radius: 4px; flex-shrink: 0; margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--gold-dim);
+  }
+  @media (max-width: 600px) { .checklist { grid-template-columns: 1fr; } }
+
+  /* VIDEO LINKS */
+  .videos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .video-card {
+    background: var(--surface2); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px; padding: 14px 16px;
+  }
+  .video-card .title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+  .video-card .sub { font-size: 12px; color: var(--text-dim); }
+  @media (max-width: 600px) { .videos { grid-template-columns: 1fr; } }
+
+  /* DICAS UNICAP */
+  .dica {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .dica:last-child { border-bottom: none; }
+  .dica-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold); color: #0a0604;
+    font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .dica p { font-size: 13.5px; color: var(--text); margin: 0; }
+  .dica strong { color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 48px 24px;
+    border-top: 1px solid var(--gold-border);
+    color: var(--text-dim); font-size: 13px;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+
+  b { color: #fff; }
+  ul { padding-left: 20px; }
+  ul li { font-size: 13.5px; color: var(--text); margin-bottom: 6px; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="../../../index.html">&#8592; Nexus</a>
+  <div class="nav-links">
+    <a href="mapa3d.html" class="btn btn-outline" style="padding:5px 14px;font-size:12px;">Mapa 3D</a>
+    <span class="badge">HIST. ANTIGA &amp; MEDIEVAL</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Antiguidade e <span>Idade Média</span></h1>
+  <p>Da Grécia Clássica à crise feudal — fundamentos do Ocidente para o vestibular UNICAP 2026.2</p>
+  <div class="hero-cta">
+    <a href="mapa3d.html" class="btn btn-gold">Ver Mapa 3D Interativo</a>
+    <a href="../../../../dashboard.html" class="btn btn-outline">Dashboard</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SEÇÃO 1: POR QUE ESTUDAR -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Por que estudar? Peso na UNICAP</h2>
+    </div>
+    <div class="section-body">
+      <div class="why-box">
+        <p>História Geral representa uma fatia significativa das questões de Humanas na UNICAP. Antiguidade e Idade Média formam a base para entender toda a história subsequente — Revolução Francesa, Direito, Filosofia Política.</p>
+        <div class="stat-row">
+          <div class="stat-box"><span class="num">2-3</span><span class="lbl">questões/prova</span></div>
+          <div class="stat-box"><span class="num">5+</span><span class="lbl">conceitos-chave</span></div>
+          <div class="stat-box"><span class="num">Alta</span><span class="lbl">conexão c/ Direito</span></div>
+        </div>
+      </div>
+      <div class="highlight" style="margin-top:16px;">
+        <strong>Para o curso de Direito:</strong> O Direito Romano é a raiz histórica do direito civil brasileiro. Questões sobre codificação, personalidade jurídica e fontes do direito têm origem em Roma. Estudar isso = diferencial para a prova.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2: GRÉCIA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Grécia Antiga: Poleis, Democracia e Cultura</h2>
+    </div>
+    <div class="section-body">
+      <p>A civilização grega (séc. VIII–IV a.C.) se organizou em <b>cidades-estado (poleis)</b> — cada uma com governo, exército e cultura próprios. Não havia um único "Estado grego".</p>
+
+      <table style="margin-bottom:20px;">
+        <thead><tr><th>Aspecto</th><th><span class="tag tag-atenas">Atenas</span></th><th><span class="tag tag-esparta">Esparta</span></th></tr></thead>
+        <tbody>
+          <tr><td>Governo</td><td>Democracia direta (Péricles, séc. V)</td><td>Oligarquia (dois reis + Éforos)</td></tr>
+          <tr><td>Economia</td><td>Comércio marítimo, artesanato</td><td>Agricultura, helotismo</td></tr>
+          <tr><td>Valores</td><td>Cultura, filosofia, debate público</td><td>Militarismo, disciplina física</td></tr>
+          <tr><td>Educação</td><td>Artes, retórica, filosofia</td><td>Agoge — treinamento militar desde os 7 anos</td></tr>
+          <tr><td>Escravidão</td><td>Escravos domésticos/mineração</td><td>Hilotas — servos do Estado espartano</td></tr>
+        </tbody>
+      </table>
+
+      <div class="danger">
+        <strong>Cuidado!</strong> A democracia ateniense era altamente excludente: apenas homens livres, nascidos em Atenas, adultos podiam participar. Mulheres, escravizados e metecos (estrangeiros) = excluídos. Apenas ~10-15% da população votava.
+      </div>
+
+      <p><b>Guerras Médicas (490–479 a.C.)</b> — Atenas e aliados vs. Império Persa de Dario e Xerxes:</p>
+      <ul>
+        <li><b>Batalha de Maratona (490 a.C.)</b> — vitória ateniense decisiva contra Dario</li>
+        <li><b>Termópilas (480 a.C.)</b> — 300 espartanos de Leônidas retardaram o avanço de Xerxes</li>
+        <li><b>Salamina (480 a.C.)</b> — vitória naval grega; virou o curso da guerra</li>
+        <li><b>Plateia (479 a.C.)</b> — derrota definitiva dos persas em terra</li>
+      </ul>
+
+      <div class="highlight" style="margin-top:16px;">
+        <strong>Cultura Grega:</strong> Filosofia (Sócrates — método dialético; Platão — Formas/República; Aristóteles — lógica e ciência). Teatro: tragédia (Sófocles, Ésquilo) e comédia (Aristófanes). Arquitetura: ordens dórica, jônica, coríntia — Partenon. Olímpiadas: celebração pan-helênica desde 776 a.C.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 3: ROMA -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Roma: Da República à Queda do Império</h2>
+    </div>
+    <div class="section-body">
+      <div class="phases">
+        <div class="phase">
+          <div class="phase-title">Monarquia</div>
+          <div class="phase-date">753–509 a.C.</div>
+          <p>7 reis. Fundação lendária por Rômulo. Derrubada por revolta aristocrática.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">República</div>
+          <div class="phase-date">509–27 a.C.</div>
+          <p>Senado + 2 cônsules + tribuno da plebe. Expansão mediterrânea. Guerras Púnicas.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Alto Império</div>
+          <div class="phase-date">27 a.C.–180 d.C.</div>
+          <p>Pax Romana. Augusto, Júlio-Cláudios, Antoninos. Apogeu da engenharia.</p>
+        </div>
+        <div class="phase">
+          <div class="phase-title">Baixo Império</div>
+          <div class="phase-date">180–476 d.C.</div>
+          <p>Crise militar, inflação, invasões bárbaras. Divisão 395. Queda 476.</p>
+        </div>
+      </div>
+
+      <p style="margin-top:16px;"><b>Estrutura Republicana:</b> Senado (patrícios = aristocracia) → Cônsules (2, com poder de veto mútuo) → Tribunos da Plebe (veto popular) → Assembleia Popular. Ditador apenas em emergências, por prazo máximo de 6 meses.</p>
+
+      <div class="highlight">
+        <strong>Júlio César ≠ Imperador.</strong> Foi ditador vitalício (quebrou a constituição) — assassinado pelos Idos de Março (44 a.C.). Augusto (Otávio), seu sobrinho-neto, é o PRIMEIRO imperador de fato (princeps = "o primeiro entre iguais").
+      </div>
+
+      <p><b>Guerras Púnicas</b> (264–146 a.C.): 3 guerras contra Cartago. A 2ª foi a mais grave: Aníbal cruzou os Alpes com elefantes e derrotou Roma em Cannas (216 a.C.). Roma resistiu e venceu com Cipião Africano. Cartago foi destruída em 146 a.C.</p>
+
+      <p><b>Queda do Império</b>: Teodósio divide em 395 (Ocidente/Oriente). Oriente = Bizâncio → sobrevive até 1453. Ocidente cai em 476 d.C. com Odoacro. Causas: crise econômica, pressão bárbara, exércitos mercenários, corrupção, epidemias.</p>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4: DIREITO ROMANO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Direito Romano: Legado para o Brasil</h2>
+    </div>
+    <div class="section-body">
+      <div class="highlight">
+        <strong>Relevância direta para Direito UNICAP:</strong> O Direito Romano é a matriz histórica do direito civil brasileiro (Código Civil, família, contratos, propriedade). Entender sua origem histórica é essencial.
+      </div>
+      <table>
+        <thead><tr><th>Conceito Romano</th><th>Herança no Direito Brasileiro</th></tr></thead>
+        <tbody>
+          <tr><td><b>Lei das XII Tábuas</b> (450 a.C.)</td><td>Primeiro código escrito de Roma — princípio da lei escrita e pública</td></tr>
+          <tr><td><b>Jus civile</b></td><td>Direito para cidadãos romanos → base do direito civil</td></tr>
+          <tr><td><b>Corpus Juris Civilis</b> (Justiniano, 529 d.C.)</td><td>Compilação que chegou ao mundo moderno via Bizâncio → Napoleão → Brasil</td></tr>
+          <tr><td><b>Persona / Personalidade</b></td><td>Conceito de sujeito de direitos (pessoa física/jurídica)</td></tr>
+          <tr><td><b>Contratos e obrigações</b></td><td>Estrutura básica do contrato → Código Civil art. 104</td></tr>
+          <tr><td><b>Família e herança (familia)</b></td><td>Pátrio poder → pátrio poder no CC de 1916 → autoridade parental 2002</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5: FEUDALISMO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Feudalismo: Estrutura Social e Papel da Igreja</h2>
+    </div>
+    <div class="section-body">
+      <p>Após a queda de Roma Ocidental (476), a Europa se fragmentou em feudos — unidades econômicas e políticas autossuficientes. O feudalismo durou aproximadamente do séc. V ao XIV.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Grupo Social</th><th>Função (Trifuncionalidade)</th><th>% da população</th></tr></thead>
+        <tbody>
+          <tr><td><b>Clero</b> (oratores)</td><td>Rezam, educam, administram a cultura</td><td>~1-2%</td></tr>
+          <tr><td><b>Nobreza</b> (bellatores)</td><td>Guerreiam, protegem, governam os feudos</td><td>~3-5%</td></tr>
+          <tr><td><b>Servos</b> (laboratores)</td><td>Trabalham, pagam tributos, sustentam os demais</td><td>~90-95%</td></tr>
+        </tbody>
+      </table>
+
+      <p><b>Relações Feudo-vassálicas:</b> Suserano concede terra (feudo) → vassalo presta homenagem e serviço militar. Era uma pirâmide de lealdades pessoais, não um Estado centralizado.</p>
+
+      <div class="danger">
+        <strong>Erro comum:</strong> O feudalismo NÃO era centralizado. Era descentralizado — o poder estava disperso entre centenas de senhores locais. Essa é a antítese do absolutismo do séc. XVII.
+      </div>
+
+      <p><b>A Igreja Medieval</b>: Era a única instituição pan-europeia. Controlava a educação, o calendário, os registros (nascimento, casamento, morte), os hospitais e a interpretação moral da lei. O papa podia <b>excomungar</b> reis — o que significava perda de legitimidade política. Investidura: conflito entre papa e imperador sobre quem nomeava bispos.</p>
+
+      <p><b>Escolástica</b>: Filosofia medieval que buscava conciliar fé e razão. Principal representante: Tomás de Aquino (1225-1274). Influenciou o pensamento jurídico medieval (direito natural).</p>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 6: CRUZADAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>As Cruzadas: Causas, Fases e Consequências</h2>
+    </div>
+    <div class="section-body">
+      <p><b>Contexto:</b> Em 1095, o papa Urbano II convocou cavaleiros cristãos para "libertar" Jerusalém do domínio muçulmano seljúcida (que havia bloqueado as peregrinações). Resultou em 8 cruzadas principais entre 1096 e 1291.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Dimensão</th><th>Resultado</th></tr></thead>
+        <tbody>
+          <tr><td><b>Militar</b></td><td>Fracasso — cruzados tomaram Jerusalém brevemente, mas muçulmanos retomaram (Saladino, 1187)</td></tr>
+          <tr><td><b>Cultural</b></td><td>SUCESSO transformador — reintroduziu na Europa a ciência greco-árabe (Avicena, Averróis, álgebra, astronomia)</td></tr>
+          <tr><td><b>Comercial</b></td><td>Abriu rotas para Oriente, estimulou cidades-estado italianas (Veneza, Gênova)</td></tr>
+          <tr><td><b>Político</b></td><td>Enfraqueceu a feudalidade — nobres gastaram fortunas, servos negociaram liberdade por participação</td></tr>
+          <tr><td><b>Religioso</b></td><td>Reforçou identidade cristã mas também gerou violência interreligiosa e perseguição a judeus</td></tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Para a prova:</strong> A questão quase nunca pergunta sobre batalhas das Cruzadas. Pergunta sobre CONSEQUÊNCIAS CULTURAIS — recontato com a Antiguidade Clássica via muçulmanos = preparação para o Renascimento. Esse elo é fundamental.
+      </div>
+
+      <p><b>Ordens Militares:</b> Templários (protegiam peregrinos, depois tornaram-se financeiros), Hospitalários (cuidados médicos), Teutônicos (fronteira com a Prússia).</p>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 7: ANTIGUIDADE ORIENTAL -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Antiguidade Oriental: Egito, Mesopotâmia, Hebreus</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Civilização</th><th>Local/Período</th><th>Inovações-chave</th><th>Para a prova</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Mesopotâmia</b></td>
+            <td>Tigre e Eufrates / 4000–539 a.C.</td>
+            <td>Escrita cuneiforme (sumérios), Código de Hamurabi, astronomia, roda</td>
+            <td>Código de Hamurabi = "lei de talião" — mas também introduziu presunção de culpa</td>
+          </tr>
+          <tr>
+            <td><b>Egito Antigo</b></td>
+            <td>Vale do Nilo / 3100–30 a.C.</td>
+            <td>Hieróglifos, mumificação, papiro, calendário solar, pirâmides</td>
+            <td>Faraó = deus-rei (poder teocrático). Pirâmides = poder centralizado do Estado</td>
+          </tr>
+          <tr>
+            <td><b>Hebreus</b></td>
+            <td>Canaã / Séc. XIII–VI a.C.</td>
+            <td>Monoteísmo ético, Torá, lei mosaica, sabá</td>
+            <td>Monoteísmo = herança fundamental para judaísmo, cristianismo e islamismo = 3,5 bilhões de pessoas hoje</td>
+          </tr>
+          <tr>
+            <td><b>Fenícios</b></td>
+            <td>Costa mediterrânea / 1200–300 a.C.</td>
+            <td>Alfabeto fonético (base do nosso alfabeto), comércio marítimo</td>
+            <td>Alfabeto fenício → grego → latino → português</td>
+          </tr>
+          <tr>
+            <td><b>Pérsia</b></td>
+            <td>Planalto Iraniano / 559–330 a.C.</td>
+            <td>Maior império até então, tolerância religiosa, satrapias, estradas</td>
+            <td>Dario e Xerxes = antagonistas das Guerras Médicas contra os gregos</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="danger" style="margin-top:16px;">
+        <strong>Atenção:</strong> O Código de Hamurabi é famoso, mas não é o "primeiro código jurídico" da história — leis escritas sumérias (de Ur-Nammu, ~2100 a.C.) são mais antigas. Hamurabi é o mais FAMOSO e completo. Cuidado com esse detalhe em questões de múltipla escolha.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 8: TRANSIÇÃO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Transição Medieval-Moderna: Crise e Ruptura</h2>
+    </div>
+    <div class="section-body">
+      <p>O séc. XIV foi uma catástrofe e um renascimento ao mesmo tempo. A crise do feudalismo abriu espaço para o mundo moderno.</p>
+
+      <table style="margin-bottom:16px;">
+        <thead><tr><th>Evento</th><th>Data</th><th>Consequência imediata</th><th>Impacto histórico</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Peste Negra</b></td><td>1347-1351</td>
+            <td>1/3 da Europa morreu (~25 milhões)</td>
+            <td>Crise de mão de obra → servos negociam liberdade → erosão do feudalismo</td>
+          </tr>
+          <tr>
+            <td><b>Guerra dos 100 Anos</b></td><td>1337-1453</td>
+            <td>França vs. Inglaterra; Joana d'Arc queimada</td>
+            <td>Fortalecimento das monarquias nacionais; identidade nacional francesa</td>
+          </tr>
+          <tr>
+            <td><b>Queda de Constantinopla</b></td><td>1453</td>
+            <td>Rota terrestre para Ásia fechada pelos turcos otomanos</td>
+            <td>Impulsionou as Grandes Navegações (Portugal, Espanha)</td>
+          </tr>
+          <tr>
+            <td><b>Renascimento italiano</b></td><td>Séc. XIV-XVI</td>
+            <td>Humanismo, perspectiva pictórica, mecenato</td>
+            <td>Da Vinci, Michelangelo, Raphael; retorno à razão e ao ser humano como centro</td>
+          </tr>
+          <tr>
+            <td><b>Imprensa de Gutenberg</b></td><td>1450</td>
+            <td>Produção em massa de livros</td>
+            <td>Reforma Protestante, difusão do saber, democratização da leitura</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Encadeamento causal para a prova:</strong> Queda de Constantinopla (1453) → Grandes Navegações → Descoberta da América (1492) / Brasil (1500). Gutenberg (1450) → Reforma Protestante (1517) → Guerras Religiosas → Paz de Westfália (1648). Esse tipo de encadeamento é o que a UNICAP adora cobrar.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 9: LINHA DO TEMPO -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Linha do Tempo Visual</h2>
+    </div>
+    <div class="section-body">
+      <div class="timeline">
+        <div class="tl-line"></div>
+        <div style="padding-left:28px;">
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">~3500 a.C.</div><div class="tl-text">Surgimento da escrita cuneiforme (Mesopotâmia)</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">~3100 a.C.</div><div class="tl-text">Unificação do Egito; início das dinastias faraônicas</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">~1700 a.C.</div><div class="tl-text">Código de Hamurabi — Babilônia</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">753 a.C.</div><div class="tl-text">Fundação lendária de Roma por Rômulo</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">490–479 a.C.</div><div class="tl-text">Guerras Médicas — Grécia vs. Pérsia (Maratona, Termópilas, Salamina)</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">338 a.C.</div><div class="tl-text">Filipe II da Macedônia domina Grécia; Alexandre Magno conquista o mundo</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">264–146 a.C.</div><div class="tl-text">Guerras Púnicas — Roma domina o Mediterrâneo</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">27 a.C.</div><div class="tl-text">Augusto — início do Império Romano; Pax Romana</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">395 d.C.</div><div class="tl-text">Teodósio divide o Império em Ocidente e Oriente</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">476 d.C.</div><div class="tl-text">Queda de Roma Ocidental — fim da Antiguidade / início da Idade Média</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">1096–1291</div><div class="tl-text">As 8 Cruzadas — Europa vs. mundo muçulmano por Jerusalém</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">1347–1351</div><div class="tl-text">Peste Negra — 1/3 da Europa morreu</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">1453</div><div class="tl-text">Queda de Constantinopla — fim do Império Bizantino; início da Idade Moderna</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <div><div class="tl-date">1450</div><div class="tl-text">Gutenberg — prensa móvel revoluciona a comunicação</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 10: DICAS UNICAP -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Dicas Estratégicas UNICAP</h2>
+    </div>
+    <div class="section-body">
+      <div class="dica">
+        <div class="dica-num">1</div>
+        <p><strong>Democracia ateniense era excludente</strong> — questão quase certa. A resposta "apenas homens livres atenienses adultos podiam participar" elimina opções erradas que falam em democracia universal.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">2</div>
+        <p><strong>Júlio César = ditador, NÃO imperador.</strong> Augusto é o primeiro imperador. Essa distinção aparece muito em questões sobre Roma.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">3</div>
+        <p><strong>Feudalismo = descentralização.</strong> Qualquer questão que descreva o feudalismo como centralizado está errada. O poder estava disperso — o oposto do absolutismo.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">4</div>
+        <p><strong>Cruzadas = legado cultural, não militar.</strong> O que ficou foi o recontato com a ciência clássica via muçulmanos, não as conquistas territoriais efêmeras.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">5</div>
+        <p><strong>Encadeamentos causais</strong> são o estilo favorito de questões. Ex.: Gutenberg → Reforma Protestante. Queda de Constantinopla → Grandes Navegações → Chegada ao Brasil.</p>
+      </div>
+      <div class="dica">
+        <div class="dica-num">6</div>
+        <p><strong>Direito Romano</strong> aparece em questões interdisciplinares (História + Direito). Saiba: Corpus Juris Civilis de Justiniano → base do Código Civil napoleônico → base do Código Civil brasileiro.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 11: CHECKLIST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Checklist de Domínio</h2>
+    </div>
+    <div class="section-body">
+      <ul class="checklist">
+        <li><span class="check-box"></span>Sei explicar por que a democracia ateniense era excludente</li>
+        <li><span class="check-box"></span>Conheço as 3 batalhas principais das Guerras Médicas</li>
+        <li><span class="check-box"></span>Distingo as 4 fases da história romana (Monarquia, República, Alto/Baixo Império)</li>
+        <li><span class="check-box"></span>Sei a diferença entre Júlio César (ditador) e Augusto (imperador)</li>
+        <li><span class="check-box"></span>Entendo a trifuncionalidade medieval (oratores, bellatores, laboratores)</li>
+        <li><span class="check-box"></span>Sei por que o feudalismo era descentralizado</li>
+        <li><span class="check-box"></span>Conheço as consequências culturais das Cruzadas</li>
+        <li><span class="check-box"></span>Sei o que foi o Código de Hamurabi e seu contexto</li>
+        <li><span class="check-box"></span>Conheço os efeitos paradoxais da Peste Negra no feudalismo</li>
+        <li><span class="check-box"></span>Sei ligar Gutenberg → Reforma Protestante</li>
+        <li><span class="check-box"></span>Conheço o papel do Corpus Juris Civilis no direito brasileiro</li>
+        <li><span class="check-box"></span>Sei o encadeamento: Queda de Constantinopla → Navegações → Brasil</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 12: VIDEOAULAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Melhores Videoaulas Recomendadas</h2>
+    </div>
+    <div class="section-body">
+      <div class="videos">
+        <div class="video-card">
+          <div class="title">Parabólica (Eduardo Galvão)</div>
+          <div class="sub">Aulas de História Geral para ENEM/Vestibular. Didático, focado em questões. Buscar: "Grécia Antiga Parabólica" e "Roma Parabólica"</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Historia do Mundo (Heitor Campos)</div>
+          <div class="sub">Aprofundamento narrativo da Antiguidade e Idade Média. Excelente para compreensão de causa-efeito. YouTube.</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Brasil Escola — História</div>
+          <div class="sub">Resumos escritos + vídeos curtos. Ideal para revisão rápida antes da prova. brasilescola.uol.com.br/historiag</div>
+        </div>
+        <div class="video-card">
+          <div class="title">Prof. Neto do ENEM</div>
+          <div class="sub">Foco total em questões de vestibular. Buscar: "Feudalismo ENEM", "Cruzadas vestibular", "Democracia Ateniense questão". Resolução comentada.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="mapa3d.html" class="btn btn-gold">Explorar Mapa 3D — Fórum Romano</a>
+  <a href="../../../../dashboard.html" class="btn btn-outline">&#8592; Voltar ao Dashboard</a>
+  <p style="margin-top:8px;">UNICAP Nexus · Carlos Régis · Direito 2026.2 · atualizado 2026</p>
+</footer>
+
+</body>
+</html>

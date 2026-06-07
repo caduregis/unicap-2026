@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruínas ao Luar — Romantismo | UNICAP Nexus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #04020d; font-family: 'Inter', sans-serif; overflow: hidden; }
+  #canvas-container { width: 100vw; height: 100vh; position: relative; }
+  canvas { display: block; }
+
+  /* NAV */
+  #nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: linear-gradient(180deg, rgba(4,2,13,0.95) 0%, rgba(4,2,13,0.0) 100%);
+  }
+  #nav a {
+    color: #b09fcc; text-decoration: none; font-size: 13px; font-weight: 500;
+    padding: 6px 14px; border: 1px solid rgba(160,130,200,0.3); border-radius: 6px;
+    transition: all 0.2s;
+  }
+  #nav a:hover { background: rgba(160,130,200,0.15); color: #d4c4e8; }
+  #badge {
+    color: #c8b8e0; font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+    padding: 5px 14px; background: rgba(120,80,180,0.2); border: 1px solid rgba(120,80,180,0.35);
+    border-radius: 20px;
+  }
+  #hint {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100;
+    color: rgba(180,160,210,0.6); font-size: 12px; font-weight: 400; letter-spacing: 0.04em;
+    pointer-events: none;
+  }
+
+  /* TOOLTIP */
+  #tooltip {
+    position: fixed; z-index: 200;
+    max-width: 400px; min-width: 280px;
+    background: linear-gradient(135deg, rgba(10,6,24,0.97) 0%, rgba(20,10,40,0.97) 100%);
+    border: 1px solid rgba(160,120,220,0.4);
+    border-radius: 12px; padding: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.7), 0 0 20px rgba(120,80,180,0.15);
+    display: none; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  #tooltip h3 {
+    color: #d4b8f0; font-size: 14px; font-weight: 700; margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+  #tooltip p {
+    color: #a898c0; font-size: 12.5px; line-height: 1.7; margin-bottom: 12px;
+  }
+  #tooltip .tip {
+    background: rgba(120,80,180,0.18); border-left: 3px solid #9060d0;
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    color: #c8a8e8; font-size: 11.5px; line-height: 1.6;
+  }
+  #tooltip .tip::before { content: "⚡ UNICAP: "; font-weight: 700; color: #b070f0; }
+
+  #crosshair {
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+    color: rgba(160,130,200,0.4); font-size: 11px; letter-spacing: 0.05em;
+    pointer-events: none; z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container">
+  <div id="nav">
+    <a href="../../../index.html">← Linguagens</a>
+    <div id="badge">🌙 Ruínas ao Luar — Romantismo</div>
+    <a href="resumo.html">Resumo Romantismo →</a>
+  </div>
+  <div id="hint">Clique nas luzes flutuantes para explorar os temas</div>
+  <div id="crosshair">WASD / arrastar para mover</div>
+</div>
+<div id="tooltip">
+  <h3 id="tt-title"></h3>
+  <p id="tt-desc"></p>
+  <div class="tip" id="tt-tip"></div>
+</div>
+
+<script>
+// ─── SCENE SETUP ───────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x04020d);
+scene.fog = new THREE.Fog(0x04020d, 20, 55);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 4, 12);
+camera.lookAt(0, 2, -5);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+// ─── AMBIENT ───────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0x0d0820, 1.5);
+scene.add(ambient);
+
+// ─── MOON ───────────────────────────────────────────────────────
+const moonGeo = new THREE.SphereGeometry(2.5, 32, 32);
+const moonMat = new THREE.MeshBasicMaterial({ color: 0xf0f0d8 });
+const moon = new THREE.Mesh(moonGeo, moonMat);
+moon.position.set(8, 18, -30);
+scene.add(moon);
+
+const moonLight = new THREE.PointLight(0xd4d4b0, 2, 60);
+moonLight.position.set(8, 18, -30);
+scene.add(moonLight);
+
+// Moon halo
+const haloGeo = new THREE.SphereGeometry(3.2, 32, 32);
+const haloMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.08 });
+const halo = new THREE.Mesh(haloGeo, haloMat);
+halo.position.set(8, 18, -30);
+scene.add(halo);
+
+// ─── CLOUDS ─────────────────────────────────────────────────────
+function makeCloudTexture() {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 192;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = 'transparent';
+  ctx.clearRect(0,0,512,192);
+  const grad = ctx.createLinearGradient(0,0,0,192);
+  grad.addColorStop(0,'rgba(30,18,50,0.9)');
+  grad.addColorStop(0.5,'rgba(20,12,38,0.75)');
+  grad.addColorStop(1,'rgba(10,6,20,0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(0,130); ctx.bezierCurveTo(60,70,120,50,200,80);
+  ctx.bezierCurveTo(260,30,340,20,400,60);
+  ctx.bezierCurveTo(450,40,500,50,512,70);
+  ctx.lineTo(512,192); ctx.lineTo(0,192); ctx.closePath();
+  ctx.fill();
+  const tex = new THREE.CanvasTexture(c);
+  return tex;
+}
+
+const clouds = [];
+for(let i=0;i<4;i++){
+  const cGeo = new THREE.PlaneGeometry(10,3.5);
+  const cMat = new THREE.MeshBasicMaterial({ map:makeCloudTexture(), transparent:true, opacity:0.65, depthWrite:false, side:THREE.DoubleSide });
+  const cloud = new THREE.Mesh(cGeo, cMat);
+  cloud.position.set(-8 + i*6, 10+Math.random()*4, -18-i*4);
+  cloud.rotation.x = -0.1;
+  scene.add(cloud);
+  clouds.push(cloud);
+}
+
+// ─── SEA ─────────────────────────────────────────────────────────
+const seaGeo = new THREE.PlaneGeometry(60, 40, 40, 40);
+const seaMat = new THREE.MeshLambertMaterial({ color: 0x08050e, side: THREE.DoubleSide });
+const sea = new THREE.Mesh(seaGeo, seaMat);
+sea.rotation.x = -Math.PI/2;
+sea.position.y = -8;
+scene.add(sea);
+
+// ─── CLIFF PLATFORM ─────────────────────────────────────────────
+const cliffMat = new THREE.MeshLambertMaterial({ color: 0x120d1a });
+const cliff = new THREE.Mesh(new THREE.BoxGeometry(18, 1.5, 16), cliffMat);
+cliff.position.set(0, -1.5, -4);
+scene.add(cliff);
+
+// ─── STONE ARCH ─────────────────────────────────────────────────
+const stoneMat = new THREE.MeshLambertMaterial({ color: 0x1a1520 });
+const stoneMatDark = new THREE.MeshLambertMaterial({ color: 0x0f0c14 });
+
+// Left pillar
+const lPillar = new THREE.Mesh(new THREE.BoxGeometry(1.2,8,1.2), stoneMat);
+lPillar.position.set(-3, 3, -5);
+scene.add(lPillar);
+
+// Right pillar (shorter, damaged)
+const rPillar = new THREE.Mesh(new THREE.BoxGeometry(1.2,6,1.2), stoneMatDark);
+rPillar.position.set(3, 2, -5);
+scene.add(rPillar);
+
+// Arch top (crumbling)
+const archTop = new THREE.Mesh(new THREE.BoxGeometry(7,1,1.2), stoneMat);
+archTop.position.set(0, 7.5, -5);
+archTop.rotation.z = 0.04;
+scene.add(archTop);
+
+// Fallen stone blocks
+const fallenData = [
+  {pos:[-4.5,-0.5,-3], rot:[0.3,0.8,0.2], s:[1.2,0.6,0.8]},
+  {pos:[2.5,-0.6,-3.5], rot:[0.1,1.2,0.5], s:[0.8,0.5,1.0]},
+  {pos:[1,-0.7,-2], rot:[0.6,0.3,0.8], s:[0.6,0.4,0.7]},
+];
+fallenData.forEach(d => {
+  const b = new THREE.Mesh(new THREE.BoxGeometry(...d.s), stoneMatDark);
+  b.position.set(...d.pos);
+  b.rotation.set(...d.rot);
+  scene.add(b);
+});
+
+// ─── WISPS (concept orbs) ───────────────────────────────────────
+const wispData = [
+  {
+    pos:[-5, 3, -8], color: 0xffd97d,
+    title: "Romantismo Brasileiro — Fases",
+    desc: "3 fases: 1ª Geração (indianismo, Gonçalves Dias — 'I-Juca Pirama'), 2ª Geração (mal do século, ultrarromantismo, Álvares de Azevedo — 'Noite na Taverna'), 3ª Geração (condoreirismo, abolicionismo, Castro Alves — 'O Navio Negreiro'). Contexto: Brasil independente, busca de identidade nacional.",
+    tip: "UNICAP cobra: identificar a fase pelo tema e pelo autor. 1ª = natureza+índio. 2ª = morte, fuga, boemia. 3ª = escravidão, liberdade."
+  },
+  {
+    pos:[5, 2, -10], color: 0xc0c8ff,
+    title: "Características Gerais",
+    desc: "Subjetivismo e individualismo, sentimentalismo exacerbado, idealização da mulher e do amor, fuga da realidade (evasão: temporal→passado, espacial→natureza, religiosa, morte), nacionalismo e valorização do folclore, linguagem rebuscada e retórica.",
+    tip: "Palavras-chave: 'eu', sentimento, natureza como refúgio, morte como solução, amor impossível, saudade. Identifique esses elementos em qualquer trecho."
+  },
+  {
+    pos:[0, 5, -15], color: 0xe8c0f0,
+    title: "Gonçalves Dias",
+    desc: "Líder da 1ª geração. 'Canção do Exílio' (obra mais cobrada: 'Minha terra tem palmeiras / Onde canta o sabiá'). 'I-Juca Pirama' (poema indianista épico). Temas: pátria, natureza brasileira, saudade, índio nobre. Morreu jovem afogado no naufrágio do navio Ville de Boulogne (1864).",
+    tip: "'Canção do Exílio' é referência cultural que cai DIRETA OU INDIRETAMENTE em provas. Saiba o contexto: escrito quando Gonçalves Dias estudava em Coimbra, Portugal."
+  },
+  {
+    pos:[-7, 1.5, -3], color: 0xf0b0c8,
+    title: "Álvares de Azevedo",
+    desc: "2ª geração, ultrarromantismo. 'Noite na Taverna' (prosa, boemia, morte, amor proibido), 'Macário' (teatro), poesias de morte e pessimismo. Morreu aos 20 anos. Típico 'mal do século': aborrecimento de viver, culto da morte, boemia.",
+    tip: "Álvares de Azevedo morreu jovem, como valorizado pelos românticos — a morte precoce era vista como poética. Se o texto tem morte, boemia, desespero amoroso → 2ª geração."
+  },
+  {
+    pos:[7, 1, -3], color: 0xa0e8c0,
+    title: "Castro Alves",
+    desc: "3ª geração, condoreirismo. 'O Navio Negreiro' (denúncia da escravidão — mais cobrado!), 'Vozes d'África', 'Os Escravos'. Linguagem oratória, discurso social, abolicionismo. Influenciado por Victor Hugo. 'Poeta dos Escravos.'",
+    tip: "'O Navio Negreiro' é praticamente certo em provas que cobrem Romantismo. Saiba: denúncia da escravidão, tom dramático e oratório, comparação entre liberdade e cativeiro."
+  },
+  {
+    pos:[0, 1.5, -1], color: 0xffd0a0,
+    title: "Romance Romântico",
+    desc: "José de Alencar: romance indianista ('O Guarani', 'Iracema'), regional ('O Sertanejo', 'O Gaúcho'), urbano ('Senhora', 'Lucíola'). Joaquim Manuel de Macedo: 'A Moreninha' (1º romance brasileiro). Manuel Antônio de Almeida: 'Memórias de um Sargento de Milícias' (transição Romantismo→Realismo).",
+    tip: "'Iracema' de Alencar: anagrama de 'América'. Iracema = índia pura, amor impossível, morte → perfeito romantismo indianista."
+  }
+];
+
+const wisps = [];
+const wispMeshes = [];
+
+wispData.forEach((d, i) => {
+  const group = new THREE.Group();
+
+  // Core orb
+  const orbGeo = new THREE.SphereGeometry(0.3, 16, 16);
+  const orbMat = new THREE.MeshBasicMaterial({ color: d.color, transparent: true, opacity: 0.85 });
+  const orb = new THREE.Mesh(orbGeo, orbMat);
+  group.add(orb);
+
+  // Inner bright core
+  const coreGeo = new THREE.SphereGeometry(0.15, 12, 12);
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  group.add(core);
+
+  // Glow sphere
+  const glowGeo = new THREE.SphereGeometry(0.55, 12, 12);
+  const glowMat = new THREE.MeshBasicMaterial({ color: d.color, transparent: true, opacity: 0.12, side: THREE.BackSide });
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  group.add(glow);
+
+  // Ring particles (firefly effect)
+  const ringCount = 12;
+  for(let r=0; r<ringCount; r++){
+    const angle = (r/ringCount)*Math.PI*2;
+    const px = Math.cos(angle)*0.8;
+    const pz = Math.sin(angle)*0.8;
+    const sparkGeo = new THREE.SphereGeometry(0.04, 6, 6);
+    const sparkMat = new THREE.MeshBasicMaterial({ color: d.color, transparent: true, opacity: 0.5 });
+    const spark = new THREE.Mesh(sparkGeo, sparkMat);
+    spark.position.set(px, (Math.random()-0.5)*0.3, pz);
+    group.add(spark);
+  }
+
+  // Point light from wisp
+  const wLight = new THREE.PointLight(d.color, 0.8, 5);
+  group.add(wLight);
+
+  group.position.set(...d.pos);
+  scene.add(group);
+  wisps.push({ group, baseY: d.pos[1], idx: i, data: d });
+  wispMeshes.push({ mesh: orb, data: d });
+});
+
+// ─── MIST PARTICLES ─────────────────────────────────────────────
+const mistCount = 150;
+const mistPositions = new Float32Array(mistCount * 3);
+const mistSpeeds = new Float32Array(mistCount);
+for(let i=0;i<mistCount;i++){
+  mistPositions[i*3] = (Math.random()-0.5)*30;
+  mistPositions[i*3+1] = -2 + Math.random()*8;
+  mistPositions[i*3+2] = -20 + Math.random()*25;
+  mistSpeeds[i] = 0.005 + Math.random()*0.008;
+}
+const mistGeo = new THREE.BufferGeometry();
+mistGeo.setAttribute('position', new THREE.BufferAttribute(mistPositions, 3));
+const mistMat = new THREE.PointsMaterial({ color: 0xc0b0d8, size: 0.08, transparent: true, opacity: 0.35, sizeAttenuation: true });
+const mist = new THREE.Points(mistGeo, mistMat);
+scene.add(mist);
+
+// ─── SEA VERTICES ────────────────────────────────────────────────
+const seaPositions = seaGeo.attributes.position;
+const seaOrigins = new Float32Array(seaPositions.array.length);
+seaOrigins.set(seaPositions.array);
+
+// ─── RAYCASTER ──────────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+const tooltip = document.getElementById('tooltip');
+const ttTitle = document.getElementById('tt-title');
+const ttDesc = document.getElementById('tt-desc');
+const ttTip = document.getElementById('tt-tip');
+
+renderer.domElement.addEventListener('click', (e) => {
+  mouse.x = (e.clientX/window.innerWidth)*2 - 1;
+  mouse.y = -(e.clientY/window.innerHeight)*2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const meshes = wispMeshes.map(w => w.mesh);
+  const hits = raycaster.intersectObjects(meshes);
+
+  if(hits.length > 0){
+    const hit = hits[0].object;
+    const found = wispMeshes.find(w => w.mesh === hit);
+    if(found){
+      showTooltip(e.clientX, e.clientY, found.data);
+    }
+  } else {
+    tooltip.style.display = 'none';
+  }
+});
+
+function showTooltip(x, y, data){
+  ttTitle.textContent = data.title;
+  ttDesc.textContent = data.desc;
+  ttTip.textContent = data.tip;
+  tooltip.style.display = 'block';
+  const tw = 400;
+  let lx = x + 15;
+  if(lx + tw > window.innerWidth) lx = x - tw - 15;
+  tooltip.style.left = lx + 'px';
+  tooltip.style.top = Math.max(10, y - 60) + 'px';
+}
+
+// ─── ORBIT CONTROLS (manual) ────────────────────────────────────
+let isDragging = false, lastX = 0, lastY = 0;
+let camTheta = 0, camPhi = 0.3;
+let camDist = 14;
+
+renderer.domElement.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; lastY = e.clientY; });
+renderer.domElement.addEventListener('mouseup', () => { isDragging = false; });
+renderer.domElement.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  const dx = e.clientX - lastX;
+  const dy = e.clientY - lastY;
+  camTheta -= dx * 0.005;
+  camPhi = Math.max(-0.2, Math.min(1.0, camPhi + dy * 0.004));
+  lastX = e.clientX; lastY = e.clientY;
+});
+renderer.domElement.addEventListener('wheel', e => {
+  camDist = Math.max(5, Math.min(25, camDist + e.deltaY * 0.01));
+});
+
+// ─── ANIMATION ──────────────────────────────────────────────────
+let t = 0;
+function animate(){
+  requestAnimationFrame(animate);
+  t += 0.008;
+
+  // Camera orbit
+  camera.position.x = Math.sin(camTheta) * camDist;
+  camera.position.z = Math.cos(camTheta) * camDist;
+  camera.position.y = 3 + Math.sin(camPhi) * camDist * 0.5;
+  camera.lookAt(0, 1.5, -5);
+
+  // Wisps float
+  wisps.forEach((w, i) => {
+    w.group.position.y = w.baseY + Math.sin(t + i * 1.2) * 0.4;
+    w.group.rotation.y = t * 0.3 + i;
+    // Ring particles orbit
+    w.group.children.forEach((child, ci) => {
+      if(ci >= 3 && ci < 15){ // ring particles
+        const angle = (ci/12)*Math.PI*2 + t * (0.5 + i*0.1);
+        child.position.x = Math.cos(angle)*0.8;
+        child.position.z = Math.sin(angle)*0.8;
+        child.position.y = Math.sin(t*2 + ci)*0.2;
+      }
+    });
+  });
+
+  // Moonlight subtle flicker
+  moonLight.intensity = 2.0 + Math.sin(t*3)*0.08;
+
+  // Clouds drift
+  clouds.forEach(c => {
+    c.position.x += 0.003;
+    if(c.position.x > 20) c.position.x = -20;
+  });
+
+  // Sea wave
+  const pos = seaGeo.attributes.position;
+  for(let i=0;i<pos.count;i++){
+    const ox = seaOrigins[i*3];
+    const oz = seaOrigins[i*3+2];
+    pos.array[i*3+1] = Math.sin(ox*0.3 + t)*0.15 + Math.cos(oz*0.2 + t*0.7)*0.1;
+  }
+  pos.needsUpdate = true;
+
+  // Mist rise
+  const mp = mistGeo.attributes.position;
+  for(let i=0;i<mistCount;i++){
+    mp.array[i*3+1] += mistSpeeds[i];
+    if(mp.array[i*3+1] > 6) mp.array[i*3+1] = -2;
+    mp.array[i*3] += Math.sin(t + i)*0.001;
+  }
+  mp.needsUpdate = true;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// ─── RESIZE ─────────────────────────────────────────────────────
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>

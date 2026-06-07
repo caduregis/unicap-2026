@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iluminismo — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #d09830;
+  --gold-light: #e0b848;
+  --gold-dim: rgba(208,152,48,0.13);
+  --bg: #06040a;
+  --bg2: #0d0b14;
+  --bg3: #141220;
+  --text: #c0b8d0;
+  --text-bright: #e0d8f0;
+  --green: #68d878;
+  --green-bg: rgba(70,195,80,0.08);
+  --border: rgba(208,152,48,0.2);
+  --amber: #e0a030;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; line-height:1.6; }
+a { color:var(--gold); text-decoration:none; }
+a:hover { color:var(--gold-light); }
+
+.topbar { background:rgba(0,0,0,0.65); border-bottom:1px solid var(--border); padding:14px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); }
+.topbar-left { display:flex; gap:12px; }
+.btn-nav { padding:7px 16px; border:1px solid var(--border); border-radius:8px; color:var(--gold); font-size:13px; font-weight:500; letter-spacing:0.04em; background:rgba(0,0,0,0.3); transition:all 0.2s; }
+.btn-nav:hover { background:var(--gold-dim); border-color:rgba(208,152,48,0.5); color:var(--gold-light); }
+.topbar-title { font-size:14px; font-weight:600; color:var(--gold-light); letter-spacing:0.06em; }
+
+.hero { text-align:center; padding:60px 24px 40px; background:linear-gradient(180deg, rgba(208,152,48,0.06) 0%, transparent 100%); border-bottom:1px solid var(--border); }
+.hero-tag { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.hero h1 { font-size:42px; font-weight:800; color:var(--text-bright); letter-spacing:-0.02em; margin-bottom:10px; }
+.hero-sub { font-size:16px; color:rgba(192,184,210,0.7); max-width:600px; margin:0 auto 24px; }
+.hero-chips { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.chip { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid var(--border); background:var(--gold-dim); color:var(--gold-light); letter-spacing:0.04em; }
+
+.container { max-width:960px; margin:0 auto; padding:0 24px 80px; }
+.section { margin-top:48px; background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.section-header { padding:20px 28px 16px; border-bottom:1px solid var(--border); background:linear-gradient(90deg, rgba(208,152,48,0.06) 0%, transparent 100%); display:flex; align-items:center; gap:14px; }
+.section-icon { font-size:22px; }
+.section-title { font-size:18px; font-weight:700; color:var(--text-bright); letter-spacing:0.01em; }
+.section-body { padding:24px 28px; }
+p { margin-bottom:14px; color:var(--text); font-size:15px; }
+p:last-child { margin-bottom:0; }
+strong { color:var(--text-bright); font-weight:600; }
+em { color:var(--gold-light); font-style:italic; }
+
+.highlight-box { background:var(--gold-dim); border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; font-size:15px; color:var(--text-bright); font-style:italic; }
+.unicap-tip { background:var(--green-bg); border-left:3px solid rgba(70,195,80,0.5); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; }
+.unicap-tip-label { font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--green); text-transform:uppercase; margin-bottom:6px; }
+.unicap-tip p { font-size:14px; color:#a8e0b0; margin:0; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+@media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
+.col-box { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px; }
+.col-box h4 { font-size:13px; font-weight:700; color:var(--gold-light); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px; }
+.col-box ul { list-style:none; }
+.col-box ul li { font-size:14px; color:var(--text); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.col-box ul li:last-child { border-bottom:none; }
+.col-box ul li::before { content:"› "; color:var(--gold); font-weight:700; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:rgba(208,152,48,0.1); color:var(--gold-light); font-weight:700; padding:11px 16px; text-align:left; letter-spacing:0.04em; font-size:13px; border-bottom:1px solid var(--border); }
+td { padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+td:first-child { color:var(--gold-light); font-weight:600; }
+
+/* Thinker cards */
+.thinkers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin:16px 0; }
+.thinker-card { background:var(--bg3); border:1px solid var(--border); border-radius:14px; padding:20px; transition:all 0.2s; }
+.thinker-card:hover { border-color:rgba(208,152,48,0.4); }
+.thinker-name { font-size:16px; font-weight:700; color:var(--gold-light); margin-bottom:6px; }
+.thinker-dates { font-size:11px; color:rgba(192,184,210,0.5); font-weight:500; letter-spacing:0.06em; margin-bottom:10px; }
+.thinker-keywords { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.thinker-kw { font-size:11px; padding:2px 8px; border-radius:10px; border:1px solid var(--border); color:var(--amber); background:rgba(208,152,48,0.08); font-weight:600; }
+.thinker-body { font-size:13px; color:var(--text); line-height:1.6; }
+.thinker-tip { margin-top:10px; font-size:12px; color:#a0e0a8; background:var(--green-bg); padding:8px 12px; border-radius:8px; }
+.thinker-tip::before { content:"UNICAP: "; font-weight:700; color:var(--green); }
+
+.timeline { position:relative; padding-left:28px; margin:16px 0; }
+.timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--border); }
+.timeline-item { position:relative; margin-bottom:18px; }
+.timeline-item::before { content:''; position:absolute; left:-24px; top:5px; width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid var(--bg2); }
+.timeline-date { font-size:12px; color:var(--gold); font-weight:700; letter-spacing:0.06em; margin-bottom:3px; }
+.timeline-text { font-size:14px; color:var(--text); }
+
+.imperative-box { background:var(--bg3); border:1px solid rgba(208,152,48,0.3); border-radius:14px; padding:24px; margin:16px 0; text-align:center; }
+.imperative-text { font-size:18px; font-weight:600; color:var(--text-bright); font-style:italic; margin-bottom:10px; line-height:1.5; }
+.imperative-source { font-size:12px; color:rgba(192,184,210,0.5); letter-spacing:0.06em; }
+
+.checklist { list-style:none; margin:0; }
+.checklist li { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; color:var(--text); }
+.checklist li:last-child { border-bottom:none; }
+.check-box { width:20px; height:20px; min-width:20px; border:2px solid var(--border); border-radius:5px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; margin-top:1px; }
+.check-box.done { background:var(--gold); border-color:var(--gold); }
+.check-box.done::after { content:'✓'; color:#000; font-size:11px; font-weight:700; }
+
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+.video-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all 0.2s; }
+.video-card:hover { border-color:rgba(208,152,48,0.4); background:var(--gold-dim); }
+.video-platform { font-size:11px; color:var(--gold); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.video-title { font-size:13px; color:var(--text-bright); font-weight:500; line-height:1.4; }
+.video-desc { font-size:12px; color:rgba(192,184,210,0.6); margin-top:4px; }
+.badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; letter-spacing:0.04em; border:1px solid; }
+.badge-gold { color:var(--gold); border-color:rgba(208,152,48,0.4); background:rgba(208,152,48,0.08); }
+.badge-green { color:var(--green); border-color:rgba(70,195,80,0.4); background:rgba(70,195,80,0.08); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../../../index.html" class="btn-nav">← Hub Principal</a>
+    <a href="mapa3d.html" class="btn-nav">📚 Mapa 3D — Salão</a>
+  </div>
+  <div class="topbar-title">FILOSOFIA — ILUMINISMO</div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Filosofia Moderna • Séc. XVIII</div>
+  <h1>Iluminismo</h1>
+  <div class="hero-sub">A razão como luz. O século das Luzes que derrubou o Antigo Regime e gerou o mundo moderno.</div>
+  <div class="hero-chips">
+    <span class="chip">Voltaire</span>
+    <span class="chip">Rousseau</span>
+    <span class="chip">Montesquieu</span>
+    <span class="chip">Locke</span>
+    <span class="chip">Kant</span>
+    <span class="chip">Encyclopédie</span>
+    <span class="chip">Rev. Francesa</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Contexto -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏰</span>
+      <div class="section-title">O Contexto — O Antigo Regime e a Ascensão Burguesa</div>
+    </div>
+    <div class="section-body">
+      <p>O Iluminismo (ou "Ilustração", em espanhol) floresceu principalmente na <strong>França do século XVIII</strong>, mas se espalhou por toda a Europa. Para entender o Iluminismo, é preciso entender o que ele combatia:</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>O Antigo Regime (o que havia)</h4>
+          <ul>
+            <li>Monarquia absoluta: rei governa por direito divino</li>
+            <li>Igreja Católica com enorme poder político</li>
+            <li>Nobreza hereditária: privilégios por nascimento</li>
+            <li>Censura e Inquisição</li>
+            <li>Clero + Nobreza = Primeiro e Segundo Estado</li>
+            <li>Povo (burguesia + camponeses) = Terceiro Estado</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>O Iluminismo (o que propunha)</h4>
+          <ul>
+            <li>Razão como autoridade suprema (vs. fé e tradição)</li>
+            <li>Liberdade de expressão e tolerância religiosa</li>
+            <li>Governo por consentimento dos governados</li>
+            <li>Separação de poderes</li>
+            <li>Direitos naturais do indivíduo</li>
+            <li>Difusão do conhecimento (Encyclopédie)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>O Iluminismo é a ideologia da burguesia em ascensão contra o Antigo Regime. Não foi apenas teoria filosófica — foi a base filosófica das Revoluções: Americana (1776), Francesa (1789), e das Independências Latino-Americanas (início do séc. XIX, incluindo a Independência do Brasil, 1822). Esta conexão é essencial.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Os 7 Pensadores -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🕯️</span>
+      <div class="section-title">Os Pensadores do Iluminismo</div>
+    </div>
+    <div class="section-body">
+      <div class="thinkers-grid">
+
+        <div class="thinker-card">
+          <div class="thinker-name">Voltaire</div>
+          <div class="thinker-dates">1694-1778 — França</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Tolerância</span>
+            <span class="thinker-kw">Deísmo</span>
+            <span class="thinker-kw">Liberdade de Expressão</span>
+          </div>
+          <div class="thinker-body">Crítico feroz da Igreja Católica e da intolerância religiosa. Frase célebre: "Esmaguem o infame!" (referindo-se à Igreja institucional). Defendia o <strong>deísmo</strong>: Deus criou o mundo como um relojoeiro cria um relógio — depois não intervém. Obras: "Cândido" (romance satírico), "Dicionário Filosófico". Exilado múltiplas vezes.</div>
+          <div class="thinker-tip">UNICAP: "Qual pensador defendia a tolerância religiosa e liberdade de expressão?" → Voltaire. "Esmagemos o infame" = a instituição Igreja, não Deus. Deísmo ≠ ateísmo.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">Jean-Jacques Rousseau</div>
+          <div class="thinker-dates">1712-1778 — Suíça/França</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Contrato Social</span>
+            <span class="thinker-kw">Bom Selvagem</span>
+            <span class="thinker-kw">Vontade Geral</span>
+          </div>
+          <div class="thinker-body">O homem nasce bom — a sociedade o corrompe. O <strong>Contrato Social</strong>: o povo é soberano e delega poder ao Estado. <em>Vontade Geral</em> ≠ vontade de todos (é o bem comum, não a soma de interesses privados). O Bom Selvagem: o estado de natureza é pacífico e inocente — a propriedade privada corrompeu tudo. Influência direta na Revolução Francesa (Liberdade, Igualdade, Fraternidade).</div>
+          <div class="thinker-tip">UNICAP: Rousseau ≠ Hobbes: Hobbes vê estado de natureza como guerra; Rousseau como paz. "Por que o homem é corrupto segundo Rousseau?" → Pela sociedade e a propriedade privada.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">Montesquieu</div>
+          <div class="thinker-dates">1689-1755 — França</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Separação de Poderes</span>
+            <span class="thinker-kw">O Espírito das Leis</span>
+          </div>
+          <div class="thinker-body">Em <em>O Espírito das Leis</em> (1748), propõe a <strong>tripartição dos poderes</strong>: Executivo (aplica as leis), Legislativo (faz as leis), Judiciário (julga). Cada poder limita os outros — sistema de freios e contrapesos. Classificação dos governos: república (virtude), monarquia (honra), despotismo (medo). Influenciou diretamente a Constituição dos EUA (1787) e a Declaração dos Direitos do Homem (1789).</div>
+          <div class="thinker-tip">UNICAP: "Quem teorizou a separação de poderes?" → Montesquieu. A Constituição Federal do Brasil de 1988 (art. 2º) adota exatamente essa divisão. Questão frequente: conectar Montesquieu com constitucionalismo.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">John Locke</div>
+          <div class="thinker-dates">1632-1704 — Inglaterra</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Liberalismo</span>
+            <span class="thinker-kw">Tabula Rasa</span>
+            <span class="thinker-kw">Direito à Revolução</span>
+          </div>
+          <div class="thinker-body">Pai do <strong>liberalismo político</strong>. O Contrato Social de Locke: o Estado existe para proteger <em>vida, liberdade e propriedade</em>. Se viola esses direitos → o povo tem direito de resistência e revolução. <em>Tabula rasa</em>: a mente nasce vazia — o conhecimento vem da experiência (empirismo). Influenciou diretamente a Declaração de Independência dos EUA: Jefferson transformou "vida, liberdade e propriedade" em "vida, liberdade e busca da felicidade".</div>
+          <div class="thinker-tip">UNICAP: Locke vs. Hobbes: Locke = estado de natureza relativamente pacífico, direito de revolução se o Estado abusar. Hobbes = estado de natureza é guerra, absolutismo necessário. Locke é mais "otimista" sobre o ser humano.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">Immanuel Kant</div>
+          <div class="thinker-dates">1724-1804 — Prússia</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Imperativo Categórico</span>
+            <span class="thinker-kw">Sapere Aude</span>
+            <span class="thinker-kw">Ética Deontológica</span>
+          </div>
+          <div class="thinker-body">"<strong>Sapere aude!</strong>" — Ouse saber! Use sua própria razão! O Iluminismo é a saída do homem da menoridade intelectual autoimposta. O <em>Imperativo Categórico</em>: "Age apenas segundo aquela máxima pela qual podes querer que ela se torne lei universal." A ética é racional, universal, independente das consequências (<em>ética deontológica</em>). <em>Crítica da Razão Pura</em>: limites do conhecimento — só conhecemos os fenômenos (o que aparece), não os nômenos (a coisa em si).</div>
+          <div class="thinker-tip">UNICAP: Kant é o mais cobrado em vestibulares. "Imperativo categórico" = teste de universalização da máxima. Ética kantiana vs. aristotélica: Kant = dever + razão; Aristóteles = virtude + felicidade. "Sapere aude" é a frase símbolo do Iluminismo.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">Diderot e D'Alembert</div>
+          <div class="thinker-dates">1713-1784 / 1717-1783</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Encyclopédie</span>
+            <span class="thinker-kw">Conhecimento</span>
+            <span class="thinker-kw">Anticlerical</span>
+          </div>
+          <div class="thinker-body">Organizaram a <em>Encyclopédie ou Dictionnaire raisonné des sciences, des arts et des métiers</em> (1751-1772): 28 volumes, contribuições de Voltaire, Rousseau, Montesquieu. Projeto de sistematizar todo o conhecimento humano pela razão. Símbolo máximo do Iluminismo: combate ao obscurantismo, à superstição, ao dogmatismo. Censurada pela Igreja e pelo governo, proibida várias vezes.</div>
+          <div class="thinker-tip">UNICAP: "O que representa a Encyclopédie para o Iluminismo?" → A sistematização do conhecimento pela razão e o combate à ignorância e ao fanatismo. É o projeto coletivo de todos os iluministas.</div>
+        </div>
+
+        <div class="thinker-card">
+          <div class="thinker-name">Thomas Hobbes</div>
+          <div class="thinker-dates">1588-1679 — Inglaterra</div>
+          <div class="thinker-keywords">
+            <span class="thinker-kw">Leviatã</span>
+            <span class="thinker-kw">Estado de Natureza</span>
+            <span class="thinker-kw">Absolutismo</span>
+          </div>
+          <div class="thinker-body">Precursor do contratualismo (anterior ao Iluminismo, mas essencial para comparações). Em <em>Leviatã</em>: o estado de natureza é "guerra de todos contra todos" (<em>homo homini lupus</em> — o homem é o lobo do homem). Para escapar, os homens fazem um contrato: cedem todos os direitos ao Soberano em troca de segurança. O Soberano é absoluto e não pode ser deposto.</div>
+          <div class="thinker-tip">UNICAP: Hobbes vs. Locke vs. Rousseau é questão clássica. Hobbes = absolutismo, estado de natureza violento. Locke = liberalismo, estado de natureza pacífico, direito de revolução. Rousseau = soberania popular, vontade geral.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Contrato Social Comparado -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📜</span>
+      <div class="section-title">Contrato Social Comparado — Hobbes vs. Locke vs. Rousseau</div>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Hobbes</th><th>Locke</th><th>Rousseau</th></tr></thead>
+          <tbody>
+            <tr><td>Estado de Natureza</td><td>Guerra de todos contra todos; vida é "solitária, pobre, brutal e curta"</td><td>Paz relativa; há razão e direitos naturais, mas sem garantia</td><td>Paz e inocência; o homem nasce bom</td></tr>
+            <tr><td>Por que o Contrato?</td><td>Para escapar da violência e ter segurança</td><td>Para garantir vida, liberdade e propriedade</td><td>Para proteger a liberdade e criar o bem comum</td></tr>
+            <tr><td>O que se cede</td><td>Todos os direitos ao Soberano absoluto</td><td>Apenas parte dos direitos; mantém os naturais</td><td>Todos os direitos, mas recupera-os como cidadão</td></tr>
+            <tr><td>Soberania</td><td>Soberano individual (monarca) — irrevogável</td><td>Parlamento — representação do povo</td><td>Povo soberano — Vontade Geral</td></tr>
+            <tr><td>Revolução?</td><td>Proibida — quebra o contrato</td><td>Legítima se o Estado violar direitos naturais</td><td>Legítima se o governo trair a Vontade Geral</td></tr>
+            <tr><td>Regime resultante</td><td>Absolutismo (justificado racionalmente)</td><td>Liberalismo representativo</td><td>Democracia direta / República</td></tr>
+            <tr><td>Influência</td><td>Fundamentação do absolutismo inglês</td><td>Revolução Americana, Declaração de Independência</td><td>Revolução Francesa, Declaração dos Direitos</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Esta tabela é uma das mais cobradas em vestibulares de ciências humanas. Decore as diferenças-chave: Estado de Natureza (Hobbes=guerra, Locke=paz relativa, Rousseau=inocência) e Soberania (Hobbes=monarca, Locke=parlamento, Rousseau=povo). A Revolução Francesa foi inspirada principalmente por Rousseau.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Separação de Poderes -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <div class="section-title">A Separação de Poderes — Montesquieu</div>
+    </div>
+    <div class="section-body">
+      <p>Em <em>O Espírito das Leis</em>, Montesquieu analisa as leis como produtos da história, geografia e cultura de cada povo — não como princípios universais abstratos. Mas sua contribuição mais duradoura é a teoria da separação dos poderes:</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Os Três Poderes</h4>
+          <ul>
+            <li><strong>Legislativo:</strong> Faz as leis (parlamento/congresso)</li>
+            <li><strong>Executivo:</strong> Aplica e executa as leis (presidente/governo)</li>
+            <li><strong>Judiciário:</strong> Julga os conflitos segundo as leis (tribunais)</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Por que Separar?</h4>
+          <ul>
+            <li>Previne a tirania: nenhum poder absoluto</li>
+            <li>Sistema de freios e contrapesos</li>
+            <li>Liberdade política = ausência de medo do abuso</li>
+            <li>Governo de leis, não de homens</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Constituição Federal do Brasil (1988), Art. 2°: "São Poderes da União, independentes e harmônicos entre si, o Legislativo, o Executivo e o Judiciário." Diretamente de Montesquieu. Questão que conecta Iluminismo com direito constitucional — frequente no vestibular de Direito.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Imperativo Categórico -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💭</span>
+      <div class="section-title">O Imperativo Categórico de Kant</div>
+    </div>
+    <div class="section-body">
+      <p>Kant é o ápice do Iluminismo filosófico. Sua filosofia moral é centrada na <strong>razão prática</strong> — a razão que guia a ação moral.</p>
+      <div class="imperative-box">
+        <div class="imperative-text">"Age apenas segundo aquela máxima pela qual podes ao mesmo tempo querer que ela se torne uma lei universal."</div>
+        <div class="imperative-source">— Kant, Fundamentação da Metafísica dos Costumes (1785)</div>
+      </div>
+      <p>O imperativo categórico opera como <strong>teste de universalização</strong>: antes de agir, pergunta — "E se todos fizessem isso?" Se a universalização da máxima for contraditória ou impossível, a ação é imoral.</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Ética Deontológica de Kant</h4>
+          <ul>
+            <li>O dever moral é independente das consequências</li>
+            <li>A boa intenção (boa vontade) é o único bem incondicional</li>
+            <li>A razão, não os sentimentos, guia a moral</li>
+            <li>O ser humano é fim em si mesmo — não meio</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Kant vs. Outras Éticas</h4>
+          <ul>
+            <li>vs. Aristóteles: não é virtude/felicidade — é dever</li>
+            <li>vs. Utilitarismo: não importa o resultado — importa a intenção</li>
+            <li>vs. Relativismo: a moral é racional e universal</li>
+            <li>vs. Sentimento: Hume dizia que moral vem de emoções</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão frequente: "Kant afirma que uma ação é moralmente correta quando..." → Quando a máxima que a guia pode ser universalizada. Exemplo: mentir para salvar alguém é um dilema kantiano — para Kant, mentir sempre é errado porque a universalização da mentira destrói a comunicação. Esta tensão aparece em questões de ética aplicada.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encyclopédie -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <div class="section-title">A Encyclopédie — O Projeto Coletivo do Iluminismo</div>
+    </div>
+    <div class="section-body">
+      <p>A <em>Encyclopédie ou Dictionnaire raisonné des sciences, des arts et des métiers</em> (1751-1772) foi o maior projeto editorial do século XVIII. Dirigida por <strong>Denis Diderot</strong> e <strong>Jean le Rond d'Alembert</strong>, com colaboração de Voltaire, Rousseau, Montesquieu.</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Características</h4>
+          <ul>
+            <li>28 volumes, mais de 70.000 artigos</li>
+            <li>1751-1772 (21 anos de trabalho)</li>
+            <li>Cobria artes, ciências, ofícios manuais</li>
+            <li>Ilustrações técnicas detalhadas</li>
+            <li>Organização alfabética (racional)</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>Significado Histórico</h4>
+          <ul>
+            <li>Símbolo da razão contra o obscurantismo</li>
+            <li>Crítica indireta à Igreja e à monarquia</li>
+            <li>Censurada e proibida várias vezes</li>
+            <li>Democratização do conhecimento</li>
+            <li>Modelo para enciclopédias modernas</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>A Encyclopédie é o símbolo máximo do projeto iluminista: reunir TODO o conhecimento humano em uma obra sistematizada pela razão, acessível a qualquer um que soubesse ler. É uma forma de combater o monopólio do conhecimento pela Igreja e pela nobreza.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Iluminismo → Rev. Francesa -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔥</span>
+      <div class="section-title">Iluminismo → Revolução Francesa → Mundo Moderno</div>
+    </div>
+    <div class="section-body">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-date">1688 — Revolução Gloriosa (Inglaterra)</div>
+          <div class="timeline-text">Parlamento limita o poder do rei; influência de Locke. Primeiro experimento de governo constitucional moderno</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1748 — O Espírito das Leis (Montesquieu)</div>
+          <div class="timeline-text">Teoria da separação de poderes sistematizada. Influência direta nas constituições modernas</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1762 — O Contrato Social (Rousseau)</div>
+          <div class="timeline-text">Soberania popular, vontade geral. Base filosófica da democracia republicana moderna</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1776 — Declaração de Independência dos EUA</div>
+          <div class="timeline-text">Inspirada em Locke (vida, liberdade e busca da felicidade). Primeira república constitucional moderna</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1789 — Revolução Francesa</div>
+          <div class="timeline-text">Queda do Antigo Regime. Declaração dos Direitos do Homem e do Cidadão (Montesquieu + Rousseau). Lema: Liberdade, Igualdade, Fraternidade</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1804 — Código Napoleônico</div>
+          <div class="timeline-text">Codificação dos princípios iluministas em lei: igualdade civil, liberdade de consciência, propriedade privada. Influência em todo o direito romano-germânico (incluindo o brasileiro)</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">1808-1822 — Independências Latino-Americanas</div>
+          <div class="timeline-text">Inspiradas pelo Iluminismo e pela Revolução Francesa. Independência do Brasil (1822) tem contexto iluminista, embora seja uma monarquia constitucional</div>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão fundamental: "Como o Iluminismo influenciou a Revolução Francesa?" → Forneceu a base ideológica: soberania popular (Rousseau), separação de poderes (Montesquieu), direitos naturais (Locke), crítica à Igreja (Voltaire). Liberdade-Igualdade-Fraternidade = síntese dos ideais iluministas.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <div class="section-title">Checklist de Domínio — Iluminismo</div>
+    </div>
+    <div class="section-body">
+      <ul class="checklist" id="checklist-iluminismo">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Descrever o Antigo Regime e explicar por que o Iluminismo surgiu como reação a ele</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Resumir em 2 frases o pensamento de cada um dos 7 iluministas (Voltaire, Rousseau, Montesquieu, Locke, Kant, Diderot, Hobbes)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Fazer a tabela comparativa dos Contratos Sociais (Hobbes vs. Locke vs. Rousseau) em 4 aspectos</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar a separação de poderes de Montesquieu e conectar com a Constituição brasileira</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Enunciar o imperativo categórico de Kant e aplicar a um exemplo prático</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar o que representa a Encyclopédie para o projeto iluminista</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Traçar a linha Iluminismo → Revolução Francesa → Independência do Brasil</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Comparar ética de Kant com ética de Aristóteles (deontológica vs. das virtudes)</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <div class="section-title">Recursos de Vídeo Recomendados</div>
+    </div>
+    <div class="section-body">
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Canal Filosofia Animada — Iluminismo</div>
+          <div class="video-desc">Os principais iluministas e suas ideias</div>
+          <div class="badge-row"><span class="badge badge-green">Iniciante</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Parabólica — Contexto Histórico do Iluminismo</div>
+          <div class="video-desc">Antigo Regime, Revolução Francesa e conexões</div>
+          <div class="badge-row"><span class="badge badge-gold">Contexto</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Prof. Anderson Lima — Contrato Social</div>
+          <div class="video-desc">Hobbes, Locke e Rousseau comparados</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Me Salva! — Kant e o Imperativo Categórico</div>
+          <div class="video-desc">Ética kantiana com questões de vestibular</div>
+          <div class="badge-row"><span class="badge badge-gold">Kant</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCheck(el) { el.classList.toggle('done'); saveChecklist(); }
+function saveChecklist() {
+  const boxes = document.querySelectorAll('#checklist-iluminismo .check-box');
+  const state = Array.from(boxes).map(b => b.classList.contains('done'));
+  localStorage.setItem('check-iluminismo', JSON.stringify(state));
+}
+function loadChecklist() {
+  const saved = localStorage.getItem('check-iluminismo');
+  if (saved) {
+    const state = JSON.parse(saved);
+    const boxes = document.querySelectorAll('#checklist-iluminismo .check-box');
+    state.forEach((done, i) => { if (done && boxes[i]) boxes[i].classList.add('done'); });
+  }
+}
+loadChecklist();
+</script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brasil República · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#10b981;--pri2:#34d399;--paper:#ecfdf5;--ink:#04140c}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#040c08;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.55) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#04140c 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(236,253,245,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(16,185,129,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(4,20,12,.7);backdrop-filter:blur(20px);border:1px solid rgba(16,185,129,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(4,20,12,.78) 0%,rgba(8,32,20,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(16,185,129,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(236,253,245,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(4,20,12,.65);backdrop-filter:blur(20px);border:1px solid rgba(16,185,129,.2);border-radius:10px;font-size:13px;color:rgba(236,253,245,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(4,20,12,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(4,12,8,.96) 0%,rgba(4,20,12,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(16,185,129,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(236,253,245,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(16,185,129,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(236,253,245,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(236,253,245,.78);position:relative;border-bottom:1px solid rgba(16,185,129,.06)}
+.sec li::before{content:'★';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(16,185,129,.15) 0%,rgba(52,211,153,.08) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">BRASIL REPÚBLICA</div><div class="lt2">1889 - hoje</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">★</div><div class="bt"><div class="l1">Brasil República</div><div class="l2">história brasil · 2.6</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · BRASIL REP</span><h1>Brasil República</h1><p>1889-hoje. Cafezal+coronel, Canudos com Antônio Conselheiro, Vargas com símbolo CLT, Brasília com Congresso de Niemeyer, tanque ditadura militar, urna eletrônica + CF/88. Clique nos marcos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> marco</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#34d399;padding:24px;font-family:monospace;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'velha',cod:'HB 2.6a',nome:'República Velha',sub:'1889-1930 · Coronelismo · Café com leite',
+topicos:['Proclamação da República (15/11/1889) — Marechal Deodoro','Poder das oligarquias estaduais','Coronelismo — poder local dos grandes proprietários','Política dos governadores — Campos Sales (1898-1902)','Valorização do Café — Convênio de Taubaté (1906)','Política do café com leite — alternância SP × MG','Movimentos: Canudos (BA), Vacina, Chibata, Contestado','Cangaço — Lampião · Tenentismo · Semana de Arte Moderna 1922'],
+resumo:'República Velha (1889-1930) = voto de cabresto, coronéis, oligarquias agrárias. SP e MG dominavam.',
+dica:'⚠️ JUAZEIRO (CE) e CANGAÇO (NE) caem pesado na UNICAP. Tenentismo (1922-30), Semana da Arte Moderna (1922).'},
+{id:'vargas',cod:'HB 2.6b',nome:'Era Vargas',sub:'1930-1945 · Estado Novo · CLT',
+topicos:['Crise de 1929 afeta o café brasileiro','Revolução de 1930 — Vargas derruba Washington Luís','Governo Provisório (1930-34), Constituição de 1934','Revolução Constitucionalista de 1932 (SP)','Estado Novo (1937-1945) — ditadura de Vargas','Constituição de 1937 ("Polaca")','CLT (1943) — Consolidação das Leis do Trabalho','Brasil na 2ª Guerra (1942-45) — FEB lutou na Itália','Queda de Vargas (1945)'],
+resumo:'Era Vargas = 15 anos no poder. Modernizou economia, criou CLT, industrializou. Ditadura no Estado Novo (1937-45).',
+dica:'CLT (1943) ainda rege o trabalho no Brasil. FEB lutou na Itália (cobras fumantes).'},
+{id:'jk',cod:'HB 2.6c',nome:'Democracia 46-64 · JK · Brasília',sub:'Dutra a Jango',
+topicos:['O Brasil de Dutra a Jango (1946-1964) — período democrático','Constituição de 1946','Eurico Dutra (1946-51), Vargas eleito (1951-54, suicidou-se 1954)','JK (1956-61) — Plano de Metas, Brasília inaugurada 1960','Jânio Quadros (1961, 7 meses, renunciou)','João Goulart "Jango" (1961-64) — Reformas de Base','Movimento sindical, ligas camponesas'],
+resumo:'Período democrático curto (18 anos). JK construiu Brasília. Jango propôs Reformas de Base. Crise terminou em golpe (1964).',
+dica:'JK = desenvolvimentismo. Brasília inaugurada em 21 de abril de 1960. Niemeyer foi o arquiteto.'},
+{id:'mil',cod:'HB 2.6d',nome:'Ditadura Militar',sub:'1964-1985 · AI-5',
+topicos:['Regime militar (1964-1985)','Golpe militar de 1º de abril de 1964 (deposição de Jango)','Generais-presidentes: Castello, Costa e Silva, Médici, Geisel, Figueiredo','AI-5 (1968): suspende habeas corpus, fecha Congresso','"Anos de Chumbo" (1968-74) — repressão, censura, tortura','Milagre Econômico (1968-73)','"Diretas Já" (1984)','Abertura "lenta, gradual e segura" (Geisel)'],
+resumo:'21 anos de ditadura. AI-5 (1968) foi o pior. Milagre econômico mascarou repressão. Diretas Já (1984) cobrou eleição direta.',
+dica:'AI-5 (13 dez 1968) = início dos "Anos de Chumbo". Lei da Anistia (1979) perdoou tortura DOS DOIS LADOS — polêmica até hoje.'},
+{id:'nova',cod:'HB 2.6e',nome:'Nova República · CF/88',sub:'Sarney a Lula 3',
+topicos:['Brasil de Sarney a Bolsonaro','Sarney (1985-90) — Plano Cruzado','Constituição de 1988 ("Constituição Cidadã") — Ulysses Guimarães','Collor (1990-92) — impeachment','Itamar Franco (1992-94) — Plano Real (FHC ministro)','FHC (1995-2002) — privatizações','Lula (2003-2010) — Bolsa Família','Dilma (2011-2016) — impeachment','Temer · Bolsonaro · Lula 3 (2023+)'],
+resumo:'Nova República = 39 anos de democracia ininterrupta. CF/88 garante direitos. Plano Real (1994) estabilizou economia.',
+dica:'⚠️ CF/88 = "Constituição Cidadã" (Ulysses Guimarães). Direitos sociais robustos. Mais analítica do mundo.'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x04200c);
+scene.fog=new THREE.Fog(0x04200c,80,260);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(60,48,70);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.95;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=30;controls.maxDistance=170;
+controls.maxPolarAngle=Math.PI*0.48;controls.target.set(0,5,0);
+
+scene.add(new THREE.AmbientLight(0x607060,0.45));
+const sun=new THREE.DirectionalLight(0xfff5d8,1.4);
+sun.position.set(40,55,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
+sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;
+sun.shadow.bias=-0.0005;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0x34d399,0x102818,0.3));
+
+// Solo verde (bandeira brasileira)
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(260,260,40,40),new THREE.MeshStandardMaterial({color:0x10b981,roughness:0.85}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+// "Losango amarelo" central
+const losango=new THREE.Mesh(new THREE.PlaneGeometry(80,50),new THREE.MeshStandardMaterial({color:0xfde047,roughness:0.7,emissive:0xa07810,emissiveIntensity:0.1}));
+losango.rotation.x=-Math.PI/2;losango.rotation.z=Math.PI/4;losango.position.y=0.01;scene.add(losango);
+
+// "Disco azul" central
+const disco=new THREE.Mesh(new THREE.CircleGeometry(18,64),new THREE.MeshStandardMaterial({color:0x002776,roughness:0.6,emissive:0x001855,emissiveIntensity:0.2}));
+disco.rotation.x=-Math.PI/2;disco.position.y=0.02;scene.add(disco);
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// REPÚBLICA VELHA - cafezal + coronel
+{const g=addMarker('velha',-32,-15);
+// Sede do coronel
+const big=new THREE.Mesh(new THREE.BoxGeometry(5,3,4),new THREE.MeshStandardMaterial({color:0xfae5d0,roughness:0.7}));
+big.position.y=1.5;big.castShadow=big.receiveShadow=true;g.add(big);
+const roof=new THREE.Mesh(new THREE.BoxGeometry(5.5,1,4.5),new THREE.MeshStandardMaterial({color:0x6a2818,roughness:0.85}));
+roof.position.y=3.5;roof.castShadow=true;g.add(roof);
+// Coronel (figura com chapéu)
+const cor=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.4,1.6,8),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.7}));
+cor.position.set(3,0.8,1);cor.castShadow=true;g.add(cor);
+const corHead=new THREE.Mesh(new THREE.SphereGeometry(0.32,12,10),new THREE.MeshStandardMaterial({color:0xd0a878,roughness:0.6}));
+corHead.position.set(3,1.9,1);g.add(corHead);
+// Chapéu (cilindro plano)
+const hat=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.1,16),new THREE.MeshStandardMaterial({color:0x1a1408,roughness:0.7}));
+hat.position.set(3,2.3,1);g.add(hat);
+const hatTop=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,0.4,12),new THREE.MeshStandardMaterial({color:0x1a1408,roughness:0.7}));
+hatTop.position.set(3,2.55,1);g.add(hatTop);
+// Cafezal (4 pés)
+for(let i=0;i<5;i++){
+  const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,1.5,6),new THREE.MeshStandardMaterial({color:0x5a3a18,roughness:0.95}));
+  const a=Math.random()*Math.PI*2;tr.position.set(Math.cos(a)*5+0.5,0.75,Math.sin(a)*5-2);tr.castShadow=true;g.add(tr);
+  const fol=new THREE.Mesh(new THREE.SphereGeometry(0.9,10,8),new THREE.MeshStandardMaterial({color:0x4a8030,roughness:0.7}));
+  fol.position.set(tr.position.x,1.7,tr.position.z);fol.castShadow=true;g.add(fol);
+}
+// Urna do voto de cabresto (caixa com seta de "controle")
+const urna=new THREE.Mesh(new THREE.BoxGeometry(1,1,0.8),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.85}));
+urna.position.set(-3,0.5,2);urna.castShadow=true;g.add(urna);
+markers.push({id:'velha',center:new THREE.Vector3(-32,3,-15),radius:9,group:g});}
+
+// VARGAS / ESTADO NOVO - estátua + CLT vermelha
+{const g=addMarker('vargas',-32,12);
+// Pedestal
+const ped=new THREE.Mesh(new THREE.BoxGeometry(3,5,3),new THREE.MeshStandardMaterial({color:0xc62828,roughness:0.6}));
+ped.position.y=2.5;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// Estátua Vargas (busto)
+const body=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.8,2,12),new THREE.MeshStandardMaterial({color:0x6a6868,metalness:0.8,roughness:0.3}));
+body.position.set(0,6,0);body.castShadow=true;g.add(body);
+const head=new THREE.Mesh(new THREE.SphereGeometry(0.5,16,12),new THREE.MeshStandardMaterial({color:0x6a6868,metalness:0.8,roughness:0.3}));
+head.position.set(0,7.5,0);g.add(head);
+// Livro CLT
+const clt=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.18,1.1),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x600808,emissiveIntensity:0.3,roughness:0.7}));
+clt.position.set(0,5.6,0.8);g.add(clt);
+// "CLT" estampado (placa dourada)
+const cltTit=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.04,0.3),new THREE.MeshStandardMaterial({color:0xd4a017,emissive:0x553300,emissiveIntensity:0.5,metalness:0.7,roughness:0.3}));
+cltTit.position.set(0,5.7,0.8);g.add(cltTit);
+// 1937 (datas em torno)
+const dt=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.5,0.1),new THREE.MeshStandardMaterial({color:0xfaf0d8,emissive:0xa08050,emissiveIntensity:0.3}));
+dt.position.set(0,4,1.55);g.add(dt);
+markers.push({id:'vargas',center:new THREE.Vector3(-32,4,12),radius:8,group:g});}
+
+// JK / BRASÍLIA - Congresso de Niemeyer estilizado (cúpula + cuia + 2 torres)
+{const g=addMarker('jk',0,0);
+// Plataforma (Esplanada dos Ministérios)
+const base=new THREE.Mesh(new THREE.BoxGeometry(14,0.5,8),new THREE.MeshStandardMaterial({color:0xebd8b8,roughness:0.6}));
+base.position.y=0.25;base.castShadow=base.receiveShadow=true;g.add(base);
+// Cúpula virada para cima (Senado)
+const dome1=new THREE.Mesh(new THREE.SphereGeometry(2.2,32,16,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.55}));
+dome1.position.set(-3,0.5,0);dome1.castShadow=true;g.add(dome1);
+// Cúpula virada para baixo / "tigela" (Câmara dos Deputados)
+const dome2=new THREE.Mesh(new THREE.SphereGeometry(2.2,32,16,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.55}));
+dome2.position.set(3,2.7,0);dome2.rotation.z=Math.PI;dome2.castShadow=true;g.add(dome2);
+// 2 torres altas (Anexo)
+for(let s=-1;s<=1;s+=2){
+  const t=new THREE.Mesh(new THREE.BoxGeometry(1.4,12,2.5),new THREE.MeshStandardMaterial({color:0xebebe8,metalness:0.4,roughness:0.4,emissive:0x4060c0,emissiveIntensity:0.1}));
+  t.position.set(s*1,6.5,0);t.castShadow=t.receiveShadow=true;g.add(t);
+  // Janelas (faixa vertical de luzes)
+  for(let f=1;f<6;f++){
+    const w=new THREE.Mesh(new THREE.PlaneGeometry(1.3,0.5),new THREE.MeshBasicMaterial({color:0xffd060,transparent:true,opacity:0.7}));
+    w.position.set(s*1,2+f*2,1.26);g.add(w);
+  }
+}
+// Faixa do espelho d'água
+const water=new THREE.Mesh(new THREE.BoxGeometry(13,0.05,2),new THREE.MeshStandardMaterial({color:0x4080c0,roughness:0.2,metalness:0.6,transparent:true,opacity:0.85}));
+water.position.set(0,0.5,3.5);g.add(water);
+// Mastros 3 poderes
+for(let i=-1;i<=1;i++){
+  const fp=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.08,5,6),new THREE.MeshStandardMaterial({color:0xb8b8b8,metalness:0.8,roughness:0.3}));
+  fp.position.set(0,2.5,4.5);g.add(fp);
+}
+// Bandeira do Brasil flutuante
+const flag=new THREE.Mesh(new THREE.PlaneGeometry(2.5,1.8),new THREE.MeshStandardMaterial({color:0x10b981,side:THREE.DoubleSide,emissive:0x046838,emissiveIntensity:0.3,roughness:0.7}));
+flag.position.set(1,5,4.5);g.add(flag);
+const flagD=new THREE.Mesh(new THREE.PlaneGeometry(1.5,1),new THREE.MeshStandardMaterial({color:0xfde047,side:THREE.DoubleSide,roughness:0.7}));
+flagD.rotation.z=Math.PI/4;flagD.position.set(1,5,4.52);flagD.scale.set(0.7,0.7,1);g.add(flagD);
+const flagC=new THREE.Mesh(new THREE.CircleGeometry(0.45,32),new THREE.MeshStandardMaterial({color:0x002776,side:THREE.DoubleSide,emissive:0x001855,emissiveIntensity:0.3}));
+flagC.position.set(1,5,4.53);g.add(flagC);
+markers.push({id:'jk',center:new THREE.Vector3(0,5,0),radius:11,group:g});}
+
+// DITADURA MILITAR - tanque
+{const g=addMarker('mil',24,-15);
+// Corpo tanque
+const tank=new THREE.Mesh(new THREE.BoxGeometry(6,2,3),new THREE.MeshStandardMaterial({color:0x4a5840,roughness:0.85,metalness:0.3}));
+tank.position.y=1.4;tank.castShadow=tank.receiveShadow=true;g.add(tank);
+// Torre
+const turret=new THREE.Mesh(new THREE.CylinderGeometry(1.3,1.5,1.2,16),new THREE.MeshStandardMaterial({color:0x4a5840,roughness:0.85,metalness:0.3}));
+turret.position.y=3.1;turret.castShadow=true;g.add(turret);
+// Canhão
+const cannon=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.22,4,12),new THREE.MeshStandardMaterial({color:0x3a3838,metalness:0.7,roughness:0.4}));
+cannon.rotation.z=Math.PI/2;cannon.position.set(2.5,3.1,0);cannon.castShadow=true;g.add(cannon);
+// Esteiras
+for(let s=-1;s<=1;s+=2){
+  const tk=new THREE.Mesh(new THREE.BoxGeometry(6.5,0.8,0.8),new THREE.MeshStandardMaterial({color:0x1a1818,roughness:0.95}));
+  tk.position.set(0,0.4,s*1.6);tk.castShadow=true;g.add(tk);
+  for(let i=-3;i<=3;i++){
+    const rd=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,0.9,12),new THREE.MeshStandardMaterial({color:0x3a3838,metalness:0.6,roughness:0.5}));
+    rd.rotation.x=Math.PI/2;rd.position.set(i*0.9,0.4,s*1.6);g.add(rd);
+  }
+}
+// Algemas no chão (símbolo AI-5)
+for(let i=0;i<2;i++){
+  const cuf=new THREE.Mesh(new THREE.TorusGeometry(0.4,0.08,8,16),new THREE.MeshStandardMaterial({color:0x4a4848,metalness:0.85,roughness:0.4}));
+  cuf.position.set(5+i*1,0.4,0);cuf.rotation.x=Math.PI/2;cuf.castShadow=true;g.add(cuf);
+}
+// Placa "AI-5 1968" cinza/preta
+const sign=new THREE.Mesh(new THREE.BoxGeometry(2,0.6,0.1),new THREE.MeshStandardMaterial({color:0x1a1818,emissive:0x800808,emissiveIntensity:0.2}));
+sign.position.set(0,5.5,0);g.add(sign);
+markers.push({id:'mil',center:new THREE.Vector3(24,3,-15),radius:9,group:g});}
+
+// NOVA REPÚBLICA - CF/88 + urna eletrônica
+{const g=addMarker('nova',28,18);
+// Pedestal
+const ped=new THREE.Mesh(new THREE.BoxGeometry(4,2,3),new THREE.MeshStandardMaterial({color:0x10b981,roughness:0.5,emissive:0x046838,emissiveIntensity:0.2}));
+ped.position.y=1;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// CF/88 (livro grande verde-amarelo)
+const cf=new THREE.Mesh(new THREE.BoxGeometry(2,2.5,1.5),new THREE.MeshStandardMaterial({color:0xfde047,roughness:0.5,emissive:0xa08010,emissiveIntensity:0.2}));
+cf.position.set(0,3.5,0);cf.castShadow=true;g.add(cf);
+// Capa "CF 88"
+const title=new THREE.Mesh(new THREE.BoxGeometry(1.4,0.7,0.05),new THREE.MeshStandardMaterial({color:0x002776,emissive:0x001855,emissiveIntensity:0.4}));
+title.position.set(0,4,0.78);g.add(title);
+// Estrela amarela
+const star=new THREE.Mesh(new THREE.RingGeometry(0.2,0.5,5),new THREE.MeshBasicMaterial({color:0xfde047,side:THREE.DoubleSide}));
+star.position.set(0,3,0.78);g.add(star);
+// Urna eletrônica
+const urn=new THREE.Mesh(new THREE.BoxGeometry(1.2,1.4,1.2),new THREE.MeshStandardMaterial({color:0xc0c0c0,roughness:0.5,metalness:0.5}));
+urn.position.set(3,1.3,0);urn.castShadow=true;g.add(urn);
+// Tela (acende)
+const screen=new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.6),new THREE.MeshBasicMaterial({color:0x00ff80,emissive:0x00ff80,emissiveIntensity:0.6}));
+screen.position.set(3,1.6,0.61);g.add(screen);g.userData.screen=screen;
+// Teclas
+for(let i=0;i<4;i++){
+  const k=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.15,0.05),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.5}));
+  k.position.set(2.7+(i%2)*0.2,1.1-Math.floor(i/2)*0.2,0.61);g.add(k);
+}
+markers.push({id:'nova',center:new THREE.Vector3(28,3,18),radius:9,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0x34d399,side:THREE.DoubleSide,transparent:true,opacity:0.35}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.15,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(60,48,70);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,5,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.25+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  if(groups['nova']&&groups['nova'].userData.screen){
+    groups['nova'].userData.screen.material.opacity=0.7+Math.sin(t*4)*0.3;
+  }
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulado Cronometrado — UNICAP 2026.2 Direito</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#050810 0%,#0a0e1a 40%,#0d1220 100%);background-attachment:fixed;min-height:100vh;color:#e8eaf0;padding:18px;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .box{max-width:880px;margin:0 auto;}
+  h1{font-size:22px;color:#fff;text-align:center;font-weight:800;letter-spacing:-0.02em;}
+  .sub{font-size:13px;color:#6b7a99;text-align:center;margin:4px 0 20px;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;}
+  .painel{background:rgba(19,24,41,0.65);backdrop-filter:blur(16px);border-radius:14px;padding:20px;margin-bottom:14px;border:1px solid rgba(0,212,255,0.10);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+  .painel:hover{border-color:rgba(0,212,255,0.22);}
+  .painel h2{font-size:14px;color:#00d4ff;margin-bottom:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;}
+  select,input{background:rgba(10,14,26,0.8);color:#e8eaf0;border:1px solid rgba(0,212,255,0.15);
+    padding:8px 10px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;outline:none;}
+  select:focus,input:focus{border-color:#00d4ff;box-shadow:0 0 0 2px rgba(0,212,255,0.15);}
+  button{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#04050a;border:none;padding:10px 20px;border-radius:9px;
+    cursor:pointer;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;transition:all 220ms;}
+  button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,255,0.35);}
+  button.sec{background:rgba(255,255,255,0.06);color:#c8d0e0;border:1px solid rgba(255,255,255,0.10);}
+  button.sec:hover{background:rgba(255,255,255,0.10);color:#e8eaf0;transform:translateY(-1px);}
+  button.danger{background:linear-gradient(135deg,#ef4444,#b91c1c);color:#fff;}
+  #cron{position:sticky;top:0;z-index:9;background:rgba(10,14,28,0.85);backdrop-filter:blur(20px);border:2px solid rgba(0,212,255,0.35);
+    border-radius:14px;padding:16px;text-align:center;margin-bottom:14px;box-shadow:0 0 40px rgba(0,212,255,0.18);}
+  #cron .t{font-size:44px;font-weight:700;color:#00d4ff;font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:0.05em;}
+  #cron.alerta{border-color:rgba(239,68,68,0.6);box-shadow:0 0 40px rgba(239,68,68,0.25);} #cron.alerta .t{color:#ef4444;}
+  .areas-tit{font-size:11px;color:#ffb800;text-transform:uppercase;letter-spacing:2px;
+    margin:16px 0 8px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+  .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:6px;}
+  .q{display:flex;align-items:center;gap:5px;background:rgba(10,14,26,0.6);padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);}
+  .q .n{font-size:11px;color:#6b7a99;width:24px;font-family:'JetBrains Mono',monospace;}
+  .q button{background:rgba(255,255,255,0.05);color:#c0c8da;padding:4px 0;width:26px;
+    border-radius:6px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,0.08);transition:all 160ms;transform:none;box-shadow:none;}
+  .q button:hover{background:rgba(0,212,255,0.15);color:#00d4ff;border-color:#00d4ff;transform:none;box-shadow:none;}
+  .q button.sel{background:rgba(0,212,255,0.25);color:#00d4ff;border-color:#00d4ff;}
+  .q button.certa{background:rgba(74,222,128,0.25);color:#4ade80;border-color:#4ade80;}
+  .q button.errada{background:rgba(239,68,68,0.25);color:#ef4444;border-color:#ef4444;}
+  .q button.gab{outline:2px solid #4ade80;outline-offset:1px;}
+  #resultado{display:none;}
+  .nota-area{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;
+    background:rgba(10,14,26,0.6);border-radius:9px;margin:6px 0;font-size:14px;border:1px solid rgba(255,255,255,0.05);}
+  .nota-area.elim{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.4);}
+  .nota-area b{font-size:17px;font-family:'JetBrains Mono',monospace;color:#00d4ff;}
+  .nota-area.elim b{color:#ef4444;}
+  .geral{text-align:center;padding:20px;background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);
+    border-radius:12px;margin:12px 0;}
+  .geral .v{font-size:52px;font-weight:700;color:#00d4ff;font-family:'JetBrains Mono',monospace;}
+  .gab-input{width:100%;font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;}
+  .red-crit{display:flex;justify-content:space-between;align-items:center;margin:7px 0;font-size:13px;}
+  .red-crit input{width:72px;text-align:center;font-family:'JetBrains Mono',monospace;}
+  .aviso{font-size:12px;color:#6b7a99;line-height:1.6;margin-top:9px;}
+  details{margin-top:9px;} summary{cursor:pointer;color:#00d4ff;font-size:13px;font-weight:600;user-select:none;}
+  summary:hover{color:#33dcff;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Simulado Cronometrado — UNICAP 2026.2 · Direito</h1>
+  <div class="sub">5 horas · 64 questões objetivas + redação · use com as provas reais da UNICAP em PDF</div>
+
+  <div id="cron">
+    <div class="t" id="tempo">05:00:00</div>
+    <div style="margin-top:8px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button id="bIniciar">Iniciar simulado</button>
+      <button id="bPausar" class="sec">Pausar</button>
+      <button id="bZerar" class="sec">Reiniciar relógio</button>
+    </div>
+  </div>
+
+  <div class="painel">
+    <h2>1. Escolha a prova</h2>
+    <p class="aviso">Abra a prova real correspondente em PDF (pasta Downloads) e responda no cartão abaixo.
+    O Simulado 1 já tem o gabarito oficial 2026.1 carregado. Para os outros, cole o gabarito no campo "gabarito oficial".</p>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <select id="prova">
+        <option value="2026.1">Simulado 1 — Prova UNICAP 2026.1 (gabarito carregado)</option>
+        <option value="manual">Simulado 2/3/4 — outra prova (inserir gabarito)</option>
+      </select>
+    </div>
+    <details>
+      <summary>Inserir / ver gabarito oficial (64 letras)</summary>
+      <p class="aviso">Cole as 64 respostas do gabarito oficial, só as letras, na ordem (ex.: ABCDE...). Espaços são ignorados.</p>
+      <input class="gab-input" id="gabInput" placeholder="64 letras A-E">
+      <div style="margin-top:8px"><button id="bGab" class="sec">Salvar gabarito</button></div>
+    </details>
+  </div>
+
+  <div class="painel">
+    <h2>2. Cartão-resposta</h2>
+    <div class="areas-tit">Linguagens — questões 1 a 16</div>
+    <div class="grade" id="g1"></div>
+    <div class="areas-tit">Ciências Humanas — questões 17 a 32</div>
+    <div class="grade" id="g2"></div>
+    <div class="areas-tit">Ciências da Natureza — questões 33 a 48</div>
+    <div class="grade" id="g3"></div>
+    <div class="areas-tit">Matemática — questões 49 a 64</div>
+    <div class="grade" id="g4"></div>
+  </div>
+
+  <div class="painel">
+    <h2>3. Redação (autoavaliação)</h2>
+    <p class="aviso">Escreva a redação no papel e avalie com o guia. Some os 5 critérios (total 0–1000).</p>
+    <div class="red-crit"><span>Estrutura (máx. 100)</span><input type="number" id="r0" min="0" max="100" value="0"></div>
+    <div class="red-crit"><span>Apropriação temática (máx. 200)</span><input type="number" id="r1" min="0" max="200" value="0"></div>
+    <div class="red-crit"><span>Construção dos argumentos (máx. 200)</span><input type="number" id="r2" min="0" max="200" value="0"></div>
+    <div class="red-crit"><span>Relevância da argumentação (máx. 200)</span><input type="number" id="r3" min="0" max="200" value="0"></div>
+    <div class="red-crit"><span>Norma padrão (máx. 300)</span><input type="number" id="r4" min="0" max="300" value="0"></div>
+  </div>
+
+  <div style="text-align:center;margin:14px 0">
+    <button id="bCorrigir">Corrigir simulado</button>
+  </div>
+
+  <div class="painel" id="resultado">
+    <h2>Resultado</h2>
+    <div class="geral"><div class="v" id="rGeral">—</div>
+      <div style="color:#cfd4e0">nota geral (média das 4 áreas + redação)</div></div>
+    <div id="rAreas"></div>
+    <div id="rRedacao" class="nota-area"></div>
+    <div id="rVeredito" style="text-align:center;margin-top:12px;font-size:15px;font-weight:600"></div>
+    <p class="aviso">Eliminação: nota < 200 em qualquer área OU na redação. Nota de corte estimada para Direito Manhã: ~540–600+.
+    Registre estes números no progresso.json (bloco "simulados").</p>
+  </div>
+</div>
+
+<script>
+// Gabarito oficial UNICAP 2026.1 - Demais Cursos (Q1-64)
+const GAB_2026_1 = "ABEDEABCECCDBCEB" + "EACBBDBCDACCBCBE" + "ACBECBACACDCCECD" + "BCBDEADCBECEBDAC";
+let gabarito = {};
+let respostas = JSON.parse(localStorage.getItem('sim_resp')||'{}');
+
+function carregarGabarito(str){
+  const letras=(str||'').toUpperCase().replace(/[^A-E]/g,'');
+  gabarito={};
+  for(let i=0;i<64&&i<letras.length;i++) gabarito[i+1]=letras[i];
+}
+carregarGabarito(GAB_2026_1);
+
+// monta cartão
+const grades={1:[1,16],2:[17,32],3:[33,48],4:[49,64]};
+for(const[g,[ini,fim]]of Object.entries(grades)){
+  const div=document.getElementById('g'+g);
+  for(let q=ini;q<=fim;q++){
+    const row=document.createElement('div');
+    row.className='q';
+    row.innerHTML=`<span class="n">${q}</span>`+
+      'ABCDE'.split('').map(l=>`<button data-q="${q}" data-l="${l}">${l}</button>`).join('');
+    div.appendChild(row);
+  }
+}
+function pintar(){
+  document.querySelectorAll('.q button').forEach(b=>{
+    b.className='';
+    if(respostas[b.dataset.q]===b.dataset.l)b.classList.add('sel');
+  });
+}
+pintar();
+document.querySelectorAll('.q button').forEach(b=>{
+  b.onclick=()=>{
+    respostas[b.dataset.q]=respostas[b.dataset.q]===b.dataset.l?null:b.dataset.l;
+    localStorage.setItem('sim_resp',JSON.stringify(respostas));
+    pintar();
+  };
+});
+
+// gabarito UI
+document.getElementById('gabInput').value=GAB_2026_1;
+document.getElementById('bGab').onclick=()=>{
+  carregarGabarito(document.getElementById('gabInput').value);
+  alert('Gabarito salvo: '+Object.keys(gabarito).length+' questões.');
+};
+document.getElementById('prova').onchange=e=>{
+  if(e.target.value==='2026.1'){
+    document.getElementById('gabInput').value=GAB_2026_1;
+    carregarGabarito(GAB_2026_1);
+  }
+};
+
+// cronômetro
+let restante=5*3600, timer=null;
+function fmt(s){const h=String(Math.floor(s/3600)).padStart(2,'0');
+  const m=String(Math.floor(s%3600/60)).padStart(2,'0');
+  const x=String(s%60).padStart(2,'0');return`${h}:${m}:${x}`;}
+function tick(){
+  restante--;
+  document.getElementById('tempo').textContent=fmt(Math.max(0,restante));
+  if(restante<=600)document.getElementById('cron').classList.add('alerta');
+  if(restante<=0){clearInterval(timer);timer=null;alert('Tempo esgotado! Pare e corrija o simulado.');}
+}
+document.getElementById('bIniciar').onclick=()=>{
+  if(!timer)timer=setInterval(tick,1000);
+};
+document.getElementById('bPausar').onclick=()=>{
+  if(timer){clearInterval(timer);timer=null;}else timer=setInterval(tick,1000);
+};
+document.getElementById('bZerar').onclick=()=>{
+  clearInterval(timer);timer=null;restante=5*3600;
+  document.getElementById('tempo').textContent='05:00:00';
+  document.getElementById('cron').classList.remove('alerta');
+};
+
+// correção
+document.getElementById('bCorrigir').onclick=()=>{
+  if(Object.keys(gabarito).length<64){
+    alert('Gabarito incompleto. Insira as 64 respostas oficiais primeiro.');return;
+  }
+  const areas={Linguagens:[1,16],Humanas:[17,32],Natureza:[33,48],Matematica:[49,64]};
+  const valorQ=1000/16; // 62,5 pontos por questão
+  let notas={}, somaAreas=0, elimAlguma=false;
+  let html='';
+  for(const[nome,[ini,fim]]of Object.entries(areas)){
+    let acertos=0;
+    for(let q=ini;q<=fim;q++){
+      const certo=gabarito[q], marc=respostas[q];
+      if(marc===certo)acertos++;
+      // pinta o cartão
+      document.querySelectorAll(`.q button[data-q="${q}"]`).forEach(b=>{
+        if(b.dataset.l===certo)b.classList.add('gab');
+        if(b.dataset.l===marc)b.classList.add(marc===certo?'certa':'errada');
+      });
+    }
+    const nota=Math.round(acertos*valorQ);
+    notas[nome]={acertos,nota};
+    somaAreas+=nota;
+    const elim=nota<200; if(elim)elimAlguma=true;
+    html+=`<div class="nota-area ${elim?'elim':''}">
+      <span>${nome} — ${acertos}/16 acertos</span><b>${nota}</b></div>`;
+  }
+  document.getElementById('rAreas').innerHTML=html;
+  // redação
+  let red=0;
+  for(let i=0;i<5;i++)red+=Number(document.getElementById('r'+i).value)||0;
+  const redElim=red<200; if(redElim)elimAlguma=true;
+  document.getElementById('rRedacao').className='nota-area'+(redElim?' elim':'');
+  document.getElementById('rRedacao').innerHTML=`<span>Redação</span><b>${red}</b>`;
+  // geral = média das 4 áreas + redação, dividido por 5
+  const geral=Math.round((somaAreas+red)/5);
+  document.getElementById('rGeral').textContent=geral;
+  const v=document.getElementById('rVeredito');
+  if(elimAlguma){
+    v.style.color='#e3565b';
+    v.textContent='ATENÇÃO: nota < 200 numa área ou na redação = ELIMINAÇÃO. Priorize a área crítica.';
+  }else if(geral>=600){
+    v.style.color='#4ade80';
+    v.textContent='Excelente — acima da faixa de corte estimada para Direito Manhã. Mantenha o ritmo.';
+  }else if(geral>=450){
+    v.style.color='#ffd24a';
+    v.textContent='Na zona de classificação, mas suba a redação e Linguagens para garantir.';
+  }else{
+    v.style.color='#ffd24a';
+    v.textContent='Abaixo da meta. Sem eliminação, mas reforce os pontos fracos no cronograma.';
+  }
+  document.getElementById('resultado').style.display='block';
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+};
+</script>
+</body>
+</html>

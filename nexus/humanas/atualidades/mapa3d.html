@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atualidades 2026 — A Rede Global</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #020408; font-family: 'Inter', sans-serif; overflow: hidden; color: #c8d8f0; }
+#canvas { display: block; width: 100vw; height: 100vh; }
+#navbar {
+  position: fixed; top: 0; left: 0; right: 0; height: 52px;
+  background: linear-gradient(90deg, #020408ee, #040810ee);
+  border-bottom: 1px solid #ffffff10;
+  display: flex; align-items: center; padding: 0 20px; gap: 12px; z-index: 100;
+  backdrop-filter: blur(8px); flex-wrap: wrap;
+}
+#nav-back { color: #60c8ff; text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #60c8ff40; border-radius: 6px; transition: all .2s; flex-shrink: 0; }
+#nav-back:hover { background: #60c8ff20; }
+#nav-badge { background: linear-gradient(135deg, #0060ff22, #00c8ff18); border: 1px solid #60c8ff30; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 600; color: #90d8f8; flex-shrink: 0; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: #c0e0f8; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#nav-link { color: #706880; text-decoration: none; font-size: 12px; padding: 5px 12px; border: 1px solid #70688040; border-radius: 6px; transition: all .2s; flex-shrink: 0; }
+#nav-link:hover { background: #70688020; color: #90c0e8; }
+#tooltip { position: fixed; pointer-events: none; z-index: 200; background: #040810f0; border: 1px solid #ffffff40; border-radius: 8px; padding: 8px 14px; font-size: 12px; color: #c0e0f8; max-width: 220px; opacity: 0; transition: opacity .2s; backdrop-filter: blur(10px); }
+#popup {
+  position: fixed; z-index: 300; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(.92);
+  background: linear-gradient(135deg, #040810, #080c18);
+  border-radius: 14px; padding: 28px 32px; max-width: 560px; width: 90%;
+  opacity: 0; pointer-events: none; transition: all .3s;
+  backdrop-filter: blur(20px); box-shadow: 0 20px 60px #00000090;
+}
+#popup.active { opacity: 1; pointer-events: all; transform: translate(-50%,-50%) scale(1); }
+#popup.ia    { border: 1px solid #00c8ff70; box-shadow: 0 20px 60px #00000090, 0 0 40px #00c8ff18; }
+#popup.amb   { border: 1px solid #20e06070; box-shadow: 0 20px 60px #00000090, 0 0 40px #20e06018; }
+#popup.conf  { border: 1px solid #ff403070; box-shadow: 0 20px 60px #00000090, 0 0 40px #ff403018; }
+#popup.desig { border: 1px solid #f0b02070; box-shadow: 0 20px 60px #00000090, 0 0 40px #f0b02018; }
+#popup.saude { border: 1px solid #c060f070; box-shadow: 0 20px 60px #00000090, 0 0 40px #c060f018; }
+#popup.demo  { border: 1px solid #80a0ff70; box-shadow: 0 20px 60px #00000090, 0 0 40px #80a0ff18; }
+#popup.dir   { border: 1px solid #ff80a070; box-shadow: 0 20px 60px #00000090, 0 0 40px #ff80a018; }
+#popup.econ  { border: 1px solid #40e0b070; box-shadow: 0 20px 60px #00000090, 0 0 40px #40e0b018; }
+#popup-title { font-size: 17px; font-weight: 700; margin-bottom: 14px; }
+#popup.ia    #popup-title { color: #60d8ff; }
+#popup.amb   #popup-title { color: #50e878; }
+#popup.conf  #popup-title { color: #ff7060; }
+#popup.desig #popup-title { color: #f8c840; }
+#popup.saude #popup-title { color: #d080f8; }
+#popup.demo  #popup-title { color: #90b0ff; }
+#popup.dir   #popup-title { color: #ff90b0; }
+#popup.econ  #popup-title { color: #60e8b0; }
+#popup-desc { font-size: 13px; line-height: 1.7; color: #b0c8e8; margin-bottom: 16px; }
+#popup-tip { border-radius: 0 8px 8px 0; padding: 12px 16px; font-size: 12px; line-height: 1.6; }
+#popup.ia    #popup-tip { background: #00c8ff18; border-left: 3px solid #00c8ff; color: #80d8f8; }
+#popup.amb   #popup-tip { background: #20e06018; border-left: 3px solid #20e060; color: #80f0a8; }
+#popup.conf  #popup-tip { background: #ff403018; border-left: 3px solid #ff4030; color: #ff9080; }
+#popup.desig #popup-tip { background: #f0b02018; border-left: 3px solid #f0b020; color: #f8d870; }
+#popup.saude #popup-tip { background: #c060f018; border-left: 3px solid #c060f0; color: #d898f8; }
+#popup.demo  #popup-tip { background: #80a0ff18; border-left: 3px solid #80a0ff; color: #a8c0ff; }
+#popup.dir   #popup-tip { background: #ff80a018; border-left: 3px solid #ff80a0; color: #ffb0c8; }
+#popup.econ  #popup-tip { background: #40e0b018; border-left: 3px solid #40e0b0; color: #80f0d0; }
+#popup-tip::before { content: "UNICAP "; font-weight: 700; }
+#popup.ia    #popup-tip::before { color: #00c8ff; }
+#popup.amb   #popup-tip::before { color: #20e060; }
+#popup.conf  #popup-tip::before { color: #ff4030; }
+#popup.desig #popup-tip::before { color: #f0b020; }
+#popup.saude #popup-tip::before { color: #c060f0; }
+#popup.demo  #popup-tip::before { color: #80a0ff; }
+#popup.dir   #popup-tip::before { color: #ff80a0; }
+#popup.econ  #popup-tip::before { color: #40e0b0; }
+#popup-close { position: absolute; top: 14px; right: 16px; background: none; border: 1px solid #ffffff30; color: #a09898; width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+#popup-close:hover { background: #ffffff18; }
+#hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #04080a90; border: 1px solid #ffffff20; border-radius: 20px; padding: 6px 18px; font-size: 11px; color: #607090; z-index: 100; backdrop-filter: blur(6px); white-space: nowrap; }
+#overlay { position: fixed; inset: 0; z-index: 250; pointer-events: none; opacity: 0; background: #00000060; transition: opacity .3s; }
+#overlay.active { pointer-events: all; opacity: 1; }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<nav id="navbar">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-badge">🌐 Atualidades 2025–2026</span>
+  <span id="nav-title">A Rede Global — Temas do Vestibular</span>
+  <a href="resumo.html" id="nav-link">Resumo →</a>
+</nav>
+<div id="tooltip"></div>
+<div id="overlay"></div>
+<div id="popup">
+  <button id="popup-close">✕</button>
+  <div id="popup-title"></div>
+  <div id="popup-desc"></div>
+  <div id="popup-tip"></div>
+</div>
+<div id="hint">Órbita com dois dedos · Clique nos nós para expandir</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const TOPICS = [
+  {
+    id:'ia', label:'Inteligência\nArtificial', color:0x00c8ff, emissive:0x003848,
+    pos:[0,0,0], radius:1.1,
+    title:'🤖 Inteligência Artificial e Sociedade',
+    desc:`A IA generativa (ChatGPT, Gemini, Claude) transformou radicalmente o mercado de trabalho, a educação e a criação de conteúdo desde 2022.\n\n• Automação de tarefas cognitivas: riscos para profissões como tradutor, analista, redator.\n• Viés algorítmico: sistemas de IA podem reproduzir discriminações raciais e de gênero.\n• Regulamentação: a União Europeia aprovou o AI Act (2024) — primeira lei abrangente sobre IA no mundo. Brasil discute projeto similar.\n• Educação: ferramentas de IA no aprendizado vs. plágio e dependência.\n• Deepfakes e desinformação: IA usada para criar conteúdo falso em contextos eleitorais.`,
+    tip:`Questão recorrente: ligar IA ao mercado de trabalho (Marx — automação × alienação) e à regulamentação (Iluminismo — razão e limites do progresso tecnológico).`
+  },
+  {
+    id:'amb', label:'Crise\nClimática', color:0x20e060, emissive:0x082015,
+    pos:[4,1,0], radius:0.9,
+    title:'🌿 Meio Ambiente e Crise Climática',
+    desc:`A crise climática é o maior desafio coletivo da humanidade. Eventos extremos se intensificam: secas, inundações, ondas de calor.\n\n• COP29 (2024, Azerbaijão): acordos de financiamento climático para países em desenvolvimento — o Norte Global paga para o Sul Global se adaptar.\n• Amazônia: desmatamento caiu mas queimadas batem recordes em 2024. Soberania nacional vs. pressão internacional.\n• Cerrado: o bioma mais ameaçado em termos relativos — "berço das águas" do Brasil.\n• Agenda 2030 (ODS): 17 Objetivos de Desenvolvimento Sustentável da ONU. Brasil: progresso desigual.\n• Transição energética: energias renováveis × dependência de petróleo e gás.`,
+    tip:`Liga meio ambiente à geopolítica (quem financia a transição?), à desigualdade (populações vulneráveis sofrem mais) e ao Direito (lei climática, crimes ambientais).`
+  },
+  {
+    id:'conf', label:'Conflitos\nGlobais', color:0xff4030, emissive:0x3a0808,
+    pos:[-3.5,1.5,-1], radius:0.85,
+    title:'⚔️ Conflitos Internacionais',
+    desc:`O mundo pós-2022 vive uma nova geopolítica marcada por conflitos diretos e tensões crescentes.\n\n• Guerra Rússia-Ucrânia (fev/2022—presente): maior conflito armado na Europa desde a 2ª Guerra. Impacto em energia (gás russo) e alimentos (grãos ucranianos). NATO expandida. Zelensky e Biden/Trump: pivô das relações EUA-Europa.\n• Conflito Gaza (out/2023—presente): Israel vs. Hamas — crise humanitária grave. Divisão na ONU. Brasil, África do Sul e outros acionam Tribunal Internacional de Justiça.\n• Indo-Pacífico: tensão EUA-China por Taiwan. Guerra comercial. Semiconductores como arma geopolítica.\n• Sahel (África): golpes de estado no Mali, Níger, Burkina Faso — rejeição da influência francesa, aproximação com Rússia.`,
+    tip:`Conflitos modernos têm dimensão econômica (energia, comida), política (democracia vs. autoritarismo) e humanitária (refugiados, direito internacional). Conecte com UDHC e ONU.`
+  },
+  {
+    id:'desig', label:'Desigualdade\nSocial', color:0xf0b020, emissive:0x302000,
+    pos:[2,-2,2], radius:0.9,
+    title:'⚖️ Desigualdade Social no Brasil',
+    desc:`O Brasil é um dos países mais desiguais do mundo (índice de Gini ≈ 0,52). A estrutura colonial ainda marca a distribuição de renda e oportunidades.\n\n• Concentração de renda: os 10% mais ricos detêm 58% da renda nacional. Os 40% mais pobres ficam com 7%.\n• Racismo estrutural: negros e negras têm menor acesso à educação superior, saúde e empregos formais. Taxa de homicídios de jovens negros é 3× maior.\n• Uberização do trabalho: plataformas digitais criam "trabalhadores independentes" sem direitos trabalhistas — CLT vs. modelo gig economy.\n• Bolsa Família reformulado (2023): ampliação de beneficiários, benefício R$600 + adicional por criança.\n• Cotas raciais: STF reafirmou constitucionalidade em 2023. Debate sobre mérito, reparação histórica e diversidade.`,
+    tip:`Marx (luta de classes, mais-valia), Weber (estratificação social) e Durkheim (anomia) são os óculos teóricos para analisar desigualdade. Redação clássica de vestibular.`
+  },
+  {
+    id:'saude', label:'Saúde\nMental', color:0xc060f0, emissive:0x200838,
+    pos:[-2,-2,2], radius:0.8,
+    title:'🧠 Saúde Mental e Geração Z',
+    desc:`A saúde mental emergiu como crise de saúde pública global, especialmente após a pandemia de COVID-19 (2020–2022).\n\n• Dados: 1 em cada 7 jovens tem algum transtorno mental (OMS). Ansiedade e depressão lideram. Brasil tem a maior taxa de ansiedade do mundo.\n• Redes sociais: Instagram, TikTok e a "comparação constante" — impacto documentado na autoestima, especialmente de meninas adolescentes.\n• Pandemia: isolamento social, luto, perda de renda agravaram transtornos mentais. Longa espera por serviços de saúde mental no SUS.\n• Legislação: Lei nº 14.738/2023 institui a Política Nacional de Saúde Mental para estudantes.\n• Saúde mental e Direito: internação compulsória, sigilo profissional, direitos dos pacientes psiquiátricos.`,
+    tip:`Sua RED #3 foi sobre este tema. Lembra dos argumentos: redes sociais, pandemia, falta de acesso ao SUS. Na prova, acrescente a dimensão de Direito (políticas públicas, dever do Estado).`
+  },
+  {
+    id:'demo', label:'Democracia\nDigital', color:0x80a0ff, emissive:0x101838,
+    pos:[0,2.5,-3.5], radius:0.8,
+    title:'🗳️ Democracia, Fake News e Redes Sociais',
+    desc:`A democracia enfrenta novos desafios no ambiente digital: desinformação em escala industrial, polarização e influência algorítmica.\n\n• Fake news eleitorais: criação industrial de conteúdo falso para influenciar eleições (Brasil 2018/2022, EUA 2016/2020).\n• TSE vs. Big Techs: embates entre Tribunal Superior Eleitoral e plataformas (X/Twitter, Meta, TikTok) sobre remoção de conteúdo.\n• Marco Civil da Internet (2014): direitos e deveres no ambiente digital. LGPD (2020): proteção de dados pessoais — similar ao GDPR europeu.\n• Polarização: câmaras de eco e bolhas algorítmicas radicalizam opiniões. Efeito sobre o processo democrático.\n• Eleições 2026: debate sobre uso de IA em campanhas, regulação da publicidade política digital.`,
+    tip:`Iluminismo (razão e esfera pública — Habermas) × desinformação é uma conexão clássica. Liberdade de expressão vs. combate ao discurso de ódio divide opiniões e questões.`
+  },
+  {
+    id:'dir', label:'Direitos\nHumanos', color:0xff80a0, emissive:0x280818,
+    pos:[3.5,-0.5,-2.5], radius:0.8,
+    title:'🏳️ Direitos Humanos e Constituição',
+    desc:`A Constituição Federal de 1988 — "Constituição Cidadã" — completa 37 anos em 2025. É o marco dos direitos fundamentais no Brasil.\n\n• Direitos fundamentais (Art. 5º): vida, liberdade, igualdade, segurança, propriedade. Aplicação direta e imediata.\n• Direitos sociais (Art. 6º): educação, saúde, alimentação, trabalho, moradia, lazer, segurança, previdência.\n• Estatuto da Criança e do Adolescente (ECA, 1990): proteção integral de crianças e adolescentes.\n• Direito das minorias: proteção a indígenas (Art. 231), quilombolas, pessoas com deficiência (Estatuto da Pessoa com Deficiência, 2015).\n• LGBTQIA+: casamento homoafetivo reconhecido pelo STF em 2011. ADI sobre criminalização da homofobia (2019).\n• Feminicídio: Lei nº 13.104/2015 qualifica o homicídio de mulher por condição de sexo feminino.`,
+    tip:`Direito Constitucional é fundamental para quem quer cursar Direito na UNICAP. Questões podem relacionar direitos fundamentais com casos concretos de violação ou proteção.`
+  },
+  {
+    id:'econ', label:'Economia\nBrasileira', color:0x40e0b0, emissive:0x082818,
+    pos:[-4,-0.5,-2], radius:0.8,
+    title:'💰 Economia Brasileira',
+    desc:`A economia brasileira passou por ciclos de crescimento, crise e retomada. Compreender o contexto econômico é essencial para interpretar questões sociais.\n\n• Plano Real (1994): estabilização monetária, fim da hiperinflação. Itamar Franco e FHC. Real substituiu cruzeiro real.\n• Ciclo de commodities (2003–2014): boom do petróleo, soja e minério de ferro impulsionou crescimento. Lula e expansão da classe média.\n• Crise de 2015–2016: recessão, desemprego acima de 14%, impeachment de Dilma Rousseff.\n• Pandemia (2020): queda histórica do PIB. Auxílio Emergencial (Bolsonaro) amorteceu impacto social.\n• 2023–2024 (Lula): retomada, mas com desafios fiscais. Debate sobre arcabouço fiscal e controle da dívida pública.\n• Inflação: IPCA é o índice oficial. Meta do Banco Central: 3% ± 1,5 pp. Taxa Selic: instrumento de controle monetário.`,
+    tip:`Economia e desigualdade andam juntas nas questões de Ciências Humanas. Conhecer os ciclos econômicos do Brasil explica a dinâmica política e social do país.`
+  },
+];
+
+const renderer = new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setClearColor(0x020408,1);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60,window.innerWidth/window.innerHeight,0.1,200);
+camera.position.set(0,2,12);
+
+const controls = new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.08;
+controls.minDistance=4; controls.maxDistance=25;
+controls.autoRotate=true; controls.autoRotateSpeed=0.4;
+
+// Ambient + directional light
+scene.add(new THREE.AmbientLight(0x102040,1.5));
+const sun=new THREE.DirectionalLight(0x80c0ff,1.2);
+sun.position.set(5,8,5); scene.add(sun);
+
+// Background stars
+const starGeo=new THREE.BufferGeometry();
+const starPos=new Float32Array(3000);
+for(let i=0;i<3000;i++)starPos[i]=(Math.random()-0.5)*200;
+starGeo.setAttribute('position',new THREE.BufferAttribute(starPos,3));
+scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0x8090b0,size:0.15})));
+
+// Topic nodes
+const meshes=[];
+const labels=[];
+function makeSprite(text,color){
+  const c=document.createElement('canvas');
+  c.width=256; c.height=80;
+  const ctx=c.getContext('2d');
+  ctx.font='bold 20px Inter, Arial';
+  ctx.fillStyle='#'+color.toString(16).padStart(6,'0');
+  ctx.textAlign='center';
+  const lines=text.split('\n');
+  lines.forEach((l,i)=>ctx.fillText(l,128,28+i*24));
+  const tex=new THREE.CanvasTexture(c);
+  const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false});
+  const sp=new THREE.Sprite(mat);
+  sp.scale.set(2.5,0.9,1);
+  return sp;
+}
+
+TOPICS.forEach(t=>{
+  const geo=new THREE.IcosahedronGeometry(t.radius,2);
+  const mat=new THREE.MeshStandardMaterial({
+    color:t.color, emissive:t.emissive, metalness:0.4, roughness:0.5,
+    wireframe:false
+  });
+  const mesh=new THREE.Mesh(geo,mat);
+  mesh.position.set(...t.pos);
+  mesh.userData={id:t.id};
+  scene.add(mesh);
+  meshes.push(mesh);
+
+  // Glow ring
+  const rGeo=new THREE.TorusGeometry(t.radius*1.35,0.03,8,40);
+  const rMat=new THREE.MeshBasicMaterial({color:t.color,opacity:0.4,transparent:true});
+  const ring=new THREE.Mesh(rGeo,rMat);
+  ring.rotation.x=Math.PI/2;
+  mesh.add(ring);
+
+  // Sprite label
+  const sp=makeSprite(t.label,t.color);
+  sp.position.set(t.pos[0],t.pos[1]+t.radius+0.7,t.pos[2]);
+  scene.add(sp);
+  labels.push(sp);
+});
+
+// Connection lines between nodes
+function addLine(a,b,color){
+  const pts=[new THREE.Vector3(...a),new THREE.Vector3(...b)];
+  const geo=new THREE.BufferGeometry().setFromPoints(pts);
+  const mat=new THREE.LineBasicMaterial({color,opacity:0.2,transparent:true});
+  scene.add(new THREE.Line(geo,mat));
+}
+// IA connects to everything (central hub)
+TOPICS.forEach((t,i)=>{if(i>0)addLine(TOPICS[0].pos,t.pos,TOPICS[i].color);});
+// Additional cross connections
+addLine(TOPICS[1].pos,TOPICS[2].pos,0x404040);
+addLine(TOPICS[3].pos,TOPICS[4].pos,0x404040);
+addLine(TOPICS[5].pos,TOPICS[6].pos,0x404040);
+addLine(TOPICS[2].pos,TOPICS[6].pos,0x404040);
+
+// Raycaster
+const raycaster=new THREE.Raycaster();
+const mouse=new THREE.Vector2();
+let hovered=null;
+const tooltip=document.getElementById('tooltip');
+const popup=document.getElementById('popup');
+const overlay=document.getElementById('overlay');
+
+function onMouse(e){
+  const rect=renderer.domElement.getBoundingClientRect();
+  const x=e.clientX??e.touches[0].clientX;
+  const y=e.clientY??e.touches[0].clientY;
+  mouse.x=((x-rect.left)/rect.width)*2-1;
+  mouse.y=-((y-rect.top)/rect.height)*2+1;
+  raycaster.setFromCamera(mouse,camera);
+  const hits=raycaster.intersectObjects(meshes);
+  if(hits.length){
+    hovered=hits[0].object;
+    renderer.domElement.style.cursor='pointer';
+    const t=TOPICS.find(t=>t.id===hovered.userData.id);
+    tooltip.style.opacity=1;
+    tooltip.style.left=(x+14)+'px';
+    tooltip.style.top=(y-10)+'px';
+    tooltip.textContent=t.title.replace(/[🤖🌿⚔️⚖️🧠🗳️🏳️💰]/,'').trim();
+  } else {
+    hovered=null;
+    renderer.domElement.style.cursor='default';
+    tooltip.style.opacity=0;
+  }
+}
+function onClick(e){
+  const rect=renderer.domElement.getBoundingClientRect();
+  const x=e.clientX??e.changedTouches[0].clientX;
+  const y=e.clientY??e.changedTouches[0].clientY;
+  mouse.x=((x-rect.left)/rect.width)*2-1;
+  mouse.y=-((y-rect.top)/rect.height)*2+1;
+  raycaster.setFromCamera(mouse,camera);
+  const hits=raycaster.intersectObjects(meshes);
+  if(hits.length){
+    const t=TOPICS.find(t=>t.id===hits[0].object.userData.id);
+    popup.className='active '+t.id;
+    document.getElementById('popup-title').textContent=t.title;
+    document.getElementById('popup-desc').textContent=t.desc;
+    document.getElementById('popup-tip').textContent=t.tip;
+    overlay.classList.add('active');
+    controls.autoRotate=false;
+    tooltip.style.opacity=0;
+  }
+}
+function closePopup(){
+  popup.className='';
+  overlay.classList.remove('active');
+  controls.autoRotate=true;
+}
+document.getElementById('popup-close').addEventListener('click',closePopup);
+document.getElementById('overlay').addEventListener('click',closePopup);
+renderer.domElement.addEventListener('mousemove',onMouse);
+renderer.domElement.addEventListener('click',onClick);
+renderer.domElement.addEventListener('touchend',onClick);
+
+let t0=0;
+function animate(t){
+  requestAnimationFrame(animate);
+  const dt=(t-t0)*0.001; t0=t;
+  meshes.forEach((m,i)=>{
+    m.rotation.y+=0.005*(i%2?1:-1);
+    m.rotation.x+=0.002;
+    const s=m===hovered?1.12:1;
+    m.scale.lerp(new THREE.Vector3(s,s,s),0.12);
+  });
+  controls.update();
+  renderer.render(scene,camera);
+}
+animate(0);
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>

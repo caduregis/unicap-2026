@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Português · Interpretação e Gramática · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_mapa-engine.css"></head>
+<body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">LÍNGUA PORTUGUESA</div><div class="lt2">interpretação · gramática · norma padrão</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+<div class="brand"><div class="bm">Α</div><div class="bt"><div class="l1">Língua Portuguesa</div><div class="l2">Linguagens · interpretação + gramática</div></div></div>
+<div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+<div class="info"><span class="bd">UNICAP 2026.2 · LINGUAGENS</span><h1>Português · Interpretação & Gramática</h1><p>Compreensão e interpretação de texto + aspectos gramaticais. Domínio da norma padrão vale 300pts da redação. Tópicos LITERAIS do PDF Conteúdos Programáticos.</p></div>
+<div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> em tópico</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span class="n" id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+<script>
+window.TEMA = { corHex:'#00d4ff', corHex2:'#0891b2', bg:'#04101a', hubForma:'sphere' };
+window.MARCOS = [
+{cod:'LP 1.1-1.3',nome:'Entendimento e Ideias',sub:'Objetivo + intertextualidade + ideias principais',forma:'icosa',cor:0x00d4ff,
+topicos:['Entendimento do objetivo e da compreensão crítica do texto','Apreensão de relações intertextuais e intratextuais','Reconhecimento das ideias principais e secundárias'],
+resumo:'Identificar o que o texto QUER comunicar (objetivo), conectar com outros textos (intertextualidade) e separar o central do periférico.',
+dica:'Ler primeiro a pergunta para saber o que procurar. Marcar palavras-chave do enunciado antes de ler o texto.'},
+{cod:'LP 1.4-1.6',nome:'Significação · Argumentação · Fatos vs Opiniões',sub:'Análise crítica',forma:'dodeca',cor:0x06b6d4,
+topicos:['Significação textual e contextual das palavras, frases, orações e dos períodos','Assimilação da linha argumentativa do texto','Diferenciação entre fatos e opiniões'],
+resumo:'Palavras mudam sentido com contexto. Argumentos têm tese + razões + evidências. FATO é verificável; OPINIÃO é avaliação subjetiva.',
+dica:'Verbos no presente + dados objetivos = FATOS. Adjetivos avaliativos (bom, ruim, terrível) + verbos modalizadores (deve, pode) = OPINIÕES.'},
+{cod:'LP 1.7-1.10',nome:'Vozes · Tipologia · Gêneros',sub:'Análise estrutural do texto',forma:'octa',cor:0x10b981,
+topicos:['Reconhecimento das diferentes "vozes" dentro de um texto','Análise dos textos do ponto de vista da uniformidade temática e estrutural','Reconhecimento da tipologia textual dominante','Identificação do gênero textual'],
+resumo:'Vozes = discurso direto/indireto/livre indireto. Tipologia = narração/descrição/dissertação/exposição/injunção. Gênero = forma social do texto.',
+dica:'TIPOLOGIA é forma básica (5 tipos). GÊNERO é uso social (artigo, crônica, notícia, edital, manifesto, e-mail, etc — infinitos). Não confunda!'},
+{cod:'LP 2.1-2.2',nome:'Reflexão Linguística',sub:'Funcionamento e relações gramaticais',forma:'torus',cor:0xa855f7,
+topicos:['Capacidade de reflexão e análise sobre o funcionamento linguístico no texto','Capacidade de estabelecer relações entre os fenômenos gramaticais de diferentes tipos'],
+resumo:'Não basta saber regras — é preciso saber por que e como elas atuam no texto.',
+dica:'Em prova, sempre situe a análise gramatical no contexto. "Por que o autor usou esse tempo verbal aqui?" — quase nunca é só "regra".'},
+{cod:'LP 2.3-2.4',nome:'Recursos Gramaticais · Adequação',sub:'Função e contexto',forma:'tetra',cor:0xfb923c,
+topicos:['Reconhecimento da função desempenhada por diferentes recursos gramaticais','Adequação de usos linguísticos ao contexto'],
+resumo:'Cada recurso (pontuação, escolha lexical, ordem das palavras) tem FUNÇÃO. Adequação ao contexto = registro formal × coloquial.',
+dica:'Vírgulas, dois-pontos, parênteses não são decorativos: organizam ideias. Inversão sintática (objeto antes do verbo) gera ênfase.'},
+{cod:'LP 2.5',nome:'Domínio da Norma Padrão',sub:'Regência · concordância · crase · pontuação',forma:'icosa',cor:0xf43f5e,
+topicos:['Domínio da norma padrão escrita','Concordância verbal e nominal','Regência verbal e nominal','Crase','Pontuação','Ortografia oficial (Acordo 1990)'],
+resumo:'CRÍTICO. Vale 300 dos 1000 pontos da redação (maior critério isolado). Erros aqui doem TRIPLO.',
+dica:'⚠️ NORMA = MAIOR PESO. Pratique regência (aspirar AO cargo, implicar SEM "em"), concordância (haver impessoal = singular), crase (À + feminino com artigo).'}
+];
+</script>
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script src="_mapa-engine.js"></script>
+<script>window.MapaUnicap.start();</script>
+</body></html>

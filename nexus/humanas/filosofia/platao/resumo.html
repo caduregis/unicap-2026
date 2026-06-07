@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platão — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #c89040;
+  --gold-light: #d8b060;
+  --gold-dim: rgba(200,144,64,0.14);
+  --bg: #07060d;
+  --bg2: #0e0d18;
+  --bg3: #141322;
+  --text: #c0b8d0;
+  --text-bright: #e0d8f0;
+  --green: #68c870;
+  --green-bg: rgba(70,175,80,0.08);
+  --border: rgba(200,144,64,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; line-height:1.6; }
+a { color:var(--gold); text-decoration:none; }
+a:hover { color:var(--gold-light); }
+
+.topbar {
+  background:rgba(0,0,0,0.65); border-bottom:1px solid var(--border);
+  padding:14px 32px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(12px);
+}
+.topbar-left { display:flex; gap:12px; }
+.btn-nav {
+  padding:7px 16px; border:1px solid var(--border); border-radius:8px;
+  color:var(--gold); font-size:13px; font-weight:500; letter-spacing:0.04em;
+  background:rgba(0,0,0,0.3); transition:all 0.2s;
+}
+.btn-nav:hover { background:var(--gold-dim); border-color:rgba(200,144,64,0.5); color:var(--gold-light); }
+.topbar-title { font-size:14px; font-weight:600; color:var(--gold-light); letter-spacing:0.06em; }
+
+.hero {
+  text-align:center; padding:60px 24px 40px;
+  background:linear-gradient(180deg, rgba(200,144,64,0.06) 0%, transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.hero-tag { font-size:11px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold); margin-bottom:14px; }
+.hero h1 { font-size:42px; font-weight:800; color:var(--text-bright); letter-spacing:-0.02em; margin-bottom:10px; }
+.hero-sub { font-size:16px; color:rgba(192,184,210,0.7); max-width:580px; margin:0 auto 24px; }
+.hero-chips { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.chip { padding:5px 14px; border-radius:20px; font-size:12px; font-weight:600; border:1px solid var(--border); background:var(--gold-dim); color:var(--gold-light); letter-spacing:0.04em; }
+
+.container { max-width:900px; margin:0 auto; padding:0 24px 80px; }
+.section { margin-top:48px; background:var(--bg2); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.section-header { padding:20px 28px 16px; border-bottom:1px solid var(--border); background:linear-gradient(90deg, rgba(200,144,64,0.06) 0%, transparent 100%); display:flex; align-items:center; gap:14px; }
+.section-icon { font-size:22px; }
+.section-title { font-size:18px; font-weight:700; color:var(--text-bright); letter-spacing:0.01em; }
+.section-body { padding:24px 28px; }
+p { margin-bottom:14px; color:var(--text); font-size:15px; }
+p:last-child { margin-bottom:0; }
+strong { color:var(--text-bright); font-weight:600; }
+em { color:var(--gold-light); font-style:italic; }
+
+.highlight-box { background:var(--gold-dim); border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; font-size:15px; color:var(--text-bright); font-style:italic; }
+.unicap-tip { background:var(--green-bg); border-left:3px solid rgba(70,175,80,0.5); padding:14px 18px; border-radius:0 10px 10px 0; margin:16px 0; }
+.unicap-tip-label { font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--green); text-transform:uppercase; margin-bottom:6px; }
+.unicap-tip p { font-size:14px; color:#a8e0b0; margin:0; }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0; }
+@media(max-width:600px) { .two-col { grid-template-columns:1fr; } }
+.col-box { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px; }
+.col-box h4 { font-size:13px; font-weight:700; color:var(--gold-light); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:12px; }
+.col-box ul { list-style:none; }
+.col-box ul li { font-size:14px; color:var(--text); padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+.col-box ul li:last-child { border-bottom:none; }
+.col-box ul li::before { content:"› "; color:var(--gold); font-weight:700; }
+
+.table-wrap { overflow-x:auto; margin:16px 0; }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th { background:rgba(200,144,64,0.1); color:var(--gold-light); font-weight:700; padding:11px 16px; text-align:left; letter-spacing:0.04em; font-size:13px; border-bottom:1px solid var(--border); }
+td { padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.05); color:var(--text); vertical-align:top; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+td:first-child { color:var(--gold-light); font-weight:600; }
+
+.three-classes {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:16px 0;
+}
+@media(max-width:600px) { .three-classes { grid-template-columns:1fr; } }
+.class-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:18px; text-align:center; }
+.class-card .class-icon { font-size:28px; margin-bottom:10px; }
+.class-card h4 { font-size:14px; font-weight:700; color:var(--gold-light); margin-bottom:8px; }
+.class-card p { font-size:13px; color:var(--text); margin:0; }
+
+.checklist { list-style:none; margin:0; }
+.checklist li { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); font-size:14px; color:var(--text); }
+.checklist li:last-child { border-bottom:none; }
+.check-box { width:20px; height:20px; min-width:20px; border:2px solid var(--border); border-radius:5px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; margin-top:1px; }
+.check-box.done { background:var(--gold); border-color:var(--gold); }
+.check-box.done::after { content:'✓'; color:#000; font-size:11px; font-weight:700; }
+
+.video-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-top:16px; }
+.video-card { background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:16px; transition:all 0.2s; }
+.video-card:hover { border-color:rgba(200,144,64,0.4); background:var(--gold-dim); }
+.video-platform { font-size:11px; color:var(--gold); font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
+.video-title { font-size:13px; color:var(--text-bright); font-weight:500; line-height:1.4; }
+.video-desc { font-size:12px; color:rgba(192,184,210,0.6); margin-top:4px; }
+.badge-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.badge { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; letter-spacing:0.04em; border:1px solid; }
+.badge-gold { color:var(--gold); border-color:rgba(200,144,64,0.4); background:rgba(200,144,64,0.08); }
+.badge-green { color:var(--green); border-color:rgba(70,175,80,0.4); background:rgba(70,175,80,0.08); }
+
+.allegory-steps { display:flex; flex-direction:column; gap:12px; margin:16px 0; }
+.allegory-step { display:flex; gap:16px; align-items:flex-start; background:var(--bg3); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.step-num { width:32px; height:32px; min-width:32px; border-radius:50%; background:var(--gold-dim); border:1px solid var(--gold); color:var(--gold-light); font-weight:700; font-size:14px; display:flex; align-items:center; justify-content:center; }
+.step-content h5 { font-size:14px; font-weight:700; color:var(--text-bright); margin-bottom:5px; }
+.step-content p { font-size:13px; color:var(--text); margin:0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="../../../index.html" class="btn-nav">← Hub Principal</a>
+    <a href="mapa3d.html" class="btn-nav">🕯️ Mapa 3D — Caverna</a>
+  </div>
+  <div class="topbar-title">FILOSOFIA — PLATÃO</div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Filosofia Grega • Séc. IV a.C.</div>
+  <h1>Platão</h1>
+  <div class="hero-sub">A Alegoria da Caverna. O Mundo das Ideias. A República do Filósofo-Rei.</div>
+  <div class="hero-chips">
+    <span class="chip">Alegoria da Caverna</span>
+    <span class="chip">Mundo das Ideias</span>
+    <span class="chip">Reminiscência (Anamnese)</span>
+    <span class="chip">A República</span>
+    <span class="chip">Demiurgo</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Contexto -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📖</span>
+      <div class="section-title">Quem era Platão</div>
+    </div>
+    <div class="section-body">
+      <p>Platão (428-348 a.C.) foi discípulo de Sócrates e fundou a <strong>Academia de Atenas</strong> (387 a.C.) — considerada a primeira universidade do Ocidente. Após a morte de Sócrates, ficou profundamente traumatizado com a democracia ateniense e dedicou toda sua obra à construção de um sistema filosófico capaz de fundamentar a política e a moral de forma racional.</p>
+      <p>Suas obras são escritas como <strong>diálogos filosóficos</strong>, sempre com Sócrates como personagem principal. Obras fundamentais: <em>A República</em>, <em>O Banquete</em>, <em>Fédon</em>, <em>Mênon</em>, <em>Timeu</em>, <em>Apologia de Sócrates</em>.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Platão usa Sócrates como personagem para expressar suas próprias ideias — por isso não se pode separar perfeitamente o "Sócrates histórico" do "Sócrates de Platão". Esta questão é o "problema socrático".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alegoria da Caverna -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🕯️</span>
+      <div class="section-title">A Alegoria da Caverna — Passo a Passo</div>
+    </div>
+    <div class="section-body">
+      <p>A Alegoria da Caverna está no Livro VII de <em>A República</em>. É a metáfora mais famosa da filosofia ocidental. Platão imagina:</p>
+      <div class="allegory-steps">
+        <div class="allegory-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h5>Os Prisioneiros na Caverna</h5>
+            <p>Humanos acorrentados desde a infância, de costas para a entrada da caverna. Só podem ver a parede à frente. Atrás deles: uma fogueira e figuras passando. Veem apenas as <strong>sombras projetadas</strong> na parede — e acreditam que essas sombras são a realidade.</p>
+          </div>
+        </div>
+        <div class="allegory-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h5>A Libertação — Dor e Descoberta</h5>
+            <p>Um prisioneiro é solto. Ao virar-se, a fogueira o cega — dor. Ao sair da caverna, o Sol o cega ainda mais. Mas gradualmente começa a ver os objetos reais, as árvores, o céu — e por fim, o próprio Sol. <strong>A libertação dói</strong> — o conhecimento é desconfortável no início.</p>
+          </div>
+        </div>
+        <div class="allegory-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h5>O Filósofo que Contempla a Verdade</h5>
+            <p>Fora da caverna, o ex-prisioneiro vê o mundo real. O Sol representa a <strong>Ideia do Bem</strong> — o princípio máximo da realidade. O filósofo contempla a verdade plena.</p>
+          </div>
+        </div>
+        <div class="allegory-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h5>O Retorno Obrigatório</h5>
+            <p>O filósofo <em>deve voltar</em> para a caverna para governar os outros. Os prisioneiros, acostumados às sombras, <strong>ridicularizarão</strong> e possivelmente matarão o retornado — alusão direta à morte de Sócrates.</p>
+          </div>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Significados simbólicos: Caverna = mundo sensível (aparências). Prisioneiros = humanos comuns presos às aparências. Sombras = opiniões e ilusões. Fogueira = conhecimento vulgar. Sol = Ideia do Bem. Fora da caverna = mundo inteligível (verdade). O filósofo que volta = o governante-filósofo de A República.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dois Mundos -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌗</span>
+      <div class="section-title">Mundo Sensível vs. Mundo das Ideias</div>
+    </div>
+    <div class="section-body">
+      <p>A filosofia de Platão é fundada no <strong>dualismo ontológico</strong>: há dois mundos completamente distintos.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Mundo Sensível (Aparências)</th><th>Mundo das Ideias (Inteligível)</th></tr></thead>
+          <tbody>
+            <tr><td>Como é acessado</td><td>Pelos sentidos: visão, tato, audição</td><td>Pela razão pura (filosofia)</td></tr>
+            <tr><td>Permanência</td><td>Em constante mudança (Heráclito)</td><td>Eterno, imutável, perfeito</td></tr>
+            <tr><td>Status</td><td>Ilusório, imperfeito, cópia</td><td>Real, perfeito, original</td></tr>
+            <tr><td>Exemplos</td><td>Esta cadeira, este círculo, esta pessoa bela</td><td>A Ideia de Cadeira, Círculo, Beleza</td></tr>
+            <tr><td>Conhecimento</td><td>Doxa (opinião)</td><td>Episteme (conhecimento verdadeiro)</td></tr>
+            <tr><td>Símbolo na caverna</td><td>As sombras e objetos dentro da caverna</td><td>Os objetos e o Sol fora da caverna</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="highlight-box">Exemplo: Todas as cadeiras do mundo são cópias imperfeitas da IDEIA DE CADEIRA, que existe no mundo inteligível — perfeita, eterna, sem matéria. O artesão que faz uma cadeira "tenta" reproduzir a Ideia, mas a matéria sempre resiste à perfeição.</div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Platão foi influenciado por Parmênides (o ser é uno, eterno, imutável) para o Mundo das Ideias, e por Heráclito (tudo muda) para o Mundo Sensível. A síntese platônica: ambos têm razão — sobre mundos diferentes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reminiscência -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌀</span>
+      <div class="section-title">A Teoria da Reminiscência — Anamnese</div>
+    </div>
+    <div class="section-body">
+      <p>Se o Mundo das Ideias é separado do mundo sensível, como podemos conhecê-lo? Platão responde: <strong>a alma já conheceu as Ideias antes de encarnar</strong>.</p>
+      <p>A alma (<em>psyche</em>) é imortal e pré-existe ao corpo. Antes de encarnar, habitou o Mundo das Ideias e contemplou as Formas perfeitas. Ao nascer (ao entrar no corpo), <em>esquece</em> esse conhecimento. A filosofia é o processo de <strong>recordar (anamnese)</strong> o que já sabíamos.</p>
+      <div class="highlight-box">No diálogo Mênon: Sócrates demonstra que um escravo sem instrução matemática "descobre" por si mesmo uma verdade geométrica — o conhecimento já estava lá, basta ser recordado.</div>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>Consequências da Anamnese</h4>
+          <ul>
+            <li>Conhecer = recordar (não aprender do zero)</li>
+            <li>A maiêutica ajuda a "dar à luz" recordações</li>
+            <li>A alma é mais real que o corpo</li>
+            <li>O filósofo "lembra mais" que os outros</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>A Alma em Platão</h4>
+          <ul>
+            <li>Imortal, preexiste ao corpo</li>
+            <li>O corpo é "prisão" ou "tumba" da alma</li>
+            <li>Três partes: razão, thumos (ânimo), apetite</li>
+            <li>A morte liberta a alma para o mundo das Ideias</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão: "O que é anamnese para Platão?" → Recordação das Ideias que a alma viu antes de encarnar no corpo. Anamnese conecta: alma imortal → pré-existência → esquecimento ao nascer → filosofia como recordação. Esta teoria justifica por que Sócrates "não ensinava, apenas perguntava".</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- A República -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏛️</span>
+      <div class="section-title">A República — O Estado Ideal</div>
+    </div>
+    <div class="section-body">
+      <p>Em <em>A República</em> (Politeia), Platão descreve o Estado ideal. A estrutura parte da analogia entre a alma e a cidade: assim como a alma tem três partes, a cidade tem três classes.</p>
+      <div class="three-classes">
+        <div class="class-card">
+          <div class="class-icon">🧠</div>
+          <h4>Governantes (Filósofos-Reis)</h4>
+          <p>Razão. Saíram da caverna. Contemplaram a Ideia do Bem. Devem governar — mas prefeririam contemplar a verdade a governar.</p>
+        </div>
+        <div class="class-card">
+          <div class="class-icon">⚔️</div>
+          <h4>Guerreiros (Guardiões)</h4>
+          <p>Thumos (ânimo, coragem). Protegem o Estado. São formados por educação física e musical rigorosa.</p>
+        </div>
+        <div class="class-card">
+          <div class="class-icon">🌾</div>
+          <h4>Produtores (Artesãos)</h4>
+          <p>Apetites. Agricultores, artesãos, comerciantes. Produzem o necessário para a vida. Devem ser governados.</p>
+        </div>
+      </div>
+      <p>A <strong>Justiça</strong> na República = cada classe cumprindo sua função. O problema com a democracia: os "produtores" (que representam os apetites) passam a governar — caos, demagogia, tirania futura.</p>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Por que Platão critica a democracia? → Para Platão, governar exige sabedoria (episteme), não popularidade. Deixar o povo (os "prisioneiros" da caverna) governar é como deixar os cegos guiarem a navegação. Questão polêmica: a visão platônica de Estado é tecnocrática e elitista — tema para redação.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demiurgo -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚙️</span>
+      <div class="section-title">O Demiurgo — A Criação do Mundo (Timeu)</div>
+    </div>
+    <div class="section-body">
+      <p>No diálogo <em>Timeu</em>, Platão descreve a origem do mundo sensível através da figura do <strong>Demiurgo</strong> (demiurgos = artesão, artífice).</p>
+      <div class="two-col">
+        <div class="col-box">
+          <h4>O Demiurgo É</h4>
+          <ul>
+            <li>Um artesão divino (não um deus criador)</li>
+            <li>Trabalha com matéria preexistente (caos)</li>
+            <li>Usa as Ideias como modelo perfeito</li>
+            <li>Tenta ordenar o caos segundo as Formas</li>
+            <li>Uma figura de racionalidade ordenadora</li>
+          </ul>
+        </div>
+        <div class="col-box">
+          <h4>O Demiurgo Não É</h4>
+          <ul>
+            <li>O Deus criador ex nihilo (do nada)</li>
+            <li>Onipotente: a matéria resiste ao modelo</li>
+            <li>O Deus judaico-cristão (este cria tudo do nada)</li>
+            <li>Uma figura religiosa — é filosófica</li>
+            <li>Idêntico à Ideia do Bem</li>
+          </ul>
+        </div>
+      </div>
+      <div class="unicap-tip">
+        <div class="unicap-tip-label">Dica UNICAP</div>
+        <p>Questão sobre Platão e religião: o Demiurgo platônico influenciou o pensamento cristão medieval (especialmente os Padres da Igreja), mas é diferente do Deus bíblico. O Demiurgo não é onipotente — por isso o mundo é imperfeito. Esta distinção aparece em questões que misturam filosofia e religião.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Platão vs. Aristóteles -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚖️</span>
+      <div class="section-title">Platão vs. Aristóteles — A Grande Distinção</div>
+    </div>
+    <div class="section-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Aspecto</th><th>Platão</th><th>Aristóteles</th></tr></thead>
+          <tbody>
+            <tr><td>Mundo das Ideias</td><td>Transcendente — separado do mundo material</td><td>Imanente — as formas estão NAS próprias coisas</td></tr>
+            <tr><td>Conhecimento</td><td>Reminiscência: recordar o que a alma viu</td><td>Experiência + razão: observação do mundo concreto</td></tr>
+            <tr><td>Corpo e Alma</td><td>Dualismo: corpo = prisão da alma</td><td>Hylomorfismo: corpo e alma são unidos na substância</td></tr>
+            <tr><td>Política</td><td>Governados por filósofos (aristocracia do mérito)</td><td>Politeia: governo da classe média</td></tr>
+            <tr><td>Método</td><td>Dedutivo: parte das Ideias para o mundo</td><td>Indutivo: parte da observação para princípios gerais</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="highlight-box">Na pintura "A Escola de Atenas" de Rafael (1509-1511): Platão aponta para CIMA (mundo transcendente das Ideias); Aristóteles aponta para FRENTE/BAIXO (mundo concreto, imanente). Esta imagem resume perfeitamente a diferença.</div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✅</span>
+      <div class="section-title">Checklist de Domínio — Platão</div>
+    </div>
+    <div class="section-body">
+      <ul class="checklist" id="checklist-platao">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Narrar a Alegoria da Caverna completa (4 etapas) com significados simbólicos</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Comparar Mundo Sensível vs. Mundo das Ideias em 5 aspectos</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar a teoria da reminiscência (anamnese) e sua conexão com a maiêutica socrática</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Descrever as 3 classes sociais de A República e a função de cada uma</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Explicar por que Platão critica a democracia (conectando com a alegoria)</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Distinguir o Demiurgo platônico do Deus criador cristão</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Fazer a comparação Platão vs. Aristóteles em 4 pontos fundamentais</span></li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div><span>Interpretar a imagem "A Escola de Atenas" de Rafael filosoficamente</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Videos -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <div class="section-title">Recursos de Vídeo Recomendados</div>
+    </div>
+    <div class="section-body">
+      <div class="video-grid">
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Canal Filosofia Animada — Alegoria da Caverna</div>
+          <div class="video-desc">Visualização animada da caverna passo a passo</div>
+          <div class="badge-row"><span class="badge badge-green">Visual</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Prof. Anderson Lima — Platão Completo</div>
+          <div class="video-desc">Teoria das Ideias, República, vestibular</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Me Salva! — Platão e a Caverna</div>
+          <div class="video-desc">Revisão objetiva com questões ENEM/vestibular</div>
+          <div class="badge-row"><span class="badge badge-gold">Revisão</span></div>
+        </div>
+        <div class="video-card">
+          <div class="video-platform">YouTube</div>
+          <div class="video-title">Descomplica — A República de Platão</div>
+          <div class="video-desc">Estado ideal e o filósofo-rei explicados</div>
+          <div class="badge-row"><span class="badge badge-gold">Vestibular</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCheck(el) { el.classList.toggle('done'); saveChecklist(); }
+function saveChecklist() {
+  const boxes = document.querySelectorAll('#checklist-platao .check-box');
+  const state = Array.from(boxes).map(b => b.classList.contains('done'));
+  localStorage.setItem('check-platao', JSON.stringify(state));
+}
+function loadChecklist() {
+  const saved = localStorage.getItem('check-platao');
+  if (saved) {
+    const state = JSON.parse(saved);
+    const boxes = document.querySelectorAll('#checklist-platao .check-box');
+    state.forEach((done, i) => { if (done && boxes[i]) boxes[i].classList.add('done'); });
+  }
+}
+loadChecklist();
+</script>
+</body>
+</html>

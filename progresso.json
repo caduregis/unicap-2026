@@ -1,0 +1,204 @@
+{
+  "meta": {
+    "candidato": "Carlos Régis",
+    "curso_alvo": "Direito - Manhã",
+    "curso_backup": "Ciência da Computação - Manhã",
+    "universidade": "UNICAP",
+    "vestibular": "2026.2 - 1a Selecao",
+    "data_prova": "2026-06-14",
+    "data_inicio_cronograma": "2026-05-19",
+    "total_dias_cronograma": 26,
+    "horas_semanais_previstas": 27,
+    "ultima_atualizacao": "2026-05-31",
+    "nivel_inicial_autoavaliado": {
+      "geografia": 7,
+      "portugues": 6,
+      "ingles": 6,
+      "matematica": 5,
+      "historia": 5,
+      "atualidades": 5,
+      "filosofia": 4,
+      "sociologia": 4,
+      "literatura": 4,
+      "biologia": 4,
+      "quimica": 3,
+      "fisica": 3
+    }
+  },
+  "estatisticas_gerais": {
+    "dias_estudados": 0,
+    "horas_estudadas": 0,
+    "streak_dias": 0,
+    "questoes_resolvidas": 0,
+    "questoes_corretas": 0,
+    "percentual_acerto_geral": null,
+    "redacoes_escritas": 1,
+    "simulados_realizados": 0
+  },
+  "metas": {
+    "nota_alvo_geral": 600,
+    "nota_alvo_redacao": 700,
+    "nota_minima_por_area": 250,
+    "nota_eliminatoria": 200,
+    "meta_acerto_linguagens": "13/16",
+    "meta_acerto_humanas": "12/16",
+    "meta_acerto_matematica": "8/16",
+    "meta_acerto_natureza": "6/16"
+  },
+  "redacoes": [
+    { "id": 1, "tema": "Meio Ambiente (VEST UNICAP 2026.1)", "arquivo": "materiais/redacao/01-meio-ambiente-correcao.html", "data_prevista": "2026-05-27", "data_feita": "2026-05-21", "nota": 640, "criterios": { "estrutura": 130, "tema": 160, "argumentos": 140, "relevancia": 110, "norma": 100 }, "pontos_a_melhorar": "Paragrafação, desenvolver omissão midiática, proposta com agente+ação+finalidade" },
+    { "id": 2, "tema": "Desigualdade Social", "arquivo": "temas-treinados/02-desigualdade-social.md", "data_prevista": "2026-05-31", "data_feita": null, "nota": null, "criterios": { "estrutura": null, "tema": null, "argumentos": null, "relevancia": null, "norma": null }, "pontos_a_melhorar": "" },
+    { "id": 3, "tema": "Saúde Mental", "arquivo": "temas-treinados/04-saude-mental.md", "data_prevista": "2026-06-03", "data_feita": null, "nota": null, "criterios": { "estrutura": null, "tema": null, "argumentos": null, "relevancia": null, "norma": null }, "pontos_a_melhorar": "" }
+  ],
+  "simulados": [
+    { "id": 1, "data_prevista": "2026-05-23", "data_feita": null, "fonte": "Simulado Enem 3 - 1° dia (externo)", "nota_geral": null, "redacao": null, "linguagens": null, "humanas": null, "natureza": null, "matematica": null, "observacoes": "" },
+    { "id": 2, "data_prevista": "2026-05-30", "data_feita": null, "fonte": "Simulado Enem 3 - 2° dia (externo)", "nota_geral": null, "redacao": null, "linguagens": null, "humanas": null, "natureza": null, "matematica": null, "observacoes": "" },
+    { "id": 3, "data_prevista": "2026-06-06", "data_feita": null, "fonte": "Simulado UNICAP Interno - 8h15 às 13h15", "nota_geral": null, "redacao": null, "linguagens": null, "humanas": null, "natureza": null, "matematica": null, "observacoes": "" }
+  ],
+  "materias": {
+    "linguagens": {
+      "area_prova": "Linguagens",
+      "prioridade": 2,
+      "topicos": [
+        { "nome": "Tipologia textual", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Interpretacao de texto", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Analise sintatica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Regencia e concordancia", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Figuras e funcoes de linguagem", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Literatura - Romantismo", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Literatura - Realismo/Naturalismo", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Literatura - Modernismo 1a fase", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Literatura - Modernismo 2a fase", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Ingles - leitura e gramatica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null }
+      ]
+    },
+    "humanas": {
+      "area_prova": "Ciencias Humanas",
+      "prioridade": 3,
+      "topicos": [
+        { "nome": "Geografia - cartografia", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Geografia - clima do Brasil", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Geografia - globalizacao e blocos", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Geografia - urbanizacao e migracao", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Historia - Grecia e Roma", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Historia - Brasil Colonia", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Historia - Brasil Imperio e Republica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Filosofia - antiga e iluminismo", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Sociologia - classicos", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Atualidades", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null }
+      ]
+    },
+    "matematica": {
+      "area_prova": "Matematica",
+      "prioridade": 4,
+      "topicos": [
+        { "nome": "Razao, proporcao, regra de 3", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Porcentagem e juros", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Funcoes 1 e 2 grau", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Geometria plana", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Probabilidade", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Estatistica basica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null }
+      ]
+    },
+    "natureza": {
+      "area_prova": "Ciencias da Natureza",
+      "prioridade": 5,
+      "topicos": [
+        { "nome": "Biologia - celula", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Biologia - ecologia e biomas", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Quimica - tabela periodica e ligacoes", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Quimica - estequiometria basica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null },
+        { "nome": "Fisica - mecanica", "estudado": false, "data_estudo": null, "revisoes_feitas": [], "acerto_questoes": null }
+      ]
+    }
+  },
+  "revisao_espacada": {
+    "algoritmo": "1d, 3d, 7d, 14d",
+    "pendentes": [],
+    "concluidas": []
+  },
+  "log_diario": [
+    {
+      "data": "2026-05-19",
+      "status": "faltou",
+      "topico_planejado": "Humanas: História Geral (Grécia, Roma) + Brasil Colonial · Filosofia Antiga (Sócrates, Platão)",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Conteúdo redistribuído: Hist. Geral + Brasil Colonial → 25/05 · Filosofia Antiga → 26/05."
+    },
+    {
+      "data": "2026-05-20",
+      "status": "faltou",
+      "topico_planejado": "Linguagens: Português (tipologia + análise sintática) + Literatura (Romantismo) · Inglês: verb tenses, pronomes",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Conteúdo redistribuído: Português + Literatura → 24/05 · Inglês → 25/05."
+    },
+    {
+      "data": "2026-05-24",
+      "status": "faltou",
+      "topico_planejado": "Reposição: Português (tipologia + análise sintática) + Literatura (Romantismo)",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Conteúdo redistribuído para 26/05 junto com reposição de 25/05."
+    },
+    {
+      "data": "2026-05-25",
+      "status": "faltou",
+      "topico_planejado": "Reposição: Inglês (verb tenses, pronomes) + História Geral (Grécia, Roma) + Brasil Colonial · Filosofia Antiga (Sócrates, Platão)",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Todo conteúdo pendente redistribuído para 26/05."
+    },
+    {
+      "data": "2026-05-26",
+      "status": "faltou",
+      "topico_planejado": "REPOSIÇÃO 3 dias — Humanas: Hist. Antiga (Grécia/Roma) + Brasil Colonial/Imperial + República + Filosofia (Sócrates/Platão) + Sociologia + Geografia · Linguagens: Português tipologia (intro)",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Conteúdo de Humanas redistribuído junto com 27/05."
+    },
+    {
+      "data": "2026-05-27",
+      "status": "faltou",
+      "topico_planejado": "Linguagens COMPLETO: Português + Literatura (Romantismo/Realismo/Modernismo) + Inglês · RED #2 Desigualdade Social · Reposição Humanas pendente",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não estudou. Conteúdo redistribuído para o cronograma final 31/05–13/06."
+    },
+    {
+      "data": "2026-05-28",
+      "status": "faltou",
+      "topico_planejado": "—",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não registrado."
+    },
+    {
+      "data": "2026-05-29",
+      "status": "faltou",
+      "topico_planejado": "—",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Não registrado."
+    },
+    {
+      "data": "2026-05-30",
+      "status": "faltou",
+      "topico_planejado": "Simulado ENEM 3 — 2º dia (externo)",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "Simulado externo não realizado."
+    },
+    {
+      "data": "2026-05-31",
+      "status": "planejado",
+      "topico_planejado": "RED #2 Desigualdade Social (vence hoje) · Tipologia + Interpretação + Análise Sintática · Flashcards",
+      "horas_estudadas": 0,
+      "flashcards": 0,
+      "observacao": "PWA mobile-app.html + dopamina.html criados. 14 dias para a prova."
+    }
+  ],
+  "pontos_fracos_identificados": [],
+  "observacoes_gerais": "Arquivo de tracking iniciado em 19/05/2026. 2ª opção atualizada para Ciência da Computação - Manhã (43 vagas). Preencher após cada sessão de estudo, redação e simulado. Atualizar 'ultima_atualizacao' a cada uso."
+}

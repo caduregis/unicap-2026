@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Célula Animal 3D — Estudos UNICAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',system-ui,sans-serif; background:#04050a; color:#e8eaf0; overflow:hidden; }
+  #canvas-wrap { position:fixed; inset:0; }
+  #painel {
+    position:fixed; top:0; right:0; width:330px; height:100%;
+    background:rgba(10,14,26,0.92); backdrop-filter:blur(20px); border-left:1px solid rgba(0,212,255,0.20);
+    padding:22px; overflow-y:auto; transition:transform .3s;
+  }
+  #painel h2 { color:#00d4ff; font-size:17px; margin-bottom:4px; font-weight:700; font-family:'Inter',sans-serif; }
+  #painel .sub { color:#6b7a99; font-size:12px; margin-bottom:16px; font-family:'JetBrains Mono',monospace; letter-spacing:0.05em; }
+  #org-nome { color:#ffb800; font-size:20px; margin:12px 0 8px; font-weight:700; }
+  #org-funcao { font-size:14px; line-height:1.65; color:#c8d0e0; }
+  #org-dica { margin-top:14px; padding:12px; background:rgba(0,212,255,0.07);
+    border-radius:9px; font-size:13px; line-height:1.55; border-left:3px solid #00d4ff; color:#c8d0e0; }
+  .placeholder { color:#4b5563; }
+  #topo {
+    position:fixed; top:0; left:0; padding:16px 22px;
+    background:linear-gradient(180deg,rgba(4,5,10,0.95),transparent);
+  }
+  #topo a { font-size:12px; color:#00d4ff; text-decoration:none; display:block; margin-bottom:6px; }
+  #topo a:hover { text-decoration:underline; }
+  #topo h1 { font-size:18px; color:#fff; font-weight:800; }
+  #topo p { font-size:12px; color:#6b7a99; margin-top:2px; }
+  #controles { position:fixed; bottom:0; left:0; padding:16px 22px; display:flex; gap:10px; flex-wrap:wrap; }
+  button {
+    background:rgba(0,212,255,0.15); color:#00d4ff; border:1px solid rgba(0,212,255,0.35); padding:9px 16px;
+    border-radius:9px; cursor:pointer; font-size:13px; font-weight:600; font-family:'Inter',sans-serif; transition:all 180ms;
+  }
+  button:hover { background:rgba(0,212,255,0.25); transform:translateY(-1px); }
+  button.off { background:rgba(255,255,255,0.05); color:#6b7a99; border-color:rgba(255,255,255,0.10); }
+  button.off:hover { background:rgba(255,255,255,0.08); color:#c0c8da; }
+  #lista-org { margin-top:16px; }
+  #lista-org div {
+    padding:7px 10px; margin:4px 0; background:rgba(255,255,255,0.04);
+    border-radius:7px; font-size:13px; cursor:pointer; border-left:3px solid transparent; transition:all 160ms;
+  }
+  #lista-org div:hover { background:rgba(0,212,255,0.10); border-left-color:#00d4ff; color:#00d4ff; }
+  .dica-mouse { font-size:11px; color:#4b5563; margin-top:8px; font-family:'JetBrains Mono',monospace; }
+</style>
+</head>
+<body>
+<div id="canvas-wrap"></div>
+
+<div id="topo">
+  <a href="../../dashboard.html">← Dashboard</a>
+  <h1>Célula Animal — Modelo 3D Interativo</h1>
+  <p>Arraste para girar · scroll para zoom · clique nas organelas</p>
+</div>
+
+<div id="painel">
+  <h2>Biologia · Citologia</h2>
+  <div class="sub">UNICAP 2026.2 — clique numa organela</div>
+  <div id="org-nome">Selecione uma organela</div>
+  <div id="org-funcao" class="placeholder">As informações da organela aparecem aqui. Use o modelo para memorizar a posição e a função de cada estrutura.</div>
+  <div id="org-dica" style="display:none"></div>
+  <div id="lista-org"></div>
+  <div class="dica-mouse">Lista acima: clique no nome para destacar a organela no modelo.</div>
+</div>
+
+<div id="controles">
+  <button id="btn-labels">Ocultar rótulos (modo estudo)</button>
+  <button id="btn-girar" class="off">Girar automático</button>
+  <button id="btn-reset">Resetar câmera</button>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// --- dados das organelas ---
+const ORGANELAS = [
+  { id:'nucleo', nome:'Núcleo', cor:0x5b9dff, pos:[0,0,0], raio:1.5,
+    funcao:'Centro de controle da célula. Guarda o DNA (material genético) e comanda a síntese de proteínas e a divisão celular.',
+    dica:'O DNA é duplicado na fase S do ciclo celular — tópico cobrado na UNICAP 2026.1 (genes BRCA).' },
+  { id:'mitocondria', nome:'Mitocôndria', cor:0xff6b5b, pos:[2.6,0.8,1], raio:0.7,
+    funcao:'Realiza a respiração celular: converte glicose e oxigênio em energia (ATP). É a "usina de energia" da célula.',
+    dica:'Respiração celular: glicose + O₂ → CO₂ + água + energia.' },
+  { id:'reticulo', nome:'Retículo Endoplasmático', cor:0x9b7bff, pos:[-2.4,0.5,0.8], raio:0.85,
+    funcao:'Rede de canais. O rugoso (com ribossomos) sintetiza proteínas; o liso produz lipídios e faz transporte.',
+    dica:'Rugoso = com ribossomos. Liso = sem ribossomos.' },
+  { id:'golgi', nome:'Complexo de Golgi', cor:0xffd24a, pos:[2.2,-1.6,-0.6], raio:0.75,
+    funcao:'Empacota, modifica e secreta substâncias produzidas pela célula. É o "centro de distribuição".',
+    dica:'Recebe proteínas do retículo e as "envia" para fora ou para outras partes da célula.' },
+  { id:'lisossomo', nome:'Lisossomo', cor:0x4ade80, pos:[-2.2,-1.7,-0.4], raio:0.5,
+    funcao:'Faz a digestão intracelular: contém enzimas que quebram partículas, restos e organelas velhas.',
+    dica:'É a "reciclagem" da célula.' },
+  { id:'ribossomo', nome:'Ribossomos', cor:0xff9e3d, pos:[0.5,2.3,1.4], raio:0.32,
+    funcao:'Pequenas estruturas que realizam a síntese de proteínas, traduzindo a informação do RNA.',
+    dica:'Podem estar livres no citoplasma ou aderidos ao retículo rugoso.' },
+  { id:'membrana', nome:'Membrana Plasmática', cor:0x36d1dc, pos:[0,0,0], raio:4.05, casca:true,
+    funcao:'Envoltório da célula. Controla a entrada e a saída de substâncias (permeabilidade seletiva).',
+    dica:'Transporte passivo = sem energia (difusão, osmose). Ativo = com gasto de ATP.' }
+];
+
+const wrap = document.getElementById('canvas-wrap');
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0e1a);
+
+const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0,3,11);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+wrap.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+const luz = new THREE.DirectionalLight(0xffffff, 0.9);
+luz.position.set(5,8,6); scene.add(luz);
+const luz2 = new THREE.PointLight(0x5b9dff, 0.5); luz2.position.set(-6,-4,-4); scene.add(luz2);
+
+const meshes = [];
+const labels = [];
+
+ORGANELAS.forEach(o => {
+  let geo, mat, mesh;
+  if (o.casca) {
+    geo = new THREE.SphereGeometry(o.raio, 48, 48);
+    mat = new THREE.MeshPhongMaterial({ color:o.cor, transparent:true, opacity:0.10,
+      side:THREE.BackSide, shininess:30 });
+    mesh = new THREE.Mesh(geo, mat);
+  } else if (o.id === 'mitocondria') {
+    geo = new THREE.CapsuleGeometry(o.raio*0.55, o.raio*1.3, 8, 16);
+    mat = new THREE.MeshPhongMaterial({ color:o.cor, shininess:60 });
+    mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.z = 0.6;
+  } else if (o.id === 'reticulo') {
+    geo = new THREE.TorusKnotGeometry(o.raio*0.7, o.raio*0.22, 64, 8);
+    mat = new THREE.MeshPhongMaterial({ color:o.cor, shininess:50 });
+    mesh = new THREE.Mesh(geo, mat);
+  } else if (o.id === 'golgi') {
+    mesh = new THREE.Group();
+    for (let i=0;i<4;i++){
+      const t = new THREE.Mesh(
+        new THREE.TorusGeometry(o.raio*(0.85-i*0.13), 0.08, 10, 32),
+        new THREE.MeshPhongMaterial({ color:o.cor, shininess:60 }));
+      t.position.y = i*0.22 - 0.33; t.rotation.x = Math.PI/2;
+      mesh.add(t);
+    }
+  } else if (o.id === 'ribossomo') {
+    mesh = new THREE.Group();
+    for (let i=0;i<7;i++){
+      const r = new THREE.Mesh(
+        new THREE.SphereGeometry(o.raio,16,16),
+        new THREE.MeshPhongMaterial({ color:o.cor, shininess:70 }));
+      r.position.set((Math.random()-0.5)*2.6,(Math.random()-0.5)*2.6,(Math.random()-0.5)*2.6);
+      mesh.add(r);
+    }
+  } else {
+    geo = new THREE.SphereGeometry(o.raio, 40, 40);
+    mat = new THREE.MeshPhongMaterial({ color:o.cor, shininess:50 });
+    mesh = new THREE.Mesh(geo, mat);
+  }
+  mesh.position.set(...o.pos);
+  mesh.userData = o;
+  scene.add(mesh);
+  meshes.push(mesh);
+
+  // label
+  const cv = document.createElement('canvas');
+  cv.width = 256; cv.height = 64;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = 'rgba(16,22,40,0.85)';
+  ctx.fillRect(0,0,256,64);
+  ctx.fillStyle = '#ffffff'; ctx.font = 'bold 22px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText(o.nome, 128, 40);
+  const tex = new THREE.CanvasTexture(cv);
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true }));
+  spr.scale.set(2.4,0.6,1);
+  spr.position.set(o.pos[0], o.pos[1] + (o.casca?4.4:o.raio+0.7), o.pos[2]);
+  scene.add(spr);
+  labels.push(spr);
+});
+
+// --- nucleolo dentro do nucleo ---
+const nucleolo = new THREE.Mesh(
+  new THREE.SphereGeometry(0.5,24,24),
+  new THREE.MeshPhongMaterial({ color:0x2d6cdf }));
+scene.add(nucleolo);
+
+// --- interação ---
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let selecionado = null;
+
+function selecionar(o, mesh){
+  document.getElementById('org-nome').textContent = o.nome;
+  const f = document.getElementById('org-funcao');
+  f.textContent = o.funcao; f.classList.remove('placeholder');
+  const d = document.getElementById('org-dica');
+  d.textContent = '💡 ' + o.dica; d.style.display = 'block';
+  if (selecionado && selecionado.scale) selecionado.scale.set(1,1,1);
+  if (mesh && mesh.scale) { mesh.scale.set(1.18,1.18,1.18); selecionado = mesh; }
+}
+
+renderer.domElement.addEventListener('click', e => {
+  mouse.x = (e.clientX/window.innerWidth)*2 - 1;
+  mouse.y = -(e.clientY/window.innerHeight)*2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const hits = raycaster.intersectObjects(meshes, true);
+  if (hits.length){
+    let obj = hits[0].object;
+    while (obj.parent && !obj.userData.id) obj = obj.parent;
+    if (obj.userData.id) selecionar(obj.userData, obj);
+  }
+});
+
+// lista lateral
+const lista = document.getElementById('lista-org');
+ORGANELAS.forEach((o,i) => {
+  const div = document.createElement('div');
+  div.textContent = o.nome;
+  div.onclick = () => selecionar(o, meshes[i]);
+  lista.appendChild(div);
+});
+
+// --- controles UI ---
+let labelsVisiveis = true, girando = false;
+document.getElementById('btn-labels').onclick = function(){
+  labelsVisiveis = !labelsVisiveis;
+  labels.forEach(l => l.visible = labelsVisiveis);
+  this.textContent = labelsVisiveis ? 'Ocultar rótulos (modo estudo)' : 'Mostrar rótulos';
+  this.classList.toggle('off', !labelsVisiveis);
+};
+document.getElementById('btn-girar').onclick = function(){
+  girando = !girando;
+  this.classList.toggle('off', !girando);
+};
+document.getElementById('btn-reset').onclick = () => {
+  camera.position.set(0,3,11); controls.target.set(0,0,0);
+};
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+function animar(){
+  requestAnimationFrame(animar);
+  if (girando) scene.rotation.y += 0.003;
+  controls.update();
+  renderer.render(scene, camera);
+}
+animar();
+</script>
+</body>
+</html>

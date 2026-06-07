@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo — Brasil Colonial e Imperial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #d4840a; --gold-light: #e8a030; --bg: #060402; --bg2: #0e0a04;
+  --bg3: #181006; --text: #c8b898; --text-bright: #e8d8b8;
+  --green: #78c870; --red: #d07060;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: linear-gradient(160deg, var(--bg) 0%, #080410 100%); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; }
+#navbar {
+  position: sticky; top: 0; background: linear-gradient(90deg, #0a060280, #180e0480);
+  border-bottom: 1px solid #3a1a0840; padding: 0 24px; height: 52px;
+  display: flex; align-items: center; gap: 16px; z-index: 50;
+  backdrop-filter: blur(12px);
+}
+#nav-back { color: var(--gold); text-decoration: none; font-size: 13px; font-weight: 500; padding: 5px 12px; border: 1px solid #d4840a40; border-radius: 6px; transition: all .2s; }
+#nav-back:hover { background: #d4840a20; }
+#nav-title { flex: 1; font-size: 14px; font-weight: 600; color: var(--text-bright); }
+#nav-map { color: #a07828; text-decoration: none; font-size: 12px; font-weight: 500; padding: 5px 12px; border: 1px solid #a0782840; border-radius: 6px; transition: all .2s; }
+#nav-map:hover { background: #a0782820; color: var(--gold-light); }
+main { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+h1 { font-size: 28px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: #a07828; margin-bottom: 32px; }
+.card {
+  background: linear-gradient(135deg, var(--bg2), var(--bg3));
+  border: 1px solid #3a1a0840; border-radius: 12px;
+  padding: 24px 28px; margin-bottom: 20px;
+}
+.card:hover { border-color: #d4840a30; transition: border-color .3s; }
+.card h2 { font-size: 16px; font-weight: 700; color: var(--gold); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.card h2 .num { background: #d4840a22; border: 1px solid #d4840a40; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+p { font-size: 14px; line-height: 1.75; color: var(--text); margin-bottom: 10px; }
+strong { color: var(--text-bright); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+th { background: #d4840a22; color: var(--gold); font-weight: 600; padding: 10px 12px; text-align: left; border-bottom: 1px solid #d4840a30; }
+td { padding: 9px 12px; border-bottom: 1px solid #1a1006; color: var(--text); }
+tr:hover td { background: #d4840a08; }
+.timeline { position: relative; padding-left: 24px; margin-top: 12px; }
+.tl-item { position: relative; padding: 10px 0 10px 20px; border-left: 2px solid #d4840a40; }
+.tl-item:last-child { border-left-color: transparent; }
+.tl-dot { position: absolute; left: -5px; top: 14px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; }
+.tl-year { font-size: 11px; font-weight: 700; color: var(--gold); }
+.tl-text { font-size: 13px; color: var(--text); margin-top: 2px; }
+.tip-box {
+  background: #d4840a12; border-left: 3px solid var(--gold);
+  border-radius: 0 8px 8px 0; padding: 10px 16px; margin-top: 12px;
+  font-size: 13px; color: #e8c870;
+}
+.tip-box::before { content: "UNICAP "; font-weight: 700; color: var(--gold); }
+.checklist { list-style: none; margin-top: 8px; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid #1a1006; font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.checklist li input[type=checkbox] { accent-color: var(--gold); width: 15px; height: 15px; cursor: pointer; }
+.checklist li:last-child { border-bottom: none; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 6px; }
+.tag-green { background: #78c87022; color: var(--green); border: 1px solid #78c87040; }
+.tag-red { background: #d0706022; color: var(--red); border: 1px solid #d0706040; }
+.tag-gold { background: #d4840a22; color: var(--gold); border: 1px solid #d4840a40; }
+.revolt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.revolt-card { background: #0a0602; border: 1px solid #2a1408; border-radius: 8px; padding: 14px; }
+.revolt-card h4 { font-size: 13px; font-weight: 700; color: var(--gold-light); margin-bottom: 6px; }
+.revolt-card p { font-size: 12px; line-height: 1.6; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+.video-card { background: #0a0602; border: 1px solid #d4840a30; border-radius: 8px; padding: 14px; text-align: center; }
+.video-card .ch { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
+.video-card p { font-size: 11px; color: #806040; }
+.map-link { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4840a20, #a05c0812); border: 1px solid #d4840a50; color: var(--gold-light); text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all .2s; }
+.map-link:hover { background: linear-gradient(135deg, #d4840a35, #a05c0825); transform: translateY(-1px); }
+.links-row { display: flex; justify-content: center; gap: 16px; margin: 32px 0; }
+</style>
+</head>
+<body>
+<nav id="navbar">
+  <a href="../../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Brasil Colonial e Imperial — Resumo</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</nav>
+<main>
+  <h1>Brasil Colonial e Imperial</h1>
+  <p class="subtitle">Do pau-brasil à República — guia completo para o vestibular UNICAP 2026</p>
+
+  <div class="links-row">
+    <a href="mapa3d.html" class="map-link">🌿 Explorar Mapa 3D Interativo</a>
+  </div>
+
+  <!-- 1 -->
+  <div class="card">
+    <h2><span class="num">01</span> Por que estudar isso?</h2>
+    <p>A UNICAP cobra <strong>3 a 4 questões de História do Brasil</strong> por vestibular. O período colonial-imperial abrange ~400 anos e é base para entender o Brasil atual. Para <strong>Direito</strong>, é ainda mais relevante: os sistemas jurídicos, a organização do Estado e os direitos civis têm raízes nesse período.</p>
+    <div class="tip-box">Foque nos grandes temas: pacto colonial, escravidão e resistência, revoltas coloniais, vinda da Família Real, Independência e Proclamação da República. São os temas mais cobrados.</div>
+  </div>
+
+  <!-- 2 -->
+  <div class="card">
+    <h2><span class="num">02</span> A Estrutura Colonial</h2>
+    <p><strong>Pacto colonial (exclusivismo):</strong> A colônia existe para enriquecer a metrópole. O Brasil só podia comerciar com Portugal. O mercantilismo era a teoria econômica dominante.</p>
+    <p><strong>Organização política:</strong> Capitanias Hereditárias (1534) → Governo-Geral (1549, 1º governador: Tomé de Sousa) → Câmaras Municipais (poder local dos colonos). A administração era fragmentada e dependente de Lisboa.</p>
+    <p><strong>Estratificação social colonial:</strong> No topo, os senhores de engenho e grandes proprietários; no meio, padres, comerciantes e pequenos proprietários; na base, índios escravizados e africanos escravizados.</p>
+    <div class="tip-box">Questão típica: 'O que eram as capitanias hereditárias?' → Divisões do território doadas a donatários (nobres portugueses) para colonizar. Falharam — só Pernambuco e São Vicente prosperaram. Foram substituídas pelo Governo-Geral centralizado.</div>
+  </div>
+
+  <!-- 3 -->
+  <div class="card">
+    <h2><span class="num">03</span> Os Ciclos Econômicos</h2>
+    <table>
+      <tr><th>Período</th><th>Produto</th><th>Região</th><th>Relevância</th></tr>
+      <tr><td>Séc. XVI</td><td>Pau-brasil</td><td>Litoral nordeste/sul</td><td>Escambo com indígenas; monopólio régio; feitorias</td></tr>
+      <tr><td>Séc. XVI–XVII</td><td>Cana-de-açúcar</td><td>Nordeste (PE, BA)</td><td>Base da economia colonial; engenhos; escravidão africana</td></tr>
+      <tr><td>Séc. XVIII</td><td>Ouro e diamantes</td><td>Minas Gerais</td><td>Gerou Vila Rica; Inconfidência Mineira (1789); quinto</td></tr>
+      <tr><td>Séc. XVIII–XIX</td><td>Algodão</td><td>Maranhão</td><td>Menor ciclo; Revolução Industrial inglesa</td></tr>
+      <tr><td>Séc. XIX–XX</td><td>Café</td><td>Vale do Paraíba → SP</td><td>Financiou industrialização; República Velha</td></tr>
+    </table>
+    <div class="tip-box">A sequência exata é cobrada: pau-brasil → açúcar → ouro → café. O ouro gerou riqueza mas saiu quase todo para Portugal e Inglaterra (Tratado de Methuen 1703). O café financiou a transição para a industrialização.</div>
+  </div>
+
+  <!-- 4 -->
+  <div class="card">
+    <h2><span class="num">04</span> Escravidão: Números, Resistência e Abolição</h2>
+    <p>O Brasil recebeu cerca de <strong>4,9 milhões de africanos escravizados</strong> — 40% de todos os traficados para as Américas. A escravidão foi o alicerce econômico da colônia e do Império por 388 anos.</p>
+    <p><strong>Resistências:</strong> Fugas, quilombos, revoltas, sabotagem, manifestações culturais (capoeira, candomblé). O <strong>Quilombo dos Palmares</strong> (Alagoas, séc. XVII) chegou a ter 30.000 habitantes, liderado por Zumbi. A <strong>Revolta dos Malês</strong> (Salvador, 1835) foi a única revolta urbana de escravizados muçulmanos da história.</p>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1695</div><div class="tl-text">Quilombo dos Palmares destruído; Zumbi assassinado</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1835</div><div class="tl-text">Revolta dos Malês (Salvador) — maior revolta urbana escravizada da história</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1850</div><div class="tl-text">Lei Eusébio de Queirós — proíbe o tráfico negreiro (pressão inglesa)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1871</div><div class="tl-text">Lei do Ventre Livre — filhos de escravizadas nascem livres (mas precisam servir até 21 anos)</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1885</div><div class="tl-text">Lei dos Sexagenários — liberta escravizados com mais de 60 anos</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-year">1888</div><div class="tl-text">Lei Áurea (13 de maio) — Princesa Isabel assina a abolição total</div></div>
+    </div>
+    <div class="tip-box">A abolição foi processual e incompleta: sem terras, sem indenização, sem políticas de integração. A desigualdade racial no Brasil é herança direta disso. Para questões sobre o 13 de maio: a pressão vinha da Inglaterra, do movimento abolicionista (Joaquim Nabuco, André Rebouças) e das fugas em massa.</div>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <h2><span class="num">05</span> Os Jesuítas e Marquês de Pombal</h2>
+    <p><strong>Jesuítas (Companhia de Jesus):</strong> Chegaram ao Brasil em 1549 com Tomé de Sousa. Padre José de Anchieta e Manuel da Nóbrega foram os principais. Fundaram colégios, catequizaram indígenas, criaram missões (reduções jesuíticas). Conflito constante com colonos que queriam escravizar os indígenas.</p>
+    <p><strong>Marquês de Pombal (1750-1777):</strong> Ministro de D. José I, reformou profundamente o Estado português. <strong>Expulsou os jesuítas</strong> (1759) de todo o Império, confiscou seus bens. Reformas pombalinas: reorganizou a economia colonial, criou companhias comerciais monopolistas, modernizou o ensino. Influência iluminista no Estado.</p>
+    <div class="tip-box">Pombal é cobrado como exemplo de 'despotismo esclarecido' — governante absolutista que usa princípios iluministas para reformar o Estado, mas sem democratizá-lo. A expulsão dos jesuítas prejudicou o ensino colonial por décadas.</div>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <h2><span class="num">06</span> Revoltas Coloniais</h2>
+    <div class="revolt-grid">
+      <div class="revolt-card">
+        <h4>Inconfidência Mineira (1789)</h4>
+        <p>Vila Rica, Minas Gerais. Motivo: cobrança da derrama (imposto sobre ouro). Líderes: Tiradentes (Joaquim José da Silva Xavier), Tomás Antônio Gonzaga, Cláudio Manuel da Costa. Denunciada antes do levante. Tiradentes foi o único executado — tornou-se mártir da República. <span class="tag tag-gold">Separatista</span></p>
+      </div>
+      <div class="revolt-card">
+        <h4>Conjuração Baiana (1798)</h4>
+        <p>Salvador, Bahia. Inspirada na Revolução Francesa (liberdade, igualdade). Participação popular: artesãos, soldados, escravizados. Reivindicava uma república igualitária — mais radical que a Inconfidência. Liderada por João de Deus e Manuel Faustino. Reprimida brutalmente. <span class="tag tag-red">Popular</span></p>
+      </div>
+      <div class="revolt-card">
+        <h4>Revolução Pernambucana (1817)</h4>
+        <p>Pernambuco. Criou uma república por 75 dias. Influenciada pelo iluminismo, massons, e descontentamento com os impostos. Protestantes, padres, militares e comerciantes unidos. Reprimida por D. João VI. Antecipou a independência. <span class="tag tag-green">República</span></p>
+      </div>
+      <div class="revolt-card">
+        <h4>Confederação do Equador (1824)</h4>
+        <p>Nordeste, após a independência. Contra a constituição outorgada por D. Pedro I (muito centralizada). Frei Caneca foi um dos líderes. Reprimida violentamente pelo Império. Mostrava que a independência não satisfez todos. <span class="tag tag-red">Republicana</span></p>
+      </div>
+    </div>
+    <div class="tip-box">Padrão nas revoltas coloniais: a maioria era de elites regionais insatisfeitas com impostos e exclusão do poder, não de movimentos populares. A Conjuração Baiana foi exceção — mais popular e racial.</div>
+  </div>
+
+  <!-- 7 -->
+  <div class="card">
+    <h2><span class="num">07</span> A Família Real no Brasil (1808–1821)</h2>
+    <p>Em novembro de 1807, Napoleão Bonaparte invadiu Portugal. D. João VI fugiu para o Brasil, trazendo ~15.000 pessoas (a corte portuguesa quase inteira). Chegou em Salvador em janeiro de 1808, depois foi ao Rio de Janeiro.</p>
+    <p><strong>Transformações imediatas:</strong></p>
+    <p>• <strong>Abertura dos portos</strong> (28/01/1808) — fim do exclusivismo colonial; a Inglaterra foi a grande beneficiária (tratado de 1810: tarifas menores que as de Portugal).</p>
+    <p>• Criação do <strong>Banco do Brasil</strong>, Biblioteca Real (hoje Biblioteca Nacional), Jardim Botânico do Rio, Academia Militar, imprensa régia (Gazeta do Rio de Janeiro).</p>
+    <p>• Em 1815, o Brasil foi elevado a <strong>Reino Unido a Portugal e Algarves</strong> — deixou formalmente de ser colônia.</p>
+    <p>• 1820: Revolução Liberal do Porto exige retorno de D. João → D. João retorna em 1821, deixando D. Pedro como príncipe regente.</p>
+    <div class="tip-box">Data crucial: 28 de janeiro de 1808 = abertura dos portos = fim do pacto colonial de fato. D. João VI ficou no Brasil de 1808 a 1821 — 13 anos. O Rio de Janeiro tornou-se uma das maiores cidades do Atlântico nesse período.</div>
+  </div>
+
+  <!-- 8 -->
+  <div class="card">
+    <h2><span class="num">08</span> Independência: Causas, Processo e Personagens</h2>
+    <p><strong>Causas:</strong> A revolução liberal portuguesa de 1820 queria recolonizar o Brasil (desfazendo as conquistas de 1808). A elite brasileira não aceitou. D. Pedro era pressionado por dois lados: Portugal queria que ele voltasse, os brasileiros queriam que ficasse.</p>
+    <p><strong>O Fico (09/01/1822):</strong> D. Pedro decide ficar no Brasil ("Fico"). Rompimento simbólico com Lisboa.</p>
+    <p><strong>Independência (07/09/1822):</strong> Às margens do Rio Ipiranga (SP), D. Pedro proclama a independência com o "Grito do Ipiranga". Processo pacífico (em comparação com outras independências americanas) porque foi liderado pela própria monarquia.</p>
+    <p><strong>Personagens:</strong> D. Pedro I (imperador), José Bonifácio de Andrada e Silva (o "Patriarca da Independência"), Leopoldina (esposa de D. Pedro, apoiou a independência).</p>
+    <p>D. Pedro I abdicou em 1831, em favor do filho D. Pedro II (5 anos). Período de Regência (1831-1840): turbulento, revoltas (Cabanagem, Balaiada, Farroupilha, Sabinada). D. Pedro II assume em 1840 com o "Golpe da Maioridade".</p>
+    <div class="tip-box">A independência brasileira foi 'pelo alto' — feita pela elite, sem revolução popular. Diferente das independências hispano-americanas (guerras, participação popular). Questão: 'Por que a independência brasileira foi pacífica?' → Continuidade dinástica (mesmo Bragança) e manutenção da escravidão garantiram estabilidade para a elite.</div>
+  </div>
+
+  <!-- 9 -->
+  <div class="card">
+    <h2><span class="num">09</span> O Império de D. Pedro II: Conquistas e Queda</h2>
+    <p>D. Pedro II governou de 1840 a 1889 — 49 anos, o maior reinado da história brasileira. Foi considerado um governante culto, interessado em ciência e artes.</p>
+    <p><strong>Conquistas:</strong> Estabilidade política, expansão do café, criação do Colégio Pedro II, apoio à ciência e ao abolicionismo.</p>
+    <p><strong>Guerra do Paraguai (1864-1870):</strong> A maior guerra da América do Sul. Brasil + Argentina + Uruguai contra o Paraguai de Solano López. O Paraguai perdeu 60-90% da população masculina. O Brasil ficou com dívidas enormes, fortalecendo o poder militar.</p>
+    <p><strong>Causa da queda:</strong> (1) Questão Militar: militares sentiam-se desrespeitados pelo governo civil. (2) Abolição (1888): fazendeiros perderam a mão-de-obra sem indenização e abandonaram o Império. (3) Questão Religiosa. (4) Republicanismo positivista na elite militar.</p>
+    <div class="tip-box">D. Pedro II foi 'derrubado' mas não 'deposto por revolução popular'. Foi um golpe militar (Deodoro da Fonseca, 15/11/1889). D. Pedro II partiu para o exílio em Portugal onde morreu em 1891. Questão clássica: a causa imediata da proclamação foi a questão militar.</div>
+  </div>
+
+  <!-- 10 -->
+  <div class="card">
+    <h2><span class="num">10</span> Proclamação da República: Causas e Atores</h2>
+    <p><strong>Data:</strong> 15 de novembro de 1889. <strong>Local:</strong> Rio de Janeiro. <strong>Ator principal:</strong> Marechal Deodoro da Fonseca.</p>
+    <p><strong>Causas convergentes:</strong> insatisfação do Exército (questão militar), perda do apoio dos cafeicultores (abolição sem indenização), influência do positivismo de Augusto Comte nos militares, desejo das oligarquias cafeeiras por maior autonomia estadual.</p>
+    <p><strong>Positivismo:</strong> A filosofia de Comte (ordem e progresso) marcou a República Brasileira literalmente — está inscrita no lema da bandeira. A República seria governada pela razão e pelo progresso técnico-científico.</p>
+    <p><strong>A República Velha (1889-1930):</strong> Não foi uma democratização — foi a substituição da monarquia pela oligarquia cafeeira. Política do café-com-leite: São Paulo (café) e Minas Gerais (leite) alternavam-se na presidência.</p>
+    <div class="tip-box">O lema 'Ordem e Progresso' na bandeira = positivismo de Auguste Comte. Questão: 'Quem proclamou a República?' → Deodoro da Fonseca (militar). 'O que era o coronelismo?' → Dominação política dos coronéis (fazendeiros) no interior, controlando votos.</div>
+  </div>
+
+  <!-- 11 -->
+  <div class="card">
+    <h2><span class="num">11</span> Dicas UNICAP por Tema</h2>
+    <table>
+      <tr><th>Tema</th><th>O que cai mais</th><th>Pegadinha comum</th></tr>
+      <tr><td>Pacto Colonial</td><td>Definição e quebra (1808)</td><td>Confundir abertura dos portos com independência</td></tr>
+      <tr><td>Escravidão</td><td>Resistência, leis abolicionistas</td><td>Achar que a abolição foi imediata ou benigna</td></tr>
+      <tr><td>Ciclos econômicos</td><td>Sequência e regiões</td><td>Errar a ordem (ouro é séc. XVIII, não XVII)</td></tr>
+      <tr><td>Inconfidência</td><td>Tiradentes como mártir simbólico</td><td>Dizer que Tiradentes liderou — ele era um dos líderes</td></tr>
+      <tr><td>Família Real</td><td>Transformações de 1808</td><td>Dizer que D. João fugiu em 1808 — partiu em 1807</td></tr>
+      <tr><td>Independência</td><td>Causas e processo</td><td>Dizer que foi uma revolução popular</td></tr>
+      <tr><td>República</td><td>Causas da queda imperial</td><td>Dizer que foi o povo que proclamou</td></tr>
+    </table>
+  </div>
+
+  <!-- 12 -->
+  <div class="card">
+    <h2><span class="num">12</span> Checklist de Revisão</h2>
+    <ul class="checklist">
+      <li><input type="checkbox"> Sei explicar o que foi o Pacto Colonial e quando terminou</li>
+      <li><input type="checkbox"> Conheço a sequência dos ciclos econômicos (5 produtos)</li>
+      <li><input type="checkbox"> Sei a diferença entre Capitanias Hereditárias e Governo-Geral</li>
+      <li><input type="checkbox"> Conheço as 3 leis abolicionistas e seus anos</li>
+      <li><input type="checkbox"> Sei quem foi Zumbi e a Revolta dos Malês</li>
+      <li><input type="checkbox"> Sei o que Marquês de Pombal fez e quando</li>
+      <li><input type="checkbox"> Conheço as 4 revoltas coloniais (ano, local, causa)</li>
+      <li><input type="checkbox"> Sei as transformações da chegada da Família Real em 1808</li>
+      <li><input type="checkbox"> Conheço a diferença entre o Fico (1822) e a Independência (1822)</li>
+      <li><input type="checkbox"> Sei por que D. Pedro II foi derrubado (3 causas)</li>
+      <li><input type="checkbox"> Sei quem proclamou a República e as causas</li>
+      <li><input type="checkbox"> Conheço o positivismo de Comte e sua relação com a bandeira</li>
+      <li><input type="checkbox"> Sei o que era o coronelismo e a política café-com-leite</li>
+      <li><input type="checkbox"> Conheço a Guerra do Paraguai e suas consequências</li>
+      <li><input type="checkbox"> Sei as datas-chave: 1808, 1822, 1888, 1889</li>
+    </ul>
+  </div>
+
+  <!-- 13 -->
+  <div class="card">
+    <h2><span class="num">13</span> Melhores Videoaulas</h2>
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="ch">Prof. Neto do Enem</div>
+        <p>YouTube — Brasil Colonial completo; linguagem clara e direta para vestibulares</p>
+      </div>
+      <div class="video-card">
+        <div class="ch">Parabólica</div>
+        <p>YouTube — Ciclos econômicos, escravidão e abolição. Ótima didática visual</p>
+      </div>
+      <div class="video-card">
+        <div class="ch">Brasil Escola</div>
+        <p>brasilescola.uol.com.br — Artigos completos com linha do tempo e exercícios</p>
+      </div>
+      <div class="video-card">
+        <div class="ch">Me Salva História</div>
+        <p>YouTube/meusalva.com — Revisão rápida para véspera de prova; flashcards</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="links-row">
+    <a href="mapa3d.html" class="map-link">🌿 Voltar ao Mapa 3D do Engenho</a>
+  </div>
+</main>
+</body>
+</html>

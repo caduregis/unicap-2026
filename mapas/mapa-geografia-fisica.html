@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia Física · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#22c55e;--pri2:#4ade80;--paper:#dcfce7;--ink:#04140a}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#040c08;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.55) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#04140a 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(220,252,231,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(34,197,94,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(4,20,10,.7);backdrop-filter:blur(20px);border:1px solid rgba(34,197,94,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(4,20,10,.78) 0%,rgba(8,32,18,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(34,197,94,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(220,252,231,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(4,20,10,.65);backdrop-filter:blur(20px);border:1px solid rgba(34,197,94,.2);border-radius:10px;font-size:13px;color:rgba(220,252,231,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(4,20,10,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(4,12,8,.96) 0%,rgba(4,20,10,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(34,197,94,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(220,252,231,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(34,197,94,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(220,252,231,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(220,252,231,.78);position:relative;border-bottom:1px solid rgba(34,197,94,.06)}
+.sec li::before{content:'⛰';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(34,197,94,.15) 0%,rgba(74,222,128,.08) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">GEOGRAFIA FÍSICA</div><div class="lt2">terra · clima · biomas</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">⛰</div><div class="bt"><div class="l1">Geografia Física</div><div class="l2">geografia · bloco 1</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · GEO FÍSICA</span><h1>Geografia Física</h1><p>Globo terrestre giratório com placas tectônicas, Cordilheira dos Andes, vulcão ativo com lava, biomas brasileiros, rio Amazonas serpenteando, nuvens de chuva tropical. Clique nos elementos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> elemento</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">Conceito-Chave</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#4ade80;padding:24px;font-family:monospace;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'cart',cod:'GEO F1',nome:'Cartografia · Globo',sub:'Latitude · longitude · projeções',
+topicos:['Cartografia: representação da superfície terrestre','Localização: latitude (paralelos) e longitude (meridianos)','Fusos horários: 24 fusos de 15° cada (Brasil tem 4)','GMT/UTC — Meridiano de Greenwich','Projeções cartográficas: Mercator, Mollweide, Robinson','Escala numérica × escala gráfica','Sensoriamento remoto, GPS, SIG'],
+resumo:'Cartografia = linguagem espacial. Projeções DEFORMAM (impossível representar esfera em plano sem distorcer).',
+dica:'Brasil tem 4 fusos horários (UTC-2 Fernando de Noronha, UTC-3 maior parte, UTC-4 oeste, UTC-5 Acre).'},
+{id:'rel',cod:'GEO F2',nome:'Relevo · Placas · Vulcanismo',sub:'Tectonismo · Andes · pré-sal',
+topicos:['Estrutura interna da Terra: crosta, manto, núcleo','Teoria das placas tectônicas (Wegener)','Tectonismo: dobras × falhas','Vulcanismo, "Cinturão de Fogo do Pacífico"','Tipos de relevo: planaltos, planícies, depressões','Agentes endógenos × exógenos','Recursos minerais do Brasil: ferro (Carajás-PA), bauxita, manganês','Pré-sal (petróleo no oceano)'],
+resumo:'Relevo é resultado do choque entre agentes internos (placas tectônicas) e externos (água, vento, gelo).',
+dica:'Brasil está no MEIO da placa Sul-Americana → estável → poucos terremotos. Carajás (PA) é a maior reserva de ferro do mundo.'},
+{id:'cli',cod:'GEO F3',nome:'Clima · Massas de Ar',sub:'Semiárido · El Niño · COP30',
+topicos:['Tempo (instantâneo) × clima (média de 30+ anos)','Elementos do clima: temperatura, umidade, pressão, ventos, precipitação','Massas de ar do Brasil: mEa, mEc, mTa, mTc, mPa','Climas brasileiros: Equatorial, Tropical, Semiárido, Subtropical','Fenômenos: El Niño × La Niña','Mudanças climáticas: aquecimento, IPCC, Acordo de Paris','COP30 no Brasil (Belém, 2025)'],
+resumo:'Brasil tem grande variedade climática. Massas de ar e relevo determinam clima local. Mudanças globais agravam extremos.',
+dica:'⚠️ SEMIÁRIDO nordestino (Sertão) é o foco UNICAP. Massas mTc + barreira Borborema + El Niño = secas.'},
+{id:'hid',cod:'GEO F4',nome:'Hidrografia · Bacias',sub:'Amazonas · São Francisco · Aquíferos',
+topicos:['Ciclo hidrológico','Bacias hidrográficas: Amazônica, Tocantins, São Francisco, Paraná','Rios: planície × planalto','Hidrelétricas: Itaipu, Belo Monte, Tucuruí','Aquíferos: Alter do Chão (Amazônia), Guarani (Sul)','Transposição do São Francisco — para combater seca no NE','Águas oceânicas: correntes (Brasil quente, Falklands fria)'],
+resumo:'Brasil tem 12% da água doce do planeta. Mas distribuição é desigual (Norte = muito, NE = pouca).',
+dica:'⚠️ TRANSPOSIÇÃO DO SÃO FRANCISCO é tópico hot no NE. Aquífero ALTER DO CHÃO > GUARANI.'},
+{id:'veg',cod:'GEO F5',nome:'Biomas · Caatinga',sub:'6 biomas brasileiros · Ab\'Saber',
+topicos:['Domínios morfoclimáticos brasileiros (Aziz Ab\'Saber)','Amazônia: maior floresta tropical','Cerrado: savana brasileira, vegetação adaptada ao fogo','Caatinga: bioma EXCLUSIVAMENTE brasileiro (NE)','Mata Atlântica: <10% original preservado','Pampas, Pantanal','Vegetação mundial: taiga, tundra, savana, estepe','Desmatamento, queimadas, SNUC'],
+resumo:'Brasil tem 6 biomas: Amazônia, Cerrado, Mata Atlântica, Caatinga, Pampa, Pantanal. Caatinga é o ÚNICO exclusivamente brasileiro.',
+dica:'⚠️ CAATINGA = único bioma EXCLUSIVAMENTE BRASILEIRO. Pra UNICAP, é foco. Vegetação xerófila (cactos, mandacaru, juazeiro).'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x0a1018);
+scene.fog=new THREE.Fog(0x0a1018,100,300);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(70,55,80);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.92;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=35;controls.maxDistance=200;
+controls.maxPolarAngle=Math.PI*0.49;controls.target.set(0,8,0);
+
+scene.add(new THREE.AmbientLight(0x4a6080,0.45));
+const sun=new THREE.DirectionalLight(0xffe8c0,1.5);
+sun.position.set(40,60,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-80;sun.shadow.camera.right=80;
+sun.shadow.camera.top=80;sun.shadow.camera.bottom=-80;
+sun.shadow.bias=-0.0005;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0x4ade80,0x10282a,0.3));
+
+// Plano-base oceano azul
+const ocean=new THREE.Mesh(new THREE.PlaneGeometry(300,300,80,80),new THREE.MeshStandardMaterial({color:0x0c4080,roughness:0.2,metalness:0.5}));
+ocean.rotation.x=-Math.PI/2;ocean.receiveShadow=true;scene.add(ocean);
+{const pos=ocean.geometry.attributes.position;
+for(let i=0;i<pos.count;i++){const x=pos.getX(i),y=pos.getY(i);pos.setZ(i,Math.sin(x*0.05)*0.3+Math.cos(y*0.06)*0.25);}
+ocean.geometry.computeVertexNormals();}
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// GLOBO TERRESTRE (centro, flutuando)
+{const g=addMarker('cart',0,0);
+// Globo com continentes pintados
+const globe=new THREE.Mesh(new THREE.SphereGeometry(6,48,32),new THREE.MeshStandardMaterial({color:0x1a5090,roughness:0.4,metalness:0.3,emissive:0x102050,emissiveIntensity:0.15}));
+globe.position.y=12;globe.castShadow=true;g.add(globe);g.userData.globe=globe;
+// Continentes como manchas verdes em torno (massas plotadas em latitude)
+const contData=[
+  {a:0.2,b:0.3,c:0.6,col:0x4a8030},{a:0.5,b:-0.3,c:0.5,col:0x4a8030},{a:-0.4,b:0.4,c:0.4,col:0x4a8030},
+  {a:-0.6,b:-0.2,c:0.3,col:0x4a8030},{a:0.7,b:0.6,c:0.3,col:0x4a8030},
+  {a:-0.2,b:-0.5,c:0.4,col:0xc8a040}
+];
+contData.forEach(c=>{
+  const cont=new THREE.Mesh(new THREE.SphereGeometry(6.02,16,12,c.a*Math.PI,c.c*Math.PI,Math.PI/2-c.b*Math.PI/2,c.c*Math.PI/2),new THREE.MeshStandardMaterial({color:c.col,roughness:0.7,emissive:c.col,emissiveIntensity:0.1}));
+  cont.position.y=12;
+  g.add(cont);
+});
+// Linhas (paralelos/meridianos) - 2 anéis
+for(let i=0;i<3;i++){
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(6.1,0.04,8,48),new THREE.MeshBasicMaterial({color:0xffaa30,transparent:true,opacity:0.4}));
+  ring.position.y=12;ring.rotation.x=i*Math.PI/3;g.add(ring);
+}
+// Eixo de rotação inclinado (23,5°)
+globe.rotation.z=0.41;
+// Satélites em órbita
+g.userData.sats=[];
+for(let i=0;i<3;i++){
+  const sat=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.2,0.2),new THREE.MeshStandardMaterial({color:0xfaf0d8,metalness:0.7,roughness:0.3,emissive:0xc8a040,emissiveIntensity:0.3}));
+  sat.userData.r=8+i*0.5;sat.userData.s=0.3+i*0.1;sat.userData.p=i*Math.PI*2/3;sat.userData.tilt=i*0.5;
+  g.add(sat);g.userData.sats.push(sat);
+}
+markers.push({id:'cart',center:new THREE.Vector3(0,12,0),radius:9,group:g});}
+
+// CORDILHEIRA + VULCÃO (esquerda)
+{const g=addMarker('rel',-35,-10);
+// Base com placas separadas (rachadura)
+for(let i=0;i<2;i++){
+  const plate=new THREE.Mesh(new THREE.BoxGeometry(8,0.8,6),new THREE.MeshStandardMaterial({color:0x6a5040,roughness:0.95}));
+  plate.position.set(i*0.5,0.4,0);plate.rotation.z=i*0.05;plate.castShadow=plate.receiveShadow=true;g.add(plate);
+}
+// Cordilheira (3 picos triangulares)
+const peaks=[[0,5,2],[-3,6.5,1],[3,4.5,-1]];
+peaks.forEach(p=>{
+  const peak=new THREE.Mesh(new THREE.ConeGeometry(2,p[1],8),new THREE.MeshStandardMaterial({color:0x7a6850,roughness:0.85}));
+  peak.position.set(p[0],p[1]/2+0.8,p[2]);peak.castShadow=peak.receiveShadow=true;g.add(peak);
+  // Neve no topo
+  const snow=new THREE.Mesh(new THREE.ConeGeometry(0.9,p[1]*0.3,8),new THREE.MeshStandardMaterial({color:0xfafafa,roughness:0.7,emissive:0xeeeeee,emissiveIntensity:0.1}));
+  snow.position.set(p[0],p[1]-p[1]*0.15+0.8,p[2]);g.add(snow);
+});
+// Vulcão à direita
+const volcano=new THREE.Mesh(new THREE.ConeGeometry(2.5,5,12),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.85}));
+volcano.position.set(7,2.5+0.4,1);volcano.castShadow=true;g.add(volcano);
+// Cratera (escavação)
+const crater=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.4,0.8,16),new THREE.MeshStandardMaterial({color:0x1a0808}));
+crater.position.set(7,5+0.4,1);g.add(crater);
+// Lava dentro da cratera
+const lava=new THREE.Mesh(new THREE.CircleGeometry(0.5,16),new THREE.MeshBasicMaterial({color:0xff5020,emissive:0xff3000,emissiveIntensity:0.8}));
+lava.rotation.x=-Math.PI/2;lava.position.set(7,5.5+0.4,1);g.add(lava);
+g.userData.lava=lava;
+// Erupção (partículas)
+g.userData.ash=[];
+for(let i=0;i<10;i++){
+  const a=new THREE.Mesh(new THREE.SphereGeometry(0.2+Math.random()*0.2,8,6),new THREE.MeshBasicMaterial({color:0x3a3030,transparent:true,opacity:0.7}));
+  a.position.set(7+(Math.random()-0.5)*0.5,6+Math.random()*3,1+(Math.random()-0.5)*0.5);
+  a.userData.vy=0.04+Math.random()*0.04;a.userData.life=Math.random();
+  g.add(a);g.userData.ash.push(a);
+}
+// Luz da lava
+const lavaL=new THREE.PointLight(0xff5020,2,12);lavaL.position.set(7,6,1);g.add(lavaL);
+markers.push({id:'rel',center:new THREE.Vector3(-35,4,-10),radius:11,group:g});}
+
+// CLIMA / NUVENS + RAIO (centro frente)
+{const g=addMarker('cli',0,28);
+// Nuvem grande (várias esferas)
+const cloud=new THREE.Group();cloud.position.set(0,8,0);
+for(let i=0;i<8;i++){
+  const c=new THREE.Mesh(new THREE.SphereGeometry(1.5+Math.random()*0.8,16,12),new THREE.MeshStandardMaterial({color:0xe0e0e8,roughness:0.95,emissive:0xa0a0a8,emissiveIntensity:0.1}));
+  c.position.set((Math.random()-0.5)*4,(Math.random()-0.5)*1,(Math.random()-0.5)*3);cloud.add(c);
+}
+g.add(cloud);g.userData.cloud=cloud;
+// Pingos de chuva (linhas)
+g.userData.rain=[];
+for(let i=0;i<24;i++){
+  const drop=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,0.5,4),new THREE.MeshBasicMaterial({color:0x6080c0,transparent:true,opacity:0.6}));
+  drop.position.set((Math.random()-0.5)*5,3+Math.random()*4,(Math.random()-0.5)*4);
+  drop.userData.vy=0.15+Math.random()*0.1;
+  g.add(drop);g.userData.rain.push(drop);
+}
+// Raio (zigue-zague de poly)
+const lightning=new THREE.Group();
+const pts=[[0,7,0],[-0.3,6,0],[0.2,5,0],[-0.2,4,0],[0.1,3,0],[0,2,0]];
+for(let i=0;i<pts.length-1;i++){
+  const a=pts[i],b=pts[i+1];
+  const dx=b[0]-a[0],dy=b[1]-a[1],dz=b[2]-a[2];
+  const len=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  const seg=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,len,5),new THREE.MeshBasicMaterial({color:0xfaf0d8,emissive:0xfaf0d8,emissiveIntensity:1}));
+  seg.position.set((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);
+  // align cylinder along direction
+  seg.lookAt(b[0],b[1],b[2]);seg.rotateX(Math.PI/2);
+  lightning.add(seg);
+}
+g.add(lightning);g.userData.lightning=lightning;
+// Sol no fundo (esfera laranja)
+const sun2=new THREE.Mesh(new THREE.SphereGeometry(1.2,24,16),new THREE.MeshStandardMaterial({color:0xfde047,emissive:0xfde047,emissiveIntensity:0.9}));
+sun2.position.set(8,10,-3);g.add(sun2);
+const sunL=new THREE.PointLight(0xfde047,1.5,15);sunL.position.copy(sun2.position);g.add(sunL);
+markers.push({id:'cli',center:new THREE.Vector3(0,7,28),radius:10,group:g});}
+
+// HIDROGRAFIA / RIO + LAGO (direita)
+{const g=addMarker('hid',32,-8);
+// Lago grande
+const lake=new THREE.Mesh(new THREE.CylinderGeometry(5,5,0.4,32),new THREE.MeshStandardMaterial({color:0x0c4080,roughness:0.15,metalness:0.6,transparent:true,opacity:0.92,emissive:0x0a2848,emissiveIntensity:0.2}));
+lake.position.y=0.2;lake.castShadow=lake.receiveShadow=true;g.add(lake);
+// Rio serpenteando (caminho de boxes/cilindros)
+const riverPath=[[0,0,0],[-1.5,0,3],[1,0,5.5],[-1,0,8],[2,0,10.5]];
+for(let i=0;i<riverPath.length-1;i++){
+  const a=riverPath[i],b=riverPath[i+1];
+  const dx=b[0]-a[0],dz=b[2]-a[2];
+  const len=Math.sqrt(dx*dx+dz*dz);
+  const seg=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.3,len),new THREE.MeshStandardMaterial({color:0x0c4080,roughness:0.15,metalness:0.6,transparent:true,opacity:0.9}));
+  seg.position.set((a[0]+b[0])/2,0.15,(a[2]+b[2])/2);
+  seg.rotation.y=Math.atan2(dx,dz);
+  g.add(seg);
+}
+// Barragem (hidrelétrica)
+const dam=new THREE.Mesh(new THREE.BoxGeometry(10,3,0.8),new THREE.MeshStandardMaterial({color:0xc8c0b0,roughness:0.75,metalness:0.2}));
+dam.position.set(0,1.5,-5.5);dam.castShadow=dam.receiveShadow=true;g.add(dam);
+// "Turbinas" (cilindros na barragem)
+for(let i=-2;i<=2;i+=2){
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.8,12),new THREE.MeshStandardMaterial({color:0x4a4848,metalness:0.7,roughness:0.4,emissive:0x004080,emissiveIntensity:0.3}));
+  t.rotation.x=Math.PI/2;t.position.set(i*1.5,1.5,-5.1);g.add(t);g.userData['turb'+i]=t;
+}
+// Cataratas (linhas brancas caindo)
+for(let i=0;i<8;i++){
+  const cat=new THREE.Mesh(new THREE.PlaneGeometry(0.2,1.5),new THREE.MeshBasicMaterial({color:0xfaf0d8,transparent:true,opacity:0.6}));
+  cat.position.set(-3+i*0.8,1.5,-4.55);g.add(cat);
+}
+markers.push({id:'hid',center:new THREE.Vector3(32,2,-8),radius:11,group:g});}
+
+// BIOMAS / VEGETAÇÃO (esquerda frente)
+{const g=addMarker('veg',-30,22);
+// 4 quadrantes representando biomas
+// Amazônia (denso, verde-escuro)
+const amaz=new THREE.Mesh(new THREE.BoxGeometry(4,0.3,4),new THREE.MeshStandardMaterial({color:0x1a4020,roughness:0.95}));
+amaz.position.set(-2.5,0.15,-2.5);g.add(amaz);
+for(let i=0;i<8;i++){
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.2,2.5,6),new THREE.MeshStandardMaterial({color:0x4a3020,roughness:0.95}));
+  t.position.set(-4+Math.random()*3,1.25,-4+Math.random()*3);t.castShadow=true;g.add(t);
+  const fol=new THREE.Mesh(new THREE.SphereGeometry(1,10,8),new THREE.MeshStandardMaterial({color:0x1a5020,roughness:0.7}));
+  fol.position.set(t.position.x,2.5,t.position.z);g.add(fol);
+}
+// Caatinga (seco, cactos)
+const cat=new THREE.Mesh(new THREE.BoxGeometry(4,0.3,4),new THREE.MeshStandardMaterial({color:0xa07050,roughness:0.95}));
+cat.position.set(2.5,0.15,-2.5);g.add(cat);
+// Mandacaru/Cacto
+for(let i=0;i<4;i++){
+  const cactus=new THREE.Group();
+  cactus.position.set(1+Math.random()*3,0.3,-4+Math.random()*3);
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,1.8,8),new THREE.MeshStandardMaterial({color:0x4a7a40,roughness:0.7}));
+  body.position.y=0.9;body.castShadow=true;cactus.add(body);
+  // Braços
+  const arm=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.8,8),new THREE.MeshStandardMaterial({color:0x4a7a40,roughness:0.7}));
+  arm.position.set(0.4,1.3,0);arm.rotation.z=-0.5;cactus.add(arm);
+  g.add(cactus);
+}
+// Cerrado (savana)
+const cer=new THREE.Mesh(new THREE.BoxGeometry(4,0.3,4),new THREE.MeshStandardMaterial({color:0xa08050,roughness:0.95}));
+cer.position.set(-2.5,0.15,2.5);g.add(cer);
+for(let i=0;i<5;i++){
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.15,1.5,6),new THREE.MeshStandardMaterial({color:0x6a4020,roughness:0.95}));
+  t.position.set(-4+Math.random()*3,0.75,1+Math.random()*3);g.add(t);
+  const fol=new THREE.Mesh(new THREE.SphereGeometry(0.5,8,6),new THREE.MeshStandardMaterial({color:0x6a8030,roughness:0.7}));
+  fol.position.set(t.position.x,1.5,t.position.z);fol.scale.y=0.5;g.add(fol);
+}
+// Pantanal (úmido)
+const pan=new THREE.Mesh(new THREE.BoxGeometry(4,0.3,4),new THREE.MeshStandardMaterial({color:0x4080a0,roughness:0.3,metalness:0.5,transparent:true,opacity:0.85}));
+pan.position.set(2.5,0.15,2.5);g.add(pan);
+// Plantinhas aquáticas
+for(let i=0;i<6;i++){
+  const wp=new THREE.Mesh(new THREE.SphereGeometry(0.3,8,6),new THREE.MeshStandardMaterial({color:0x4a8030,roughness:0.7}));
+  wp.position.set(1+Math.random()*3,0.4,1+Math.random()*3);wp.scale.y=0.4;g.add(wp);
+}
+markers.push({id:'veg',center:new THREE.Vector3(-30,1,22),radius:11,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0x4ade80,side:THREE.DoubleSide,transparent:true,opacity:0.4}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.1,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(70,55,80);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,8,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.3+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  // Globo rotação
+  if(groups['cart']&&groups['cart'].userData.globe){
+    groups['cart'].userData.globe.rotation.y=t*0.3;
+    if(groups['cart'].userData.sats){
+      groups['cart'].userData.sats.forEach(sat=>{
+        const ang=t*sat.userData.s+sat.userData.p;
+        sat.position.set(Math.cos(ang)*sat.userData.r,12+Math.sin(sat.userData.tilt)*Math.cos(ang)*sat.userData.r*0.3,Math.sin(ang)*sat.userData.r*Math.cos(sat.userData.tilt));
+        sat.rotation.y=ang;
+      });
+    }
+  }
+  // Vulcão lava + cinzas
+  if(groups['rel']){
+    if(groups['rel'].userData.lava) groups['rel'].userData.lava.scale.setScalar(1+Math.sin(t*4)*0.15);
+    if(groups['rel'].userData.ash){
+      groups['rel'].userData.ash.forEach(a=>{
+        a.position.y+=a.userData.vy;a.userData.life+=0.01;
+        a.material.opacity=Math.max(0,0.7-a.userData.life*0.7);
+        if(a.userData.life>1){a.position.y=6;a.userData.life=0;a.material.opacity=0.7;}
+      });
+    }
+  }
+  // Chuva
+  if(groups['cli']){
+    if(groups['cli'].userData.rain){
+      groups['cli'].userData.rain.forEach(d=>{
+        d.position.y-=d.userData.vy;
+        if(d.position.y<0.5){d.position.y=7+Math.random();}
+      });
+    }
+    if(groups['cli'].userData.cloud) groups['cli'].userData.cloud.position.x=Math.sin(t*0.3)*1.5;
+    if(groups['cli'].userData.lightning){
+      groups['cli'].userData.lightning.visible=(Math.sin(t*7)>0.96);
+    }
+  }
+  // Turbinas
+  if(groups['hid']){
+    for(let i=-2;i<=2;i+=2){
+      const tk=groups['hid'].userData['turb'+i];if(tk) tk.rotation.y=t*4;
+    }
+  }
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

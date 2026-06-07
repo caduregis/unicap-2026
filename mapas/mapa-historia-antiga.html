@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idade Antiga · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#e0b878;--pri2:#f5d99a;--paper:#f0e6d0;--ink:#1a1408}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0e18;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+body.dragging{cursor:grabbing}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.55) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#1a1408 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(240,230,208,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(224,184,120,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(26,20,8,.7);backdrop-filter:blur(20px);border:1px solid rgba(224,184,120,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(26,20,8,.78) 0%,rgba(40,30,15,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(224,184,120,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(240,230,208,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(26,20,8,.65);backdrop-filter:blur(20px);border:1px solid rgba(224,184,120,.2);border-radius:10px;font-size:13px;color:rgba(240,230,208,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(224,184,120,.15);border:1px solid rgba(224,184,120,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(26,20,8,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(15,10,5,.96) 0%,rgba(26,20,8,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(224,184,120,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(224,184,120,.1);border:1px solid rgba(224,184,120,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(224,184,120,.15);border:1px solid rgba(224,184,120,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(240,230,208,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(224,184,120,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(240,230,208,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(240,230,208,.78);position:relative;border-bottom:1px solid rgba(224,184,120,.06)}
+.sec li::before{content:'◆';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(224,184,120,.12) 0%,rgba(245,217,154,.06) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">IDADE ANTIGA</div><div class="lt2">erguendo civilizações</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">Ω</div><div class="bt"><div class="l1">Idade Antiga</div><div class="l2">história geral · 1.3</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · HIST 1.3</span><h1>Idade Antiga</h1><p>4000 a.C. - 476 d.C. Pirâmide egípcia, Zigurate mesopotâmico, Pártenon grego na Acrópole, Coliseu romano, Templo de Salomão, pintura rupestre. Clique nos monumentos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> monumento</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#f5d99a;padding:24px;font-family:monospace;max-width:600px;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'preh',cod:'HG 1.3a',nome:'Pré-História',sub:'Paleolítico · Neolítico · Idade dos Metais',
+topicos:['Paleolítico (Idade da Pedra Lascada): nômades, caçadores-coletores','Neolítico (Idade da Pedra Polida): sedentarização, agricultura, pecuária, cerâmica','Revolução Neolítica (~10.000 a.C.) — surgimento da agricultura','Idade dos Metais: Cobre → Bronze → Ferro','Arte rupestre: Lascaux (França), Altamira (Espanha)','No Brasil: Serra da Capivara (PI), Lagoa Santa (MG)','Sítios arqueológicos brasileiros'],
+resumo:'A pré-história termina com a invenção da ESCRITA (~4000 a.C.). Revolução Neolítica permitiu cidades, especialização do trabalho, Estado.',
+dica:'PRÉ-HISTÓRIA termina com a ESCRITA. Serra da Capivara (PI) é Patrimônio Mundial UNESCO — pinturas rupestres mais antigas das Américas (~12.000 anos).'},
+{id:'meso',cod:'HG 1.3b',nome:'Mesopotâmia',sub:'Crescente Fértil · escrita cuneiforme',
+topicos:['Mesopotâmia: "entre rios" Tigre e Eufrates (atual Iraque)','Sumérios: inventores da ESCRITA cuneiforme (~3500 a.C.)','Acádios, Babilônios (Código de Hamurabi, 1750 a.C. — "olho por olho")','Assírios, Caldeus (Nabucodonosor)','Zigurate: templo em forma de pirâmide escalonada','Jardins Suspensos da Babilônia (uma das 7 maravilhas)','Astronomia, matemática, sistema sexagesimal (60 minutos)'],
+resumo:'A Mesopotâmia é o "berço da civilização": primeira escrita, primeiras leis escritas (Hamurabi), primeiras cidades-Estado.',
+dica:'CÓDIGO DE HAMURABI (1750 a.C.) é o mais antigo CÓDIGO DE LEIS preservado. "Olho por olho, dente por dente" — Talião. Inspira Direito moderno.'},
+{id:'egito',cod:'HG 1.3c',nome:'Egito Antigo',sub:'Nilo · faraós · pirâmides',
+topicos:['Egito: civilização do rio Nilo (3500 a.C. - 30 a.C.)','Cheia anual do Nilo: agricultura, agrimensura, calendário','Antigo Império, Médio Império, Novo Império','Faraó: rei-deus, monarquia teocrática','Pirâmides: tumbas dos faraós (Quéops, Quéfren, Miquerinos, Gizé)','Esfinges, hieróglifos, papiro','Religião politeísta: Rá, Osíris, Ísis, Anúbis, Hórus','Mumificação: crença na vida após a morte','Cleópatra (último faraó) cai para Roma (30 a.C.)'],
+resumo:'Civilização brilhante por 3.000 anos. Pirâmides ainda hoje impressionam pela engenharia. Conhecimento de astronomia, medicina, matemática.',
+dica:'PIRÂMIDE DE QUÉOPS (Gizé) tem 4.500 anos. Único monumento das 7 maravilhas antigas ainda em pé. Hieróglifos decifrados em 1822 (Champollion, Pedra de Roseta).'},
+{id:'hebreus',cod:'HG 1.3d',nome:'Hebreus · Fenícios · Persas',
+sub:'Povos do Antigo Oriente',
+topicos:['Hebreus: povo monoteísta (Antigo Testamento)','Abraão, Moisés (Êxodo), David, Salomão','Diáspora (após destruição do Templo, 70 d.C.)','Cisma judaísmo / cristianismo / islamismo (3 religiões abraâmicas)','Fenícios: comerciantes do Mediterrâneo, alfabeto fonético (~22 letras)','Colônias fenícias: Cartago (Tunísia)','Persas: império de Ciro, Dario, Xerxes','Zoroastrismo (Mazdeísmo)','Guerras Médicas (gregos × persas): Maratona (490 a.C.), Salamina (480 a.C.)'],
+resumo:'Hebreus deram base religiosa ao Ocidente (3 religiões). Fenícios deram o alfabeto. Persas formaram o maior império da época.',
+dica:'ALFABETO FONÉTICO fenício é a base do nosso alfabeto. Hebreus = MONOTEÍSMO (Yahveh). Persas perderam para os gregos em Maratona (490 a.C.) — origem da prova esportiva.'},
+{id:'grecia',cod:'HG 1.3e',nome:'Grécia Antiga',sub:'Pólis · democracia · filosofia',
+topicos:['Grécia: península balcânica, polis (cidades-Estado independentes)','Atenas (democracia: Péricles) × Esparta (oligarquia militar)','Democracia ateniense: votação na ágora (só homens livres, atenienses)','Guerras Médicas (gregos × persas, vitória grega)','Guerra do Peloponeso (Atenas × Esparta): Esparta venceu','Filosofia clássica: Sócrates, Platão (Academia), Aristóteles (Liceu)','Pitágoras, Tales de Mileto (matemática), Hipócrates (medicina)','Mitologia: Zeus, Poseidon, Atena, Hera, Apolo, Afrodite','Período helenístico: Alexandre, o Grande (império até Índia)','Pártenon (templo de Atena, na Acrópole), Jogos Olímpicos (776 a.C.)'],
+resumo:'Grécia é a base do Ocidente: democracia, filosofia, matemática, teatro, esportes. Helenismo levou cultura grega ao mundo.',
+dica:'⚠️ SÓCRATES → PLATÃO → ARISTÓTELES (mestre-discípulo). Aristóteles foi tutor de Alexandre, o Grande. Pártenon honra Atenas (deusa Atena).'},
+{id:'roma',cod:'HG 1.3f',nome:'Roma Antiga',sub:'República · Império · Cristianismo',
+topicos:['Roma: do Tibre ao Mediterrâneo todo','Monarquia (753-509 a.C.), República (509-27 a.C.), Império (27 a.C.-476 d.C.)','Conflitos sociais: patrícios × plebeus, Lei das XII Tábuas','Guerras Púnicas: Roma × Cartago (Aníbal), Roma vence','Júlio César (assassinado em 44 a.C.) — fim da República','Octavio Augusto (1º imperador), Pax Romana','Direito Romano: base do Direito Civil brasileiro','Cristianismo: surge no séc. I, perseguido até Edito de Milão (313, Constantino)','Édito de Tessalônica (380): cristianismo religião oficial','Queda do Império Romano do Ocidente (476 d.C.) — fim da Antiguidade'],
+resumo:'Roma deu ao Ocidente: Direito, língua latina (origem do português, espanhol, francês, italiano), cristianismo, conceito de Estado.',
+dica:'⚠️ DIREITO ROMANO é a base do nosso Código Civil (também do Napoleônico, do alemão). Lei das XII Tábuas (450 a.C.). Império cai em 476 d.C. = início da Idade Média.'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x1a1f2e);
+scene.fog=new THREE.Fog(0x1a1f2e,80,250);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(60,45,65);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=0.92;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=30;controls.maxDistance=160;
+controls.maxPolarAngle=Math.PI*0.48;
+controls.target.set(0,5,0);
+
+scene.add(new THREE.AmbientLight(0x8a7a55,0.4));
+const sun=new THREE.DirectionalLight(0xffe8b0,1.5);
+sun.position.set(40,55,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-70;sun.shadow.camera.right=70;
+sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;
+sun.shadow.camera.near=0.5;sun.shadow.camera.far=200;
+sun.shadow.bias=-0.0005;
+scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xe0b878,0x4a3a20,0.3));
+
+const ground=new THREE.Mesh(
+  new THREE.PlaneGeometry(260,260,80,80),
+  new THREE.MeshStandardMaterial({color:0xc9a878,roughness:0.95})
+);
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;
+{const pos=ground.geometry.attributes.position;
+for(let i=0;i<pos.count;i++){
+  const x=pos.getX(i),y=pos.getY(i);
+  pos.setZ(i,Math.sin(x*0.05)*0.6+Math.cos(y*0.06)*0.5);
+}
+ground.geometry.computeVertexNormals();}
+scene.add(ground);
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// PIRÂMIDE EGITO
+{const g=addMarker('egito',-25,15);
+const pyr=new THREE.Mesh(new THREE.ConeGeometry(11,12,4),new THREE.MeshStandardMaterial({color:0xe6c890,roughness:0.85}));
+pyr.rotation.y=Math.PI/4;pyr.position.y=6;pyr.castShadow=pyr.receiveShadow=true;g.add(pyr);
+const pyr2=new THREE.Mesh(new THREE.ConeGeometry(7,8,4),new THREE.MeshStandardMaterial({color:0xd6b880,roughness:0.85}));
+pyr2.rotation.y=Math.PI/4;pyr2.position.set(12,4,-3);pyr2.castShadow=true;g.add(pyr2);
+// Esfinge
+const sphinx=new THREE.Group();sphinx.position.set(-9,0,5);
+const body=new THREE.Mesh(new THREE.BoxGeometry(5,2,2.5),new THREE.MeshStandardMaterial({color:0xb89a68,roughness:0.85}));
+body.position.y=1;body.castShadow=true;sphinx.add(body);
+const head=new THREE.Mesh(new THREE.BoxGeometry(1.8,2.2,1.8),new THREE.MeshStandardMaterial({color:0xb89a68,roughness:0.85}));
+head.position.set(2.5,2.8,0);head.castShadow=true;sphinx.add(head);
+g.add(sphinx);
+// Palmeiras
+for(let i=0;i<3;i++){
+  const palm=new THREE.Group();palm.position.set(-15+i*5,0,-8);
+  const t=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.3,5,8),new THREE.MeshStandardMaterial({color:0x5a3a18,roughness:0.95}));
+  t.position.y=2.5;t.castShadow=true;palm.add(t);
+  for(let j=0;j<6;j++){
+    const l=new THREE.Mesh(new THREE.ConeGeometry(0.35,2.5,5),new THREE.MeshStandardMaterial({color:0x6a9c30,roughness:0.7}));
+    const a=j*Math.PI/3;l.position.set(Math.cos(a)*1.2,5.5,Math.sin(a)*1.2);
+    l.rotation.z=Math.cos(a)*0.8;l.rotation.x=Math.sin(a)*0.8;l.castShadow=true;palm.add(l);
+  }
+  g.add(palm);
+}
+markers.push({id:'egito',center:new THREE.Vector3(-25,6,15),radius:14,group:g});}
+
+// ZIGURATE MESOPOTÂMICO
+{const g=addMarker('meso',-30,-18);
+for(let i=0;i<3;i++){
+  const lvl=new THREE.Mesh(new THREE.BoxGeometry(10-i*2.5,2.5,10-i*2.5),new THREE.MeshStandardMaterial({color:i%2?0xc89060:0xb88050,roughness:0.85}));
+  lvl.position.y=1.25+i*2.5;lvl.castShadow=lvl.receiveShadow=true;g.add(lvl);
+}
+const top=new THREE.Mesh(new THREE.BoxGeometry(2.5,1.8,2.5),new THREE.MeshStandardMaterial({color:0xe6b070,roughness:0.7}));
+top.position.y=9;top.castShadow=true;g.add(top);
+const ramp=new THREE.Mesh(new THREE.BoxGeometry(1.5,0.4,8),new THREE.MeshStandardMaterial({color:0xa07050,roughness:0.9}));
+ramp.position.set(0,3.5,5);ramp.rotation.x=-0.4;g.add(ramp);
+for(let i=0;i<4;i++){
+  const tab=new THREE.Mesh(new THREE.BoxGeometry(1,0.15,0.7),new THREE.MeshStandardMaterial({color:0xa07050,roughness:0.9}));
+  const a=i*Math.PI/2;tab.position.set(Math.cos(a)*7,0.1,Math.sin(a)*7);tab.castShadow=true;g.add(tab);
+}
+markers.push({id:'meso',center:new THREE.Vector3(-30,5,-18),radius:12,group:g});}
+
+// PÁRTENON GRÉCIA (centro)
+{const g=addMarker('grecia',0,0);
+const hill=new THREE.Mesh(new THREE.CylinderGeometry(11,14,3,32),new THREE.MeshStandardMaterial({color:0xb09870,roughness:0.95}));
+hill.position.y=1.5;hill.receiveShadow=true;g.add(hill);
+const platform=new THREE.Mesh(new THREE.BoxGeometry(14,0.6,8),new THREE.MeshStandardMaterial({color:0xfff5dc,roughness:0.5}));
+platform.position.y=3.3;platform.castShadow=platform.receiveShadow=true;g.add(platform);
+const colMat=new THREE.MeshStandardMaterial({color:0xfff8e8,roughness:0.55});
+function coluna(x,z){
+  const col=new THREE.Mesh(new THREE.CylinderGeometry(0.42,0.5,5,16),colMat);
+  col.position.set(x,6.1,z);col.castShadow=true;g.add(col);
+  const cap=new THREE.Mesh(new THREE.BoxGeometry(1.1,0.4,1.1),colMat);
+  cap.position.set(x,8.8,z);cap.castShadow=true;g.add(cap);
+}
+for(let i=-3;i<=3;i++){coluna(i*1.8,3.2);coluna(i*1.8,-3.2);}
+for(let i=-1;i<=1;i++){coluna(-6,i*1.8);coluna(6,i*1.8);}
+const entab=new THREE.Mesh(new THREE.BoxGeometry(14,1.2,8),new THREE.MeshStandardMaterial({color:0xf0e0c0,roughness:0.55}));
+entab.position.y=9.5;entab.castShadow=entab.receiveShadow=true;g.add(entab);
+// Estátua Atena
+const atena=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.4,1.8,8),new THREE.MeshStandardMaterial({color:0xfff2c0,roughness:0.5,emissive:0xaa8030,emissiveIntensity:0.1}));
+atena.position.set(0,7.5,0);atena.castShadow=true;g.add(atena);
+const aHead=new THREE.Mesh(new THREE.SphereGeometry(0.3,12,12),new THREE.MeshStandardMaterial({color:0xfff2c0,roughness:0.5,emissive:0xaa8030,emissiveIntensity:0.1}));
+aHead.position.set(0,8.7,0);g.add(aHead);
+// Oliveiras
+for(let i=0;i<5;i++){
+  const tree=new THREE.Group();const a=i*Math.PI*2/5;
+  tree.position.set(Math.cos(a)*13,0,Math.sin(a)*13);
+  const tr=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.3,2,6),new THREE.MeshStandardMaterial({color:0x5a4030,roughness:0.95}));
+  tr.position.y=1;tr.castShadow=true;tree.add(tr);
+  const cr=new THREE.Mesh(new THREE.SphereGeometry(1.3,10,10),new THREE.MeshStandardMaterial({color:0x6a8030,roughness:0.7}));
+  cr.position.y=2.5;cr.scale.y=0.7;cr.castShadow=true;tree.add(cr);
+  g.add(tree);
+}
+markers.push({id:'grecia',center:new THREE.Vector3(0,6,0),radius:15,group:g});}
+
+// COLISEU ROMANO
+{const g=addMarker('roma',28,12);
+const archMat=new THREE.MeshStandardMaterial({color:0xd8b890,roughness:0.85});
+for(let lvl=0;lvl<3;lvl++){
+  const ring=new THREE.Mesh(new THREE.CylinderGeometry(8.5-lvl*0.3,8.5-lvl*0.3,2.5,32,1,true),archMat);
+  ring.position.y=1.25+lvl*2.5;ring.castShadow=true;g.add(ring);
+}
+const arena=new THREE.Mesh(new THREE.CylinderGeometry(5,5,0.3,32),new THREE.MeshStandardMaterial({color:0x8b6230,roughness:0.95}));
+arena.position.y=0.5;arena.receiveShadow=true;g.add(arena);
+for(let r=0;r<3;r++){
+  const seat=new THREE.Mesh(new THREE.CylinderGeometry(6.5-r*0.5,7-r*0.5,0.8,32,1,true),new THREE.MeshStandardMaterial({color:0xc8a878,roughness:0.85}));
+  seat.position.y=1+r*0.8;seat.castShadow=seat.receiveShadow=true;g.add(seat);
+}
+const broken=new THREE.Mesh(new THREE.BoxGeometry(3,4,1.5),new THREE.MeshStandardMaterial({color:0xb89870,roughness:0.95}));
+broken.position.set(7,2,5);broken.rotation.y=0.6;g.add(broken);
+markers.push({id:'roma',center:new THREE.Vector3(28,4,12),radius:11,group:g});}
+
+// TEMPLO HEBREU
+{const g=addMarker('hebreus',22,-22);
+const t=new THREE.Mesh(new THREE.BoxGeometry(5,4,6),new THREE.MeshStandardMaterial({color:0xf0d8a0,roughness:0.6}));
+t.position.y=2;t.castShadow=t.receiveShadow=true;g.add(t);
+const roof=new THREE.Mesh(new THREE.BoxGeometry(5.3,0.7,6.3),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.7,roughness:0.3,emissive:0x664400,emissiveIntensity:0.2}));
+roof.position.y=4.35;roof.castShadow=true;g.add(roof);
+for(let s=-1;s<=1;s+=2){
+  const p=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.45,4.5,12),new THREE.MeshStandardMaterial({color:0xc89860,roughness:0.7}));
+  p.position.set(s*1.8,2.25,3.2);p.castShadow=true;g.add(p);
+  const top=new THREE.Mesh(new THREE.SphereGeometry(0.5,12,8),new THREE.MeshStandardMaterial({color:0xd4a017,metalness:0.6,roughness:0.4}));
+  top.position.set(s*1.8,4.8,3.2);g.add(top);
+}
+const star=new THREE.Mesh(new THREE.TorusGeometry(0.7,0.07,8,6),new THREE.MeshStandardMaterial({color:0x4060ff,emissive:0x2040ff,emissiveIntensity:0.5,metalness:0.7,roughness:0.3}));
+star.position.set(0,7,0);g.add(star);
+g.userData.star=star;
+markers.push({id:'hebreus',center:new THREE.Vector3(22,3,-22),radius:9,group:g});}
+
+// PRÉ-HISTÓRIA - parede de pintura rupestre + fogueira
+{const g=addMarker('preh',-15,30);
+const stone=new THREE.Mesh(new THREE.BoxGeometry(8,5,1.5),new THREE.MeshStandardMaterial({color:0x6a4830,roughness:0.95}));
+stone.position.y=2.5;stone.castShadow=stone.receiveShadow=true;g.add(stone);
+for(let i=0;i<4;i++){
+  const p=new THREE.Mesh(new THREE.PlaneGeometry(0.9,0.9),new THREE.MeshStandardMaterial({color:i%2?0xc04020:0xe89060,side:THREE.DoubleSide,roughness:0.85}));
+  p.position.set(-3+i*2,2.5+(i%2)*0.5,0.78);
+  g.add(p);
+}
+const fire=new THREE.Group();fire.position.set(0,0,5);
+const logs=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.5,1.5,8),new THREE.MeshStandardMaterial({color:0x3a2010,roughness:0.95}));
+logs.rotation.z=Math.PI/2;logs.position.y=0.4;logs.castShadow=true;fire.add(logs);
+const flame=new THREE.Mesh(new THREE.ConeGeometry(0.6,1.5,8),new THREE.MeshStandardMaterial({color:0xff6020,emissive:0xff4020,emissiveIntensity:0.8,transparent:true,opacity:0.85}));
+flame.position.y=1.6;fire.add(flame);
+fire.userData.flame=flame;g.add(fire);g.userData.fire=fire;
+for(let i=0;i<3;i++){
+  const man=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.35,1.5,6),new THREE.MeshStandardMaterial({color:0x8b5a30,roughness:0.85}));
+  man.position.set(-2+i*2,0.75,6);man.castShadow=true;g.add(man);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.32,8,8),new THREE.MeshStandardMaterial({color:0x8b5a30,roughness:0.85}));
+  head.position.set(-2+i*2,1.8,6);head.castShadow=true;g.add(head);
+}
+markers.push({id:'preh',center:new THREE.Vector3(-15,2,30),radius:8,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0xf5d99a,side:THREE.DoubleSide,transparent:true,opacity:0.35}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.1,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(60,45,65);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,5,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.25+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  if(groups['hebreus']&&groups['hebreus'].userData.star){groups['hebreus'].userData.star.rotation.y=t*0.6;groups['hebreus'].userData.star.rotation.x=t*0.4;}
+  if(groups['preh']&&groups['preh'].userData.fire){
+    const f=groups['preh'].userData.fire.userData.flame;
+    f.scale.y=1+Math.sin(t*8)*0.2;f.scale.x=1+Math.cos(t*7)*0.1;
+  }
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

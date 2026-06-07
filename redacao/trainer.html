@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redação Trainer · UNICAP 2026.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Lora:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  body { background: linear-gradient(135deg, #0a0e1a 0%, #131829 50%, #0a0e1a 100%); min-height: 100vh; color: #e8eaf0; }
+  .lora { font-family: 'Lora', Georgia, serif; }
+  .mono { font-family: 'JetBrains Mono', mono; }
+  .glass { background: rgba(19,24,41,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(0,212,255,0.1); }
+  .cyan { color: #00d4ff; } .amber { color: #ffb800; }
+  textarea {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.85;
+    background: rgba(10,14,26,0.7);
+    color: #e8eaf0;
+    border: 1px solid rgba(0,212,255,0.15);
+    transition: border-color 240ms;
+  }
+  textarea:focus { outline: none; border-color: rgba(0,212,255,0.6); box-shadow: 0 0 30px rgba(0,212,255,0.1); }
+  .btn-primary { background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%); color: #0a0e1a; font-weight: 700; transition: all 240ms; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,212,255,0.4); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .timer-warning { color: #ffb800; }
+  .timer-danger { color: #ef4444; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .tema-card { cursor: pointer; transition: all 200ms ease-out; }
+  .tema-card:hover { transform: translateY(-2px); border-color: #ffb800 !important; }
+  .tema-card.selected { background: rgba(255,184,0,0.08); border-color: #ffb800 !important; box-shadow: 0 0 20px rgba(255,184,0,0.15); }
+  .nota-bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .nota-fill { height: 100%; transition: width 600ms ease-out; }
+</style>
+</head>
+<body class="p-4 sm:p-8">
+
+<!-- TELA INICIAL -->
+<div id="telaTemas" class="max-w-5xl mx-auto">
+  <header class="mb-8">
+    <a href="../dashboard.html" class="text-sm cyan hover:underline">← Dashboard</a>
+    <h1 class="text-4xl font-black mt-3">✍️ <span class="text-emerald-400">Redação</span> Trainer</h1>
+    <p class="text-slate-400 mt-2">Treine cronometrado · IA corrige · critérios UNICAP</p>
+  </header>
+
+  <div class="glass rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-3">📋 Como funciona (critérios OFICIAIS UNICAP 2026.2)</h2>
+    <ol class="space-y-2 text-sm text-slate-300">
+      <li><span class="amber font-bold">1.</span> Escolha 1 tema da lista (10 prováveis)</li>
+      <li><span class="amber font-bold">2.</span> Cronômetro de 90 min começa quando você escolher</li>
+      <li><span class="amber font-bold">3.</span> Escreva dissertativo-argumentativo: <span class="amber">TÍTULO obrigatório</span> + 8-30 linhas + ~250-400 palavras</li>
+      <li><span class="amber font-bold">4.</span> Clique em "Analisar com IA" pra receber correção</li>
+      <li><span class="amber font-bold">5.</span> <strong>Critérios OFICIAIS:</strong> Estrutura/título (100) · Apropriação temática (200) · Construção dos argumentos (200) · Relevância (200) · <span class="amber">Norma padrão (300)</span> = 1000 pts</li>
+    </ol>
+    <p class="text-xs text-slate-500 mt-4">⚠️ Para a análise IA funcionar, você precisa fornecer sua chave da Anthropic API (salva localmente, nunca enviada a terceiros).</p>
+  </div>
+
+  <h2 class="text-2xl font-bold mb-4">📚 Escolha um tema</h2>
+  <div id="temasGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+</div>
+
+<!-- TELA ESCRITA -->
+<div id="telaEscrita" class="hidden max-w-7xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
+
+    <div>
+      <header class="glass rounded-xl p-4 mb-4 flex items-center justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-wider amber font-bold">Tema</p>
+          <p class="text-lg font-bold" id="temaAtual"></p>
+        </div>
+        <button onclick="voltarTemas()" class="text-xs text-slate-400 hover:text-cyan-400">trocar tema →</button>
+      </header>
+
+      <div class="glass rounded-xl p-6">
+        <textarea id="redacaoArea" rows="22" placeholder="Comece a redação aqui...
+
+Lembre-se da estrutura:
+[1] INTRODUÇÃO — contextualização + tese
+[2] DESENVOLVIMENTO 1 — argumento + repertório
+[3] DESENVOLVIMENTO 2 — argumento + repertório
+[4] CONCLUSÃO — síntese OU proposta de intervenção" class="w-full p-4 rounded-lg"></textarea>
+      </div>
+    </div>
+
+    <aside class="lg:sticky lg:top-4 h-fit space-y-4">
+      <div class="glass rounded-xl p-5 text-center">
+        <p class="text-xs uppercase tracking-wide text-slate-400 mb-1">Tempo restante</p>
+        <p id="timer" class="mono text-4xl font-bold cyan">90:00</p>
+      </div>
+
+      <div class="glass rounded-xl p-5">
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between"><span class="text-slate-400">Palavras</span><span class="mono font-bold" id="palavrasCount">0</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">Linhas (aprox.)</span><span class="mono font-bold" id="linhasCount">0</span></div>
+          <div class="flex justify-between"><span class="text-slate-400">Caracteres</span><span class="mono font-bold" id="charCount">0</span></div>
+          <div class="border-t border-slate-700 my-3"></div>
+          <p class="text-xs text-slate-500">Meta: 250-400 palavras / 20-30 linhas</p>
+        </div>
+      </div>
+
+      <button onclick="analisar()" id="btnAnalisar" class="btn-primary w-full py-3 rounded-xl">
+        🤖 Analisar com IA
+      </button>
+
+      <button onclick="finalizarSemAnalise()" class="w-full py-2 text-sm text-slate-400 hover:text-cyan-400">
+        Salvar sem analisar
+      </button>
+    </aside>
+  </div>
+</div>
+
+<!-- TELA RESULTADO -->
+<div id="telaResultado" class="hidden max-w-4xl mx-auto">
+  <header class="mb-6">
+    <a href="#" onclick="voltarTemas()" class="text-sm cyan hover:underline">← Nova redação</a>
+    <h1 class="text-3xl font-black mt-3">📊 Resultado · Correção UNICAP</h1>
+  </header>
+
+  <div class="glass rounded-2xl p-8 mb-6 text-center">
+    <p class="text-xs uppercase tracking-wider text-slate-400 mb-2">Nota total UNICAP</p>
+    <p class="text-7xl font-black mono cyan" id="notaTotal">--</p>
+    <p class="text-sm text-slate-400 mt-2"><span id="notaBruta">--</span>/10 · escala UNICAP 0-1000</p>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4">Notas por critério</h2>
+    <div id="criteriosArea" class="space-y-4"></div>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6">
+    <h2 class="text-xl font-bold mb-3">💬 Comentário geral</h2>
+    <p id="comentarioGeral" class="text-slate-300 leading-relaxed"></p>
+  </div>
+
+  <div class="glass rounded-2xl p-6 mb-6 border-amber-500/30">
+    <h2 class="text-xl font-bold mb-4 amber">🎯 3 sugestões pra próxima redação</h2>
+    <ol id="sugestoes" class="space-y-3"></ol>
+  </div>
+
+  <div class="flex gap-3">
+    <button onclick="voltarTemas()" class="btn-primary px-6 py-3 rounded-lg">← Nova redação</button>
+    <a href="../dashboard.html" class="bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg flex items-center">Dashboard</a>
+  </div>
+</div>
+
+<!-- MODAL API KEY -->
+<div id="modalApiKey" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+  <div class="glass rounded-2xl p-8 max-w-md w-full">
+    <h2 class="text-xl font-bold mb-3">🔑 Chave da API Anthropic</h2>
+    <p class="text-sm text-slate-400 mb-4">Para a análise IA funcionar, precisa de uma chave da Anthropic (formato: <code class="mono cyan">sk-ant-...</code>). É salva apenas no seu navegador, não enviada a terceiros.</p>
+    <input id="inputApiKey" type="password" placeholder="sk-ant-..." class="w-full p-3 rounded-lg bg-slate-900/60 border border-slate-700 focus:border-cyan-400 outline-none text-sm mono mb-4">
+    <p class="text-xs text-slate-500 mb-4">Não tem? Pegue em <a href="https://console.anthropic.com/" target="_blank" class="cyan hover:underline">console.anthropic.com</a> (custo ~R$0,05 por análise).</p>
+    <div class="flex gap-2">
+      <button onclick="salvarApiKey()" class="btn-primary flex-1 py-2 rounded-lg">Salvar e analisar</button>
+      <button onclick="fecharModal()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOADER -->
+<div id="loader" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+  <div class="glass rounded-2xl p-8 text-center">
+    <div class="inline-block w-12 h-12 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin mb-4"></div>
+    <p class="text-lg font-bold">Analisando sua redação...</p>
+    <p class="text-sm text-slate-400 mt-1">~15 segundos</p>
+  </div>
+</div>
+
+<script>
+const TEMAS = [
+  { id: 't1', titulo: 'Acesso ao Judiciário e a desigualdade no Brasil', desc: 'O direito de acesso à Justiça é constitucional, mas barreiras econômicas e geográficas o limitam. Como o Brasil deve enfrentar essas desigualdades?' },
+  { id: 't2', titulo: 'Direitos humanos e populações vulneráveis no século XXI', desc: 'Apesar da DUDH de 1948 e da CF/88, populações vulneráveis (indígenas, LGBT+, mulheres negras, refugiados) ainda enfrentam violações sistemáticas. Discuta.' },
+  { id: 't3', titulo: 'O papel das redes sociais na democracia brasileira', desc: 'Redes sociais ampliaram o debate público, mas também a desinformação e a polarização. Qual o equilíbrio entre liberdade e responsabilidade?' },
+  { id: 't4', titulo: 'A judicialização da política e o futuro da democracia', desc: 'Cada vez mais decisões políticas são levadas ao Judiciário. Isso fortalece ou ameaça a democracia representativa brasileira?' },
+  { id: 't5', titulo: 'Justiça e desigualdade no Brasil contemporâneo', desc: 'A desigualdade econômica reflete-se no sistema de Justiça? O direito penal trata diferente ricos e pobres? Discuta dimensões éticas e estruturais.' },
+  { id: 't6', titulo: 'O direito à privacidade na era digital', desc: 'Coleta massiva de dados por empresas e governos vs. direito constitucional à privacidade. Como o Direito deve regular esse novo cenário?' },
+  { id: 't7', titulo: 'Pena de morte e direito à vida no debate brasileiro', desc: 'A CF/88 proíbe a pena de morte (cláusula pétrea). Periodicamente, surgem propostas de revisão. Por que é cláusula pétrea? O que significa pra um Estado Democrático?' },
+  { id: 't8', titulo: 'Liberdade de expressão e seus limites éticos', desc: 'Liberdade de expressão é direito fundamental, mas convive com o combate ao discurso de ódio. Como o Direito brasileiro deve equilibrar?' },
+  { id: 't9', titulo: 'A função social do Direito em uma sociedade plural', desc: 'O Direito deve apenas regular conflitos ou promover transformação social? Discuta com base em pensadores e na CF/88.' },
+  { id: 't10', titulo: 'Educação como direito fundamental e a realidade brasileira', desc: 'Art. 205 da CF/88 garante educação como direito de todos. Discuta o gap entre norma e realidade no Brasil contemporâneo.' }
+];
+
+let temaSelecionado = null;
+let timerSeg = 90 * 60;
+let timerId = null;
+let inicio = null;
+let textoAtual = '';
+
+function renderTemas() {
+  const grid = document.getElementById('temasGrid');
+  grid.innerHTML = TEMAS.map((t, i) => `
+    <div class="tema-card glass rounded-xl p-5 border border-slate-700/50" onclick="escolherTema('${t.id}')">
+      <p class="text-xs amber font-bold mb-2 mono">TEMA ${i+1}</p>
+      <h3 class="font-bold mb-2">${t.titulo}</h3>
+      <p class="text-xs text-slate-400 leading-relaxed">${t.desc}</p>
+    </div>`).join('');
+}
+
+function escolherTema(id) {
+  temaSelecionado = TEMAS.find(t => t.id === id);
+  document.getElementById('temaAtual').textContent = temaSelecionado.titulo;
+  document.getElementById('telaTemas').classList.add('hidden');
+  document.getElementById('telaEscrita').classList.remove('hidden');
+  inicio = new Date();
+  iniciarTimer();
+  document.getElementById('redacaoArea').focus();
+}
+
+function voltarTemas() {
+  if (timerId) clearInterval(timerId);
+  document.getElementById('telaTemas').classList.remove('hidden');
+  document.getElementById('telaEscrita').classList.add('hidden');
+  document.getElementById('telaResultado').classList.add('hidden');
+  document.getElementById('redacaoArea').value = '';
+  timerSeg = 90 * 60;
+}
+
+function iniciarTimer() {
+  timerId = setInterval(() => {
+    timerSeg--;
+    const m = Math.floor(timerSeg/60);
+    const s = timerSeg % 60;
+    const el = document.getElementById('timer');
+    el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    el.classList.remove('timer-warning','timer-danger');
+    if (timerSeg <= 60) el.classList.add('timer-danger');
+    else if (timerSeg <= 300) el.classList.add('timer-warning');
+    if (timerSeg <= 0) { clearInterval(timerId); alert('⏰ Tempo esgotado! Sua redação será analisada agora.'); analisar(); }
+  }, 1000);
+}
+
+document.addEventListener('input', e => {
+  if (e.target.id === 'redacaoArea') {
+    const txt = e.target.value;
+    const palavras = txt.trim().split(/\s+/).filter(Boolean).length;
+    const chars = txt.length;
+    // estima linhas (60 chars / linha)
+    const linhas = Math.ceil(chars / 60);
+    document.getElementById('palavrasCount').textContent = palavras;
+    document.getElementById('linhasCount').textContent = linhas;
+    document.getElementById('charCount').textContent = chars;
+    textoAtual = txt;
+  }
+});
+
+async function analisar() {
+  const texto = document.getElementById('redacaoArea').value.trim();
+  if (texto.length < 100) {
+    alert('Texto muito curto pra analisar. Escreva pelo menos 100 caracteres.');
+    return;
+  }
+  // Verifica API key
+  const key = localStorage.getItem('anthropic-api-key');
+  if (!key) {
+    document.getElementById('modalApiKey').classList.remove('hidden');
+    return;
+  }
+  await chamarAPI(texto, key);
+}
+
+function salvarApiKey() {
+  const k = document.getElementById('inputApiKey').value.trim();
+  if (!k.startsWith('sk-ant-')) { alert('Formato inválido. Chave deve começar com sk-ant-'); return; }
+  localStorage.setItem('anthropic-api-key', k);
+  fecharModal();
+  chamarAPI(document.getElementById('redacaoArea').value.trim(), k);
+}
+
+function fecharModal() { document.getElementById('modalApiKey').classList.add('hidden'); }
+
+async function chamarAPI(texto, key) {
+  document.getElementById('loader').classList.remove('hidden');
+  if (timerId) clearInterval(timerId);
+
+  const promptCorrecao = `Você é examinador da banca COAVE/UNICAP (Universidade Católica de Pernambuco), avaliando redação dissertativo-argumentativa do vestibular 2026.2 — curso de Direito.
+
+TEMA: "${temaSelecionado.titulo}"
+DESCRIÇÃO DO TEMA: ${temaSelecionado.desc}
+
+REDAÇÃO DO CANDIDATO:
+"""
+${texto}
+"""
+
+Avalie estritamente conforme os 5 CRITÉRIOS OFICIAIS DO EDITAL UNICAP 2026.2 (totalizando 1000 pontos):
+
+1. **ESTRUTURA (0-100 pts):** título obrigatório, parágrafos bem divididos, respeita 8-30 linhas. SE FALTAR TÍTULO, máximo 50 pts neste critério.
+2. **APROPRIAÇÃO TEMÁTICA (0-200 pts):** aderência ao recorte específico do tema. 0 = fuga; 100 = tangencia; 200 = pleno desenvolvimento.
+3. **CONSTRUÇÃO DOS ARGUMENTOS (0-200 pts):** estrutura lógica dos parágrafos, encadeamento, ausência de repetição. 0 = circular; 100 = parcial; 200 = sólido.
+4. **RELEVÂNCIA DA ARGUMENTAÇÃO (0-200 pts):** profundidade, qualidade do repertório (pertinente vs decorativo), problematização. 0 = superficial; 100 = razoável; 200 = profundo.
+5. **DOMÍNIO DA NORMA PADRÃO (0-300 pts) — MAIOR PESO:** ortografia, regência verbal/nominal, concordância, crase, pontuação, acentuação, coesão gramatical. Seja RIGOROSO com erros gramaticais.
+
+Verifique ainda se a redação:
+- Tem TÍTULO (sem título perde pontos da Estrutura)
+- Tem pelo menos 8 linhas
+- Não tem fuga ao tema, fuga ao gênero, desrespeito a direitos humanos, impropérios, desenhos ou assinatura/identificação (qualquer um zera = nota 0)
+
+Retorne APENAS um JSON válido (sem markdown, sem \`\`\`, sem texto extra) neste formato:
+{
+  "estrutura": NUMERO_0_A_100,
+  "apropriacao_tematica": NUMERO_0_A_200,
+  "construcao_argumentos": NUMERO_0_A_200,
+  "relevancia_argumentacao": NUMERO_0_A_200,
+  "norma_padrao": NUMERO_0_A_300,
+  "tem_titulo": BOOLEAN,
+  "n_linhas_estimadas": NUMERO,
+  "zerou": BOOLEAN,
+  "motivo_zerou": "string ou null",
+  "comentario_geral": "3-4 frases sobre a redação, tom direto e construtivo",
+  "sugestoes": ["sugestão concreta 1", "sugestão concreta 2", "sugestão concreta 3"],
+  "erros_norma_detectados": ["erro 1 com correção", "erro 2 com correção", "..."]
+}`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: promptCorrecao }]
+      })
+    });
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error('API erro ' + resp.status + ': ' + err);
+    }
+    const data = await resp.json();
+    const txt = data.content[0].text.trim();
+    // Tenta parsear o JSON
+    let result;
+    try {
+      result = JSON.parse(txt);
+    } catch (e) {
+      // Tenta extrair JSON de texto que pode ter markdown
+      const m = txt.match(/\{[\s\S]*\}/);
+      if (m) result = JSON.parse(m[0]);
+      else throw new Error('Resposta não é JSON válido: ' + txt);
+    }
+    mostrarResultado(result);
+  } catch (e) {
+    document.getElementById('loader').classList.add('hidden');
+    alert('Erro ao analisar: ' + e.message + '\n\nTente novamente ou verifique sua API key.');
+  }
+}
+
+function mostrarResultado(r) {
+  document.getElementById('loader').classList.add('hidden');
+  document.getElementById('telaEscrita').classList.add('hidden');
+  document.getElementById('telaResultado').classList.remove('hidden');
+
+  // Calcula nota oficial UNICAP
+  let notaUnicap;
+  if (r.zerou) {
+    notaUnicap = 0;
+  } else {
+    notaUnicap = (r.estrutura || 0) + (r.apropriacao_tematica || 0) + (r.construcao_argumentos || 0) + (r.relevancia_argumentacao || 0) + (r.norma_padrao || 0);
+  }
+  document.getElementById('notaTotal').textContent = notaUnicap;
+  document.getElementById('notaBruta').textContent = (notaUnicap/100).toFixed(1);
+
+  const criterios = [
+    { nome: 'Estrutura (título + linhas)', valor: r.estrutura || 0, max: 100, cor: '#00d4ff' },
+    { nome: 'Apropriação temática', valor: r.apropriacao_tematica || 0, max: 200, cor: '#ffb800' },
+    { nome: 'Construção dos argumentos', valor: r.construcao_argumentos || 0, max: 200, cor: '#10b981' },
+    { nome: 'Relevância da argumentação', valor: r.relevancia_argumentacao || 0, max: 200, cor: '#a78bfa' },
+    { nome: 'Domínio da norma padrão ⭐', valor: r.norma_padrao || 0, max: 300, cor: '#f472b6' }
+  ];
+  document.getElementById('criteriosArea').innerHTML = criterios.map(c => `
+    <div>
+      <div class="flex justify-between items-baseline mb-1">
+        <span class="font-medium">${c.nome}</span>
+        <span class="mono text-sm"><span style="color:${c.cor}">${c.valor}</span>/${c.max}</span>
+      </div>
+      <div class="nota-bar"><div class="nota-fill" style="width:${(c.valor/c.max)*100}%; background:${c.cor}"></div></div>
+    </div>
+  `).join('');
+
+  // Alerta zerou
+  let alertaZerou = '';
+  if (r.zerou) {
+    alertaZerou = `<div class="glass rounded-xl p-4 mb-4 border border-red-500"><p class="text-red-300 font-bold">⚠️ REDAÇÃO ZERADA</p><p class="text-sm mt-1">${r.motivo_zerou || 'Motivo não especificado pela IA.'}</p></div>`;
+  }
+  if (!r.tem_titulo) {
+    alertaZerou += `<div class="glass rounded-xl p-3 mb-4 border border-amber-500"><p class="text-amber-300 text-sm">⚠️ Faltou TÍTULO — perdeu pontos da Estrutura.</p></div>`;
+  }
+  document.getElementById('comentarioGeral').innerHTML = alertaZerou + r.comentario_geral;
+
+  document.getElementById('sugestoes').innerHTML = r.sugestoes.map((s, i) => `
+    <li class="flex gap-3 p-3 bg-slate-900/40 rounded-lg">
+      <span class="amber font-bold text-lg shrink-0">${i+1}</span>
+      <p class="text-sm leading-relaxed">${s}</p>
+    </li>`).join('');
+
+  // Erros de norma (se houver)
+  if (r.erros_norma_detectados && r.erros_norma_detectados.length > 0) {
+    const errosHtml = `
+      <div class="glass rounded-2xl p-6 mb-6 border border-pink-500/30">
+        <h2 class="text-xl font-bold mb-3 text-pink-400">📝 Erros de norma detectados (corrigi-los sobe a nota — 300pts em jogo)</h2>
+        <ul class="space-y-2">
+          ${r.erros_norma_detectados.map(e => `<li class="text-sm text-slate-300 p-2 bg-slate-900/40 rounded">• ${e}</li>`).join('')}
+        </ul>
+      </div>`;
+    document.querySelector('#sugestoes').parentElement.insertAdjacentHTML('afterend', errosHtml);
+  }
+
+  // Salva no localStorage
+  const histKey = 'unicap-redacoes';
+  const hist = JSON.parse(localStorage.getItem(histKey) || '[]');
+  hist.push({
+    data: new Date().toISOString(),
+    tema: temaSelecionado.titulo,
+    texto: document.getElementById('redacaoArea').value,
+    notas: {
+      estrutura: r.estrutura,
+      apropriacao: r.apropriacao_tematica,
+      argumentos: r.construcao_argumentos,
+      relevancia: r.relevancia_argumentacao,
+      norma: r.norma_padrao
+    },
+    notaUnicap,
+    tem_titulo: r.tem_titulo,
+    zerou: r.zerou,
+    comentario: r.comentario_geral,
+    sugestoes: r.sugestoes,
+    erros_norma: r.erros_norma_detectados
+  });
+  localStorage.setItem(histKey, JSON.stringify(hist));
+}
+
+function finalizarSemAnalise() {
+  if (!confirm('Salvar a redação sem análise IA? Você pode voltar e analisar depois.')) return;
+  if (timerId) clearInterval(timerId);
+  const hist = JSON.parse(localStorage.getItem('unicap-redacoes') || '[]');
+  hist.push({
+    data: new Date().toISOString(),
+    tema: temaSelecionado.titulo,
+    texto: document.getElementById('redacaoArea').value,
+    notas: null,
+    notaUnicap: null,
+    comentario: null
+  });
+  localStorage.setItem('unicap-redacoes', JSON.stringify(hist));
+  alert('Redação salva. Você pode voltar e analisar depois.');
+  voltarTemas();
+}
+
+renderTemas();
+</script>
+</body>
+</html>

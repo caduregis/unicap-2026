@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geometria — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#030108; color:#c8b8e8; font-family:'Inter',sans-serif; min-height:100vh; padding-bottom:60px; }
+a { color:#8866cc; text-decoration:none; transition:color 0.2s; }
+a:hover { color:#bb99ff; }
+#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(3,1,8,0.95); border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(12px);
+}
+#nav-back, #nav-map {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5); font-size:12px; font-weight:500;
+  padding:7px 14px; border-radius:7px; transition:all 0.2s;
+}
+#nav-back:hover, #nav-map:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#nav-title { font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.hero { padding:60px 24px 40px; text-align:center; max-width:860px; margin:0 auto; }
+.hero-badge {
+  display:inline-block; background:rgba(255,160,44,0.12); border:1px solid rgba(255,160,44,0.25);
+  color:#cc8833; font-size:11px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size:clamp(28px,5vw,44px); font-weight:700; line-height:1.15;
+  background:linear-gradient(135deg,#f8d8a8,#cc8833,#aa5511);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:16px;
+}
+.hero p { font-size:15px; color:rgba(240,200,160,0.5); max-width:560px; margin:0 auto; line-height:1.7; }
+.content { max-width:860px; margin:0 auto; padding:0 24px; }
+.section {
+  margin-bottom:40px; background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden;
+}
+.section-header {
+  padding:20px 24px 16px; border-bottom:1px solid rgba(255,255,255,0.05);
+  display:flex; align-items:center; gap:12px;
+}
+.section-num {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,#aa5511,#dd8822);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#ffcc88; flex-shrink:0;
+}
+.section-title {
+  font-size:17px; font-weight:700;
+  background:linear-gradient(90deg,#f8d4a8,#cc8833);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.section-body { padding:20px 24px; }
+.card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:8px; }
+.card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; border-left:3px solid; }
+.card.blue { border-left-color:#4488ff; }
+.card.gold { border-left-color:#ddaa22; }
+.card.green { border-left-color:#44cc88; }
+.card.orange { border-left-color:#ff8844; }
+.card.cyan { border-left-color:#44ccff; }
+.card.red { border-left-color:#ff5555; }
+.card.purple { border-left-color:#8855cc; }
+.card h3 { font-size:13px; font-weight:700; color:#d4c8f0; margin-bottom:8px; }
+.card p { font-size:12px; color:#8878a8; line-height:1.65; }
+.formula-block {
+  background:rgba(255,160,44,0.06); border:1px solid rgba(255,160,44,0.15);
+  border-radius:10px; padding:14px 18px; margin:10px 0;
+  font-family:'Courier New',monospace; font-size:13px; color:#d4aa66; line-height:1.8;
+}
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+th { background:rgba(200,120,30,0.12); color:#d4a060; font-weight:600; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; padding:10px 14px; text-align:left; }
+td { padding:10px 14px; color:#9080b0; border-bottom:1px solid rgba(255,255,255,0.04); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:20px; margin-bottom:16px; }
+.question-card .q-label { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#aa7733; margin-bottom:10px; }
+.question-card .q-text { font-size:14px; color:#c0b0e0; margin-bottom:14px; font-weight:500; }
+.question-card .q-answer { background:rgba(68,204,136,0.06); border:1px solid rgba(68,204,136,0.15); border-radius:8px; padding:12px 16px; font-size:12px; color:#88c8a0; line-height:1.6; }
+.q-answer strong { color:#66ff99; }
+.tip-box { background:rgba(255,170,0,0.06); border:1px solid rgba(255,170,0,0.15); border-radius:10px; padding:14px 18px; margin-top:12px; font-size:12px; color:#b89944; line-height:1.6; }
+.tip-box strong { color:#ffcc44; }
+.text-body { font-size:14px; color:#9080b0; line-height:1.7; margin-bottom:12px; }
+.formula-table td { font-family:'Courier New',monospace; }
+.formula-table td:first-child { color:#ffcc88; font-weight:600; }
+.formula-table td:nth-child(2) { color:#cc8833; }
+.formula-table td:last-child { color:#8899cc; }
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Matemática · Geometria</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</div>
+<div class="hero">
+  <div class="hero-badge">Matemática</div>
+  <h1>Geometria</h1>
+  <p>Geometria plana, espacial e analítica completas com trigonometria básica — tudo para o UNICAP 2026.</p>
+</div>
+<div class="content">
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">1</div><div class="section-title">Geometria Plana — Triângulos e Polígonos</div></div>
+    <div class="section-body">
+      <p class="text-body">A geometria plana estuda figuras em duas dimensões: ponto, reta, plano, polígonos e círculos. Os triângulos são a base de toda a geometria.</p>
+      <div class="card-grid">
+        <div class="card gold">
+          <h3>Triângulos — Classificação</h3>
+          <p>Por lados: equilátero (3 iguais), isósceles (2 iguais), escaleno (todos diferentes). Por ângulos: acutângulo (todos &lt;90°), retângulo (um =90°), obtusângulo (um >90°).</p>
+        </div>
+        <div class="card blue">
+          <h3>Pitágoras</h3>
+          <p>No triângulo retângulo: c² = a² + b², onde c é a hipotenusa. Triplas pitagóricas comuns: (3,4,5), (5,12,13), (8,15,17). Multiplicações dessas: (6,8,10), etc.</p>
+        </div>
+        <div class="card green">
+          <h3>Triângulo Equilátero</h3>
+          <p>Lado L: Área = L²√3/4. Altura = L√3/2. Os três ângulos medem 60° cada. A mediana, altura, bissetriz e mediatriz coincidem.</p>
+        </div>
+        <div class="card orange">
+          <h3>Polígonos Regulares</h3>
+          <p>Soma ângulos internos: (n−2)·180°. Cada ângulo interno: (n−2)·180°/n. Diagonal de polígono n lados: n(n−3)/2. Ângulo externo: 360°/n.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Triângulo — Área:
+  A = base × altura / 2
+  A = (a·b·sen C) / 2  (dois lados e ângulo entre eles)
+  A = √(s(s-a)(s-b)(s-c))  (Fórmula de Heron, s = (a+b+c)/2)
+
+Triângulo equilátero: A = L²√3/4,  h = L√3/2
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">2</div><div class="section-title">Quadriláteros e Área — Tabela Completa</div></div>
+    <div class="section-body">
+      <table>
+        <thead><tr><th>Figura</th><th>Área</th><th>Perímetro</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>Quadrado (lado L)</td><td>L²</td><td>4L</td><td>Diagonal = L√2</td></tr>
+          <tr><td>Retângulo (b × h)</td><td>b × h</td><td>2(b+h)</td><td>Diagonal = √(b²+h²)</td></tr>
+          <tr><td>Losango (diag D, d)</td><td>D × d / 2</td><td>4L (L = lado)</td><td>L = √((D/2)²+(d/2)²)</td></tr>
+          <tr><td>Trapézio (bases B, b; alt h)</td><td>(B+b)×h / 2</td><td>B+b+lat1+lat2</td><td>Mediatriz = (B+b)/2</td></tr>
+          <tr><td>Paralelogramo (b × h)</td><td>b × h</td><td>2(b+L_lado)</td><td>Altura ⊥ base</td></tr>
+          <tr><td>Triângulo (b × h)</td><td>b × h / 2</td><td>a+b+c</td><td>h = altura relativa à base</td></tr>
+          <tr><td>Círculo (raio r)</td><td>π r²</td><td>2π r</td><td>π ≈ 3,14159</td></tr>
+          <tr><td>Setor circular (ângulo θ°)</td><td>π r² · θ/360</td><td>2r + arco</td><td>arco = 2πr·θ/360</td></tr>
+          <tr><td>Polígono regular (n lados, apót. a)</td><td>n · L · a / 2</td><td>n · L</td><td>a = apótema</td></tr>
+        </tbody>
+      </table>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Para o trapézio, a área é sempre (soma das bases paralelas × altura)/2. Questões gostam de dar apenas as bases e a altura ou exigir que se calcule a altura pelo Pitágoras.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">3</div><div class="section-title">Geometria Espacial — Sólidos</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Prismas</h3>
+          <p>Volume: V = A_base × altura. Área lateral: A_lat = perímetro_base × altura. Área total: A_lat + 2·A_base. Prisma reto: faces laterais são retângulos.</p>
+        </div>
+        <div class="card gold">
+          <h3>Pirâmides</h3>
+          <p>Volume: V = A_base × altura / 3. Área lateral: soma das faces triangulares laterais. Tronco: V = h/3 · (A₁ + A₂ + √(A₁·A₂)).</p>
+        </div>
+        <div class="card green">
+          <h3>Cilindro</h3>
+          <p>V = π r² h. A_lateral = 2π r h. A_total = 2π r (r + h). Planificação: retângulo + 2 círculos.</p>
+        </div>
+        <div class="card orange">
+          <h3>Cone</h3>
+          <p>V = π r² h / 3. A_lateral = π r l (l = geratriz = √(r²+h²)). A_total = π r (r + l). Planificação: setor circular + círculo.</p>
+        </div>
+        <div class="card cyan">
+          <h3>Esfera</h3>
+          <p>V = 4π r³ / 3. A_superfície = 4π r². Hemisfério: V = 2πr³/3; A = 3πr².</p>
+        </div>
+        <div class="card purple">
+          <h3>Cubo</h3>
+          <p>V = a³. A_total = 6a². Diagonal principal: d = a√3. Diagonal da face: d = a√2. Inscrito em esfera: r = a√3/2.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Resumo rápido dos volumes:
+  Prisma/Cilindro = A_base × h
+  Pirâmide/Cone  = A_base × h / 3
+  Esfera         = 4πr³ / 3
+  Cubo           = a³
+
+Regra: pirâmide/cone = 1/3 do prisma/cilindro de mesma base e altura.
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">4</div><div class="section-title">Geometria Analítica</div></div>
+    <div class="section-body">
+      <p class="text-body">Geometria analítica usa coordenadas cartesianas para representar figuras como equações algébricas. Liga álgebra e geometria.</p>
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Distância entre Pontos</h3>
+          <p>d(A,B) = √((x₂−x₁)² + (y₂−y₁)²). Em 3D: d = √((x₂−x₁)² + (y₂−y₁)² + (z₂−z₁)²).</p>
+        </div>
+        <div class="card gold">
+          <h3>Ponto Médio</h3>
+          <p>M = ((x₁+x₂)/2 , (y₁+y₂)/2). Divide o segmento ao meio. Mediatriz é perpendicular ao segmento em M.</p>
+        </div>
+        <div class="card green">
+          <h3>Equação da Reta</h3>
+          <p>Forma reduzida: y = ax + b. Forma geral: Ax + By + C = 0. Coeficiente angular: a = (y₂−y₁)/(x₂−x₁). Retas paralelas: mesmo a. Perpendiculares: a₁·a₂ = −1.</p>
+        </div>
+        <div class="card orange">
+          <h3>Circunferência</h3>
+          <p>Centro (a,b) raio r: (x−a)² + (y−b)² = r². Forma geral: x²+y²+Dx+Ey+F=0 → completar o quadrado. Centro: (−D/2, −E/2); r² = D²/4 + E²/4 − F.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Distância ponto-reta (Ax+By+C=0 e ponto (x₀,y₀)):
+  d = |Ax₀ + By₀ + C| / √(A² + B²)
+
+Área do triângulo com vértices (x₁,y₁),(x₂,y₂),(x₃,y₃):
+  A = |x₁(y₂−y₃) + x₂(y₃−y₁) + x₃(y₁−y₂)| / 2
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">5</div><div class="section-title">Trigonometria Básica no Triângulo Retângulo</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card blue"><h3>Seno (sin)</h3><p>sin θ = cateto oposto / hipotenusa. sin 30° = 1/2. sin 45° = √2/2. sin 60° = √3/2. sin 90° = 1.</p></div>
+        <div class="card green"><h3>Cosseno (cos)</h3><p>cos θ = cateto adjacente / hipotenusa. cos 30° = √3/2. cos 45° = √2/2. cos 60° = 1/2. cos 90° = 0.</p></div>
+        <div class="card orange"><h3>Tangente (tan)</h3><p>tan θ = cateto oposto / cateto adjacente = sin/cos. tan 30° = √3/3. tan 45° = 1. tan 60° = √3. tan 90° = indefinida.</p></div>
+        <div class="card gold"><h3>Identidade Fundamental</h3><p>sin²θ + cos²θ = 1 (sempre verdadeiro). Decorre do Teorema de Pitágoras aplicado ao círculo unitário.</p></div>
+      </div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Mnemônico SOH-CAH-TOA: Seno=Oposto/Hipotenusa, Cosseno=Adjacente/Hipotenusa, Tangente=Oposto/Adjacente. Aprenda a tabela de valores notáveis de cor — é cobrada diretamente.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">6</div><div class="section-title">Questões-Tipo UNICAP — Resolvidas</div></div>
+    <div class="section-body">
+      <div class="question-card">
+        <div class="q-label">Questão 1 — Área de Trapézio</div>
+        <div class="q-text">Um trapézio tem bases paralelas de 8 cm e 14 cm. As laterais medem 5 cm e 5 cm. Calcule a área.</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong> O trapézio é isósceles. A diferença das bases = 14−8 = 6 cm. Cada lado excede a base menor por 3 cm.<br>
+          Altura: h = √(5² − 3²) = √(25−9) = √16 = 4 cm<br>
+          Área = (B+b)·h/2 = (14+8)·4/2 = 22·2 = <strong>44 cm²</strong>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 2 — Volume de Cone</div>
+        <div class="q-text">Um cone tem raio da base 6 cm e geratriz 10 cm. Calcule o volume (use π = 3).</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong> Altura: h = √(l²−r²) = √(100−36) = √64 = 8 cm<br>
+          Volume = π r² h / 3 = 3 × 36 × 8 / 3 = 3 × 12 × 8 / ... = 36 × 8 = <strong>288 cm³</strong><br>
+          (π r² h / 3 = 3 × 36 × 8 / 3 = 36 × 8 = 288 cm³)
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 3 — Geometria Analítica</div>
+        <div class="q-text">Determine a equação da circunferência com centro C(2, −3) e que passa pelo ponto P(6, 0).</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong> O raio é a distância de C a P:<br>
+          r = √((6−2)² + (0−(−3))²) = √(16+9) = √25 = 5<br>
+          Equação: (x−2)² + (y+3)² = 25<br>
+          Ou seja, <strong>(x−2)² + (y+3)² = 25</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">7</div><div class="section-title">Tabela de Fórmulas Essenciais</div></div>
+    <div class="section-body">
+      <table class="formula-table">
+        <thead><tr><th>Figura</th><th>Fórmula</th><th>Obs</th></tr></thead>
+        <tbody>
+          <tr><td>Triângulo</td><td>A = b·h/2</td><td>Pitágoras: c²=a²+b²</td></tr>
+          <tr><td>Equilátero</td><td>A = L²√3/4</td><td>h = L√3/2</td></tr>
+          <tr><td>Quadrado</td><td>A = L²</td><td>Diagonal = L√2</td></tr>
+          <tr><td>Losango</td><td>A = D·d/2</td><td>D e d = diagonais</td></tr>
+          <tr><td>Trapézio</td><td>A = (B+b)·h/2</td><td>B,b = bases paralelas</td></tr>
+          <tr><td>Círculo</td><td>A = πr²; C = 2πr</td><td>Setor: A = πr²·θ/360</td></tr>
+          <tr><td>Prisma/Cilindro</td><td>V = A_base · h</td><td>A_lat = P_base · h</td></tr>
+          <tr><td>Pirâmide/Cone</td><td>V = A_base · h / 3</td><td>Cone: l = √(r²+h²)</td></tr>
+          <tr><td>Esfera</td><td>V = 4πr³/3</td><td>A = 4πr²</td></tr>
+          <tr><td>Cubo</td><td>V = a³; A = 6a²</td><td>Diagonal: a√3</td></tr>
+          <tr><td>Dist. pontos</td><td>d = √(Δx²+Δy²)</td><td>2D; 3D: +Δz²</td></tr>
+          <tr><td>Circunferência</td><td>(x−a)²+(y−b)²=r²</td><td>Centro (a,b), raio r</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

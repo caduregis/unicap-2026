@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idade Contemporânea · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--pri:#ef4444;--pri2:#fb7185;--paper:#fce8e8;--ink:#1a0808}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0e0408;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+canvas{display:block}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,.6) 85%,#000 100%)}
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#1a0808 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out .5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(252,232,232,.5);text-transform:uppercase}
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}.hud>*{pointer-events:auto}
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(239,68,68,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(26,8,8,.7);backdrop-filter:blur(20px);border:1px solid rgba(239,68,68,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(26,8,8,.78) 0%,rgba(40,12,12,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(239,68,68,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(252,232,232,.78);font-style:italic}
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(26,8,8,.65);backdrop-filter:blur(20px);border:1px solid rgba(239,68,68,.2);border-radius:10px;font-size:13px;color:rgba(252,232,232,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(26,8,8,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(14,4,8,.96) 0%,rgba(26,8,8,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(239,68,68,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(252,232,232,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(239,68,68,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(252,232,232,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(252,232,232,.78);position:relative;border-bottom:1px solid rgba(239,68,68,.06)}
+.sec li::before{content:'⚛';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(239,68,68,.15) 0%,rgba(251,113,133,.08) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head><body>
+<div id="loader"><div class="lwrap"><div class="lr"></div><div class="lc"></div></div><div class="lt1">CONTEMPORÂNEA</div><div class="lt2">guerras · revoluções · foguetes</div></div>
+<div id="three-canvas"></div><div class="vinheta"></div>
+<div class="hud">
+  <div class="brand"><div class="bm">⚛</div><div class="bt"><div class="l1">Idade Contemporânea</div><div class="l2">história geral · 1.6</div></div></div>
+  <div class="act"><button class="btn" id="reset">⟲ Vista geral</button><a class="btn" href="galeria-mapas.html">← Galeria</a></div>
+  <div class="info"><span class="ep">UNICAP 2026.2 · HIST 1.6</span><h1>Idade Contemporânea</h1><p>1789-hoje. Bastilha em chamas, foice e martelo soviético, tanque de guerra, cogumelo atômico, Muro de Berlim caindo, satélite globalização, foguete espacial. Clique nos marcos.</p></div>
+  <div class="hint"><div class="r"><kbd>DRAG</kbd> orbitar</div><div class="r"><kbd>SCROLL</kbd> zoom</div><div class="r"><kbd>CLICK</kbd> marco</div></div>
+</div>
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+<aside class="painel" id="painel"><button class="painel-close" onclick="fc()">✕</button><span class="pcod" id="pc"></span><h2 id="pn"></h2><div class="psub" id="psb"></div><div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div><div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div><div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div></aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error',e=>{document.getElementById('loader').innerHTML='<div style="color:#fb7185;padding:24px;font-family:monospace;"><h2>Erro</h2><pre style="white-space:pre-wrap;font-size:12px;">'+e.message+'\n'+(e.error&&e.error.stack||'')+'</pre></div>'});
+
+const MARCOS=[
+{id:'fran',cod:'HG 1.6a',nome:'Revolução Francesa · Napoleão',sub:'1789-1815 · Bastilha · Império',
+topicos:['Revolução Francesa (1789): Queda da Bastilha, Declaração dos Direitos do Homem e do Cidadão','3 fases: monárquica (1789-92), girondina/jacobina/Terror (1792-94), Diretório/Consulado (1795-99)','Liberté, Égalité, Fraternité','O domínio de Napoleão na Europa (1799-1815): Consulado, Império','Código Napoleônico (1804) — base do Código Civil brasileiro','Bloqueio Continental contra a Inglaterra','Derrota em Waterloo (1815), Congresso de Viena, exílio em Santa Helena'],
+resumo:'1789 marca o nascimento do mundo contemporâneo: fim do Antigo Regime, ideias liberais consagradas. Napoleão "exportou" ideias da revolução.',
+dica:'Vinda da Corte Portuguesa ao Brasil (1808) foi consequência DIRETA do bloqueio continental e da expansão napoleônica.'},
+{id:'sec19',cod:'HG 1.6c',nome:'Séc. XIX · Marx · Unificações',sub:'Liberalismo · socialismo · nacionalismo',
+topicos:['Ideologias e revoluções europeias no século XIX','Liberalismo, socialismo (utópico × científico: Marx e Engels)','Manifesto Comunista (1848) e O Capital (1867)','Nacionalismo: unificação alemã (Bismarck, 1871), unificação italiana (Garibaldi, Cavour, 1870)','Ondas revolucionárias de 1830 e 1848','Guerra de Secessão dos EUA (1861-1865)','Imperialismo neocolonial (Conferência de Berlim 1884-85)'],
+resumo:'Séc. XIX vê ascensão da burguesia industrial, formação dos estados-nações modernos (Itália, Alemanha), nascimento do socialismo marxista.',
+dica:'1848 = ano-chave: Primavera dos Povos + Manifesto Comunista. Bismarck unificou Alemanha em "blood and iron" (sangue e ferro).'},
+{id:'guerra1',cod:'HG 1.6d',nome:'I Guerra · Revolução Russa',sub:'1914-1917',
+topicos:['Primeira Guerra Mundial (1914-1918): Tríplice Entente × Tríplice Aliança','Estopim: assassinato do arquiduque Francisco Ferdinando (Sarajevo, 1914)','Guerra de trincheiras na Frente Ocidental','Tratado de Versalhes (1919) humilha a Alemanha','Revolução Russa de 1917 (Lênin, bolcheviques)','Czar Nicolau II abdicou, depois assassinado','A direção de Lênin (1917-24) e de Stalin (1924-53)'],
+resumo:'1ª Guerra = primeira guerra industrial. Tratado de Versalhes plantou sementes da 2ª Guerra. Revolução Russa = primeiro estado socialista do mundo.',
+dica:'Tratado de Versalhes (1919) humilhou tanto a Alemanha que abriu caminho pra Hitler 14 anos depois. URSS foi o 1º Estado socialista.'},
+{id:'tot',cod:'HG 1.6e',nome:'Totalitarismos · 1929',sub:'Fascismo · Nazismo · Crise',
+topicos:['Crise de 1929: quebra da Bolsa de NY, Grande Depressão','New Deal (Roosevelt) — intervenção do Estado','Itália fascista (Mussolini, 1922)','Alemanha nazista (Hitler, 1933) — antissemitismo, supremacia ariana','Franquismo na Espanha (Franco, 1939-1975)','Período entre guerras: instabilidade econômica e política','Holocausto/Shoah: 6 milhões de judeus mortos'],
+resumo:'Crise econômica gerou regimes autoritários. Totalitarismos: controle total do Estado, partido único, culto à personalidade.',
+dica:'Fascismo (Itália) — nacionalismo corporativista. Nazismo (Alemanha) — racismo + nacionalismo. Comunismo soviético — totalitário também. Hannah Arendt analisa os 3.'},
+{id:'guerra2',cod:'HG 1.6f',nome:'II Guerra · ONU · Bomba Atômica',sub:'1939-1945',
+topicos:['Segunda Guerra Mundial (1939-1945): Eixo × Aliados','Brasil declarou guerra ao Eixo (1942) — FEB lutou na Itália','Bombas atômicas em Hiroshima e Nagasaki (agosto 1945)','Mundo pós-guerra: bipolarização (EUA × URSS)','ONU (1945) — sucessora da Liga das Nações','Declaração Universal dos Direitos Humanos (1948)','Plano Marshall (EUA) para reconstrução da Europa','Bretton Woods: FMI, Banco Mundial, GATT'],
+resumo:'2ª Guerra deixou 50-80 milhões de mortos, primeiras armas nucleares usadas. Após, mundo dividido em 2 superpotências.',
+dica:'ONU substituiu Liga das Nações. DUDH 1948 é base dos direitos humanos modernos. FEB Brasileira lutou na Itália (cobras fumantes).'},
+{id:'fria',cod:'HG 1.6g',nome:'Guerra Fria · Mundo Bipolar',sub:'1947-1991 · Muro de Berlim',
+topicos:['Guerra Fria (1947-1991): EUA × URSS','OTAN × Pacto de Varsóvia','Cortina de Ferro (Churchill, 1946), Muro de Berlim (1961)','Cuba e o socialismo: Fidel Castro (1959), Crise dos Mísseis (1962)','Populismo na América Latina: Perón, Vargas','Ditaduras militares na América Latina (1964-89)','Fim da colonização nos países africanos e asiáticos','Oriente Médio: conflitos árabe-israelenses','China: dos tempos imperialistas ao socialismo (Mao, 1949)'],
+resumo:'Guerra Fria moldou metade do séc. XX. Disputa ideológica, corrida armamentista, guerras "por procuração" (Coreia, Vietnã, Afeganistão).',
+dica:'Crise dos Mísseis (1962) foi quando o mundo MAIS perto chegou de guerra nuclear. Ditadura militar brasileira (1964-85) parte do contexto.'},
+{id:'fim',cod:'HG 1.6h',nome:'Fim do Século XX · Globalização',sub:'1989-2001',
+topicos:['Queda do muro de Berlim (1989)','Desintegração da URSS (1991) — fim oficial da Guerra Fria','Disputas no Leste Europeu (Iugoslávia 1991-2001)','Reunificação da Alemanha (1990)','Crises na economia global (México 1994, Ásia 1997)','O terrorismo: 11 de setembro de 2001 (Torres Gêmeas)','Estados Unidos e a luta contra o terror','Globalização: blocos econômicos, multinacionais, internet'],
+resumo:'1989-1991 = fim do mundo bipolar. EUA viraram única superpotência. Globalização acelerou após 1990. 11/9/2001 inicia "Guerra ao Terror".',
+dica:'Francis Fukuyama ("Fim da História", 1992), Samuel Huntington ("Choque de Civilizações") são referências pós-Guerra Fria.'},
+{id:'sec21',cod:'HG 1.6i',nome:'Século XXI · Hoje',sub:'IA · clima · multipolar',
+topicos:['Crises na economia global (2008 — crise do subprime)','Primavera Árabe (2010-12): Tunísia, Egito, Líbia, Síria','Crise dos refugiados (sírios, ucranianos)','Ascensão da China como segunda potência mundial','Guerra Rússia × Ucrânia (2022+)','Conflito Israel × Hamas (2023+)','As novas tecnologias e novos agentes sociais e políticos','Mudanças climáticas: Acordo de Paris (2015), COP30 (Brasil 2025)','IA, big data, redes sociais'],
+resumo:'Séc. XXI = era digital, climática, multipolar. China desafia hegemonia americana. Conflitos regionais com efeitos globais.',
+dica:'COP30 será no Brasil (Belém, 2025). Acordo de Paris (2015) é o tratado climático mais importante. China = 2ª maior economia.'}
+];
+
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x180810);
+scene.fog=new THREE.Fog(0x180810,90,280);
+
+const camera=new THREE.PerspectiveCamera(45,innerWidth/innerHeight,0.1,500);
+camera.position.set(65,52,75);
+
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.setPixelRatio(Math.min(2,devicePixelRatio));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=0.95;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=0.07;
+controls.minDistance=35;controls.maxDistance=180;
+controls.maxPolarAngle=Math.PI*0.48;controls.target.set(0,5,0);
+
+scene.add(new THREE.AmbientLight(0x603040,0.5));
+const sun=new THREE.DirectionalLight(0xffd8a8,1.3);
+sun.position.set(40,55,30);sun.castShadow=true;
+sun.shadow.mapSize.width=2048;sun.shadow.mapSize.height=2048;
+sun.shadow.camera.left=-80;sun.shadow.camera.right=80;
+sun.shadow.camera.top=80;sun.shadow.camera.bottom=-80;
+sun.shadow.bias=-0.0005;scene.add(sun);
+scene.add(new THREE.HemisphereLight(0xef4444,0x2a1010,0.25));
+
+// Ground - urbanizado, cinza/concreto
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(300,300),new THREE.MeshStandardMaterial({color:0x3a2828,roughness:0.95}));
+ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+
+const markers=[];const groups={};
+function addMarker(id,x,z){const g=new THREE.Group();g.position.set(x,0,z);scene.add(g);groups[id]=g;return g;}
+
+// BASTILHA EM CHAMAS (esquerda fundo)
+{const g=addMarker('fran',-38,-20);
+// Torre da Bastilha (fortaleza)
+const base=new THREE.Mesh(new THREE.CylinderGeometry(2.5,3,7,8),new THREE.MeshStandardMaterial({color:0x6a5040,roughness:0.95}));
+base.position.y=3.5;base.castShadow=base.receiveShadow=true;g.add(base);
+// Ameias
+for(let i=0;i<8;i++){const a=i*Math.PI/4;const am=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.7,0.5),new THREE.MeshStandardMaterial({color:0x6a5040}));am.position.set(Math.cos(a)*2.5,7.35,Math.sin(a)*2.5);g.add(am);}
+// Chamas grandes saindo do topo
+g.userData.flames=[];
+for(let i=0;i<8;i++){
+  const f=new THREE.Mesh(new THREE.ConeGeometry(0.6+Math.random()*0.4,2.5,8),new THREE.MeshStandardMaterial({color:0xff5020,emissive:0xff3000,emissiveIntensity:0.9,transparent:true,opacity:0.85}));
+  const a=Math.random()*Math.PI*2;const r=Math.random()*2;
+  f.position.set(Math.cos(a)*r,8+Math.random()*1.5,Math.sin(a)*r);
+  f.userData.base=f.position.y;f.userData.phase=Math.random()*Math.PI*2;
+  g.add(f);g.userData.flames.push(f);
+}
+// Bandeira francesa (tricolor) erguida
+const fpole=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,6,6),new THREE.MeshStandardMaterial({color:0x3a2010,roughness:0.95}));
+fpole.position.set(5,3,1);g.add(fpole);
+for(let i=0;i<3;i++){
+  const stripe=new THREE.Mesh(new THREE.PlaneGeometry(0.7,1.4),new THREE.MeshStandardMaterial({color:[0x002395,0xffffff,0xed2939][i],side:THREE.DoubleSide}));
+  stripe.position.set(5.7+i*0.7,5,1);g.add(stripe);
+}
+// Pedras espalhadas (cair da Bastilha)
+for(let i=0;i<6;i++){
+  const p=new THREE.Mesh(new THREE.BoxGeometry(0.8+Math.random()*0.4,0.6,0.7),new THREE.MeshStandardMaterial({color:0x7a6050,roughness:0.95}));
+  const a=Math.random()*Math.PI*2;p.position.set(Math.cos(a)*5,0.3,Math.sin(a)*5);p.rotation.y=Math.random()*Math.PI;p.castShadow=true;g.add(p);
+}
+// Luz vermelha de fogo
+const fireL=new THREE.PointLight(0xff5020,2,15);fireL.position.set(0,8,0);g.add(fireL);
+markers.push({id:'fran',center:new THREE.Vector3(-38,5,-20),radius:10,group:g});}
+
+// MARX / FOICE E MARTELO (esquerda meio)
+{const g=addMarker('sec19',-30,12);
+// Pedestal
+const ped=new THREE.Mesh(new THREE.BoxGeometry(3,2,3),new THREE.MeshStandardMaterial({color:0x603030,roughness:0.85}));
+ped.position.y=1;ped.castShadow=ped.receiveShadow=true;g.add(ped);
+// Foice
+const sickle=new THREE.Group();sickle.position.set(0,4,0);
+const handle=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,3,8),new THREE.MeshStandardMaterial({color:0x6a4020,roughness:0.85}));
+handle.rotation.z=-0.3;sickle.add(handle);
+const blade=new THREE.Mesh(new THREE.TorusGeometry(1,0.18,8,12,Math.PI),new THREE.MeshStandardMaterial({color:0xc8c0b0,metalness:0.8,roughness:0.3,emissive:0xf0a050,emissiveIntensity:0.2}));
+blade.position.set(0.7,1.5,0);blade.rotation.x=Math.PI/2;blade.rotation.z=-0.5;sickle.add(blade);
+g.add(sickle);g.userData.sickle=sickle;
+// Martelo
+const hammer=new THREE.Group();hammer.position.set(0,4,0);
+const hh=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.18,3,8),new THREE.MeshStandardMaterial({color:0x6a4020,roughness:0.85}));
+hh.rotation.z=0.3;hammer.add(hh);
+const head=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.2,0.6),new THREE.MeshStandardMaterial({color:0x4a4848,metalness:0.7,roughness:0.4}));
+head.position.set(-0.5,1.3,0);hammer.add(head);
+g.add(hammer);g.userData.hammer=hammer;
+// Bandeira vermelha
+const flag=new THREE.Mesh(new THREE.PlaneGeometry(3,2),new THREE.MeshStandardMaterial({color:0xc62828,side:THREE.DoubleSide,emissive:0x600808,emissiveIntensity:0.3}));
+flag.position.set(0,6.5,-1.5);g.add(flag);
+// Estrela amarela
+const star=new THREE.Mesh(new THREE.RingGeometry(0.15,0.5,5),new THREE.MeshBasicMaterial({color:0xf5d040,side:THREE.DoubleSide}));
+star.position.set(0,6.5,-1.49);g.add(star);
+markers.push({id:'sec19',center:new THREE.Vector3(-30,4,12),radius:9,group:g});}
+
+// I GUERRA - TRINCHEIRA + ATM HISTÓRICO (centro esquerda)
+{const g=addMarker('guerra1',-15,-8);
+// Trincheira (caixa funda)
+const trench=new THREE.Mesh(new THREE.BoxGeometry(10,1.5,3),new THREE.MeshStandardMaterial({color:0x5a4028,roughness:0.95}));
+trench.position.y=0.75;trench.castShadow=trench.receiveShadow=true;g.add(trench);
+// Sacos de areia
+for(let i=0;i<8;i++){
+  const sb=new THREE.Mesh(new THREE.SphereGeometry(0.4,8,6),new THREE.MeshStandardMaterial({color:0x9a8060,roughness:0.95}));
+  sb.position.set(-4+i*1,1.7,1.6);sb.castShadow=true;g.add(sb);
+}
+// Capacete militar (icônico)
+const helmet=new THREE.Mesh(new THREE.SphereGeometry(0.6,16,8,0,Math.PI*2,0,Math.PI/2),new THREE.MeshStandardMaterial({color:0x4a5040,metalness:0.5,roughness:0.6}));
+helmet.position.set(-2,2.2,1.5);helmet.castShadow=true;g.add(helmet);
+// Cruz vermelha (médica)
+const cross=new THREE.Group();cross.position.set(2,2,1.5);
+const cv=new THREE.Mesh(new THREE.BoxGeometry(0.15,0.7,0.15),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x500808,emissiveIntensity:0.3}));cross.add(cv);
+const ch=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.15,0.15),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x500808,emissiveIntensity:0.3}));cross.add(ch);
+g.add(cross);
+markers.push({id:'guerra1',center:new THREE.Vector3(-15,2,-8),radius:8,group:g});}
+
+// TOTALITARISMOS / Águia + suástica estilizada (centro)
+{const g=addMarker('tot',0,-25);
+// Pilar austero
+const pillar=new THREE.Mesh(new THREE.BoxGeometry(2.5,9,2.5),new THREE.MeshStandardMaterial({color:0x3a3838,roughness:0.7}));
+pillar.position.y=4.5;pillar.castShadow=pillar.receiveShadow=true;g.add(pillar);
+// Águia estilizada (corpo + 2 asas planas)
+const eagleBody=new THREE.Mesh(new THREE.SphereGeometry(0.6,16,10),new THREE.MeshStandardMaterial({color:0x6a6a6a,metalness:0.6,roughness:0.5}));
+eagleBody.position.set(0,10,0);g.add(eagleBody);
+for(let s=-1;s<=1;s+=2){
+  const wing=new THREE.Mesh(new THREE.PlaneGeometry(1.5,0.5),new THREE.MeshStandardMaterial({color:0x6a6a6a,side:THREE.DoubleSide,metalness:0.6,roughness:0.5}));
+  wing.position.set(s*1,10,0);wing.rotation.y=Math.PI/2;wing.rotation.z=s*0.2;g.add(wing);
+}
+// Bandeiras totalitárias estilizadas — só cores neutras
+for(let i=-1;i<=1;i+=2){
+  const flag=new THREE.Mesh(new THREE.PlaneGeometry(1.5,2),new THREE.MeshStandardMaterial({color:0x802020,side:THREE.DoubleSide,emissive:0x300808,emissiveIntensity:0.25}));
+  flag.position.set(i*3,4,0);g.add(flag);
+  const ringO=new THREE.Mesh(new THREE.RingGeometry(0.45,0.55,16),new THREE.MeshBasicMaterial({color:0xf5e8c8,side:THREE.DoubleSide}));
+  ringO.position.set(i*3,4,0.01);g.add(ringO);
+}
+markers.push({id:'tot',center:new THREE.Vector3(0,5,-25),radius:9,group:g});}
+
+// II GUERRA - COGUMELO ATÔMICO (direita fundo)
+{const g=addMarker('guerra2',30,-22);
+// Caule da nuvem cogumelo
+const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.5,1.8,10,16),new THREE.MeshStandardMaterial({color:0x9a8068,roughness:0.95,emissive:0xc88040,emissiveIntensity:0.15}));
+stem.position.y=5;stem.castShadow=true;g.add(stem);
+// Topo da cogumelo (3 esferas empilhadas)
+for(let i=0;i<3;i++){
+  const r=4-i*0.8;
+  const cap=new THREE.Mesh(new THREE.SphereGeometry(r,20,16),new THREE.MeshStandardMaterial({color:0xa89070,roughness:0.95,emissive:0xc88040,emissiveIntensity:0.2,transparent:true,opacity:0.92}));
+  cap.position.y=11+i*2;cap.castShadow=true;g.add(cap);
+}
+// Brilho central
+const flash=new THREE.PointLight(0xffd060,3,20);flash.position.set(0,13,0);g.add(flash);
+// Símbolo ONU (anel azul flutuante)
+const un=new THREE.Mesh(new THREE.RingGeometry(1.2,1.5,32),new THREE.MeshStandardMaterial({color:0x5b92e5,side:THREE.DoubleSide,emissive:0x3060c0,emissiveIntensity:0.4}));
+un.position.set(-4,6,3);g.add(un);g.userData.un=un;
+// Globo dentro do anel ONU
+const globe=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),new THREE.MeshStandardMaterial({color:0x4080c0,roughness:0.5,emissive:0x102040,emissiveIntensity:0.2}));
+globe.position.set(-4,6,3);g.add(globe);g.userData.globe=globe;
+markers.push({id:'guerra2',center:new THREE.Vector3(30,6,-22),radius:10,group:g});}
+
+// GUERRA FRIA / MURO DE BERLIM (direita meio)
+{const g=addMarker('fria',32,10);
+// Muro segmentado
+for(let i=-4;i<=4;i++){
+  const block=new THREE.Mesh(new THREE.BoxGeometry(1.4,5,1.2),new THREE.MeshStandardMaterial({color:0x9a8070,roughness:0.9}));
+  block.position.set(i*1.5,2.5,0);block.castShadow=block.receiveShadow=true;
+  // Grafites colorido em alguns
+  if(i%2===0) block.material.color.setHex(0xc8a878);
+  g.add(block);
+}
+// Pichações (planos coloridos no muro)
+const tags=[0xc62828,0xf0c040,0x4060c0];
+for(let i=0;i<3;i++){
+  const t=new THREE.Mesh(new THREE.PlaneGeometry(2,1.2),new THREE.MeshStandardMaterial({color:tags[i],side:THREE.DoubleSide,emissive:tags[i],emissiveIntensity:0.15}));
+  t.position.set(-3+i*3,2.8,0.62);g.add(t);
+}
+// Estrela vermelha (URSS) e estrelas brancas (EUA) flutuantes — bipolarismo
+const urss=new THREE.Mesh(new THREE.SphereGeometry(0.8,16,12),new THREE.MeshStandardMaterial({color:0xc62828,emissive:0x800808,emissiveIntensity:0.5,roughness:0.5}));
+urss.position.set(-6,7,0);g.add(urss);g.userData.urss=urss;
+const eua=new THREE.Mesh(new THREE.SphereGeometry(0.8,16,12),new THREE.MeshStandardMaterial({color:0x4060c0,emissive:0x203080,emissiveIntensity:0.5,roughness:0.5}));
+eua.position.set(6,7,0);g.add(eua);g.userData.eua=eua;
+// Arame farpado (toróides finos)
+for(let i=0;i<3;i++){
+  const wire=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.03,4,12),new THREE.MeshStandardMaterial({color:0x6a6068,metalness:0.7,roughness:0.4}));
+  wire.position.set(-2+i*2,5.5,0);wire.rotation.y=Math.PI/2;g.add(wire);
+}
+markers.push({id:'fria',center:new THREE.Vector3(32,4,10),radius:10,group:g});}
+
+// FIM SÉC XX - TORRES + ANTENA GLOBAL (frente direita)
+{const g=addMarker('fim',18,22);
+// Duas torres altas (NY estilizado)
+for(let s=-1;s<=1;s+=2){
+  const t=new THREE.Mesh(new THREE.BoxGeometry(1.8,12,1.8),new THREE.MeshStandardMaterial({color:0x6a8090,metalness:0.7,roughness:0.3,emissive:0x102040,emissiveIntensity:0.15}));
+  t.position.set(s*1.5,6,0);t.castShadow=t.receiveShadow=true;g.add(t);
+  // Janelas (faixa de luzes)
+  for(let f=1;f<6;f++){
+    const win=new THREE.Mesh(new THREE.PlaneGeometry(1.6,0.6),new THREE.MeshBasicMaterial({color:0xffd060,transparent:true,opacity:0.85}));
+    win.position.set(s*1.5,1+f*2,0.91);g.add(win);
+  }
+}
+// Antena globalização (esfera com anéis)
+const earth=new THREE.Mesh(new THREE.SphereGeometry(1.3,24,16),new THREE.MeshStandardMaterial({color:0x4080c0,roughness:0.5,emissive:0x102040,emissiveIntensity:0.3}));
+earth.position.set(0,16,0);g.add(earth);g.userData.earth=earth;
+// 3 anéis cruzados (órbitas)
+for(let i=0;i<3;i++){
+  const r=new THREE.Mesh(new THREE.TorusGeometry(2,0.05,8,32),new THREE.MeshStandardMaterial({color:0xf0a050,emissive:0xc06030,emissiveIntensity:0.5,metalness:0.7,roughness:0.3}));
+  r.position.set(0,16,0);r.rotation.x=i*Math.PI/3;r.rotation.z=i*Math.PI/4;g.add(r);
+}
+markers.push({id:'fim',center:new THREE.Vector3(18,5,22),radius:10,group:g});}
+
+// SÉCULO XXI - FOGUETE + IA CHIP (frente esquerda)
+{const g=addMarker('sec21',-18,25);
+// Foguete (cilindro + cone)
+const body=new THREE.Mesh(new THREE.CylinderGeometry(0.7,1,7,16),new THREE.MeshStandardMaterial({color:0xfaf0d8,roughness:0.5,metalness:0.3}));
+body.position.y=4.5;body.castShadow=true;g.add(body);
+const nose=new THREE.Mesh(new THREE.ConeGeometry(0.7,2,16),new THREE.MeshStandardMaterial({color:0xc62828,roughness:0.5}));
+nose.position.y=9;nose.castShadow=true;g.add(nose);
+// Aletas
+for(let i=0;i<4;i++){
+  const a=i*Math.PI/2;
+  const fin=new THREE.Mesh(new THREE.BoxGeometry(0.15,1.5,1),new THREE.MeshStandardMaterial({color:0x4060c0,roughness:0.5}));
+  fin.position.set(Math.cos(a)*0.95,2,Math.sin(a)*0.95);g.add(fin);
+}
+// Chamas embaixo
+g.userData.flames=[];
+for(let i=0;i<5;i++){
+  const fl=new THREE.Mesh(new THREE.ConeGeometry(0.5+Math.random()*0.3,1.5+Math.random()*0.5,8),new THREE.MeshStandardMaterial({color:0xff5020,emissive:0xff3000,emissiveIntensity:0.8,transparent:true,opacity:0.8}));
+  fl.position.set((Math.random()-0.5)*1,0.5,(Math.random()-0.5)*1);fl.rotation.x=Math.PI;g.add(fl);g.userData.flames.push(fl);
+}
+// Luz da chama
+const flameL=new THREE.PointLight(0xff6030,2,10);flameL.position.set(0,1,0);g.add(flameL);
+// Chip IA flutuante ao lado
+const chip=new THREE.Mesh(new THREE.BoxGeometry(2,0.4,2),new THREE.MeshStandardMaterial({color:0x208040,emissive:0x10c040,emissiveIntensity:0.4,metalness:0.7,roughness:0.4}));
+chip.position.set(4,5,0);g.add(chip);g.userData.chip=chip;
+// Linhas no chip
+for(let i=-2;i<=2;i+=1){
+  if(i===0) continue;
+  const line=new THREE.Mesh(new THREE.BoxGeometry(0.05,0.02,1.8),new THREE.MeshBasicMaterial({color:0x80ffa0}));
+  line.position.set(4+i*0.3,5.22,0);g.add(line);
+}
+markers.push({id:'sec21',center:new THREE.Vector3(-18,5,25),radius:10,group:g});}
+
+markers.forEach(m=>{
+  const ring=new THREE.Mesh(new THREE.RingGeometry(m.radius*0.9,m.radius*1.05,40),new THREE.MeshBasicMaterial({color:0xfb7185,side:THREE.DoubleSide,transparent:true,opacity:0.35}));
+  ring.rotation.x=-Math.PI/2;ring.position.set(m.center.x,0.1,m.center.z);
+  scene.add(ring);m.ring=ring;
+});
+
+const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();let hovered=null;
+function onMove(ev){
+  mouse.x=(ev.clientX/innerWidth)*2-1;mouse.y=-(ev.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(mouse,camera);let id=null;
+  for(const m of markers){
+    if(raycaster.intersectObject(m.ring,false).length){id=m.id;break;}
+    if(raycaster.intersectObject(m.group,true).length){id=m.id;break;}
+  }
+  const tag=document.getElementById('tag');
+  if(id){hovered=id;document.body.style.cursor='pointer';
+    const mc=MARCOS.find(x=>x.id===id);
+    document.getElementById('tc').textContent=mc.cod;
+    document.getElementById('tn').textContent=mc.nome;
+    tag.style.left=(ev.clientX+18)+'px';tag.style.top=(ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {hovered=null;document.body.style.cursor='grab';tag.classList.remove('show');}
+}
+window.addEventListener('pointermove',onMove);
+window.addEventListener('click',()=>{if(hovered) abrirPainel(hovered);});
+window.fc=()=>document.getElementById('painel').classList.remove('open');
+function abrirPainel(id){
+  const m=MARCOS.find(x=>x.id===id);if(!m) return;
+  document.getElementById('pc').textContent=m.cod;
+  document.getElementById('pn').textContent=m.nome;
+  document.getElementById('psb').textContent=m.sub;
+  const ul=document.getElementById('pt');ul.innerHTML='';
+  m.topicos.forEach(t=>{const li=document.createElement('li');li.textContent=t;ul.appendChild(li);});
+  document.getElementById('pr').textContent=m.resumo;
+  document.getElementById('pd').textContent=m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+document.getElementById('reset').addEventListener('click',()=>{
+  const sp=camera.position.clone(),ep=new THREE.Vector3(65,52,75);
+  const st=controls.target.clone(),et=new THREE.Vector3(0,5,0);
+  const t0=performance.now();
+  (function tw(){const t=Math.min(1,(performance.now()-t0)/900);const e=1-Math.pow(1-t,4);
+    camera.position.lerpVectors(sp,ep,e);controls.target.lerpVectors(st,et,e);
+    if(t<1) requestAnimationFrame(tw);})();
+});
+
+const clock=new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  markers.forEach(m=>{m.ring.material.opacity=0.25+0.2*Math.sin(t*2.2+m.center.x*0.1);});
+  // Bastilha em chamas
+  if(groups['fran']&&groups['fran'].userData.flames){
+    groups['fran'].userData.flames.forEach(f=>{
+      f.position.y=f.userData.base+Math.sin(t*5+f.userData.phase)*0.3;
+      f.scale.y=1+Math.sin(t*6+f.userData.phase)*0.2;
+    });
+  }
+  // Marx
+  if(groups['sec19']){
+    if(groups['sec19'].userData.sickle) groups['sec19'].userData.sickle.rotation.y=t*0.3;
+    if(groups['sec19'].userData.hammer) groups['sec19'].userData.hammer.rotation.y=-t*0.3;
+  }
+  // Cogumelo ONU
+  if(groups['guerra2']){
+    if(groups['guerra2'].userData.globe) groups['guerra2'].userData.globe.rotation.y=t*0.4;
+    if(groups['guerra2'].userData.un) groups['guerra2'].userData.un.rotation.z=t*0.2;
+  }
+  // Guerra Fria estrelas
+  if(groups['fria']){
+    if(groups['fria'].userData.urss){groups['fria'].userData.urss.position.y=7+Math.sin(t*1.2)*0.3;groups['fria'].userData.urss.rotation.y=t;}
+    if(groups['fria'].userData.eua){groups['fria'].userData.eua.position.y=7+Math.cos(t*1.2)*0.3;groups['fria'].userData.eua.rotation.y=-t;}
+  }
+  // Globalização
+  if(groups['fim']&&groups['fim'].userData.earth) groups['fim'].userData.earth.rotation.y=t*0.3;
+  // Foguete chamas
+  if(groups['sec21']){
+    if(groups['sec21'].userData.flames){
+      groups['sec21'].userData.flames.forEach(f=>{f.scale.y=1+Math.sin(t*15+f.id)*0.3;f.scale.x=1+Math.cos(t*12)*0.15;});
+    }
+    if(groups['sec21'].userData.chip) groups['sec21'].userData.chip.rotation.y=t*0.5;
+  }
+  controls.update();renderer.render(scene,camera);
+}
+loop();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+setTimeout(()=>document.getElementById('loader').classList.add('hide'),800);
+</script>
+</body></html>

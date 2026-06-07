@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brasil Colonial · Diorama 3D · UNICAP 2026.2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pri:#d4a017; --pri2:#f0c040;
+  --paper:#f5ede0; --ink:#1a1208; --terra:#6b3410;
+  --green:#2d5d3a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0710;color:var(--paper);font-family:'Cormorant Garamond',Georgia,serif;cursor:grab}
+body.dragging{cursor:grabbing}
+canvas{display:block}
+.cinzel{font-family:'Cinzel',serif}
+#three-canvas{position:fixed;inset:0;z-index:1}
+.vinheta{position:fixed;inset:0;z-index:3;pointer-events:none;background:radial-gradient(ellipse 110% 90% at center,transparent 35%,rgba(0,0,0,0.55) 85%,#000 100%)}
+.grain{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:0.06;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.6'/></svg>")}
+
+#loader{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse at center,#1a1208 0%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease-out 0.5s}
+#loader.hide{opacity:0;pointer-events:none}
+.lwrap{position:relative;width:120px;height:120px;margin-bottom:32px}
+.lr{position:absolute;inset:0;border:2px solid transparent;border-top-color:var(--pri);border-right-color:var(--pri2);border-radius:50%;animation:lspin 1.2s linear infinite}
+@keyframes lspin{to{transform:rotate(360deg)}}
+.lc{position:absolute;inset:30px;border-radius:50%;background:radial-gradient(circle,var(--pri) 0%,transparent 70%);animation:lpulse 1.4s ease-in-out infinite}
+@keyframes lpulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+.lt1{font-family:'Cinzel',serif;font-size:24px;letter-spacing:.18em;color:var(--pri);margin-bottom:8px}
+.lt2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.25em;color:rgba(245,237,224,.5);text-transform:uppercase}
+
+.hud{position:fixed;inset:0;z-index:20;pointer-events:none}
+.hud>*{pointer-events:auto}
+
+.brand{position:fixed;top:24px;left:28px;display:flex;align-items:center;gap:14px}
+.bm{width:46px;height:46px;background:linear-gradient(135deg,var(--pri) 0%,var(--pri2) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--ink);box-shadow:0 0 28px rgba(212,160,23,.5)}
+.bt{line-height:1}
+.bt .l1{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.05em;color:var(--paper);margin-bottom:4px}
+.bt .l2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--pri)}
+
+.act{position:fixed;top:24px;right:28px;display:flex;gap:10px}
+.btn{padding:10px 16px;background:rgba(26,18,8,.7);backdrop-filter:blur(20px);border:1px solid rgba(212,160,23,.25);border-radius:8px;color:var(--paper);font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 280ms}
+.btn:hover{border-color:var(--pri);color:var(--pri2);transform:translateY(-1px)}
+
+.info{position:fixed;bottom:24px;left:28px;max-width:380px;padding:22px 26px;background:linear-gradient(135deg,rgba(26,18,8,.78) 0%,rgba(40,30,15,.78) 100%);backdrop-filter:blur(24px);border:1px solid rgba(212,160,23,.25);border-radius:14px}
+.info .ep{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:8px}
+.info h1{font-family:'Cinzel',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:8px;background:linear-gradient(180deg,var(--paper) 0%,var(--pri) 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.info p{font-size:14px;line-height:1.55;color:rgba(245,237,224,.78);font-style:italic}
+
+.hint{position:fixed;bottom:24px;right:28px;display:flex;flex-direction:column;gap:6px;padding:14px 18px;background:rgba(26,18,8,.65);backdrop-filter:blur(20px);border:1px solid rgba(212,160,23,.2);border-radius:10px;font-size:13px;color:rgba(245,237,224,.7)}
+.hint .r{display:flex;align-items:center;gap:8px}
+.hint kbd{display:inline-block;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.3);border-radius:4px;color:var(--pri);min-width:46px;text-align:center}
+
+.tag{position:fixed;z-index:25;padding:10px 18px;background:rgba(26,18,8,.92);backdrop-filter:blur(20px);border:1px solid var(--pri);border-radius:8px;font-family:'Cinzel',serif;font-size:14px;color:var(--paper);pointer-events:none;opacity:0;transition:opacity 200ms;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.tag.show{opacity:1}
+.tag .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--pri);margin-right:8px;letter-spacing:1.5px}
+
+.painel{position:fixed;top:0;right:-460px;width:440px;height:100vh;z-index:30;background:linear-gradient(180deg,rgba(15,10,5,.96) 0%,rgba(26,18,8,.96) 100%);backdrop-filter:blur(30px);border-left:1px solid rgba(212,160,23,.3);transition:right 480ms cubic-bezier(.22,1,.36,1);overflow-y:auto;padding:38px 32px}
+.painel.open{right:0}
+.painel::-webkit-scrollbar{width:6px}
+.painel::-webkit-scrollbar-thumb{background:var(--pri);border-radius:3px}
+.painel-close{position:absolute;top:18px;right:18px;width:34px;height:34px;background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.3);border-radius:50%;color:var(--paper);cursor:pointer;font-size:18px;line-height:32px;text-align:center;transition:all 280ms}
+.painel-close:hover{background:var(--pri);color:var(--ink);transform:rotate(90deg)}
+.pcod{display:inline-block;padding:4px 10px;background:rgba(212,160,23,.15);border:1px solid rgba(212,160,23,.3);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--pri);margin-bottom:14px;text-transform:uppercase}
+.painel h2{font-family:'Cinzel',serif;font-size:28px;font-weight:700;line-height:1.1;color:var(--pri2);margin-bottom:8px}
+.psub{font-size:14px;color:rgba(245,237,224,.6);font-style:italic;margin-bottom:24px}
+.sec{margin-bottom:24px;padding-bottom:22px;border-bottom:1px solid rgba(212,160,23,.12)}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2.5px;color:var(--pri);text-transform:uppercase;margin-bottom:12px}
+.sec p{font-size:15px;line-height:1.6;color:rgba(245,237,224,.85)}
+.sec ul{list-style:none}
+.sec li{padding:8px 0 8px 22px;font-size:14px;line-height:1.55;color:rgba(245,237,224,.78);position:relative;border-bottom:1px solid rgba(212,160,23,.06)}
+.sec li::before{content:'◆';position:absolute;left:0;color:var(--pri);font-size:10px;top:11px}
+.tip{padding:14px 16px;background:linear-gradient(135deg,rgba(212,160,23,.12) 0%,rgba(240,192,64,.06) 100%);border-left:3px solid var(--pri);border-radius:6px;font-size:14px;line-height:1.55;color:var(--paper)}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="lwrap"><div class="lr"></div><div class="lc"></div></div>
+  <div class="lt1">BRASIL COLONIAL</div>
+  <div class="lt2">construindo diorama 1500-1822</div>
+</div>
+
+<div id="three-canvas"></div>
+<div class="vinheta"></div>
+<div class="grain"></div>
+
+<div class="hud">
+  <div class="brand">
+    <div class="bm">⚜</div>
+    <div class="bt"><div class="l1">Brasil Colonial</div><div class="l2">história · diorama 3d</div></div>
+  </div>
+  <div class="act">
+    <button class="btn" id="reset">⟲ Vista geral</button>
+    <a class="btn" href="galeria-mapas.html">← Galeria</a>
+  </div>
+  <div class="info">
+    <span class="ep">UNICAP 2026.2 · HIST BR 2.2</span>
+    <h1>Brasil Colônia</h1>
+    <p>1500-1822. Engenho fumegante, Quilombo dos Palmares com palmeiras, Vila Rica do ouro, Capela barroca, Caravela no mar, Pelourinho. Clique nos elementos.</p>
+  </div>
+  <div class="hint">
+    <div class="r"><kbd>DRAG</kbd> orbitar</div>
+    <div class="r"><kbd>SCROLL</kbd> zoom</div>
+    <div class="r"><kbd>CLICK</kbd> elemento</div>
+  </div>
+</div>
+
+<div class="tag" id="tag"><span class="c" id="tc"></span><span id="tn"></span></div>
+
+<aside class="painel" id="painel">
+  <button class="painel-close" onclick="fc()">✕</button>
+  <span class="pcod" id="pc"></span>
+  <h2 id="pn"></h2>
+  <div class="psub" id="psb"></div>
+  <div class="sec"><div class="sec-t">No Programa Oficial</div><ul id="pt"></ul></div>
+  <div class="sec"><div class="sec-t">O que aconteceu</div><p id="pr"></p></div>
+  <div class="sec"><div class="sec-t">Dica de Prova</div><div class="tip" id="pd"></div></div>
+</aside>
+
+<script src="https://unpkg.com/three@0.140.2/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.140.2/examples/js/controls/OrbitControls.js"></script>
+<script>
+window.addEventListener('error', e => {
+  document.getElementById('loader').innerHTML = '<div style="color:#f0c040;padding:24px;text-align:center;font-family:monospace;max-width:600px;"><h2>Erro de carregamento</h2><pre style="white-space:pre-wrap;text-align:left;margin-top:12px;font-size:12px;">'+e.message+'\n\n'+(e.error&&e.error.stack||'')+'</pre></div>';
+});
+
+const MARCOS = [
+  { id:'engenho', cod:'HIST 2.2a', nome:'Engenho de Açúcar',
+    sub:'Zona da Mata · séc. XVI-XVIII · escravidão e mercantilismo',
+    topicos:[
+      'Engenho de Açúcar: principal atividade econômica da colônia (séc. XVI-XVII)',
+      'Pernambuco e Bahia: principais centros açucareiros do Brasil colonial',
+      'Mão de obra escravizada africana (4-5 milhões trazidos para o Brasil)',
+      'Trabalho árduo: cana, moagem, fornalha, purga',
+      'Senhor de engenho × escravos × homens livres pobres',
+      'Casa-grande × senzala (Gilberto Freyre)',
+      'Pacto colonial e mercantilismo metropolitano (exclusivo metropolitano)',
+      'Invasões holandesas (1630-1654) — Maurício de Nassau em Pernambuco'
+    ],
+    resumo:'O engenho era o motor econômico da colônia. Pernambuco e Bahia produziam o açúcar exportado para a Europa. Mão de obra escravizada africana sustentava o sistema.',
+    dica:'⚠️ PERNAMBUCO foi o MAIOR produtor de açúcar do mundo no séc. XVI/XVII. Casa-grande × senzala é referência obrigatória (Gilberto Freyre, pernambucano).'
+  },
+  { id:'palmares', cod:'HIST 2.2b', nome:'Quilombo dos Palmares',
+    sub:'Serra da Barriga (AL) · 1597-1695 · Zumbi',
+    topicos:[
+      'Quilombo dos Palmares: maior comunidade de escravos fugidos da história brasileira',
+      'Localizado na Serra da Barriga (Alagoas, então capitania de Pernambuco)',
+      'Existiu por quase 100 anos (1597-1695)',
+      'Liderança lendária: Ganga Zumba e depois Zumbi dos Palmares',
+      'Zumbi: símbolo da resistência negra brasileira',
+      'Morte de Zumbi: 20 de novembro de 1695 (Dia Nacional da Consciência Negra)',
+      'Destruído pela bandeira de Domingos Jorge Velho (paulista)',
+      'Outros quilombos brasileiros: Buraco do Tatu (BA), Carlota (MT)'
+    ],
+    resumo:'Palmares foi o maior símbolo de resistência à escravidão na América portuguesa. Comunidade autônoma com agricultura, religião e organização própria.',
+    dica:'⚠️ 20 de novembro = Dia da Consciência Negra (morte de Zumbi 1695). Serra da Barriga hoje é em AL, mas era parte de PE colonial. Domingos Jorge Velho = bandeirante destruidor.'
+  },
+  { id:'vilarica', cod:'HIST 2.2c', nome:'Vila Rica · Ciclo do Ouro',
+    sub:'Minas Gerais · 1693-1789 · barroco mineiro',
+    topicos:[
+      'Ciclo do Ouro: descoberto em Minas Gerais em 1693',
+      'Vila Rica (atual Ouro Preto): capital do ciclo',
+      'Mudança da capital colonial: Salvador → Rio de Janeiro (1763)',
+      'Quinto do ouro: tributo de 20% pago à Coroa Portuguesa',
+      'Casas de fundição (controle da Coroa sobre o ouro)',
+      'Arte Barroca brasileira: Aleijadinho (Antônio Francisco Lisboa), Mestre Ataíde',
+      'Igrejas barrocas: São Francisco de Assis (Ouro Preto), Bom Jesus de Matosinhos (Congonhas)',
+      'Inconfidência Mineira (1789): Tiradentes, Tomás Antônio Gonzaga, Cláudio Manuel da Costa',
+      '"Libertas Quae Sera Tamen" (liberdade ainda que tardia)'
+    ],
+    resumo:'Ouro de Minas Gerais financiou a Europa por décadas. Vila Rica viveu auge cultural barroco. Inconfidência Mineira (1789) foi a primeira tentativa de independência.',
+    dica:'INCONFIDÊNCIA MINEIRA inspirou-se na Revolução Francesa e Independência dos EUA. Tiradentes (Joaquim José da Silva Xavier) foi enforcado em 1792 — único punido.'
+  },
+  { id:'capela', cod:'HIST 2.2d', nome:'Capela Barroca · Jesuítas',
+    sub:'Catequização · educação · arte sacra',
+    topicos:[
+      'Companhia de Jesus (Jesuítas): chegada com Tomé de Sousa em 1549',
+      'Padre Manuel da Nóbrega, José de Anchieta',
+      'Aldeamento dos indígenas (catequização e exploração)',
+      'Educação colonial: jesuítas controlavam quase todo o ensino',
+      'Auto da Barca do Inferno, autos sacramentais',
+      'Arte Barroca brasileira: igrejas com talha dourada',
+      'Estados portugueses no Brasil colonial: Estado do Maranhão e Estado do Brasil',
+      'Conflito Pombal × Jesuítas: expulsão dos jesuítas (1759, Marquês de Pombal)',
+      'Após expulsão: Reforma de Pombal modernizou educação'
+    ],
+    resumo:'A Igreja Católica, via jesuítas, foi instrumento central da colonização: catequização indígena, educação, arte. Pombal os expulsou em 1759.',
+    dica:'JESUÍTAS expulsos em 1759 (Marquês de Pombal). José de Anchieta = "Apóstolo do Brasil". Padre Antônio Vieira pregou em PE/BA contra escravidão indígena.'
+  },
+  { id:'caravela', cod:'HIST 2.2e', nome:'Caravela · Chegada Portuguesa',
+    sub:'1500 · Cabral · Tordesilhas',
+    topicos:[
+      'Período Pré-Colonial (1500-1530): apenas exploração do pau-brasil',
+      'Pedro Álvares Cabral chegou em 22 de abril de 1500 (Monte Pascoal, BA)',
+      'Tratado de Tordesilhas (1494): linha imaginária 370 léguas a oeste de Cabo Verde',
+      'Capitanias Hereditárias (1534): tentativa de povoamento (Pernambuco e São Vicente foram as únicas prósperas)',
+      'Governo-Geral (1549): Tomé de Sousa funda Salvador, primeira capital',
+      'Pau-brasil: extração intensiva, escambo com indígenas',
+      'União Ibérica (1580-1640): Portugal sob domínio espanhol',
+      'Invasões francesas: França Antártica (RJ, 1555), França Equinocial (MA, 1612)',
+      'Invasões holandesas em Pernambuco (1630-1654) — Maurício de Nassau'
+    ],
+    resumo:'Portugal colonizou o Brasil em fases: pré-colonial (só pau-brasil), capitanias (falharam quase todas), Governo-Geral. Invasões francesas e holandesas marcaram o período.',
+    dica:'⚠️ CAPITANIAS HEREDITÁRIAS: só PERNAMBUCO (Duarte Coelho) e SÃO VICENTE (Martim Afonso) prosperaram. As outras 12 falharam. Maurício de Nassau modernizou Recife.'
+  },
+  { id:'revolucao', cod:'HIST 2.2f', nome:'Revolução Pernambucana 1817',
+    sub:'Recife · 6 de março de 1817 · república nativista',
+    topicos:[
+      'Revolução Pernambucana de 1817: maior movimento separatista colonial',
+      'Estourou em 6 de março de 1817 em Recife',
+      'Causas: insatisfação com altos impostos, presença da Corte no RJ (1808), crise econômica',
+      'Influências: ideais iluministas, Revolução Francesa, Independência dos EUA',
+      'Proclamou a República em Pernambuco (durou apenas 75 dias)',
+      'Líderes: Padre João Ribeiro, Domingos José Martins, Frei Caneca',
+      'Sufocada por D. João VI; líderes executados',
+      'Confederação do Equador (1824) foi a continuação dessa revolta — Frei Caneca de novo'
+    ],
+    resumo:'Pernambuco foi o foco de revoluções nativistas (1710 Mascates, 1817 Pernambucana, 1824 Confederação do Equador, 1848 Praieira). Tradição libertária do estado.',
+    dica:'⚠️⚠️ UNICAP! Esse é o tópico MAIS PERNAMBUCANO de toda a história colonial. Frei Caneca é símbolo: lutou em 1817 E em 1824, foi fuzilado. Recife = berço das revoluções.'
+  }
+];
+
+// ===== THREE.JS SCENE =====
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a1218);
+scene.fog = new THREE.Fog(0x0a1218, 60, 180);
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 500);
+camera.position.set(50, 38, 55);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.95;
+document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.minDistance = 25;
+controls.maxDistance = 130;
+controls.maxPolarAngle = Math.PI * 0.48;
+controls.target.set(0, 4, 0);
+
+// ===== LIGHTS =====
+scene.add(new THREE.AmbientLight(0x7a6648, 0.35));
+const sun = new THREE.DirectionalLight(0xfff0d0, 1.6);
+sun.position.set(35, 50, 28);
+sun.castShadow = true;
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 200;
+sun.shadow.camera.left = -60;
+sun.shadow.camera.right = 60;
+sun.shadow.camera.top = 60;
+sun.shadow.camera.bottom = -60;
+sun.shadow.bias = -0.0005;
+scene.add(sun);
+const fillLight = new THREE.HemisphereLight(0xd4a017, 0x2d5d3a, 0.25);
+scene.add(fillLight);
+
+// ===== GROUND: solo + mar =====
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(200, 200, 80, 80),
+  new THREE.MeshStandardMaterial({ color:0x3a5a30, roughness:0.95 })
+);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+{
+  const pos = ground.geometry.attributes.position;
+  for (let i=0; i<pos.count; i++){
+    const x = pos.getX(i), y = pos.getY(i);
+    let dist = Math.sqrt(x*x + y*y);
+    let h = Math.sin(x*0.08)*0.4 + Math.cos(y*0.07)*0.3;
+    if (x < -25) h -= 5 - (x+25)*0.1;
+    pos.setZ(i, h);
+  }
+  ground.geometry.computeVertexNormals();
+}
+scene.add(ground);
+
+// Mar (lado esquerdo, x < -25)
+const sea = new THREE.Mesh(
+  new THREE.PlaneGeometry(120, 200, 60, 60),
+  new THREE.MeshStandardMaterial({ color:0x0d4862, roughness:0.2, metalness:0.5, transparent:true, opacity:0.85 })
+);
+sea.rotation.x = -Math.PI/2;
+sea.position.set(-65, -1, 0);
+scene.add(sea);
+
+// Praia
+const beach = new THREE.Mesh(
+  new THREE.PlaneGeometry(8, 60),
+  new THREE.MeshStandardMaterial({ color:0xe8d8a0, roughness:0.9 })
+);
+beach.rotation.x = -Math.PI/2;
+beach.position.set(-27, 0.02, 0);
+beach.receiveShadow = true;
+scene.add(beach);
+
+// ===== MARCOS — pontos clicáveis =====
+const markers = [];
+const groups = {}; // id -> Group
+
+function addMarker(id, x, z, label) {
+  const g = new THREE.Group();
+  g.position.set(x, 0, z);
+  g.userData.id = id;
+  g.userData.label = label;
+  scene.add(g);
+  groups[id] = g;
+  return g;
+}
+
+// ===== ENGENHO DE AÇÚCAR (centro-direita) =====
+{
+  const g = addMarker('engenho', 10, 0, 'Engenho de Açúcar');
+  // Casa grande (corpo principal)
+  const base = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 4, 6),
+    new THREE.MeshStandardMaterial({ color:0xd2b48c, roughness:0.85 })
+  );
+  base.position.y = 2;
+  base.castShadow = base.receiveShadow = true;
+  g.add(base);
+  // Telhado de telhas (cone achatado)
+  const roofGeo = new THREE.ConeGeometry(6.2, 2.5, 4);
+  const roof = new THREE.Mesh(roofGeo, new THREE.MeshStandardMaterial({ color:0x8b3a1a, roughness:0.85 }));
+  roof.rotation.y = Math.PI/4;
+  roof.position.y = 5.25;
+  roof.castShadow = true;
+  g.add(roof);
+  // Chaminé
+  const chimney = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.6, 0.7, 4, 12),
+    new THREE.MeshStandardMaterial({ color:0x5a3220, roughness:0.85 })
+  );
+  chimney.position.set(2.5, 6.5, 0);
+  chimney.castShadow = true;
+  g.add(chimney);
+  // Roda d'água (engenho)
+  const wheelGeo = new THREE.TorusGeometry(1.5, 0.18, 8, 16);
+  const wheel = new THREE.Mesh(wheelGeo, new THREE.MeshStandardMaterial({ color:0x4a2a1a, roughness:0.8 }));
+  wheel.position.set(-4.5, 1.5, 0);
+  wheel.rotation.y = Math.PI/2;
+  g.add(wheel);
+  // Cana-de-açúcar (caules verdes em volta)
+  for (let i=0; i<14; i++){
+    const cana = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.1, 0.1, 2.2, 5),
+      new THREE.MeshStandardMaterial({ color:0xa8d05c, roughness:0.7 })
+    );
+    const ang = i * (Math.PI*2/14);
+    const r = 6.5 + Math.random()*1.5;
+    cana.position.set(Math.cos(ang)*r, 1.1, Math.sin(ang)*r);
+    cana.rotation.z = (Math.random()-0.5)*0.2;
+    cana.castShadow = true;
+    g.add(cana);
+  }
+  // Particulas de fumaça
+  g.userData.smoke = [];
+  const smokeMat = new THREE.MeshBasicMaterial({ color:0xe0d0b8, transparent:true, opacity:0.6 });
+  for (let i=0; i<18; i++){
+    const s = new THREE.Mesh(new THREE.SphereGeometry(0.4 + Math.random()*0.35, 8, 8), smokeMat.clone());
+    s.position.set(2.5 + (Math.random()-0.5)*0.5, 8 + Math.random()*4, (Math.random()-0.5)*0.5);
+    s.userData.vy = 0.02 + Math.random()*0.03;
+    s.userData.life = Math.random();
+    g.add(s);
+    g.userData.smoke.push(s);
+  }
+  markers.push({ id:'engenho', center:new THREE.Vector3(10,5,0), radius:8, group:g });
+}
+
+// ===== QUILOMBO DOS PALMARES (esquerda-frente, palmeiras) =====
+{
+  const g = addMarker('palmares', -8, 14, 'Quilombo dos Palmares');
+  // Base elevada (Serra da Barriga)
+  const hill = new THREE.Mesh(
+    new THREE.ConeGeometry(7, 2.5, 24),
+    new THREE.MeshStandardMaterial({ color:0x4a6a30, roughness:0.9 })
+  );
+  hill.position.y = 1.0;
+  hill.scale.y = 0.6;
+  hill.receiveShadow = true;
+  g.add(hill);
+  // 5 palmeiras
+  for (let i=0; i<7; i++){
+    const palm = new THREE.Group();
+    const ang = i * (Math.PI*2/7);
+    const r = 2 + Math.random()*2.5;
+    palm.position.set(Math.cos(ang)*r, 2, Math.sin(ang)*r);
+    // Tronco
+    const trunk = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.25, 0.4, 6, 8),
+      new THREE.MeshStandardMaterial({ color:0x5a3a20, roughness:0.95 })
+    );
+    trunk.position.y = 3;
+    trunk.castShadow = true;
+    palm.add(trunk);
+    // Folhas (cone aberto)
+    for (let j=0; j<7; j++){
+      const leaf = new THREE.Mesh(
+        new THREE.ConeGeometry(0.4, 3, 6),
+        new THREE.MeshStandardMaterial({ color:0x6a9c30, roughness:0.7, side:THREE.DoubleSide })
+      );
+      const a = j * (Math.PI*2/7);
+      leaf.position.set(Math.cos(a)*1.3, 6.5, Math.sin(a)*1.3);
+      leaf.rotation.z = Math.cos(a) * 0.7;
+      leaf.rotation.x = Math.sin(a) * 0.7;
+      leaf.castShadow = true;
+      palm.add(leaf);
+    }
+    g.add(palm);
+  }
+  // Cabanas de palha
+  for (let i=0; i<3; i++){
+    const c = new THREE.Group();
+    c.position.set(-3 + i*3, 2, -2);
+    const wall = new THREE.Mesh(
+      new THREE.CylinderGeometry(1.2, 1.2, 1.5, 12),
+      new THREE.MeshStandardMaterial({ color:0xa07650, roughness:0.95 })
+    );
+    wall.position.y = 0.75;
+    wall.castShadow = true;
+    c.add(wall);
+    const roof = new THREE.Mesh(
+      new THREE.ConeGeometry(1.6, 1.6, 12),
+      new THREE.MeshStandardMaterial({ color:0xc9a06a, roughness:0.95 })
+    );
+    roof.position.y = 2.3;
+    roof.castShadow = true;
+    c.add(roof);
+    g.add(c);
+  }
+  markers.push({ id:'palmares', center:new THREE.Vector3(-8,5,14), radius:8, group:g });
+}
+
+// ===== VILA RICA (direita-fundo) =====
+{
+  const g = addMarker('vilarica', 20, -15, 'Vila Rica');
+  // Conjunto de casas barrocas
+  const colors = [0xfae5d0, 0xf5d4a0, 0xebc090, 0xf8dab8];
+  const positions = [
+    [-4,0,0],[0,0,-1],[4,0,0],
+    [-2,0,4],[2,0,4],
+    [-3,0,-4],[3,0,-4]
+  ];
+  positions.forEach((p,i) => {
+    const h = 3 + Math.random()*1.5;
+    const house = new THREE.Mesh(
+      new THREE.BoxGeometry(2.6, h, 2.2),
+      new THREE.MeshStandardMaterial({ color:colors[i%4], roughness:0.85 })
+    );
+    house.position.set(p[0], h/2, p[2]);
+    house.castShadow = house.receiveShadow = true;
+    g.add(house);
+    // Telhado
+    const r = new THREE.Mesh(
+      new THREE.ConeGeometry(1.9, 1.2, 4),
+      new THREE.MeshStandardMaterial({ color:0x7a3018, roughness:0.85 })
+    );
+    r.rotation.y = Math.PI/4;
+    r.position.set(p[0], h+0.6, p[2]);
+    r.castShadow = true;
+    g.add(r);
+  });
+  // Igreja barroca central
+  const ig = new THREE.Group();
+  const igb = new THREE.Mesh(
+    new THREE.BoxGeometry(3.5, 5, 3),
+    new THREE.MeshStandardMaterial({ color:0xfff5e0, roughness:0.7 })
+  );
+  igb.position.y = 2.5;
+  igb.castShadow = true;
+  ig.add(igb);
+  // 2 torres
+  for (let s=-1; s<=1; s+=2){
+    const t = new THREE.Mesh(
+      new THREE.BoxGeometry(1.1, 6.5, 1.1),
+      new THREE.MeshStandardMaterial({ color:0xfff5e0, roughness:0.7 })
+    );
+    t.position.set(s*1.7, 3.25, -1.5);
+    t.castShadow = true;
+    ig.add(t);
+    const cap = new THREE.Mesh(
+      new THREE.ConeGeometry(0.9, 1.4, 6),
+      new THREE.MeshStandardMaterial({ color:0xd4a017, roughness:0.5, metalness:0.6 })
+    );
+    cap.position.set(s*1.7, 7.2, -1.5);
+    cap.castShadow = true;
+    ig.add(cap);
+  }
+  // Cruz dourada no topo
+  const cruxV = new THREE.Mesh(
+    new THREE.BoxGeometry(0.12, 0.9, 0.12),
+    new THREE.MeshStandardMaterial({ color:0xf0c040, metalness:0.7, roughness:0.3, emissive:0x664400, emissiveIntensity:0.3 })
+  );
+  cruxV.position.set(0, 5.8, 0);
+  ig.add(cruxV);
+  const cruxH = new THREE.Mesh(
+    new THREE.BoxGeometry(0.5, 0.12, 0.12),
+    new THREE.MeshStandardMaterial({ color:0xf0c040, metalness:0.7, roughness:0.3, emissive:0x664400, emissiveIntensity:0.3 })
+  );
+  cruxH.position.set(0, 5.95, 0);
+  ig.add(cruxH);
+  ig.position.set(0, 0, 0);
+  g.add(ig);
+  markers.push({ id:'vilarica', center:new THREE.Vector3(20,4,-15), radius:9, group:g });
+}
+
+// ===== CAPELA BARROCA / JESUÍTAS (fundo central) =====
+{
+  const g = addMarker('capela', -3, -18, 'Capela Barroca');
+  // Capela grande, barroca, dourada
+  const body = new THREE.Mesh(
+    new THREE.BoxGeometry(5, 6, 7),
+    new THREE.MeshStandardMaterial({ color:0xf5e8c8, roughness:0.7 })
+  );
+  body.position.y = 3;
+  body.castShadow = body.receiveShadow = true;
+  g.add(body);
+  // Fachada com vão (porta + ornamentos)
+  const portal = new THREE.Mesh(
+    new THREE.BoxGeometry(1.4, 2.4, 0.3),
+    new THREE.MeshStandardMaterial({ color:0x3a2410, roughness:0.6 })
+  );
+  portal.position.set(0, 1.2, 3.55);
+  g.add(portal);
+  // Torre central
+  const tower = new THREE.Mesh(
+    new THREE.BoxGeometry(2.4, 4, 2.4),
+    new THREE.MeshStandardMaterial({ color:0xf5e8c8, roughness:0.7 })
+  );
+  tower.position.set(0, 8, -1);
+  tower.castShadow = true;
+  g.add(tower);
+  // Cúpula
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(1.6, 16, 12, 0, Math.PI*2, 0, Math.PI/2),
+    new THREE.MeshStandardMaterial({ color:0xd4a017, metalness:0.7, roughness:0.3 })
+  );
+  dome.position.set(0, 10, -1);
+  dome.castShadow = true;
+  g.add(dome);
+  // Cruz no topo
+  const cv = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.2, 0.12),
+    new THREE.MeshStandardMaterial({ color:0xf0c040, emissive:0x553300, emissiveIntensity:0.4 }));
+  cv.position.set(0, 12.1, -1); g.add(cv);
+  const ch = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.12, 0.12),
+    new THREE.MeshStandardMaterial({ color:0xf0c040, emissive:0x553300, emissiveIntensity:0.4 }));
+  ch.position.set(0, 12.3, -1); g.add(ch);
+  markers.push({ id:'capela', center:new THREE.Vector3(-3,5,-18), radius:8, group:g });
+}
+
+// ===== CARAVELA (no mar, esquerda) =====
+{
+  const g = addMarker('caravela', -55, -4, 'Caravela Portuguesa');
+  // Casco (forma alongada)
+  const hull = new THREE.Mesh(
+    new THREE.BoxGeometry(8, 1.8, 2.5),
+    new THREE.MeshStandardMaterial({ color:0x4a2810, roughness:0.85 })
+  );
+  hull.position.y = 1;
+  hull.castShadow = true;
+  g.add(hull);
+  // Castelo de popa
+  const popa = new THREE.Mesh(
+    new THREE.BoxGeometry(2.5, 2, 2.5),
+    new THREE.MeshStandardMaterial({ color:0x6b3a18, roughness:0.85 })
+  );
+  popa.position.set(3, 2.6, 0);
+  popa.castShadow = true;
+  g.add(popa);
+  // 3 mastros
+  for (let i=-1; i<=1; i++){
+    const mast = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.18, 0.22, 8, 8),
+      new THREE.MeshStandardMaterial({ color:0x6b4218, roughness:0.85 })
+    );
+    mast.position.set(i*2.5, 5, 0);
+    mast.castShadow = true;
+    g.add(mast);
+    // Vela (plano)
+    const sail = new THREE.Mesh(
+      new THREE.PlaneGeometry(2.6, 3.5),
+      new THREE.MeshStandardMaterial({ color:0xfaf0d8, roughness:0.95, side:THREE.DoubleSide })
+    );
+    sail.position.set(i*2.5, 5.5, 0);
+    sail.castShadow = true;
+    g.add(sail);
+  }
+  // Bandeira portuguesa
+  const flag = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.7, 0.5),
+    new THREE.MeshStandardMaterial({ color:0xc62828, roughness:0.7, side:THREE.DoubleSide })
+  );
+  flag.position.set(2.5, 9.4, 0);
+  g.add(flag);
+  // Movimento de balanço (anim)
+  g.userData.bob = true;
+  markers.push({ id:'caravela', center:new THREE.Vector3(-55,4,-4), radius:8, group:g });
+}
+
+// ===== PELOURINHO / 1817 (frente direita) =====
+{
+  const g = addMarker('revolucao', 0, 18, 'Revolução Pernambucana 1817');
+  // Plataforma de pedra
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(2.5, 2.7, 0.6, 16),
+    new THREE.MeshStandardMaterial({ color:0x9a8870, roughness:0.95 })
+  );
+  base.position.y = 0.3;
+  base.receiveShadow = true;
+  g.add(base);
+  // Coluna principal (pelourinho)
+  const col = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.4, 0.5, 6.5, 12),
+    new THREE.MeshStandardMaterial({ color:0xa89878, roughness:0.85 })
+  );
+  col.position.y = 3.85;
+  col.castShadow = true;
+  g.add(col);
+  // Capitel
+  const cap = new THREE.Mesh(
+    new THREE.BoxGeometry(1.3, 0.6, 1.3),
+    new THREE.MeshStandardMaterial({ color:0xa89878, roughness:0.85 })
+  );
+  cap.position.y = 7.3;
+  cap.castShadow = true;
+  g.add(cap);
+  // Bandeira da Confederação do Equador (vermelha + estrela)
+  const flagPole = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.06, 0.06, 4, 6),
+    new THREE.MeshStandardMaterial({ color:0x4a2810, roughness:0.85 })
+  );
+  flagPole.position.set(0, 9.5, 0);
+  g.add(flagPole);
+  const flag = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.6, 1.0),
+    new THREE.MeshStandardMaterial({ color:0xc62828, roughness:0.8, side:THREE.DoubleSide, emissive:0x4a0808, emissiveIntensity:0.2 })
+  );
+  flag.position.set(0.85, 10, 0);
+  g.add(flag);
+  // Estrela 5 pontas
+  const star = new THREE.Mesh(
+    new THREE.RingGeometry(0.05, 0.25, 5),
+    new THREE.MeshBasicMaterial({ color:0xf5e8c8, side:THREE.DoubleSide })
+  );
+  star.position.set(0.85, 10, 0.02);
+  g.add(star);
+  markers.push({ id:'revolucao', center:new THREE.Vector3(0,5,18), radius:8, group:g });
+}
+
+// ===== HALO indicador em cada marker (anel pulsante no chão) =====
+markers.forEach(m => {
+  const ring = new THREE.Mesh(
+    new THREE.RingGeometry(2.5, 3.2, 32),
+    new THREE.MeshBasicMaterial({ color:0xf0c040, side:THREE.DoubleSide, transparent:true, opacity:0.5 })
+  );
+  ring.rotation.x = -Math.PI/2;
+  ring.position.set(m.center.x, 0.05, m.center.z);
+  ring.userData.marker = m.id;
+  scene.add(ring);
+  m.ring = ring;
+});
+
+// ===== RAYCASTER =====
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hovered = null;
+
+function onMove(ev){
+  mouse.x = (ev.clientX/innerWidth)*2 - 1;
+  mouse.y = -(ev.clientY/innerHeight)*2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  let foundId = null;
+  for (const m of markers){
+    // checa intersecção com ring (descritor visual)
+    const hit = raycaster.intersectObject(m.ring, false);
+    if (hit.length){ foundId = m.id; break; }
+    // ou com objetos do group
+    const hg = raycaster.intersectObject(m.group, true);
+    if (hg.length){ foundId = m.id; break; }
+  }
+  const tag = document.getElementById('tag');
+  if (foundId){
+    hovered = foundId;
+    document.body.style.cursor = 'pointer';
+    const m = MARCOS.find(x => x.id===foundId);
+    document.getElementById('tc').textContent = m.cod;
+    document.getElementById('tn').textContent = m.nome;
+    tag.style.left = (ev.clientX+18)+'px';
+    tag.style.top = (ev.clientY-14)+'px';
+    tag.classList.add('show');
+  } else {
+    hovered = null;
+    document.body.style.cursor = 'grab';
+    tag.classList.remove('show');
+  }
+}
+window.addEventListener('pointermove', onMove);
+
+function onClick(){
+  if (!hovered) return;
+  abrirPainel(hovered);
+}
+window.addEventListener('click', onClick);
+
+window.fc = function(){
+  document.getElementById('painel').classList.remove('open');
+};
+
+function abrirPainel(id){
+  const m = MARCOS.find(x => x.id===id);
+  if (!m) return;
+  document.getElementById('pc').textContent = m.cod;
+  document.getElementById('pn').textContent = m.nome;
+  document.getElementById('psb').textContent = m.sub;
+  const ul = document.getElementById('pt');
+  ul.innerHTML = '';
+  m.topicos.forEach(t => { const li=document.createElement('li'); li.textContent=t; ul.appendChild(li); });
+  document.getElementById('pr').textContent = m.resumo;
+  document.getElementById('pd').textContent = m.dica;
+  document.getElementById('painel').classList.add('open');
+}
+
+// ===== RESET CAMERA =====
+document.getElementById('reset').addEventListener('click', () => {
+  const start = camera.position.clone();
+  const end = new THREE.Vector3(50, 38, 55);
+  const startT = controls.target.clone();
+  const endT = new THREE.Vector3(0, 4, 0);
+  const dur = 900;
+  const t0 = performance.now();
+  (function tween(){
+    const t = Math.min(1, (performance.now()-t0)/dur);
+    const e = 1 - Math.pow(1-t, 4);
+    camera.position.lerpVectors(start, end, e);
+    controls.target.lerpVectors(startT, endT, e);
+    if (t<1) requestAnimationFrame(tween);
+  })();
+});
+
+// ===== ANIMATION LOOP =====
+const clock = new THREE.Clock();
+function loop(){
+  requestAnimationFrame(loop);
+  const t = clock.getElapsedTime();
+  // Smoke animation
+  const eng = groups['engenho'];
+  if (eng && eng.userData.smoke){
+    eng.userData.smoke.forEach(s => {
+      s.position.y += s.userData.vy;
+      s.userData.life += 0.008;
+      s.material.opacity = Math.max(0, 0.55 - s.userData.life*0.5);
+      s.scale.setScalar(1 + s.userData.life*1.5);
+      if (s.userData.life > 1.1){
+        s.position.y = 8;
+        s.userData.life = 0;
+        s.scale.setScalar(1);
+        s.material.opacity = 0.55;
+      }
+    });
+  }
+  // Pulsing rings
+  markers.forEach(m => {
+    m.ring.material.opacity = 0.35 + 0.25*Math.sin(t*2.2 + m.center.x*0.1);
+  });
+  // Caravela balança
+  if (groups['caravela']){
+    groups['caravela'].position.y = Math.sin(t*0.9)*0.3;
+    groups['caravela'].rotation.z = Math.sin(t*0.7)*0.04;
+  }
+  // Mar ondula
+  if (sea.geometry.attributes.position){
+    const pos = sea.geometry.attributes.position;
+    for (let i=0; i<pos.count; i++){
+      const x = pos.getX(i), y = pos.getY(i);
+      pos.setZ(i, Math.sin(x*0.18 + t*1.5)*0.25 + Math.cos(y*0.22 + t*1.2)*0.18);
+    }
+    pos.needsUpdate = true;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+loop();
+
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+setTimeout(() => document.getElementById('loader').classList.add('hide'), 800);
+</script>
+</body>
+</html>

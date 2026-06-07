@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trigonometria — Resumo Completo | UNICAP Nexus</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#030108; color:#c8b8e8; font-family:'Inter',sans-serif; min-height:100vh; padding-bottom:60px; }
+a { color:#8866cc; text-decoration:none; transition:color 0.2s; }
+a:hover { color:#bb99ff; }
+#nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(3,1,8,0.95); border-bottom:1px solid rgba(255,255,255,0.06);
+  padding:12px 24px; display:flex; justify-content:space-between; align-items:center;
+  backdrop-filter:blur(12px);
+}
+#nav-back, #nav-map {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.5); font-size:12px; font-weight:500;
+  padding:7px 14px; border-radius:7px; transition:all 0.2s;
+}
+#nav-back:hover, #nav-map:hover { background:rgba(255,255,255,0.08); color:#fff; }
+#nav-title { font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.hero { padding:60px 24px 40px; text-align:center; max-width:860px; margin:0 auto; }
+.hero-badge {
+  display:inline-block; background:rgba(100,100,255,0.12); border:1px solid rgba(100,100,255,0.25);
+  color:#7777ee; font-size:11px; font-weight:600; letter-spacing:0.12em;
+  text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size:clamp(28px,5vw,44px); font-weight:700; line-height:1.15;
+  background:linear-gradient(135deg,#c8c8ff,#7777ff,#4444aa);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:16px;
+}
+.hero p { font-size:15px; color:rgba(180,180,255,0.45); max-width:560px; margin:0 auto; line-height:1.7; }
+.content { max-width:860px; margin:0 auto; padding:0 24px; }
+.section { margin-bottom:40px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px; overflow:hidden; }
+.section-header { padding:20px 24px 16px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:12px; }
+.section-num {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,#222288,#5555cc);
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#aaaaff; flex-shrink:0;
+}
+.section-title {
+  font-size:17px; font-weight:700;
+  background:linear-gradient(90deg,#c8c8ff,#7777ee);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+}
+.section-body { padding:20px 24px; }
+.card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-top:8px; }
+.card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:10px; padding:16px; border-left:3px solid; }
+.card.blue { border-left-color:#4488ff; }
+.card.violet { border-left-color:#8855ff; }
+.card.green { border-left-color:#44cc88; }
+.card.orange { border-left-color:#ff8844; }
+.card.cyan { border-left-color:#44ccff; }
+.card.red { border-left-color:#ff5555; }
+.card.pink { border-left-color:#ff55cc; }
+.card h3 { font-size:13px; font-weight:700; color:#d4c8f0; margin-bottom:8px; }
+.card p { font-size:12px; color:#8878a8; line-height:1.65; }
+.formula-block {
+  background:rgba(100,100,255,0.06); border:1px solid rgba(100,100,255,0.15);
+  border-radius:10px; padding:14px 18px; margin:10px 0;
+  font-family:'Courier New',monospace; font-size:13px; color:#aaaaee; line-height:1.8;
+}
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+th { background:rgba(80,80,200,0.12); color:#9999cc; font-weight:600; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; padding:10px 14px; text-align:center; }
+td { padding:10px 14px; color:#9080b0; border-bottom:1px solid rgba(255,255,255,0.04); text-align:center; }
+td:first-child { text-align:left; color:#ccbbff; font-weight:600; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.question-card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.07); border-radius:12px; padding:20px; margin-bottom:16px; }
+.question-card .q-label { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#5555aa; margin-bottom:10px; }
+.question-card .q-text { font-size:14px; color:#c0b0e0; margin-bottom:14px; font-weight:500; }
+.question-card .q-answer { background:rgba(68,204,136,0.06); border:1px solid rgba(68,204,136,0.15); border-radius:8px; padding:12px 16px; font-size:12px; color:#88c8a0; line-height:1.6; }
+.q-answer strong { color:#66ff99; }
+.tip-box { background:rgba(255,170,0,0.06); border:1px solid rgba(255,170,0,0.15); border-radius:10px; padding:14px 18px; margin-top:12px; font-size:12px; color:#b89944; line-height:1.6; }
+.tip-box strong { color:#ffcc44; }
+.text-body { font-size:14px; color:#9080b0; line-height:1.7; margin-bottom:12px; }
+.circle-diagram {
+  display:flex; justify-content:center; padding:20px 0;
+}
+.circle-diagram canvas {
+  border-radius:50%;
+  border:1px solid rgba(100,100,255,0.2);
+}
+.val-table td { font-family:'Courier New',monospace; font-size:13px; }
+.val-table td:first-child { color:#ccbbff; font-weight:700; }
+.identity-block {
+  background:rgba(180,100,255,0.06); border:1px solid rgba(180,100,255,0.15);
+  border-radius:10px; padding:14px 18px; margin:10px 0;
+  font-family:'Courier New',monospace; font-size:13px; color:#cc99ff; line-height:1.9;
+}
+.formula-table td:first-child { color:#aaaaff; font-weight:600; font-family:'Courier New',monospace; }
+.formula-table td:nth-child(2) { color:#7777ee; font-family:'Courier New',monospace; text-align:left; }
+.formula-table td:last-child { color:#8899cc; text-align:left; }
+</style>
+</head>
+<body>
+<div id="nav">
+  <a href="../../index.html" id="nav-back">← Nexus</a>
+  <span id="nav-title">Matemática · Trigonometria</span>
+  <a href="mapa3d.html" id="nav-map">Mapa 3D →</a>
+</div>
+<div class="hero">
+  <div class="hero-badge">Matemática</div>
+  <h1>Trigonometria</h1>
+  <p>Do triângulo retângulo ao círculo unitário, Leis dos Senos e Cossenos, identidades fundamentais — guia completo para o UNICAP 2026.</p>
+</div>
+<div class="content">
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">1</div><div class="section-title">Razões Trigonométricas no Triângulo Retângulo</div></div>
+    <div class="section-body">
+      <p class="text-body">As razões trigonométricas relacionam os lados de um triângulo retângulo com seus ângulos. O mnemônico <strong style="color:#aaaaff">SOH-CAH-TOA</strong> é a chave.</p>
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Seno — SOH</h3>
+          <p>sin θ = Cateto Oposto / Hipotenusa. Varia de 0 a 1 para θ ∈ [0°, 90°]. sin 0° = 0; sin 90° = 1. Cateto oposto é o que fica "do lado de fora" do ângulo θ.</p>
+        </div>
+        <div class="card violet">
+          <h3>Cosseno — CAH</h3>
+          <p>cos θ = Cateto Adjacente / Hipotenusa. Varia de 1 a 0 para θ ∈ [0°, 90°]. cos 0° = 1; cos 90° = 0. Cateto adjacente é o que "toca" o ângulo θ (além da hipotenusa).</p>
+        </div>
+        <div class="card green">
+          <h3>Tangente — TOA</h3>
+          <p>tan θ = Cateto Oposto / Cateto Adjacente = sin θ / cos θ. Não tem limite: tan 89° é muito grande; tan 90° = indefinida. tan 45° = 1 (catetos iguais).</p>
+        </div>
+        <div class="card orange">
+          <h3>Identidade de Pitágoras</h3>
+          <p>sin²θ + cos²θ = 1 (sempre). Decorre do teorema de Pitágoras. A partir disso: sec²θ = 1 + tan²θ; csc²θ = 1 + cot²θ.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Mnemônico: SOH — CAH — TOA
+  sin θ = Oposto   / Hipotenusa
+  cos θ = Adjacente / Hipotenusa
+  tan θ = Oposto   / Adjacente
+
+Hipotenusa = lado oposto ao ângulo reto (o maior lado)
+Identidade fundamental: sin²θ + cos²θ = 1
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> Se sin θ = 3/5, então cos θ = 4/5 e tan θ = 3/4. Montar o triângulo retângulo de lados 3, 4, 5 (tripla pitagórica) é a forma mais rápida de calcular todas as razões.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">2</div><div class="section-title">Tabela de Valores Notáveis</div></div>
+    <div class="section-body">
+      <table class="val-table">
+        <thead>
+          <tr>
+            <th>Ângulo</th>
+            <th>sin θ</th>
+            <th>cos θ</th>
+            <th>tan θ</th>
+            <th>Quadrante</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>0°</td><td>0</td><td>1</td><td>0</td><td>I / Eixo</td></tr>
+          <tr><td>30°</td><td>1/2</td><td>√3/2 ≈ 0,866</td><td>√3/3 ≈ 0,577</td><td>I</td></tr>
+          <tr><td>45°</td><td>√2/2 ≈ 0,707</td><td>√2/2 ≈ 0,707</td><td>1</td><td>I</td></tr>
+          <tr><td>60°</td><td>√3/2 ≈ 0,866</td><td>1/2</td><td>√3 ≈ 1,732</td><td>I</td></tr>
+          <tr><td>90°</td><td>1</td><td>0</td><td>Indefinida</td><td>Eixo</td></tr>
+          <tr><td>120°</td><td>√3/2</td><td>−1/2</td><td>−√3</td><td>II</td></tr>
+          <tr><td>135°</td><td>√2/2</td><td>−√2/2</td><td>−1</td><td>II</td></tr>
+          <tr><td>150°</td><td>1/2</td><td>−√3/2</td><td>−√3/3</td><td>II</td></tr>
+          <tr><td>180°</td><td>0</td><td>−1</td><td>0</td><td>Eixo</td></tr>
+          <tr><td>270°</td><td>−1</td><td>0</td><td>Indefinida</td><td>Eixo</td></tr>
+          <tr><td>360°</td><td>0</td><td>1</td><td>0</td><td>Eixo</td></tr>
+        </tbody>
+      </table>
+      <div class="tip-box"><strong>Macete para decorar:</strong> O seno de 0°, 30°, 45°, 60°, 90° segue o padrão √0/2, √1/2, √2/2, √3/2, √4/2. E o cosseno é o inverso (√4/2, √3/2, √2/2, √1/2, √0/2).</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">3</div><div class="section-title">Círculo Unitário — Visualização e Propriedades</div></div>
+    <div class="section-body">
+      <p class="text-body">O círculo unitário (raio = 1, centro na origem) é a ferramenta definitiva para entender trigonometria. Para qualquer ângulo θ, o ponto P = (cos θ, sin θ) está na circunferência.</p>
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>Quadrantes e Sinais</h3>
+          <p>Q1 (0–90°): sin>0, cos>0. Q2 (90–180°): sin>0, cos&lt;0. Q3 (180–270°): sin&lt;0, cos&lt;0. Q4 (270–360°): sin&lt;0, cos>0. Mnemônico: "Todos Sinais Começam Com" (Todos, Seno, Cosseno, Tangente).</p>
+        </div>
+        <div class="card cyan">
+          <h3>Ângulos Relacionados</h3>
+          <p>Arco suplementar (π − θ): sin(π−θ) = sin θ; cos(π−θ) = −cos θ. Arco oposto (−θ): sin(−θ) = −sin θ; cos(−θ) = cos θ. Arco complementar (π/2−θ): sin = cos do outro.</p>
+        </div>
+        <div class="card green">
+          <h3>Periodicidade</h3>
+          <p>Seno e cosseno: período 2π (360°). sin(θ+2π) = sin θ. Tangente: período π (180°). tan(θ+π) = tan θ. Qualquer ângulo pode ser reduzido ao intervalo [0°, 360°].</p>
+        </div>
+        <div class="card orange">
+          <h3>Radianos</h3>
+          <p>π rad = 180°. 1 rad ≈ 57,3°. Converter: graus × π/180 = radianos. Ex: 90° = π/2; 60° = π/3; 45° = π/4; 30° = π/6. Comprimento de arco: s = r·θ (θ em rad).</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Conversão:  graus × π/180 = radianos
+            radianos × 180/π = graus
+
+Tabela rápida:
+  30° = π/6   |   45° = π/4   |   60° = π/3
+  90° = π/2   |  180° = π     |  270° = 3π/2   |  360° = 2π
+
+Ponto no círculo unitário: P(θ) = (cos θ, sin θ)
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">4</div><div class="section-title">Funções Trigonométricas — Gráficos, Período e Amplitude</div></div>
+    <div class="section-body">
+      <div class="card-grid">
+        <div class="card blue">
+          <h3>y = sin(x)</h3>
+          <p>Amplitude = 1. Período = 2π. Domínio: ℝ. Imagem: [−1, 1]. Cruza o eixo x em x = nπ. Máximo em π/2; mínimo em 3π/2. Função ímpar: sin(−x) = −sin x.</p>
+        </div>
+        <div class="card violet">
+          <h3>y = cos(x)</h3>
+          <p>Amplitude = 1. Período = 2π. Domínio: ℝ. Imagem: [−1, 1]. Cruza o eixo x em π/2 + nπ. Máximo em 0; mínimo em π. Função par: cos(−x) = cos x.</p>
+        </div>
+        <div class="card orange">
+          <h3>y = tan(x)</h3>
+          <p>Período = π. Domínio: ℝ − {π/2 + nπ}. Imagem: ℝ. Assíntotas verticais em ±π/2, ±3π/2, etc. Função ímpar: tan(−x) = −tan x. Cresce em cada ramo.</p>
+        </div>
+        <div class="card green">
+          <h3>Forma Geral y = a·sin(bx+c)+d</h3>
+          <p>a = amplitude (|a|). b determina período: T = 2π/|b|. c = defasagem (deslocamento horizontal). d = deslocamento vertical. Mesma lógica vale para cosseno e tangente.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+y = a · sin(bx + c) + d
+  Amplitude: |a|
+  Período:   T = 2π/|b|  (para sin/cos)  ou  T = π/|b| (para tan)
+  Fase:      deslocamento horizontal de −c/b
+  Deslocamento vertical: d
+
+Exemplo: y = 3·sin(2x − π/3) + 1
+  Amplitude = 3 ; Período = 2π/2 = π ; Fase = π/6 para direita ; Centro = 1
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">5</div><div class="section-title">Lei dos Senos e Lei dos Cossenos</div></div>
+    <div class="section-body">
+      <p class="text-body">Para triângulos não retângulos (oblíquos), o Pitágoras não se aplica. As Leis dos Senos e dos Cossenos generalizam as relações entre lados e ângulos.</p>
+      <div class="card-grid">
+        <div class="card cyan">
+          <h3>Lei dos Senos</h3>
+          <p>a/sin A = b/sin B = c/sin C = 2R. Use quando: (1) dois ângulos e um lado (AAL); (2) dois lados e o ângulo oposto a um deles (LAL-oposto). Permite encontrar qualquer lado ou ângulo faltante.</p>
+        </div>
+        <div class="card violet">
+          <h3>Lei dos Cossenos</h3>
+          <p>c² = a²+b²−2ab·cos C. Generaliza Pitágoras. Use quando: (1) três lados (LLL) para encontrar ângulo; (2) dois lados e o ângulo entre eles (LAL-incluso). Não funciona com AAL.</p>
+        </div>
+        <div class="card blue">
+          <h3>Quando Usar Cada Uma</h3>
+          <p>Tem 2 ângulos → Lei dos Senos. Tem 3 lados → Lei dos Cossenos. Tem 2 lados + ângulo entre eles → Lei dos Cossenos. Tem 2 lados + ângulo oposto → Lei dos Senos.</p>
+        </div>
+        <div class="card green">
+          <h3>Casos Especiais</h3>
+          <p>Quando C = 90°: cos 90° = 0, Lei dos Cossenos vira c² = a²+b² (Pitágoras!). Triângulo equilátero: todos os lados iguais, todos os ângulos = 60°. Lei dos Senos: a/sin 60° = 2R → R = a/√3.</p>
+        </div>
+      </div>
+      <div class="formula-block">
+Lei dos Senos:
+  a / sin A = b / sin B = c / sin C = 2R
+
+Lei dos Cossenos:
+  c² = a² + b² − 2ab·cos C
+  → cos C = (a² + b² − c²) / (2ab)
+
+Notação: lados a, b, c opostos aos ângulos A, B, C respectivamente.
+</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">6</div><div class="section-title">Identidades Trigonométricas Fundamentais</div></div>
+    <div class="section-body">
+      <div class="identity-block">
+Identidade Fundamental:
+  sin²θ + cos²θ = 1
+
+Derivadas:
+  1 + tan²θ = sec²θ   (divida por cos²θ)
+  1 + cot²θ = csc²θ   (divida por sin²θ)
+
+Razões:
+  tan θ = sin θ / cos θ
+  cot θ = cos θ / sin θ = 1/tan θ
+  sec θ = 1/cos θ
+  csc θ = 1/sin θ
+
+Fórmulas de Adição:
+  sin(A+B) = sin A·cos B + cos A·sin B
+  sin(A−B) = sin A·cos B − cos A·sin B
+  cos(A+B) = cos A·cos B − sin A·sin B
+  cos(A−B) = cos A·cos B + sin A·sin B
+
+Arco Duplo:
+  sin 2A = 2·sin A·cos A
+  cos 2A = cos²A − sin²A = 1 − 2sin²A = 2cos²A − 1
+  tan 2A = 2·tan A / (1 − tan²A)
+</div>
+      <div class="tip-box"><strong>Dica UNICAP:</strong> A prova mais cobrada é: simplificar expressões como (sin²θ+cos²θ)/cos²θ = 1/cos²θ = sec²θ. Ou provar que (sin θ + cos θ)² = 1 + 2sin θ cos θ = 1 + sin 2θ. Parta sempre da identidade fundamental.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">7</div><div class="section-title">Questões-Tipo UNICAP — Resolvidas</div></div>
+    <div class="section-body">
+      <div class="question-card">
+        <div class="q-label">Questão 1 — Valores Notáveis</div>
+        <div class="q-text">Calcule o valor de sin 45° · cos 30° + cos 45° · sin 30°. O que essa expressão representa?</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          sin 45° = √2/2 ; cos 30° = √3/2 ; cos 45° = √2/2 ; sin 30° = 1/2<br>
+          Expressão = (√2/2)(√3/2) + (√2/2)(1/2) = √6/4 + √2/4 = (√6+√2)/4<br>
+          <strong>Essa é a fórmula de sin(A+B) com A=45° e B=30°: sin 75° = (√6+√2)/4</strong>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 2 — Lei dos Cossenos</div>
+        <div class="q-text">Um triângulo tem lados a=5, b=7 e c=8. Encontre o cosseno e o valor aproximado do ângulo C (oposto ao lado c=8).</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          cos C = (a²+b²−c²)/(2ab) = (25+49−64)/(2·5·7) = 10/70 = 1/7 ≈ 0,143<br>
+          C = arccos(1/7) ≈ 81,8° — ângulo obtuso? Não! cos>0, então C é agudo.<br>
+          <strong>cos C = 1/7, C ≈ 81,8°</strong>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="q-label">Questão 3 — Identidade</div>
+        <div class="q-text">Simplifique a expressão: (1 − sin²θ) / cos θ + sin²θ / cos θ</div>
+        <div class="q-answer">
+          <strong>Resolução:</strong><br>
+          = [1 − sin²θ + sin²θ] / cos θ   (mesmo denominador)<br>
+          = 1 / cos θ<br>
+          = <strong>sec θ</strong><br>
+          (Usamos: 1 − sin²θ = cos²θ, mas como os sin²θ se cancelam antes, fica direto = 1/cosθ)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><div class="section-num">8</div><div class="section-title">Tabela de Fórmulas Essenciais</div></div>
+    <div class="section-body">
+      <table class="formula-table">
+        <thead><tr><th>Conceito</th><th>Fórmula</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>Seno</td><td>sin θ = CO/H</td><td>SOH</td></tr>
+          <tr><td>Cosseno</td><td>cos θ = CA/H</td><td>CAH</td></tr>
+          <tr><td>Tangente</td><td>tan θ = CO/CA = sin/cos</td><td>TOA</td></tr>
+          <tr><td>Identidade fund.</td><td>sin²θ + cos²θ = 1</td><td>Sempre válida</td></tr>
+          <tr><td>Conversão °↔rad</td><td>θ_rad = θ° × π/180</td><td>π rad = 180°</td></tr>
+          <tr><td>Período sin/cos</td><td>T = 2π/|b|</td><td>em a·sin(bx+c)+d</td></tr>
+          <tr><td>Período tan</td><td>T = π/|b|</td><td>—</td></tr>
+          <tr><td>Lei dos Senos</td><td>a/sin A = b/sin B = c/sin C</td><td>= 2R (circunraio)</td></tr>
+          <tr><td>Lei dos Cossenos</td><td>c² = a²+b²−2ab·cos C</td><td>Generaliza Pitágoras</td></tr>
+          <tr><td>sin(A+B)</td><td>sinA·cosB + cosA·sinB</td><td>—</td></tr>
+          <tr><td>cos(A+B)</td><td>cosA·cosB − sinA·sinB</td><td>—</td></tr>
+          <tr><td>sin 2A</td><td>2·sinA·cosA</td><td>Arco duplo</td></tr>
+          <tr><td>cos 2A</td><td>cos²A − sin²A</td><td>ou 1−2sin²A</td></tr>
+          <tr><td>Arco de circunf.</td><td>s = r·θ (θ em rad)</td><td>s = comprimento do arco</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RED #1 — Meio Ambiente · Correção UNICAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#0a0e1a;color:#e8eaf0;padding:32px 20px 60px;min-height:100vh;}
+.max{max-width:860px;margin:0 auto;}
+a.back{display:inline-flex;align-items:center;gap:6px;color:#8a93a8;font-size:13px;text-decoration:none;margin-bottom:20px;}
+a.back:hover{color:#00d4ff;}
+h1{font-size:clamp(20px,4vw,28px);font-weight:900;margin-bottom:6px;}
+h1 span{color:#10b981;}
+.sub{font-size:13px;color:#8a93a8;margin-bottom:32px;}
+
+.score-bar{
+  display:flex;gap:12px;flex-wrap:wrap;
+  background:rgba(19,24,41,0.8);border:1px solid rgba(0,212,255,0.12);
+  border-radius:14px;padding:20px 24px;margin-bottom:28px;
+}
+.score-item{flex:1;min-width:120px;text-align:center;}
+.score-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;}
+.score-label{font-size:11px;color:#8a93a8;margin-top:4px;}
+.score-total .score-num{color:#ffb800;font-size:36px;}
+.score-ok .score-num{color:#10b981;}
+.score-med .score-num{color:#ffb800;}
+.score-low .score-num{color:#ef4444;}
+
+.card{background:rgba(19,24,41,0.7);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:22px 26px;margin-bottom:20px;}
+.card h2{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;}
+.tag-ok{background:rgba(16,185,129,0.2);color:#34d399;}
+.tag-med{background:rgba(255,184,0,0.2);color:#ffb800;}
+.tag-low{background:rgba(239,68,68,0.2);color:#f87171;}
+
+.original{
+  background:rgba(255,255,255,0.03);border-left:3px solid #8a93a8;
+  padding:16px 20px;border-radius:0 10px 10px 0;
+  font-size:14px;line-height:1.75;color:#ccd0dc;
+  margin-bottom:16px;
+}
+.nota1000{
+  background:rgba(16,185,129,0.05);border-left:3px solid #10b981;
+  padding:16px 20px;border-radius:0 10px 10px 0;
+  font-size:14px;line-height:1.9;color:#e8eaf0;
+}
+.nota1000 p{margin-bottom:14px;text-indent:2em;}
+.nota1000 p:last-child{margin-bottom:0;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;}
+th{text-align:left;padding:8px 12px;color:#8a93a8;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);}
+td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top;}
+td:first-child{color:#f87171;font-style:italic;width:38%;}
+td:last-child{color:#ccd0dc;}
+
+.criterio{margin-bottom:14px;padding:14px 16px;background:rgba(255,255,255,0.03);border-radius:10px;}
+.criterio-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.criterio-nome{font-size:13px;font-weight:700;}
+.criterio-nota{font-family:'JetBrains Mono',monospace;font-size:13px;color:#ffb800;}
+.criterio-desc{font-size:12px;color:#8a93a8;line-height:1.55;}
+.bar{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:8px;}
+.bar-fill{height:4px;border-radius:2px;transition:width 600ms;}
+
+.melhorias{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.melhoria{display:flex;gap:10px;align-items:flex-start;font-size:13px;padding:10px 12px;background:rgba(0,212,255,0.05);border-radius:8px;}
+.melhoria span:first-child{font-size:16px;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="max">
+
+  <a class="back" href="../../dashboard.html">← Voltar ao Dashboard</a>
+
+  <h1>RED #1 — <span>Meio Ambiente</span></h1>
+  <div class="sub">VEST UNICAP 2026.1 · Feita em 21/05/2026 · Carlos Régis</div>
+
+  <!-- SCORE -->
+  <div class="score-bar">
+    <div class="score-item score-total">
+      <div class="score-num">640</div>
+      <div class="score-label">Nota estimada</div>
+    </div>
+    <div class="score-item score-med">
+      <div class="score-num">130</div>
+      <div class="score-label">Estrutura /200</div>
+    </div>
+    <div class="score-item score-ok">
+      <div class="score-num">160</div>
+      <div class="score-label">Tema /200</div>
+    </div>
+    <div class="score-item score-med">
+      <div class="score-num">140</div>
+      <div class="score-label">Argumentos /200</div>
+    </div>
+    <div class="score-item score-low">
+      <div class="score-num">110</div>
+      <div class="score-label">Proposta /200</div>
+    </div>
+    <div class="score-item score-low">
+      <div class="score-num">100</div>
+      <div class="score-label">Norma /200</div>
+    </div>
+  </div>
+
+  <!-- TEXTO ORIGINAL -->
+  <div class="card">
+    <h2>📄 Texto original</h2>
+    <div class="original">
+      A Constituição Federal de 1988, no artigo de número 225, determina que todos têm direito ao meio ambiente ecologicamente equilibrado e o dever de preservá-lo para as futuras gerações. Assim, fica evidente a importância de conscientizar a população mundial para compreender que o meio ambiente desequilibrado ecologicamente possui consequências, como o aquecimento global, efeito estufa, entre outros inúmeros fatores que vão alastrando-se e prejudicando o planeta. Assim, diminuindo cada vez mais a expectativa de vida. Com isso, expõe-se que pequenos gestos são ponto de partida para preservar o meio ambiente, de um lixo jogado num lixo ou qualquer ação contribuinte, pois, mesmo que seja mínima, o ambiente agradece. Sob esse viés, fica evidente que, sem preservação ambiental, o planeta pode deixar de ser habitável, impossibilitando a presença de seres humanos e outros nesse planeta. No filme Wall-E, esta narrativa é evidenciada por um robô. O planeta deixa de ser habitável, levando-os para outro planeta. Assim, por meio desta obra ficcional, expõe-se a importância de preservar o meio ambiente, para desta forma evitar um colapso ambiental. Analisa-se por outra perspectiva que, por mais que todos tenham a obrigação de preservar o meio ambiente, ainda assim, muitos não cumprem o seu dever. Ademais, a omissão midiática é um dos principais fatores agravantes para a inconscientização populacional. Com isso, percebe-se que a população mundial deve possuir conscientização sobre a importância de preservação do meio ambiente, para assim mantê-lo ecologicamente equilibrado. Além disso, é de suma importância analisar que a ganância, o egoísmo e o mercenarismo são características de pessoas que pouco se importam com o equilíbrio ecológico. Ademais, observa-se que estas pessoas possuem tais sentimentos, pois desmatam e executam diversas outras ações prejudiciais ao meio ambiente, em prol de lucro, vendas e outros. O filme Lorax apresenta esta temática na prática, onde o protagonista Lorax é um guardião do meio-ambiente e protege-a com tudo ao seu alcance. Mas um ser humano ganancioso derruba a floresta para ganhar dinheiro com vendas de material. Lorax, por outra vez, pede ajuda à população, assim recuperando a floresta e fazendo os animais que antes saíam de seu habitat voltarem, além de favorecer o equilíbrio ecológico. Com isso, expõe-se que a pauta iniciada é fortalecida. Conclui-se, portanto, que é necessário ocorrer mudanças midiáticas, assim conscientizando a população por meio da mídia, expondo, entretanto, a extrema importância da preservação. Em outra perspectiva, é indispensável ressaltar a Constituição Federal de 1988. No artigo 225 determina que todos têm direito ao meio ambiente ecologicamente equilibrado e o dever de preservá-lo para as futuras gerações. Assim, deve ser praticado tal dever, além de órgãos responsáveis pela preservação do meio ambiente, aplicarem leis e punições eficazes, para assim, evitar quaisquer ação prejudicial ao meio ambiente.
+    </div>
+  </div>
+
+  <!-- CRITÉRIOS -->
+  <div class="card">
+    <h2>📊 Análise por critério</h2>
+
+    <div class="criterio">
+      <div class="criterio-header">
+        <span class="criterio-nome">Estrutura</span>
+        <span class="criterio-nota">130 / 200</span>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:65%;background:#ffb800;"></div></div>
+      <div class="criterio-desc" style="margin-top:8px;">Tem introdução, desenvolvimento e conclusão — mas tudo em bloco único sem paragrafação. A conclusão repete o Art. 225 quase palavra por palavra da introdução, sinalizando falta de planejamento para a banca.</div>
+    </div>
+
+    <div class="criterio">
+      <div class="criterio-header">
+        <span class="criterio-nome">Adequação ao tema</span>
+        <span class="criterio-nota">160 / 200</span>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:80%;background:#10b981;"></div></div>
+      <div class="criterio-desc" style="margin-top:8px;">Bem dentro do tema. Aborda desequilíbrio ecológico, causas (ganância, omissão midiática) e proposta. A tese ("pequenos gestos") aparece sem ser defendida até o fim — perdeu coerência.</div>
+    </div>
+
+    <div class="criterio">
+      <div class="criterio-header">
+        <span class="criterio-nome">Argumentos e repertório</span>
+        <span class="criterio-nota">140 / 200</span>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:70%;background:#ffb800;"></div></div>
+      <div class="criterio-desc" style="margin-top:8px;">Wall-E citado de forma vaga ("um robô" — sem aprofundamento). Lorax melhor desenvolvido. Omissão midiática é o argumento mais original mas foi abandonado no meio do texto. Art. 225 como repertório jurídico é forte, mas usado duas vezes igual.</div>
+    </div>
+
+    <div class="criterio">
+      <div class="criterio-header">
+        <span class="criterio-nome">Relevância social / Proposta</span>
+        <span class="criterio-nota">110 / 200</span>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:55%;background:#ef4444;"></div></div>
+      <div class="criterio-desc" style="margin-top:8px;">Proposta existe ("mudanças midiáticas" + "leis e punições") mas é genérica. A UNICAP quer: agente responsável + ação específica + finalidade.</div>
+    </div>
+
+    <div class="criterio">
+      <div class="criterio-header">
+        <span class="criterio-nome">Norma culta</span>
+        <span class="criterio-nota">100 / 200</span>
+      </div>
+      <div class="bar"><div class="bar-fill" style="width:50%;background:#ef4444;"></div></div>
+      <div class="criterio-desc" style="margin-top:8px;">Vários problemas de vocabulário e construção (ver tabela abaixo).</div>
+    </div>
+
+    <table>
+      <tr><th>Trecho original</th><th>Problema / correção</th></tr>
+      <tr><td>"de um lixo jogado num lixo"</td><td>Sem sentido — provavelmente "jogar lixo no lixo (lixeira)"</td></tr>
+      <tr><td>"inconscientização"</td><td>Palavra inexistente — use "falta de consciência" ou "desinformação"</td></tr>
+      <tr><td>"mercenarismo"</td><td>Palavra incomum e mal encaixada no contexto</td></tr>
+      <tr><td>"onde o protagonista Lorax"</td><td>"onde" é para lugar — use "em que" ou "no qual"</td></tr>
+      <tr><td>"protege-a com tudo ao seu alcance"</td><td>Pronome "a" sem referente claro</td></tr>
+      <tr><td>"expõe-se" (4 vezes)</td><td>Repetição excessiva — varie os conectivos</td></tr>
+      <tr><td>"Ademais" (2x seguido)</td><td>Repetição de conectivo — use "além disso", "outrossim", "por sua vez"</td></tr>
+      <tr><td>Art. 225 repetido 2x igual</td><td>Banca interpreta como falta de planejamento</td></tr>
+    </table>
+  </div>
+
+  <!-- 3 AJUSTES PRINCIPAIS -->
+  <div class="card">
+    <h2>🎯 3 ajustes que mais sobem a nota</h2>
+    <div class="melhorias">
+      <div class="melhoria"><span>1️⃣</span><span><strong>Separar em 4 parágrafos.</strong> Introdução + 2 desenvolvimentos + conclusão. Fácil de fazer e vale muito na estrutura.</span></div>
+      <div class="melhoria"><span>2️⃣</span><span><strong>Desenvolver a omissão midiática.</strong> Era o argumento mais forte e foi abandonado. 3 linhas bem escritas sobre isso valem mais que citar Wall-E de forma vaga.</span></div>
+      <div class="melhoria"><span>3️⃣</span><span><strong>Proposta específica na conclusão.</strong> Trocar "mudanças midiáticas" por: "Cabe ao Ministério da Educação incluir educação ambiental no currículo escolar" + "ao IBAMA intensificar fiscalização com punições proporcionais".</span></div>
+    </div>
+  </div>
+
+  <!-- VERSÃO NOTA 1000 -->
+  <div class="card" style="border-color:rgba(16,185,129,0.25);">
+    <h2>🏆 Versão nota 1000 <span class="tag tag-ok">referência</span></h2>
+    <p style="font-size:12px;color:#8a93a8;margin-bottom:16px;">Mesmas ideias, mesmo repertório (Wall-E, Lorax, Art. 225) — só reorganizado, aprofundado e com a língua correta.</p>
+    <div class="nota1000">
+      <p>A Constituição Federal de 1988, em seu artigo 225, assegura a todos o direito ao meio ambiente ecologicamente equilibrado e impõe o dever coletivo de preservá-lo para as gerações futuras. No entanto, apesar dessa garantia legal, o planeta enfrenta uma crescente crise ambiental, alimentada pela desinformação e pela ganância humana, que ameaça a habitabilidade da Terra e a qualidade de vida das sociedades contemporâneas.</p>
+      <p>Um dos principais fatores que agravam esse cenário é a omissão midiática em relação às questões ambientais. A ausência de informação qualificada sobre os impactos do desmatamento e do descarte inadequado de resíduos impede que a população adote práticas sustentáveis. Essa realidade é explorada na animação <em>Wall-E</em>, em que a Terra se torna inabitável pelo acúmulo de lixo e pela degradação ambiental — cenário que, embora ficcional, reflete tendências já observadas no mundo real, como o avanço das ilhas de plástico nos oceanos.</p>
+      <p>Além da desinformação, a ganância de agentes econômicos representa outro obstáculo central à preservação do meio ambiente. Movidos pelo lucro imediato, empresas e indivíduos promovem o desmatamento e a exploração predatória dos recursos naturais, ignorando as consequências coletivas de suas ações. A animação <em>O Lorax</em> ilustra esse conflito ao retratar a destruição de uma floresta por um empresário ganancioso, que só recua diante da mobilização comunitária — evidenciando que a resistência organizada da sociedade é capaz de reverter danos ambientais.</p>
+      <p>Diante do exposto, torna-se imprescindível adotar medidas concretas para enfrentar a crise ambiental. Cabe ao Ministério da Educação incluir a educação ambiental de forma sistemática no currículo escolar, formando cidadãos conscientes desde a infância. Paralelamente, órgãos como o IBAMA devem intensificar a fiscalização e aplicar punições efetivas a quem descumpre a legislação vigente, garantindo que o dever constitucional de preservação seja cumprido por todos.</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

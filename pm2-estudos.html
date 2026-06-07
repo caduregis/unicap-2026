@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>⚡ PM2 — Revisão Express · Carlos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0e1a;--bg2:#131829;--bg3:#1a2035;
+  --cyan:#00d4ff;--amber:#ffb800;--emerald:#10b981;--red:#ef4444;--purple:#8b5cf6;--gold:#f59e0b;
+  --text:#e8eaf0;--muted:#8a93a8;--border:rgba(0,212,255,0.1);
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-bottom:60px;}
+
+/* HEADER */
+.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(10,14,26,0.97);border-bottom:1px solid var(--border);
+  padding:10px 14px;
+  backdrop-filter:blur(12px);
+}
+.top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.top-title{font-size:15px;font-weight:900;color:var(--text);}
+.top-title span{color:var(--red);}
+.countdown{
+  background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+  color:var(--red);font-size:12px;font-weight:800;
+  padding:5px 12px;border-radius:20px;
+}
+.xp-row{display:flex;align-items:center;gap:8px;}
+.xp-lbl{font-size:11px;color:var(--muted);}
+.xp-bar{flex:1;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--amber));border-radius:3px;transition:width 500ms ease;}
+.xp-pts{font-size:11px;font-weight:700;color:var(--gold);min-width:50px;text-align:right;}
+
+/* PLAN HERO */
+.plan-hero{margin:14px;background:var(--bg2);border:1px solid rgba(239,68,68,0.25);border-radius:18px;padding:16px;overflow:hidden;position:relative;}
+.plan-hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(239,68,68,0.05),transparent);pointer-events:none;}
+.plan-hero h2{font-size:16px;font-weight:900;color:var(--red);margin-bottom:4px;}
+.plan-hero p{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.plan-item{
+  background:var(--bg3);border-radius:10px;padding:9px 10px;
+  font-size:11px;
+}
+.plan-item .pi-num{font-size:18px;font-weight:900;color:var(--cyan);line-height:1;}
+.plan-item .pi-txt{color:var(--muted);margin-top:2px;line-height:1.3;}
+.plan-item .pi-time{color:var(--amber);font-weight:700;font-size:10px;margin-top:2px;}
+
+/* SECTION TITLE */
+.sec-label{
+  font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);padding:14px 14px 6px;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SUBJECT CARD */
+.scard{
+  margin:0 14px 10px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  transition:border-color 200ms;
+}
+.scard.done-card{border-color:rgba(16,185,129,0.3);opacity:0.6;}
+.scard-head{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;cursor:pointer;
+  user-select:none;
+}
+.scard-head:active{background:rgba(255,255,255,0.02);}
+.scard-icon{font-size:22px;flex-shrink:0;}
+.scard-info{flex:1;}
+.scard-title{font-size:14px;font-weight:800;}
+.scard-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+.scard-right{display:flex;align-items:center;gap:8px;}
+.scard-xp{font-size:10px;font-weight:700;color:var(--gold);background:rgba(245,158,11,0.1);padding:3px 8px;border-radius:6px;}
+.scard-check{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  transition:all 200ms;flex-shrink:0;
+}
+.scard.done-card .scard-check{background:var(--emerald);border-color:var(--emerald);}
+.scard.done-card .scard-check::after{content:'✓';color:#fff;font-size:11px;font-weight:900;}
+.scard-arrow{font-size:12px;color:var(--muted);transition:transform 200ms;}
+.scard.open .scard-arrow{transform:rotate(180deg);}
+.scard-tag{
+  font-size:9px;font-weight:700;padding:3px 7px;border-radius:5px;
+}
+
+/* CONTENT */
+.scard-body{display:none;padding:0 14px 14px;}
+.scard.open .scard-body{display:block;}
+
+/* CONTENT SECTIONS */
+.ctag{
+  display:inline-block;font-size:9px;font-weight:800;letter-spacing:0.5px;
+  text-transform:uppercase;padding:3px 8px;border-radius:6px;margin-bottom:8px;
+}
+.ctag.hot{background:rgba(239,68,68,0.15);color:var(--red);}
+.ctag.key{background:rgba(0,212,255,0.1);color:var(--cyan);}
+.ctag.formula{background:rgba(139,92,246,0.12);color:var(--purple);}
+
+.content-block{margin-bottom:12px;}
+.content-block h4{font-size:12px;font-weight:800;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.content-block ul{list-style:none;padding:0;}
+.content-block ul li{
+  font-size:12px;color:var(--muted);padding:3px 0;padding-left:14px;position:relative;line-height:1.5;
+}
+.content-block ul li::before{content:'→';position:absolute;left:0;color:var(--cyan);font-size:10px;top:4px;}
+.content-block ul li strong{color:var(--text);}
+.content-block ul li em{color:var(--amber);}
+
+.formula-box{
+  background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--purple);
+  border-radius:0 8px 8px 0;padding:8px 10px;margin-bottom:8px;
+  font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--purple);
+  line-height:1.7;
+}
+.alert-box{
+  background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);
+  border-radius:8px;padding:8px 10px;margin-bottom:8px;
+  font-size:11px;color:var(--red);line-height:1.5;
+}
+.tip-box{
+  background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+  border-radius:8px;padding:8px 10px;margin-bottom:8px;
+  font-size:11px;color:var(--emerald);line-height:1.5;
+}
+
+/* DONE BUTTON */
+.done-btn{
+  width:100%;padding:12px;margin-top:4px;
+  background:linear-gradient(135deg,var(--emerald),#059669);
+  color:#fff;font-weight:800;font-size:14px;
+  border:none;border-radius:12px;cursor:pointer;
+  box-shadow:0 3px 12px rgba(16,185,129,0.25);
+  transition:transform 150ms;
+}
+.done-btn:active{transform:scale(0.97);}
+.done-btn.undone{background:var(--bg3);color:var(--muted);box-shadow:none;}
+
+/* PRIORITY BADGE */
+.prio{
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;
+}
+.prio.p1{background:rgba(239,68,68,0.15);color:var(--red);}
+.prio.p2{background:rgba(255,184,0,0.12);color:var(--amber);}
+.prio.p3{background:rgba(139,92,246,0.1);color:var(--purple);}
+
+/* XP POPUP */
+.xp-pop{
+  position:fixed;top:70px;right:14px;z-index:200;
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#0a0e1a;font-size:15px;font-weight:900;
+  padding:8px 18px;border-radius:30px;
+  animation:popXP 1.8s ease forwards;pointer-events:none;
+}
+@keyframes popXP{0%{opacity:0;transform:translateY(10px) scale(0.8);}15%{opacity:1;transform:scale(1.05);}70%{opacity:1;transform:translateY(-20px);}100%{opacity:0;transform:translateY(-40px);}}
+
+/* PROGRESS FOOTER */
+.footer-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(10,14,26,0.97);border-top:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;justify-content:space-between;align-items:center;
+  backdrop-filter:blur(12px);
+}
+.footer-done{font-size:13px;font-weight:700;}
+.footer-done span{color:var(--cyan);}
+.all-done-btn{
+  background:linear-gradient(135deg,var(--gold),var(--amber));
+  color:#0a0e1a;font-size:12px;font-weight:800;
+  border:none;border-radius:8px;padding:8px 14px;cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="top">
+  <div class="top-row">
+    <div class="top-title">PM2 · <span>Amanhã 7h</span> · CBV</div>
+    <div class="countdown" id="cntdown">calculando...</div>
+  </div>
+  <div class="xp-row">
+    <span class="xp-lbl">XP:</span>
+    <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    <span class="xp-pts" id="xp-pts">0 / 1500</span>
+  </div>
+</div>
+
+<!-- PLANO DA NOITE -->
+<div class="plan-hero">
+  <h2>⚡ Plano de Ataque — Esta Noite</h2>
+  <p>15 matérias. Você não precisa saber tudo — precisa saber o suficiente para cada uma. Siga a ordem:</p>
+  <div class="plan-grid">
+    <div class="plan-item"><div class="pi-num">1ª</div><div class="pi-txt">Análise Ling. + Literatura</div><div class="pi-time">~35 min</div></div>
+    <div class="plan-item"><div class="pi-num">2ª</div><div class="pi-txt">Filosofia + Sociologia</div><div class="pi-time">~30 min</div></div>
+    <div class="plan-item"><div class="pi-num">3ª</div><div class="pi-txt">História + Geografia</div><div class="pi-time">~35 min</div></div>
+    <div class="plan-item"><div class="pi-num">4ª</div><div class="pi-txt">Biologia 1 + 2</div><div class="pi-time">~30 min</div></div>
+    <div class="plan-item"><div class="pi-num">5ª</div><div class="pi-txt">Física 1 + 2</div><div class="pi-time">~25 min</div></div>
+    <div class="plan-item"><div class="pi-num">6ª</div><div class="pi-txt">Química 1 + 2</div><div class="pi-time">~25 min</div></div>
+    <div class="plan-item"><div class="pi-num">7ª</div><div class="pi-txt">Matemática 1 + 2</div><div class="pi-time">~25 min</div></div>
+    <div class="plan-item"><div class="pi-num">8ª</div><div class="pi-txt">Inglês — rápido</div><div class="pi-time">~15 min</div></div>
+  </div>
+</div>
+
+<!-- SUBJECTS -->
+<div class="sec-label">Linguagens</div>
+
+<!-- 1. ANÁLISE LINGUÍSTICA -->
+<div class="scard" id="s-ling" onclick="toggleCard('ling')">
+  <div class="scard-head">
+    <div class="scard-icon">📝</div>
+    <div class="scard-info">
+      <div class="scard-title">Análise Linguística <span class="prio p1">PRIORIDADE</span></div>
+      <div class="scard-sub">Até capítulo 12 · Gramática e estilo</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+100 XP</span>
+      <div class="scard-check" id="chk-ling"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-ling">
+    <div class="alert-box">🔥 Mais cobrado: Concordância, Regência, Crase, Figuras de linguagem</div>
+
+    <div class="content-block">
+      <h4>📌 Concordância Verbal</h4>
+      <ul>
+        <li>Sujeito simples → verbo concorda em número e pessoa</li>
+        <li><strong>Sujeito coletivo</strong> → verbo no singular: "A turma <em>saiu</em>"</li>
+        <li><strong>"Quem" como sujeito</strong> → verbo na 3ª pessoa: "Fui eu quem <em>fez</em>"</li>
+        <li><strong>Sujeito composto antes do verbo</strong> → plural; <strong>depois</strong> → pode ficar singular</li>
+        <li><strong>Verbos impessoais</strong> (haver, fazer, ser) → sempre singular: "Faz dois anos"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Regência Verbal (principais)</h4>
+      <ul>
+        <li><strong>Assistir</strong> (ver) → a: "Assisti <em>ao</em> jogo"</li>
+        <li><strong>Visar</strong> (ter por objetivo) → a: "Visa <em>ao</em> lucro"</li>
+        <li><strong>Aspirar</strong> (almejar) → a: "Aspira <em>ao</em> cargo"</li>
+        <li><strong>Preferir</strong> → a (não usa "do que"): "Prefiro café <em>a</em> chá"</li>
+        <li><strong>Obedecer / desobedecer</strong> → a: "Obedece <em>aos</em> pais"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Crase</h4>
+      <ul>
+        <li><strong>Usa crase</strong>: verbo que pede "a" + substantivo feminino determinado</li>
+        <li>Teste: troca por "ao" → se couber = crase. "Fui <em>à</em> escola" (fui ao colégio ✓)</li>
+        <li><strong>Não usa</strong>: antes de masculino, verbos, pronomes pessoais, "uma"</li>
+        <li><strong>Facultativo</strong>: antes de nomes próprios femininos e pronomes possessivos</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Figuras de Linguagem</h4>
+      <ul>
+        <li><strong>Metáfora</strong>: comparação implícita — "A vida é uma viagem"</li>
+        <li><strong>Metonímia</strong>: substituição por proximidade — "Tomei um copo" (= líquido do copo)</li>
+        <li><strong>Hipérbole</strong>: exagero — "Já te disse um milhão de vezes"</li>
+        <li><strong>Ironia</strong>: diz o contrário — "Que bonito isso que você fez!"</li>
+        <li><strong>Eufemismo</strong>: suavizar — "Ele passou desta para melhor"</li>
+        <li><strong>Antítese</strong>: ideias opostas — "O rico ri, o pobre chora"</li>
+        <li><strong>Paradoxo</strong>: contradição lógica — "Amor é fogo que arde sem se ver"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Funções da Linguagem</h4>
+      <ul>
+        <li><strong>Referencial/informativa</strong>: foco no contexto (notícia, artigo)</li>
+        <li><strong>Expressiva/emotiva</strong>: foco no emissor (diário, poesia lírica)</li>
+        <li><strong>Conativa/apelativa</strong>: foco no receptor (propaganda, discurso)</li>
+        <li><strong>Fática</strong>: verificar canal — "Alô? Está me ouvindo?"</li>
+        <li><strong>Metalinguística</strong>: língua falando sobre si mesma</li>
+        <li><strong>Poética</strong>: foco na forma — uso estético da linguagem</li>
+      </ul>
+    </div>
+
+    <div class="tip-box">✅ Dica PM: Questões de análise linguística geralmente trazem texto e pedem identificação de figura, função ou correção gramatical. Leia o texto antes de responder.</div>
+    <button class="done-btn" id="btn-ling" onclick="markDone(event,'ling',100)">✓ Estudei — +100 XP</button>
+  </div>
+</div>
+
+<!-- 2. LITERATURA -->
+<div class="scard" id="s-lit" onclick="toggleCard('lit')">
+  <div class="scard-head">
+    <div class="scard-icon">📚</div>
+    <div class="scard-info">
+      <div class="scard-title">Literatura <span class="prio p1">PRIORIDADE</span></div>
+      <div class="scard-sub">Até capítulo 4 · Modernismo brasileiro</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-lit"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-lit">
+    <div class="alert-box">🔥 Mais cobrado: Semana de Arte Moderna, autores e características de cada fase</div>
+
+    <div class="content-block">
+      <h4>📌 Pré-Modernismo (1900–1922)</h4>
+      <ul>
+        <li>Transição entre o século XIX e o Modernismo</li>
+        <li><strong>Euclides da Cunha</strong>: "Os Sertões" — Guerra de Canudos, regionalismo</li>
+        <li><strong>Lima Barreto</strong>: crítica social, personagens marginalizados</li>
+        <li><strong>Monteiro Lobato</strong>: "Urupês" — Jeca Tatu, crítica ao caboclo</li>
+        <li>Características: ruptura com Parnasianismo, realidade brasileira</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Modernismo 1ª Fase (1922–1930)</h4>
+      <ul>
+        <li><strong>Marco</strong>: Semana de Arte Moderna — 13 a 17 fev/1922, Teatro Municipal SP</li>
+        <li><strong>Características</strong>: ruptura com tradição, verso livre, linguagem coloquial, nacionalismo</li>
+        <li><strong>Mário de Andrade</strong>: "Macunaíma" — herói sem nenhum caráter, identidade nacional</li>
+        <li><strong>Oswald de Andrade</strong>: "Manifesto Antropófago" — devorar cultura estrangeira</li>
+        <li><strong>Manuel Bandeira</strong>: "Pneumotórax", cotidiano, humor, morte</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Modernismo 2ª Fase (1930–1945)</h4>
+      <ul>
+        <li><strong>Características</strong>: mais reflexão, engajamento social, regionalismo nordestino</li>
+        <li><strong>Carlos Drummond de Andrade</strong>: "No meio do caminho" — pedra, existencialismo</li>
+        <li><strong>Graciliano Ramos</strong>: "Vidas Secas" — seca, miséria, desumanização</li>
+        <li><strong>Rachel de Queiroz</strong>: "O Quinze" — primeira romancista do Nordeste</li>
+        <li><strong>Jorge Amado</strong>: "Capitães da Areia" — menores abandonados, Salvador</li>
+        <li><strong>José Lins do Rego</strong>: "Fogo Morto" — decadência do engenho</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Modernismo 3ª Fase (1945–1980)</h4>
+      <ul>
+        <li><strong>Poesia</strong>: Geração de 45 — retorno ao formalismo; depois Concretismo</li>
+        <li><strong>João Cabral de Melo Neto</strong>: "Morte e Vida Severina" — Nordeste, objetividade</li>
+        <li><strong>Prosa</strong>: romance urbano, experimentalismo</li>
+        <li><strong>Guimarães Rosa</strong>: "Grande Sertão: Veredas" — mistura sertão e metafísica</li>
+        <li><strong>Clarice Lispector</strong>: introspecção, fluxo de consciência</li>
+      </ul>
+    </div>
+
+    <div class="tip-box">✅ Dica: Saiba associar autor → obra → período → características. Tabela mental: 1922 (ruptura) → 1930 (regional) → 1945 (reflexão).</div>
+    <button class="done-btn" id="btn-lit" onclick="markDone(event,'lit',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<!-- 3. INGLÊS -->
+<div class="scard" id="s-ing" onclick="toggleCard('ing')">
+  <div class="scard-head">
+    <div class="scard-icon">🇺🇸</div>
+    <div class="scard-info">
+      <div class="scard-title">Inglês</div>
+      <div class="scard-sub">Até capítulo 5 · Grammar + Reading</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+60 XP</span>
+      <div class="scard-check" id="chk-ing"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-ing">
+    <div class="alert-box">🔥 Na PM: geralmente interpretação de texto + gramática (tenses, modals)</div>
+
+    <div class="content-block">
+      <h4>📌 Tempos Verbais — Resumo</h4>
+      <ul>
+        <li><strong>Simple Present</strong>: rotinas — "I study every day"</li>
+        <li><strong>Present Continuous</strong>: agora — "I am studying now"</li>
+        <li><strong>Simple Past</strong>: passado concluído — "I studied yesterday"</li>
+        <li><strong>Present Perfect</strong>: passado com relevância presente — "I have studied" (já estudei)</li>
+        <li><strong>Past Perfect</strong>: antes de outro passado — "I had studied before the test"</li>
+        <li><strong>Future (will)</strong>: decisão espontânea — "I will help you"</li>
+        <li><strong>Going to</strong>: plano/intenção — "I am going to study tonight"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Modal Verbs</h4>
+      <ul>
+        <li><strong>Can/Could</strong>: capacidade / possibilidade</li>
+        <li><strong>Must / Have to</strong>: obrigação — must = interno; have to = externo</li>
+        <li><strong>Should</strong>: conselho — "You should study"</li>
+        <li><strong>May / Might</strong>: possibilidade — might = menos certo</li>
+        <li><strong>Would</strong>: condicional / pedido educado</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Interpretação de Texto</h4>
+      <ul>
+        <li>Leia título e subtítulo primeiro</li>
+        <li>Identifique palavras-cognatas (similar ao português)</li>
+        <li>Contexto > tradução literal</li>
+        <li><strong>Vocabulary em contexto</strong>: palavras como "however" (porém), "therefore" (portanto), "although" (embora)</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-ing" onclick="markDone(event,'ing',60)">✓ Estudei — +60 XP</button>
+  </div>
+</div>
+
+<div class="sec-label">Ciências Humanas</div>
+
+<!-- 4. HISTÓRIA -->
+<div class="scard" id="s-hist" onclick="toggleCard('hist')">
+  <div class="scard-head">
+    <div class="scard-icon">🏛️</div>
+    <div class="scard-info">
+      <div class="scard-title">História <span class="prio p1">PRIORIDADE</span></div>
+      <div class="scard-sub">Até capítulo 12 · Brasil séc. XX + História Geral</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+100 XP</span>
+      <div class="scard-check" id="chk-hist"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-hist">
+    <div class="alert-box">🔥 Mais cobrado: Era Vargas, Ditadura Militar, Guerra Fria, Nazismo</div>
+
+    <div class="content-block">
+      <h4>📌 Era Vargas (1930–1945)</h4>
+      <ul>
+        <li><strong>1930</strong>: Revolução de 1930 — fim da República Velha/café-com-leite</li>
+        <li><strong>1937</strong>: Estado Novo — ditadura, "Polaca" (Constituição inspirada no fascismo)</li>
+        <li>Trabalhismo: CLT (1943), salário mínimo, direitos trabalhistas</li>
+        <li>Industrialização: CSN (Companhia Siderúrgica Nacional), Petrobras (fundada 1953)</li>
+        <li><strong>1945</strong>: deposição de Vargas pelos militares</li>
+        <li><strong>1950</strong>: volta eleito; <strong>1954</strong>: suicídio — "Saio da vida para entrar na história"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Ditadura Militar (1964–1985)</h4>
+      <ul>
+        <li><strong>31/03/1964</strong>: Golpe Militar — derruba João Goulart (Jango)</li>
+        <li><strong>AI-5 (1968)</strong>: ato mais duro — cassações, censura, fechamento do Congresso</li>
+        <li>"Milagre Econômico" (1968–73): crescimento ~10% a.a., mas concentração de renda</li>
+        <li>Resistência: guerrilha urbana (ALN — Marighella), guerrilha do Araguaia</li>
+        <li><strong>Lei da Anistia (1979)</strong>: abertura política "lenta, gradual e segura"</li>
+        <li><strong>1985</strong>: eleição indireta de Tancredo Neves → Sarney assume</li>
+        <li><strong>1988</strong>: Constituição Cidadã</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Guerra Fria (1947–1991)</h4>
+      <ul>
+        <li><strong>EUA (capitalismo) × URSS (socialismo)</strong> — corrida armamentista e espacial</li>
+        <li><strong>Doutrina Truman (1947)</strong>: conter o avanço comunista</li>
+        <li><strong>Plano Marshall</strong>: reconstrução econômica da Europa Ocidental</li>
+        <li><strong>OTAN (NATO)</strong> vs. <strong>Pacto de Varsóvia</strong></li>
+        <li><strong>1962</strong>: Crise dos Mísseis em Cuba — mais próximos de guerra nuclear</li>
+        <li><strong>1989</strong>: Queda do Muro de Berlim; <strong>1991</strong>: fim da URSS</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Nazismo e 2ª Guerra (1939–1945)</h4>
+      <ul>
+        <li><strong>Hitler</strong>: Partido Nazista, antissemitismo, pangermanismo</li>
+        <li><strong>1939</strong>: invasão da Polônia → início da guerra</li>
+        <li>Holocausto: extermínio de ~6 milhões de judeus</li>
+        <li><strong>1941</strong>: EUA entram após Pearl Harbor</li>
+        <li><strong>1945</strong>: rendição da Alemanha (maio) e Japão (agosto — bombas Hiroshima/Nagasaki)</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-hist" onclick="markDone(event,'hist',100)">✓ Estudei — +100 XP</button>
+  </div>
+</div>
+
+<!-- 5. GEOGRAFIA -->
+<div class="scard" id="s-geo" onclick="toggleCard('geo')">
+  <div class="scard-head">
+    <div class="scard-icon">🌍</div>
+    <div class="scard-info">
+      <div class="scard-title">Geografia <span class="prio p2">IMPORTANTE</span></div>
+      <div class="scard-sub">Até capítulo 11 · Geopolítica e Globalização</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+90 XP</span>
+      <div class="scard-check" id="chk-geo"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-geo">
+    <div class="alert-box">🔥 Mais cobrado: Globalização, Blocos Econômicos, Geopolítica, Biomas</div>
+
+    <div class="content-block">
+      <h4>📌 Globalização</h4>
+      <ul>
+        <li>Processo de integração econômica, cultural e política mundial</li>
+        <li><strong>Empresas transnacionais</strong>: atuam em vários países, buscam mão de obra barata</li>
+        <li><strong>Financeirização</strong>: capital financeiro circula instantaneamente</li>
+        <li>Críticas: aumento da desigualdade, homogeneização cultural, deslocalização industrial</li>
+        <li><strong>Glocalização</strong>: global + local — adaptar produto ao mercado local</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Blocos Econômicos</h4>
+      <ul>
+        <li><strong>UE</strong>: União Europeia — moeda única (euro), livre circulação</li>
+        <li><strong>Mercosul</strong>: Brasil, Argentina, Uruguai, Paraguai</li>
+        <li><strong>NAFTA/USMCA</strong>: EUA, Canadá, México</li>
+        <li><strong>ASEAN</strong>: Sudeste Asiático</li>
+        <li><strong>BRICS</strong>: Brasil, Rússia, Índia, China, África do Sul — países emergentes</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Geopolítica Mundial</h4>
+      <ul>
+        <li><strong>Unipolaridade</strong> pós-1991: EUA como única superpotência</li>
+        <li><strong>Multipolaridade</strong> atual: China, Rússia, UE como polos de poder</li>
+        <li><strong>Terrorismo</strong>: 11/09/2001 — "Guerra ao Terror"</li>
+        <li>Conflitos regionais: Oriente Médio, África Subsaariana</li>
+        <li><strong>OTAN</strong>: aliança militar ocidental, expansão para Leste Europeu</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Biomas Brasileiros</h4>
+      <ul>
+        <li><strong>Amazônia</strong>: 49% do território, clima equatorial, maior biodiversidade</li>
+        <li><strong>Cerrado</strong>: savana tropical, "berço das águas", muito desmatado</li>
+        <li><strong>Caatinga</strong>: único bioma 100% brasileiro, semiárido, NE</li>
+        <li><strong>Mata Atlântica</strong>: costeira, 12-15% original, mais degradada proporcionalmente</li>
+        <li><strong>Pampa</strong>: RS, campos sulinos, pecuária extensiva</li>
+        <li><strong>Pantanal</strong>: maior área úmida do mundo, MT/MS</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-geo" onclick="markDone(event,'geo',90)">✓ Estudei — +90 XP</button>
+  </div>
+</div>
+
+<!-- 6. FILOSOFIA -->
+<div class="scard" id="s-fil" onclick="toggleCard('fil')">
+  <div class="scard-head">
+    <div class="scard-icon">🦉</div>
+    <div class="scard-info">
+      <div class="scard-title">Filosofia</div>
+      <div class="scard-sub">Até capítulo 5 · Filosofia Antiga ao Iluminismo</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+70 XP</span>
+      <div class="scard-check" id="chk-fil"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-fil">
+    <div class="alert-box">🔥 Mais cobrado: Sócrates/Platão/Aristóteles, Iluminismo (Locke, Rousseau, Montesquieu)</div>
+
+    <div class="content-block">
+      <h4>📌 Filosofia Grega</h4>
+      <ul>
+        <li><strong>Sócrates</strong>: "Conhece-te a ti mesmo" · maiêutica (parto das ideias) · ironista</li>
+        <li><strong>Platão</strong>: mundo das ideias (real) × mundo sensível (aparência) · Alegoria da Caverna</li>
+        <li><strong>Aristóteles</strong>: lógica formal, ética (virtude = meio-termo), política ("animal político")</li>
+        <li><strong>Pré-Socráticos</strong>: buscavam arché (origem de tudo) — Tales (água), Heráclito (fogo), Demócrito (átomo)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Filosofia Medieval</h4>
+      <ul>
+        <li><strong>Santo Agostinho</strong>: fé e razão — fé para entender</li>
+        <li><strong>São Tomás de Aquino</strong>: síntese Aristóteles + Cristianismo — razão serve à fé</li>
+        <li>Escolástica: filosofia a serviço da teologia</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Iluminismo (séc. XVIII)</h4>
+      <ul>
+        <li>Razão, liberdade, progresso, crítica à Igreja e ao absolutismo</li>
+        <li><strong>Locke</strong>: direitos naturais (vida, liberdade, propriedade), contrato social, liberalismo</li>
+        <li><strong>Rousseau</strong>: "bom selvagem", vontade geral, crítica à desigualdade</li>
+        <li><strong>Montesquieu</strong>: separação dos três poderes (Executivo, Legislativo, Judiciário)</li>
+        <li><strong>Voltaire</strong>: tolerância religiosa, crítica ao fanatismo</li>
+        <li>Influência: Revolução Americana (1776) e Francesa (1789)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Filosofia Moderna</h4>
+      <ul>
+        <li><strong>Descartes</strong>: "Cogito ergo sum" (penso, logo existo) · dúvida metódica · racionalismo</li>
+        <li><strong>Bacon</strong>: método indutivo · empirismo</li>
+        <li><strong>Kant</strong>: razão pura × razão prática · imperativo categórico</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-fil" onclick="markDone(event,'fil',70)">✓ Estudei — +70 XP</button>
+  </div>
+</div>
+
+<!-- 7. SOCIOLOGIA -->
+<div class="scard" id="s-soc" onclick="toggleCard('soc')">
+  <div class="scard-head">
+    <div class="scard-icon">👥</div>
+    <div class="scard-info">
+      <div class="scard-title">Sociologia</div>
+      <div class="scard-sub">Até capítulo 6 · Clássicos e Contemporâneos</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+70 XP</span>
+      <div class="scard-check" id="chk-soc"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-soc">
+    <div class="alert-box">🔥 Mais cobrado: Durkheim, Marx, Weber — conceitos centrais de cada um</div>
+
+    <div class="content-block">
+      <h4>📌 Auguste Comte — Positivismo</h4>
+      <ul>
+        <li>Fundador da Sociologia como ciência · "ordem e progresso"</li>
+        <li>Lei dos três estados: teológico → metafísico → positivo (científico)</li>
+        <li>Influência na bandeira do Brasil: "Ordem e Progresso"</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Émile Durkheim — Funcionalismo</h4>
+      <ul>
+        <li>Sociedade = organismo, cada parte tem função</li>
+        <li><strong>Fato social</strong>: exterior, coercitivo, geral — "coisa" a ser estudada</li>
+        <li><strong>Solidariedade mecânica</strong>: sociedades simples, semelhança</li>
+        <li><strong>Solidariedade orgânica</strong>: sociedades complexas, divisão do trabalho</li>
+        <li><strong>Anomia</strong>: ausência de normas → desordem social</li>
+        <li>Obra: "O Suicídio" — primeiros estudos estatísticos em sociologia</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Karl Marx — Materialismo Histórico</h4>
+      <ul>
+        <li><strong>Luta de classes</strong>: burguesia × proletariado → motor da história</li>
+        <li><strong>Mais-valia</strong>: diferença entre salário pago e valor produzido = lucro do capitalista</li>
+        <li><strong>Alienação</strong>: trabalhador separado do produto do seu trabalho</li>
+        <li><strong>Infraestrutura</strong>: base econômica → determina a <strong>superestrutura</strong> (política, cultura, ideologia)</li>
+        <li>Obra: "O Capital", "Manifesto Comunista" (com Engels)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Max Weber — Ação Social</h4>
+      <ul>
+        <li>Sociologia compreensiva: entender o sentido da ação humana</li>
+        <li><strong>Tipos de ação social</strong>: racional com relação a fins, racional com relação a valores, afetiva, tradicional</li>
+        <li><strong>Ética protestante</strong>: calvinismo → trabalho = vocação → acumulação de capital → capitalismo</li>
+        <li><strong>Dominação</strong>: tradicional, carismática, racional-legal (burocracia)</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-soc" onclick="markDone(event,'soc',70)">✓ Estudei — +70 XP</button>
+  </div>
+</div>
+
+<div class="sec-label">Ciências da Natureza</div>
+
+<!-- 8. BIOLOGIA 1 -->
+<div class="scard" id="s-bio1" onclick="toggleCard('bio1')">
+  <div class="scard-head">
+    <div class="scard-icon">🧬</div>
+    <div class="scard-info">
+      <div class="scard-title">Biologia 1 <span class="prio p2">IMPORTANTE</span></div>
+      <div class="scard-sub">Até capítulo 16 · Genética e Evolução</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+90 XP</span>
+      <div class="scard-check" id="chk-bio1"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-bio1">
+    <div class="alert-box">🔥 Mais cobrado: Leis de Mendel, DNA/RNA, Mitose vs Meiose, Evolução</div>
+
+    <div class="content-block">
+      <h4>📌 Leis de Mendel</h4>
+      <ul>
+        <li><strong>1ª Lei</strong>: Segregação — cada caráter é determinado por par de fatores que se separam na formação dos gametas</li>
+        <li><strong>2ª Lei</strong>: Segregação independente — caracteres diferentes se combinam independentemente</li>
+        <li><strong>Dominante (A)</strong> mascara <strong>recessivo (a)</strong></li>
+        <li>Genótipo AA ou Aa = fenótipo dominante · aa = fenótipo recessivo</li>
+        <li><strong>Cruzamento Aa × Aa</strong>: 1AA : 2Aa : 1aa (3 dominantes : 1 recessivo)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 DNA e Síntese Proteica</h4>
+      <ul>
+        <li><strong>DNA</strong>: dupla hélice, bases nitrogenadas (A-T, C-G)</li>
+        <li><strong>RNA mensageiro (mRNA)</strong>: leva informação do núcleo ao ribossomo</li>
+        <li><strong>Transcrição</strong>: DNA → RNA (no núcleo)</li>
+        <li><strong>Tradução</strong>: RNA → Proteína (no ribossomo)</li>
+        <li><strong>Códon</strong>: tripla de bases do mRNA que codifica um aminoácido</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Divisão Celular</h4>
+      <ul>
+        <li><strong>Mitose</strong>: 1 célula → 2 células iguais (crescimento, regeneração)</li>
+        <li><strong>Meiose</strong>: 1 célula → 4 células com metade dos cromossomos (reprodução sexuada)</li>
+        <li>Fases: Prófase → Metáfase → Anáfase → Telófase</li>
+        <li>Humano: 46 cromossomos (23 pares) nas células somáticas; 23 nos gametas</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Evolução</h4>
+      <ul>
+        <li><strong>Darwin</strong>: seleção natural — sobrevivem os mais adaptados ao ambiente</li>
+        <li><strong>Lamarck</strong>: herança dos caracteres adquiridos (teoria incorreta, mas importante historicamente)</li>
+        <li><strong>Neodarwinismo</strong>: Darwin + genética — mutação + seleção natural</li>
+        <li>Evidências: fósseis, anatomia comparada, bioquímica</li>
+        <li><strong>Especiação</strong>: formação de novas espécies por isolamento geográfico</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-bio1" onclick="markDone(event,'bio1',90)">✓ Estudei — +90 XP</button>
+  </div>
+</div>
+
+<!-- 9. BIOLOGIA 2 -->
+<div class="scard" id="s-bio2" onclick="toggleCard('bio2')">
+  <div class="scard-head">
+    <div class="scard-icon">🫀</div>
+    <div class="scard-info">
+      <div class="scard-title">Biologia 2</div>
+      <div class="scard-sub">Até capítulo 8 · Fisiologia Humana</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+70 XP</span>
+      <div class="scard-check" id="chk-bio2"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-bio2">
+    <div class="content-block">
+      <h4>📌 Sistema Nervoso</h4>
+      <ul>
+        <li><strong>SNC</strong>: encéfalo (cérebro, cerebelo, bulbo) + medula espinhal</li>
+        <li><strong>SNP</strong>: nervos e gânglios — somático (voluntário) + autônomo (involuntário)</li>
+        <li><strong>Neurônio</strong>: dendrito (recebe) → corpo celular → axônio (transmite)</li>
+        <li><strong>Sinapse</strong>: junção entre neurônios — neurotransmissores (dopamina, serotonina)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Sistema Endócrino (Hormônios)</h4>
+      <ul>
+        <li><strong>Hipófise</strong>: "glândula mestra" — regula outras glândulas</li>
+        <li><strong>Tireoide</strong>: metabolismo (T3, T4) — hipotireoidismo / hipertireoidismo</li>
+        <li><strong>Pâncreas</strong>: insulina (↓ glicose) e glucagon (↑ glicose)</li>
+        <li><strong>Adrenal</strong>: adrenalina (luta ou fuga), cortisol (estresse)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Sistema Circulatório</h4>
+      <ul>
+        <li>Coração: 4 câmaras — 2 átrios + 2 ventrículos</li>
+        <li><strong>Circulação pulmonar</strong>: coração → pulmões → coração (oxigenação)</li>
+        <li><strong>Circulação sistêmica</strong>: coração → corpo → coração</li>
+        <li>Sangue: hemácias (O₂), leucócitos (defesa), plaquetas (coagulação)</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-bio2" onclick="markDone(event,'bio2',70)">✓ Estudei — +70 XP</button>
+  </div>
+</div>
+
+<!-- 10. QUÍMICA 1 -->
+<div class="scard" id="s-qui1" onclick="toggleCard('qui1')">
+  <div class="scard-head">
+    <div class="scard-icon">⚗️</div>
+    <div class="scard-info">
+      <div class="scard-title">Química 1</div>
+      <div class="scard-sub">Até capítulo 9 · Orgânica + Termoquímica</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-qui1"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-qui1">
+    <div class="content-block">
+      <h4>📌 Química Orgânica — Funções</h4>
+      <ul>
+        <li><strong>Hidrocarboneto</strong>: só C e H — alcanos (–ano), alcenos (–eno), alcinos (–ino)</li>
+        <li><strong>Álcool</strong>: grupo –OH — ex: etanol (C₂H₅OH)</li>
+        <li><strong>Ácido carboxílico</strong>: grupo –COOH — ex: ácido acético (vinagre)</li>
+        <li><strong>Éster</strong>: –COO– — perfumes, gorduras</li>
+        <li><strong>Amina</strong>: grupo –NH₂</li>
+        <li><strong>Cetona</strong>: C=O no meio da cadeia · <strong>Aldeído</strong>: C=O na extremidade</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Reações Orgânicas</h4>
+      <ul>
+        <li><strong>Combustão</strong>: orgânico + O₂ → CO₂ + H₂O (+ energia)</li>
+        <li><strong>Adição</strong>: insaturado + reagente → saturado</li>
+        <li><strong>Substituição</strong>: H substituído por outro grupo (halogenação)</li>
+        <li><strong>Saponificação</strong>: gordura + base → sabão + glicerol</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Termoquímica</h4>
+      <ul>
+        <li><strong>Exotérmica</strong>: libera calor → ΔH negativo (ΔH &lt; 0)</li>
+        <li><strong>Endotérmica</strong>: absorve calor → ΔH positivo (ΔH &gt; 0)</li>
+        <li><strong>Lei de Hess</strong>: ΔH total = soma dos ΔH das etapas</li>
+        <li><strong>Entalpia de formação</strong>: ΔHf° de elemento puro = 0</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-qui1" onclick="markDone(event,'qui1',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<!-- 11. QUÍMICA 2 -->
+<div class="scard" id="s-qui2" onclick="toggleCard('qui2')">
+  <div class="scard-head">
+    <div class="scard-icon">🔋</div>
+    <div class="scard-info">
+      <div class="scard-title">Química 2</div>
+      <div class="scard-sub">Até capítulo 10 · Cinética, Equilíbrio, Eletro</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-qui2"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-qui2">
+    <div class="content-block">
+      <h4>📌 Cinética Química</h4>
+      <ul>
+        <li>Fatores que aumentam velocidade: ↑ temperatura, ↑ concentração, catalisador, ↑ superfície de contato</li>
+        <li><strong>Catalisador</strong>: aumenta velocidade sem ser consumido</li>
+        <li><strong>Teoria das colisões</strong>: moléculas colidem com energia mínima (energia de ativação)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Equilíbrio Químico</h4>
+      <ul>
+        <li>Reação reversível atinge equilíbrio quando velocidade direta = inversa</li>
+        <li><strong>Le Chatelier</strong>: perturbação → sistema reage para restabelecer equilíbrio</li>
+        <li>↑ concentração de reagente → equilíbrio vai para produtos</li>
+        <li>↑ temperatura: favorece reação endotérmica</li>
+        <li>↑ pressão: favorece lado com menos moles de gás</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Eletroquímica</h4>
+      <ul>
+        <li><strong>Oxidação</strong>: perde elétrons (OIL — Oxidation Is Loss)</li>
+        <li><strong>Redução</strong>: ganha elétrons (RIG — Reduction Is Gain)</li>
+        <li><strong>Pilha</strong>: reação espontânea gera corrente elétrica (cátodo +, ânodo –)</li>
+        <li><strong>Eletrólise</strong>: corrente elétrica força reação não espontânea</li>
+        <li><strong>Série de reatividade</strong>: metais mais à esquerda são redutores mais fortes</li>
+      </ul>
+    </div>
+    <button class="done-btn" id="btn-qui2" onclick="markDone(event,'qui2',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<!-- 12. FÍSICA 1 -->
+<div class="scard" id="s-fis1" onclick="toggleCard('fis1')">
+  <div class="scard-head">
+    <div class="scard-icon">🔭</div>
+    <div class="scard-info">
+      <div class="scard-title">Física 1</div>
+      <div class="scard-sub">Até capítulo 10 · Termodinâmica e Óptica</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-fis1"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-fis1">
+    <div class="content-block">
+      <h4>📌 Termodinâmica</h4>
+      <ul>
+        <li><strong>1ª Lei</strong>: energia se conserva — Q = ΔU + W (calor = variação interna + trabalho)</li>
+        <li><strong>2ª Lei</strong>: calor flui espontaneamente do quente para o frio · entropia sempre aumenta</li>
+        <li><strong>Máquina térmica</strong>: eficiência η = W/Q₁ = (Q₁–Q₂)/Q₁</li>
+        <li>Processos: isotérmico (T const), isobárico (P const), isocórico (V const), adiabático (Q=0)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Óptica Geométrica</h4>
+      <ul>
+        <li><strong>Reflexão</strong>: ângulo de incidência = ângulo de reflexão</li>
+        <li><strong>Refração</strong>: mudança de velocidade ao mudar de meio → desvio da luz</li>
+        <li><strong>Lentes convergentes</strong>: formam imagem real e invertida (câmera, olho)</li>
+        <li><strong>Lentes divergentes</strong>: formam imagem virtual e direita (óculos para miopia)</li>
+        <li>Fórmula de Gauss: 1/f = 1/p + 1/p'</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Ondas</h4>
+      <ul>
+        <li><strong>v = λ · f</strong> (velocidade = comprimento de onda × frequência)</li>
+        <li>Ondas mecânicas: precisam de meio · Ondas eletromagnéticas: propagam no vácuo</li>
+        <li>Espectro: rádio → micro-ondas → infravermelho → visível → UV → raios-X → gama</li>
+        <li><strong>Efeito Doppler</strong>: frequência aparente muda com movimento da fonte</li>
+      </ul>
+    </div>
+    <div class="formula-box">v = λ·f | η = (T₁–T₂)/T₁ | 1/f = 1/p + 1/p'</div>
+    <button class="done-btn" id="btn-fis1" onclick="markDone(event,'fis1',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<!-- 13. FÍSICA 2 -->
+<div class="scard" id="s-fis2" onclick="toggleCard('fis2')">
+  <div class="scard-head">
+    <div class="scard-icon">⚡</div>
+    <div class="scard-info">
+      <div class="scard-title">Física 2</div>
+      <div class="scard-sub">Até capítulo 8 · Eletricidade e Magnetismo</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-fis2"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-fis2">
+    <div class="content-block">
+      <h4>📌 Eletrostática</h4>
+      <ul>
+        <li>Cargas: + e – · iguais se repelem, opostas se atraem</li>
+        <li><strong>Lei de Coulomb</strong>: F = k·Q₁·Q₂/d² (k = 9×10⁹ N·m²/C²)</li>
+        <li><strong>Campo elétrico</strong>: E = F/q · sai de + entra em –</li>
+        <li>Potencial elétrico: V = k·Q/d</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Circuitos Elétricos</h4>
+      <ul>
+        <li><strong>Lei de Ohm</strong>: V = R·I (tensão = resistência × corrente)</li>
+        <li><strong>Série</strong>: R total = R₁+R₂+... · corrente igual · tensão dividida</li>
+        <li><strong>Paralelo</strong>: 1/R = 1/R₁+1/R₂... · tensão igual · corrente dividida</li>
+        <li><strong>Potência</strong>: P = V·I = V²/R = I²·R (em watts)</li>
+        <li>Energia: E = P·t · kWh = 1000W × 1h</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Física Moderna</h4>
+      <ul>
+        <li><strong>Efeito fotoelétrico</strong>: luz ejecta elétrons de metais — Einstein (1905)</li>
+        <li><strong>Fóton</strong>: E = h·f (h = constante de Planck)</li>
+        <li>Dualidade onda-partícula: luz se comporta como onda e como partícula</li>
+        <li><strong>Radioatividade</strong>: α (hélio), β (elétron), γ (onda eletromagnética)</li>
+      </ul>
+    </div>
+    <div class="formula-box">F = kQ₁Q₂/d² | V = RI | P = VI | E = hf</div>
+    <button class="done-btn" id="btn-fis2" onclick="markDone(event,'fis2',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<div class="sec-label">Matemática</div>
+
+<!-- 14. MATEMÁTICA 1 -->
+<div class="scard" id="s-mat1" onclick="toggleCard('mat1')">
+  <div class="scard-head">
+    <div class="scard-icon">📈</div>
+    <div class="scard-info">
+      <div class="scard-title">Matemática 1 <span class="prio p2">IMPORTANTE</span></div>
+      <div class="scard-sub">Até capítulo 11 · Funções, Log, Sequências</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+90 XP</span>
+      <div class="scard-check" id="chk-mat1"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-mat1">
+    <div class="content-block">
+      <h4>📌 Progressões</h4>
+      <ul>
+        <li><strong>PA</strong>: razão constante — aₙ = a₁ + (n–1)·r · Sₙ = n·(a₁+aₙ)/2</li>
+        <li><strong>PG</strong>: razão constante por multiplicação — aₙ = a₁·qⁿ⁻¹ · Sₙ = a₁·(qⁿ–1)/(q–1)</li>
+        <li>Identificar PA: diferença constante · PG: quociente constante</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Logaritmos</h4>
+      <ul>
+        <li>log_a(b) = x ↔ aˣ = b</li>
+        <li><strong>Propriedades</strong>: log(a·b) = log a + log b · log(a/b) = log a – log b · log(aⁿ) = n·log a</li>
+        <li>log₁₀(100) = 2 · log₁₀(1000) = 3 · ln(e) = 1</li>
+        <li>Mudança de base: log_a(b) = log(b)/log(a)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Funções Exponenciais e Trigonométricas</h4>
+      <ul>
+        <li><strong>f(x) = aˣ</strong>: a&gt;1 → crescente; 0&lt;a&lt;1 → decrescente</li>
+        <li>sin 30° = 1/2 · sin 60° = √3/2 · sin 45° = √2/2</li>
+        <li>cos 30° = √3/2 · cos 60° = 1/2 · cos 45° = √2/2</li>
+        <li>tg 30° = √3/3 · tg 60° = √3 · tg 45° = 1</li>
+        <li>sin²x + cos²x = 1</li>
+      </ul>
+    </div>
+    <div class="formula-box">aₙ = a₁+(n-1)r | Sₙ = n(a₁+aₙ)/2 | log(ab)=loga+logb | sin²+cos²=1</div>
+    <button class="done-btn" id="btn-mat1" onclick="markDone(event,'mat1',90)">✓ Estudei — +90 XP</button>
+  </div>
+</div>
+
+<!-- 15. MATEMÁTICA 2 -->
+<div class="scard" id="s-mat2" onclick="toggleCard('mat2')">
+  <div class="scard-head">
+    <div class="scard-icon">📊</div>
+    <div class="scard-info">
+      <div class="scard-title">Matemática 2</div>
+      <div class="scard-sub">Até capítulo 9 · Estatística e Probabilidade</div>
+    </div>
+    <div class="scard-right">
+      <span class="scard-xp">+80 XP</span>
+      <div class="scard-check" id="chk-mat2"></div>
+      <span class="scard-arrow">▼</span>
+    </div>
+  </div>
+  <div class="scard-body" id="body-mat2">
+    <div class="content-block">
+      <h4>📌 Estatística</h4>
+      <ul>
+        <li><strong>Média</strong>: soma / quantidade</li>
+        <li><strong>Mediana</strong>: valor central (dados ordenados)</li>
+        <li><strong>Moda</strong>: valor mais frequente</li>
+        <li><strong>Desvio padrão</strong>: dispersão em torno da média</li>
+        <li>Gráficos: barras, setores (pizza), histograma, polígono de frequência</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Probabilidade</h4>
+      <ul>
+        <li>P(A) = casos favoráveis / casos totais</li>
+        <li>0 ≤ P(A) ≤ 1 · P(impossível) = 0 · P(certo) = 1</li>
+        <li><strong>Eventos independentes</strong>: P(A e B) = P(A) × P(B)</li>
+        <li><strong>Eventos mutuamente exclusivos</strong>: P(A ou B) = P(A) + P(B)</li>
+      </ul>
+    </div>
+
+    <div class="content-block">
+      <h4>📌 Análise Combinatória</h4>
+      <ul>
+        <li><strong>Fatorial</strong>: n! = n·(n–1)·...·1 · 0! = 1</li>
+        <li><strong>Permutação</strong>: P(n) = n! (arranjar n elementos distintos)</li>
+        <li><strong>Combinação</strong>: C(n,k) = n! / (k!·(n–k)!) — escolher sem ordem</li>
+        <li><strong>Arranjo</strong>: A(n,k) = n!/(n–k)! — escolher com ordem</li>
+      </ul>
+    </div>
+    <div class="formula-box">P(A) = favoráveis/total | C(n,k) = n!/k!(n-k)! | Média = Σx/n</div>
+    <button class="done-btn" id="btn-mat2" onclick="markDone(event,'mat2',80)">✓ Estudei — +80 XP</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer-bar">
+  <div class="footer-done"><span id="foot-done">0</span>/15 matérias estudadas</div>
+  <button class="all-done-btn" onclick="allDone()">🏆 Terminei tudo!</button>
+</div>
+
+<script>
+const TOTAL_XP = 1500;
+let xp = 0;
+let doneMap = {};
+
+try { doneMap = JSON.parse(localStorage.getItem('pm2_done')||'{}'); } catch(e){}
+try { xp = parseInt(localStorage.getItem('pm2_xp')||'0'); } catch(e){}
+
+// Restore state
+Object.keys(doneMap).forEach(id => {
+  if(doneMap[id]) applyDone(id);
+});
+updateXP(0);
+updateCountdown();
+setInterval(updateCountdown, 30000);
+updateFooter();
+
+function toggleCard(id) {
+  const card = document.getElementById('s-'+id);
+  const body = document.getElementById('body-'+id);
+  if(!card || !body) return;
+  card.classList.toggle('open');
+  // Close others
+  document.querySelectorAll('.scard.open').forEach(c => {
+    if(c.id !== 's-'+id) c.classList.remove('open');
+  });
+}
+
+function markDone(event, id, pts) {
+  event.stopPropagation();
+  const already = !!doneMap[id];
+  if(already) {
+    doneMap[id] = false;
+    xp = Math.max(0, xp - pts);
+    unapplyDone(id);
+  } else {
+    doneMap[id] = true;
+    xp += pts;
+    applyDone(id);
+    showXPPop('+'+pts+' XP');
+  }
+  localStorage.setItem('pm2_done', JSON.stringify(doneMap));
+  localStorage.setItem('pm2_xp', xp);
+  updateXP(0);
+  updateFooter();
+}
+
+function applyDone(id) {
+  const card = document.getElementById('s-'+id);
+  const btn = document.getElementById('btn-'+id);
+  const chk = document.getElementById('chk-'+id);
+  if(card) card.classList.add('done-card');
+  if(btn) { btn.classList.add('undone'); btn.textContent = '↩ Desmarcar'; }
+  if(chk) chk.classList.add('applied');
+  const chkEl = document.getElementById('chk-'+id);
+  if(chkEl) chkEl.parentElement.closest('.scard').querySelector('.scard-check').style.background = '#10b981';
+}
+
+function unapplyDone(id) {
+  const card = document.getElementById('s-'+id);
+  const btn = document.getElementById('btn-'+id);
+  if(card) card.classList.remove('done-card');
+  if(btn) {
+    const xpMap = {ling:100,lit:80,ing:60,hist:100,geo:90,fil:70,soc:70,bio1:90,bio2:70,qui1:80,qui2:80,fis1:80,fis2:80,mat1:90,mat2:80};
+    btn.classList.remove('undone');
+    btn.textContent = `✓ Estudei — +${xpMap[id]||80} XP`;
+  }
+  document.getElementById('s-'+id).querySelector('.scard-check').style.background = '';
+}
+
+function updateXP(add) {
+  const pct = Math.min(100, Math.round(xp / TOTAL_XP * 100));
+  document.getElementById('xp-fill').style.width = pct+'%';
+  document.getElementById('xp-pts').textContent = xp+' / '+TOTAL_XP;
+}
+
+function updateFooter() {
+  const n = Object.values(doneMap).filter(Boolean).length;
+  document.getElementById('foot-done').textContent = n;
+}
+
+function showXPPop(msg) {
+  const el = document.createElement('div');
+  el.className = 'xp-pop'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1900);
+}
+
+function updateCountdown() {
+  const now = new Date();
+  const exam = new Date();
+  exam.setDate(exam.getDate() + (now.getHours() >= 7 && now.toDateString() === new Date('2026-06-01').toDateString() ? 1 : 0));
+  exam.setFullYear(2026); exam.setMonth(5); exam.setDate(1);
+  exam.setHours(7,0,0,0);
+  const diff = exam - now;
+  if(diff <= 0) { document.getElementById('cntdown').textContent = '🏆 BOA PROVA!'; return; }
+  const h = Math.floor(diff/3600000);
+  const m = Math.floor((diff%3600000)/60000);
+  document.getElementById('cntdown').textContent = `${h}h ${m}min`;
+}
+
+function allDone() {
+  const ids = ['ling','lit','ing','hist','geo','fil','soc','bio1','bio2','qui1','qui2','fis1','fis2','mat1','mat2'];
+  ids.forEach(id => { if(!doneMap[id]) alert('Você ainda não marcou '+id+' como estudado!'); });
+  alert('🏆 Parabéns! Vai dormir agora. Boa prova amanhã!');
+}
+</script>
+</body>
+</html>
