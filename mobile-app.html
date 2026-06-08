@@ -508,19 +508,17 @@ const PLANO = [
 ];
 
 const COMPROMISSOS = [
-  {date:'2026-06-09', items:[
+  {date:'2026-06-08', items:[
     {time:'14h–16h', title:'Prime Cursinho', desc:'Linguagens e Redação', type:'conf'},
   ]},
-  {date:'2026-06-12', items:[
-    {time:'15h',     title:'Dr. André',     desc:'Consulta médica',              type:'conf'},
-    {time:'~?h',     title:'Thainam',       desc:'Última consulta (provável)',   type:'prov'},
-    {time:'17h–19h30',title:'Estima',       desc:'Acompanhamento',               type:'conf'},
-  ]},
-  {date:'2026-06-13', items:[
-    {time:'~?h',     title:'Muyá',          desc:'Psicopedagoga — provável (ou semana que vem)', type:'prov'},
+  {date:'2026-06-11', items:[
+    {time:'15h',      title:'Dr. André',     desc:'Consulta médica · alarme 14h30',         type:'conf'},
+    {time:'~?h',      title:'Thainam',       desc:'Última consulta (provável)',              type:'prov'},
+    {time:'17h–19h30',title:'Estima',        desc:'Acompanhamento · alarme 16h30',          type:'conf'},
+    {time:'~?h',      title:'Muyá',          desc:'Psicopedagoga — provável (ou sex/próx sem)', type:'prov'},
   ]},
   {date:'2026-06-14', items:[
-    {time:'8h15',    title:'🏆 PROVA UNICAP', desc:'Chegar às 7h45 — levar doc + caneta + água', type:'cprova'},
+    {time:'8h15',     title:'🏆 PROVA UNICAP', desc:'Chegar às 7h45 — levar doc + caneta + água', type:'cprova'},
   ]},
 ];
 
@@ -532,18 +530,18 @@ function generateICS(){
     return `${y}${mo}${d}T${pad(h)}${pad(m||0)}00`;
   }
   const events=[
-    {date:'2026-06-09',h0:14,h1:16,alarm:13,alm:30,
+    {date:'2026-06-08',h0:14,h1:16,alarm:13,alm:30,
      sum:'Prime Cursinho — Linguagens e Redação',
      desc:'Aula no Prime Cursinho\\nLinguagens e Redação',
-     uid:'unicap-cursinho-0609'},
-    {date:'2026-06-12',h0:15,h1:16,alarm:14,alm:30,
+     uid:'unicap-cursinho-0608'},
+    {date:'2026-06-11',h0:15,h1:16,alarm:14,alm:30,
      sum:'Dr. André — Consulta',
      desc:'Consulta médica com Dr. André',
-     uid:'unicap-drAndre-0612'},
-    {date:'2026-06-12',h0:17,m0:0,h1:19,m1:30,alarm:16,alm:30,
+     uid:'unicap-drAndre-0611'},
+    {date:'2026-06-11',h0:17,m0:0,h1:19,m1:30,alarm:16,alm:30,
      sum:'Estima — Acompanhamento',
      desc:'Acompanhamento Estima (17h–19h30)',
-     uid:'unicap-estima-0612'},
+     uid:'unicap-estima-0611'},
     {date:'2026-06-14',h0:8,m0:15,h1:13,m1:15,alarm:7,alm:45,
      sum:'🏆 PROVA UNICAP 2026.2 — DIREITO MANHÃ',
      desc:'Chegar às 7h45\\nLevar: documento + caneta azul + água',
