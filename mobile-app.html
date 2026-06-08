@@ -510,16 +510,18 @@ const PLANO = [
 
 const COMPROMISSOS = [
   {date:'2026-06-08', items:[
-    {time:'14h–16h', title:'Prime Cursinho', desc:'Linguagens e Redação', type:'conf'},
+    {time:'14h–16h', title:'Prime Cursinho', desc:'Linguagens e Redação · alarme 13h30', type:'conf'},
+  ]},
+  {date:'2026-06-10', items:[
+    {time:'15h20', title:'Muy', desc:'Consulta · alarme 14h50', type:'conf'},
   ]},
   {date:'2026-06-11', items:[
-    {time:'15h',      title:'Dr. André',     desc:'Consulta médica · alarme 14h30',         type:'conf'},
-    {time:'~?h',      title:'Thainam',       desc:'Última consulta (provável)',              type:'prov'},
-    {time:'17h–19h30',title:'Estima',        desc:'Acompanhamento · alarme 16h30',          type:'conf'},
-    {time:'~?h',      title:'Muyá',          desc:'Psicopedagoga — provável (ou sex/próx sem)', type:'prov'},
+    {time:'14h',       title:'Thainam',        desc:'Consulta · alarme 13h30',               type:'conf'},
+    {time:'15h',       title:'Dr. André',      desc:'Consulta médica · alarme 14h30',        type:'conf'},
+    {time:'17h–19h30', title:'Estima',         desc:'Acompanhamento · alarme 16h30',         type:'conf'},
   ]},
   {date:'2026-06-14', items:[
-    {time:'8h15',     title:'🏆 PROVA UNICAP', desc:'Chegar às 7h45 — levar doc + caneta + água', type:'cprova'},
+    {time:'8h15', title:'🏆 PROVA UNICAP', desc:'Chegar às 7h45 — levar doc + caneta + água', type:'cprova'},
   ]},
 ];
 
@@ -535,17 +537,25 @@ function generateICS(){
     return `${uy}${pad(um)}${pad(ud)}T${pad(uh)}${pad(m||0)}00Z`;
   }
   const events=[
-    {date:'2026-06-08',h0:14,h1:16,min:-30,
+    {date:'2026-06-08',h0:14,m0:0,h1:16,m1:0,min:-30,
      sum:'Prime Cursinho — Linguagens e Redação',
      desc:'Aula no Prime Cursinho - Linguagens e Redacao',
      uid:'unicap-cursinho-0608'},
-    {date:'2026-06-11',h0:15,h1:16,min:-30,
+    {date:'2026-06-10',h0:15,m0:20,h1:16,m1:20,min:-30,
+     sum:'Muy — Consulta',
+     desc:'Muy (15h20)',
+     uid:'unicap-muy-0610'},
+    {date:'2026-06-11',h0:14,m0:0,h1:15,m1:0,min:-30,
+     sum:'Thainam — Consulta',
+     desc:'Thainam (14h)',
+     uid:'unicap-thainam-0611'},
+    {date:'2026-06-11',h0:15,m0:0,h1:16,m1:0,min:-30,
      sum:'Dr. Andre — Consulta Medica',
-     desc:'Consulta medica com Dr. Andre',
+     desc:'Consulta medica com Dr. Andre (15h)',
      uid:'unicap-drAndre-0611'},
     {date:'2026-06-11',h0:17,m0:0,h1:19,m1:30,min:-30,
      sum:'Estima — Acompanhamento',
-     desc:'Acompanhamento Estima (17h-19h30)',
+     desc:'Estima (17h)',
      uid:'unicap-estima-0611'},
     {date:'2026-06-14',h0:8,m0:15,h1:13,m1:15,min:-30,
      sum:'PROVA UNICAP 2026.2 — DIREITO MANHA',
@@ -673,7 +683,7 @@ function installPWA(){
 }
 
 // ── HELPERS ──────────────────────────────────────────────────────────
-function todayStr(){return new Date().toISOString().slice(0,10);}
+function todayStr(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
 function save(){localStorage.setItem('uc_done',JSON.stringify(done));localStorage.setItem('uc_alarms',JSON.stringify(alarms));}
 function daysLeft(){
   const n=new Date();n.setHours(0,0,0,0);
