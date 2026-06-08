@@ -1,4 +1,4 @@
-const CACHE = 'unicap-v5';
+const CACHE = 'unicap-v6';
 const STATIC = [
   './mobile-app.html',
   './final-sprint.html',
