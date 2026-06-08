@@ -246,6 +246,28 @@ body{display:flex;flex-direction:column;}
   font-size:15px;cursor:pointer;
 }
 
+/* SUB-TABS (Agenda) */
+.sub-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.stab{flex:1;padding:9px 6px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;transition:all .18s;text-align:center;}
+.stab.active{background:rgba(0,212,255,0.1);border-color:var(--cyan);color:var(--cyan);}
+.sub-panel{display:none;}
+.sub-panel.active{display:block;}
+/* COMPROMISSOS */
+.cday-hdr{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--muted);margin:14px 0 7px;}
+.cday-hdr.ctoday{color:var(--cyan);}
+.citem{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;border-radius:12px;padding:12px;margin-bottom:8px;border:1px solid var(--border);background:var(--bg2);}
+.citem.conf{border-color:rgba(16,185,129,0.35);}
+.citem.prov{border-color:rgba(255,184,0,0.28);}
+.citem.cprova{border-color:var(--red);background:rgba(239,68,68,0.05);}
+.ctime{font-size:14px;font-weight:900;text-align:center;color:var(--cyan);line-height:1.1;}
+.cdow{font-size:9px;color:var(--muted);text-align:center;font-weight:700;letter-spacing:0.5px;margin-top:3px;}
+.cbadge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;margin-bottom:4px;}
+.cbadge.conf{background:rgba(16,185,129,0.15);color:var(--emerald);}
+.cbadge.prov{background:rgba(255,184,0,0.12);color:var(--amber);}
+.cbadge.cprova{background:rgba(239,68,68,0.15);color:var(--red);}
+.ctitle{font-size:13px;font-weight:700;margin-bottom:1px;}
+.cdesc{font-size:11px;color:var(--muted);line-height:1.5;}
+
 /* ALARM FIRE */
 .afire{
   position:fixed;inset:0;background:rgba(0,0,0,0.94);
@@ -356,14 +378,22 @@ body{display:flex;flex-direction:column;}
 
   <!-- TAB AGENDA -->
   <div id="tab-agenda" class="tab">
-    <div style="font-size:16px;font-weight:800;margin-bottom:12px;">14 dias · Cronograma final</div>
-    <div class="cal-legend">
-      <div class="leg"><div class="ldot" style="background:var(--cyan)"></div>Hoje</div>
-      <div class="leg"><div class="ldot" style="background:var(--amber)"></div>Evento</div>
-      <div class="leg"><div class="ldot" style="background:var(--purple)"></div>Simulado</div>
-      <div class="leg"><div class="ldot" style="background:var(--red)"></div>Prova</div>
+    <div class="sub-tabs">
+      <button class="stab active" id="stab-est" onclick="goSubTab('est')">📚 Estudos</button>
+      <button class="stab" id="stab-comp" onclick="goSubTab('comp')">📌 Compromissos</button>
     </div>
-    <div id="calendar"></div>
+    <div class="sub-panel active" id="spanel-est">
+      <div class="cal-legend">
+        <div class="leg"><div class="ldot" style="background:var(--cyan)"></div>Hoje</div>
+        <div class="leg"><div class="ldot" style="background:var(--amber)"></div>Evento</div>
+        <div class="leg"><div class="ldot" style="background:var(--purple)"></div>Simulado</div>
+        <div class="leg"><div class="ldot" style="background:var(--red)"></div>Prova</div>
+      </div>
+      <div id="calendar"></div>
+    </div>
+    <div class="sub-panel" id="spanel-comp">
+      <div id="comp-list"></div>
+    </div>
   </div>
 
   <!-- TAB ALARMES -->
@@ -476,6 +506,53 @@ const PLANO = [
    events:[{type:'prova',txt:'Prova às 8h15 — Chegue às 7h45. Boa sorte!'}],
    tasks:[]},
 ];
+
+const COMPROMISSOS = [
+  {date:'2026-06-09', items:[
+    {time:'14h–16h', title:'Prime Cursinho', desc:'Linguagens e Redação', type:'conf'},
+  ]},
+  {date:'2026-06-12', items:[
+    {time:'15h',     title:'Dr. André',     desc:'Consulta médica',              type:'conf'},
+    {time:'~?h',     title:'Thainam',       desc:'Última consulta (provável)',   type:'prov'},
+    {time:'17h–19h30',title:'Estima',       desc:'Acompanhamento',               type:'conf'},
+  ]},
+  {date:'2026-06-13', items:[
+    {time:'~?h',     title:'Muyá',          desc:'Psicopedagoga — provável (ou semana que vem)', type:'prov'},
+  ]},
+  {date:'2026-06-14', items:[
+    {time:'8h15',    title:'🏆 PROVA UNICAP', desc:'Chegar às 7h45 — levar doc + caneta + água', type:'cprova'},
+  ]},
+];
+
+function renderComp(){
+  const c=document.getElementById('comp-list'); if(!c)return;
+  const today=todayStr();
+  const DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const MN=['jan','fev','mar','abr','mai','jun'];
+  c.innerHTML=COMPROMISSOS.map(day=>{
+    const d=new Date(day.date+'T12:00:00');
+    const isT=day.date===today;
+    const hdr=`<div class="cday-hdr${isT?' ctoday':''}">${isT?'● ':''}${DN[d.getDay()]}, ${d.getDate()} ${MN[d.getMonth()]}</div>`;
+    const items=day.items.map(it=>`
+      <div class="citem ${it.type}">
+        <div><div class="ctime">${it.time}</div><div class="cdow">${DN[d.getDay()].toUpperCase()}</div></div>
+        <div>
+          <div class="cbadge ${it.type}">${it.type==='conf'?'Confirmado':it.type==='cprova'?'PROVA':'Provável'}</div>
+          <div class="ctitle">${it.title}</div>
+          <div class="cdesc">${it.desc}</div>
+        </div>
+      </div>`).join('');
+    return hdr+items;
+  }).join('');
+}
+
+function goSubTab(id){
+  document.querySelectorAll('.stab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sub-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('stab-'+id).classList.add('active');
+  document.getElementById('spanel-'+id).classList.add('active');
+  if(id==='comp')renderComp();
+}
 
 const MATS=[
   {sec:'🎯 Ferramentas',items:[
