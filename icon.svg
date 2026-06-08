@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+  <radialGradient id="bg" cx="50%" cy="35%" r="75%">
+    <stop offset="0%" stop-color="#1e0050"/>
+    <stop offset="55%" stop-color="#08001a"/>
+    <stop offset="100%" stop-color="#020008"/>
+  </radialGradient>
+  <radialGradient id="aura" cx="50%" cy="45%" r="45%">
+    <stop offset="0%" stop-color="#f5c542" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="#f5c542" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="aura2" cx="50%" cy="45%" r="35%">
+    <stop offset="0%" stop-color="#a855f7" stop-opacity="0.2"/>
+    <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="gold" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#ffe066"/>
+    <stop offset="40%" stop-color="#f5c542"/>
+    <stop offset="100%" stop-color="#b8860b"/>
+  </linearGradient>
+  <linearGradient id="cyan-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#00eeff"/>
+    <stop offset="100%" stop-color="#0088cc"/>
+  </linearGradient>
+  <linearGradient id="shield-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#2a0060"/>
+    <stop offset="50%" stop-color="#130030"/>
+    <stop offset="100%" stop-color="#050010"/>
+  </linearGradient>
+  <filter id="glow-gold" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="6" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-cyan" x="-60%" y="-60%" width="220%" height="220%">
+    <feGaussianBlur stdDeviation="8" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="glow-soft" x="-40%" y="-40%" width="180%" height="180%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#f5c542" flood-opacity="0.5"/>
+  </filter>
+</defs>
+
+<!-- FUNDO -->
+<rect width="512" height="512" rx="90" fill="url(#bg)"/>
+
+<!-- AURA DE FUNDO -->
+<ellipse cx="256" cy="230" rx="200" ry="180" fill="url(#aura)"/>
+<ellipse cx="256" cy="230" rx="130" ry="120" fill="url(#aura2)"/>
+
+<!-- ESTRELAS -->
+<circle cx="45" cy="55" r="1.5" fill="#fff" opacity="0.7"/>
+<circle cx="90" cy="30" r="1" fill="#fff" opacity="0.5"/>
+<circle cx="150" cy="70" r="1.5" fill="#fff" opacity="0.4"/>
+<circle cx="30" cy="130" r="1" fill="#fff" opacity="0.6"/>
+<circle cx="75" cy="180" r="1.5" fill="#00d4ff" opacity="0.5"/>
+<circle cx="470" cy="60" r="1.5" fill="#fff" opacity="0.7"/>
+<circle cx="430" cy="100" r="1" fill="#fff" opacity="0.5"/>
+<circle cx="490" cy="150" r="1.5" fill="#fff" opacity="0.4"/>
+<circle cx="460" cy="200" r="1" fill="#00d4ff" opacity="0.6"/>
+<circle cx="120" cy="460" r="1" fill="#fff" opacity="0.4"/>
+<circle cx="390" cy="470" r="1.5" fill="#fff" opacity="0.5"/>
+<circle cx="50" cy="380" r="1" fill="#a855f7" opacity="0.7"/>
+<circle cx="470" cy="350" r="1" fill="#a855f7" opacity="0.6"/>
+<circle cx="200" cy="25" r="1" fill="#fff" opacity="0.6"/>
+<circle cx="340" cy="35" r="1.5" fill="#fff" opacity="0.5"/>
+
+<!-- ESCUDO -->
+<path d="M256 68 L380 110 L380 240 Q380 330 256 390 Q132 330 132 240 L132 110 Z"
+  fill="url(#shield-grad)" stroke="#f5c542" stroke-width="2.5" opacity="0.9" filter="url(#glow-soft)"/>
+<!-- Borda interna do escudo -->
+<path d="M256 88 L364 126 L364 238 Q364 318 256 372 Q148 318 148 238 L148 126 Z"
+  fill="none" stroke="#f5c542" stroke-width="1" opacity="0.35"/>
+
+<!-- BALANÇA — HASTE VERTICAL -->
+<rect x="252" y="120" width="8" height="148" rx="4" fill="url(#gold)" filter="url(#glow-soft)"/>
+<!-- Topo ornamental -->
+<circle cx="256" cy="116" r="10" fill="url(#gold)" filter="url(#glow-soft)"/>
+<circle cx="256" cy="116" r="6" fill="#ffe066"/>
+
+<!-- BALANÇA — VIGA HORIZONTAL (levemente inclinada para drama) -->
+<rect x="168" y="163" width="176" height="7" rx="3.5" fill="url(#gold)" filter="url(#glow-gold)"
+  transform="rotate(-3 256 166)"/>
+
+<!-- BALANÇA — CORRENTES ESQUERDA -->
+<line x1="186" y1="159" x2="176" y2="202" stroke="#f5c542" stroke-width="2" opacity="0.8"/>
+<line x1="198" y1="157" x2="188" y2="202" stroke="#f5c542" stroke-width="2" opacity="0.8"/>
+<!-- PRATO ESQUERDO -->
+<path d="M162 202 Q180 216 198 202" fill="none" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" filter="url(#glow-soft)"/>
+<ellipse cx="180" cy="202" rx="20" ry="4" fill="#f5c542" opacity="0.25"/>
+
+<!-- BALANÇA — CORRENTES DIREITA -->
+<line x1="318" y1="157" x2="328" y2="206" stroke="#f5c542" stroke-width="2" opacity="0.8"/>
+<line x1="330" y1="155" x2="340" y2="206" stroke="#f5c542" stroke-width="2" opacity="0.8"/>
+<!-- PRATO DIREITO -->
+<path d="M314 206 Q332 220 350 206" fill="none" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" filter="url(#glow-soft)"/>
+<ellipse cx="332" cy="206" rx="20" ry="4" fill="#f5c542" opacity="0.25"/>
+
+<!-- BASE DA BALANÇA -->
+<rect x="242" y="262" width="28" height="8" rx="4" fill="url(#gold)" opacity="0.7"/>
+<rect x="220" y="268" width="72" height="5" rx="2.5" fill="url(#gold)" opacity="0.5"/>
+
+<!-- LINHA SEPARADORA -->
+<rect x="140" y="295" width="232" height="1.5" rx="1" fill="#f5c542" opacity="0.2"/>
+
+<!-- TEXTO: UNICAP -->
+<text x="256" y="350"
+  text-anchor="middle"
+  font-family="Arial Black, Arial, sans-serif"
+  font-size="78" font-weight="900"
+  letter-spacing="4"
+  fill="url(#gold)"
+  filter="url(#glow-gold)">UNICAP</text>
+
+<!-- TEXTO: 2026 -->
+<text x="256" y="412"
+  text-anchor="middle"
+  font-family="Arial, sans-serif"
+  font-size="52" font-weight="700"
+  letter-spacing="8"
+  fill="url(#cyan-grad)"
+  filter="url(#glow-cyan)">2026</text>
+
+<!-- TEXTO: DIREITO -->
+<text x="256" y="456"
+  text-anchor="middle"
+  font-family="Arial, sans-serif"
+  font-size="22" font-weight="600"
+  letter-spacing="10"
+  fill="#a855f7"
+  opacity="0.9">DIREITO</text>
+
+<!-- BORDA EXTERNA BRILHANTE -->
+<rect x="1.5" y="1.5" width="509" height="509" rx="89" fill="none"
+  stroke="#f5c542" stroke-width="3" opacity="0.15"/>
+<rect x="5" y="5" width="502" height="502" rx="86" fill="none"
+  stroke="#a855f7" stroke-width="1.5" opacity="0.1"/>
+</svg>
