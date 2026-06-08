@@ -525,49 +525,49 @@ const COMPROMISSOS = [
 function generateICS(){
   const nl='\r\n';
   const pad=n=>String(n).padStart(2,'0');
-  function dt(dateStr,h,m){
+  // Converte hora local Recife (UTC-3) para UTC e formata para ICS
+  function dtUTC(dateStr,h,m){
     const [y,mo,d]=dateStr.split('-');
-    return `${y}${mo}${d}T${pad(h)}${pad(m||0)}00`;
+    // Recife = UTC-3: soma 3h para UTC
+    let uh=h+3, ud=parseInt(d), um=parseInt(mo), uy=parseInt(y);
+    if(uh>=24){uh-=24;ud++;}
+    return `${uy}${pad(um)}${pad(ud)}T${pad(uh)}${pad(m||0)}00Z`;
   }
   const events=[
-    {date:'2026-06-08',h0:14,h1:16,alarm:13,alm:30,
+    {date:'2026-06-08',h0:14,h1:16,min:-30,
      sum:'Prime Cursinho — Linguagens e Redação',
-     desc:'Aula no Prime Cursinho\\nLinguagens e Redação',
+     desc:'Aula no Prime Cursinho - Linguagens e Redacao',
      uid:'unicap-cursinho-0608'},
-    {date:'2026-06-11',h0:15,h1:16,alarm:14,alm:30,
-     sum:'Dr. André — Consulta',
-     desc:'Consulta médica com Dr. André',
+    {date:'2026-06-11',h0:15,h1:16,min:-30,
+     sum:'Dr. Andre — Consulta Medica',
+     desc:'Consulta medica com Dr. Andre',
      uid:'unicap-drAndre-0611'},
-    {date:'2026-06-11',h0:17,m0:0,h1:19,m1:30,alarm:16,alm:30,
+    {date:'2026-06-11',h0:17,m0:0,h1:19,m1:30,min:-30,
      sum:'Estima — Acompanhamento',
-     desc:'Acompanhamento Estima (17h–19h30)',
+     desc:'Acompanhamento Estima (17h-19h30)',
      uid:'unicap-estima-0611'},
-    {date:'2026-06-14',h0:8,m0:15,h1:13,m1:15,alarm:7,alm:45,
-     sum:'🏆 PROVA UNICAP 2026.2 — DIREITO MANHÃ',
-     desc:'Chegar às 7h45\\nLevar: documento + caneta azul + água',
+    {date:'2026-06-14',h0:8,m0:15,h1:13,m1:15,min:-30,
+     sum:'PROVA UNICAP 2026.2 — DIREITO MANHA',
+     desc:'Chegar as 7h45. Levar: documento + caneta azul + agua',
      uid:'unicap-prova-0614'},
   ];
-  let ics=`BEGIN:VCALENDAR${nl}VERSION:2.0${nl}PRODID:-//UNICAP 2026//Carlos Regis//PT${nl}CALSCALE:GREGORIAN${nl}METHOD:PUBLISH${nl}`;
-  ics+=`BEGIN:VTIMEZONE${nl}TZID:America/Recife${nl}BEGIN:STANDARD${nl}DTSTART:19700101T000000${nl}TZOFFSETFROM:-0300${nl}TZOFFSETTO:-0300${nl}TZNAME:BRT${nl}END:STANDARD${nl}END:VTIMEZONE${nl}`;
+  let ics=`BEGIN:VCALENDAR${nl}VERSION:2.0${nl}PRODID:-//UNICAP2026//CarlosRegis//PT${nl}CALSCALE:GREGORIAN${nl}METHOD:PUBLISH${nl}`;
   events.forEach(e=>{
-    const start=dt(e.date,e.h0,e.m0||0);
-    const end=dt(e.date,e.h1,e.m1||0);
-    const alarmDt=dt(e.date,e.alarm,e.alm||0);
+    const start=dtUTC(e.date,e.h0,e.m0||0);
+    const end=dtUTC(e.date,e.h1,e.m1||0);
     ics+=`BEGIN:VEVENT${nl}`;
     ics+=`UID:${e.uid}@unicap2026${nl}`;
-    ics+=`DTSTART;TZID=America/Recife:${start}${nl}`;
-    ics+=`DTEND;TZID=America/Recife:${end}${nl}`;
+    ics+=`DTSTART:${start}${nl}`;
+    ics+=`DTEND:${end}${nl}`;
     ics+=`SUMMARY:${e.sum}${nl}`;
     ics+=`DESCRIPTION:${e.desc}${nl}`;
-    ics+=`BEGIN:VALARM${nl}TRIGGER;VALUE=DATE-TIME:${alarmDt}${nl}ACTION:AUDIO${nl}DESCRIPTION:⏰ ${e.sum.replace(/🏆 /,'')}${nl}END:VALARM${nl}`;
+    ics+=`BEGIN:VALARM${nl}ACTION:DISPLAY${nl}TRIGGER:${e.min<0?'-':''}PT${Math.abs(e.min)}M${nl}DESCRIPTION:Lembrete: ${e.sum}${nl}END:VALARM${nl}`;
     ics+=`END:VEVENT${nl}`;
   });
   ics+=`END:VCALENDAR`;
-  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='unicap-compromissos.ics';
-  a.click();
+  // iOS Safari não suporta blob: download — usa data: URI
+  const dataUri='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+  window.location.href=dataUri;
 }
 
 function renderComp(){
@@ -575,8 +575,8 @@ function renderComp(){
   const today=todayStr();
   const DN=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   const MN=['jan','fev','mar','abr','mai','jun'];
-  const btn=`<button onclick="generateICS()" style="width:100%;padding:13px;border-radius:12px;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.08);color:var(--cyan);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;">📅 Importar alarmes no Calendário iPhone</button>`;
-  const note=`<div style="font-size:10px;color:var(--muted);text-align:center;margin:-10px 0 16px;line-height:1.5;">Baixa o arquivo → abre no iPhone → toca "Adicionar todos" no Calendário.<br>Alarme toca 30 min antes de cada compromisso, mesmo com tela bloqueada.</div>`;
+  const btn=`<a href="compromissos.ics" style="display:block;width:100%;padding:13px;border-radius:12px;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.08);color:var(--cyan);font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;text-align:center;text-decoration:none;">📅 Adicionar ao Calendário iPhone</a>`;
+  const note=`<div style="font-size:10px;color:var(--muted);text-align:center;margin:0 0 16px;line-height:1.6;">Toca no botão → Safari abre o arquivo → toca <strong style="color:var(--text)">"Adicionar todos"</strong> no Calendário.<br>Alarme toca 30 min antes de cada compromisso, mesmo com tela bloqueada.</div>`;
   c.innerHTML=btn+note+COMPROMISSOS.map(day=>{
     const d=new Date(day.date+'T12:00:00');
     const isT=day.date===today;
